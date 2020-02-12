@@ -32,6 +32,8 @@
 * 创建一个页面就是对应在 pages 里面创建一个同名的文件夹，里面有三个文件 index.vue, main.js, main.json；后面两个文件基本直接拷贝复制，index.vue 根据 ui 稿来自行开发
 * 所有外部 api 由 utils/apiList.js 统一管理
 * 弹框，picker，消息提示已经二次封装，开发过程中尽量用小程序原生组件
+* 小程序只识别 rpx，框架在单页面 style 里面可以识别是 px，在 template 里面写行样式的时候一律要用 rpx
+* 小程序 template 里面不接受复制行计算，不接受行里面应用方法
 
 ## 前期装备
 
