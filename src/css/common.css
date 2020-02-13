@@ -62,10 +62,6 @@ page,
   border-bottom: 1rpx solid #ddd;
 }
 
-.bg-white {
-  background-color: #fff;
-}
-
 .ft-11 {
   font-size: 22rpx !important;
 }
@@ -152,23 +148,30 @@ page,
 .ml-5 {
   margin-left: 10rpx;
 }
+.ml-15 {
+  margin-left: 30rpx;
+}
 .mt-35 {
   margin-top: 70rpx;
 }
 
-/* .main-btn {
-  height: 104rpx;
+.mt-50 {
+  margin-top: 100rpx;
+}
+
+.main-btn {
+  height: 96rpx;
   width: 100%;
-  border-radius: 6rpx;
-  background: #ffd946;
-  color: #191919;
-  font-size: 40rpx;
+  border-radius: 60rpx;
+  background: #2485ff;
+  color: #ffffff;
+  font-size: 22px;
   font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: center;
-  letter-spacing: 2rpx;
-} */
+  letter-spacing: 6rpx;
+}
 
 .hover-gray {
   background: #ddd;

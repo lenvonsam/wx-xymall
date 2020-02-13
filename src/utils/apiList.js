@@ -1,7 +1,9 @@
 export default {
   xy: {
     banner: 'getBanner.shtml',
-    notice: 'getNotice.shtml'
+    notice: 'getNotice.shtml',
+    trend: 'trends.shtml',
+    login: 'userLogin.shtml'
   },
   erp: {
     // 手机验证码登录

@@ -125,8 +125,16 @@ function ironRequest (reqUrl, param, type, context = null) {
       data: reqBody,
       success (res) {
         console.log('success', res)
-        if (res.data.returncode === '0') {
-          resolve(res.data)
+        if (res.statusCode === 200) {
+          if (res.data.returncode === undefined) {
+            resolve(res.data)
+          } else {
+            if (res.data.returncode === '0') {
+              resolve(res.data)
+            } else {
+              reject(res.data.errormsg)
+            }
+          }
         } else {
           reject(res.data === undefined ? '网络异常' : res.data.errormsg)
         }

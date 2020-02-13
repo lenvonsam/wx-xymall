@@ -10,6 +10,9 @@ const store = new Vuex.Store({
   actions: {
     configVal ({ commit }, { key, val }) {
       commit('CONFIGVAL', { key: key, val: val })
+      if (key === 'oldVersion') {
+        mpvue.setStorageSync('oldVersion', val)
+      }
     }
   },
   mutations: {

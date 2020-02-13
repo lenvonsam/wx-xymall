@@ -1,5 +1,7 @@
 import apiList from '../utils/apiList'
 import httpUtil from '../utils/httpUtil'
+import UTF8 from 'utf8'
+import BASE64 from 'base-64'
 
 const wxMixins = {
   data () {
@@ -134,6 +136,11 @@ const wxMixins = {
         doubleArr.push(tempRow)
       }
       return doubleArr
+    },
+    // base64加密
+    base64Str (str) {
+      const bytes = UTF8.encode(str)
+      return BASE64.encode(bytes)
     }
   }
 }

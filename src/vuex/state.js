@@ -1,6 +1,10 @@
 export default {
+  // 版本
+  currentVersion: '1.0.7',
   // 临时存储对象
   tempObject: {},
+  // 屏幕宽度
+  screenWidth: 375,
   // 导航栏高度
   statusBar: 0,
   // 自定义导航栏对象

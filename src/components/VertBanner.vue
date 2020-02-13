@@ -1,8 +1,7 @@
 <template lang="pug">
-.marquee-container(:style="{height: '40rpx'}")
-  //- .marquee-content(:style="{transform: 'translate3d(0, -' + (currentIdx * height) + 'rpx, 0)', transition: 'transform ' + noAnimate ? 0 :  duration + 's'}")
-    .marquee-item(v-for="(qe, idx) in quees", ref="marqueeItem",:key="idx", @click="jumpNotices(qe.id)")
-      span {{qe.title}}
+.marquee-container(style="height: 40rpx")
+  .marquee-content(:style="{transform: 'translate3d(0, -' + (currentIdx * height) + 'rpx, 0)', transition: 'transform ' + noAnimate ? 0 :  duration + 's'}")
+    text.marquee-item(v-for="(qe, idx) in quees", :key="idx", @click="jumpNotices(qe.id)") {{qe.title}}
       //- strong 【{{title(qe.title)}}】
       //- span.ml-5(style="color: #666") {{content(qe.title)}}
 </template>
@@ -27,18 +26,11 @@ export default {
     return {
       items: 5,
       currentIdx: 0,
-      height: 40,
       noAnimate: false,
       marqueeContent: ''
     }
   },
-  beforeMount () {
-    console.log('beforeMount:>>>')
-  },
   mounted () {
-    console.log('marquee mounted:>>>>>')
-    this.height = 40
-    console.log('quees:>>>', this.quees)
     this.start()
   },
   beforeDestory () {
@@ -88,14 +80,16 @@ export default {
     .marquee-item
       color #262626
       height 20px
-      line-height 22px
+      line-height 20px
       overflow hidden
+      display -webkit-box
+      -webkit-line-clamp 1
+      -webkit-box-orient vertical
       text-overflow ellipsis
-      white-space nowrap
       @media (min-width: 320px)
-        width 224px
+        width 245px
       @media (min-width: 375px)
-        width 272px
+        width 250px
       @media (min-width: 414px)
-        width 304px
+        width 260px
 </style>
