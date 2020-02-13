@@ -15,6 +15,7 @@ const wxMixins = {
     }
   },
   methods: {
+    statisticRequest: httpUtil.statisticRequest,
     ironRequest: httpUtil.ironRequest,
     request: httpUtil.request,
     requestDecode: httpUtil.requestDecode,
