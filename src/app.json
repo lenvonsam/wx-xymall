@@ -1,8 +1,8 @@
 {
   "pages": [
+    "pages/mall/main",
     "pages/index/main",
     "pages/me/main",
-    "pages/mall/main",
     "pages/cart/main"
   ],
   "window": {
@@ -15,8 +15,7 @@
     "selectedColor": "#2485ff",
     "borderStyle": "white",
 
-    "list": [
-      {
+    "list": [{
         "text": "首页",
         "pagePath": "pages/index/main",
         "iconPath": "static/tabs/home.png",

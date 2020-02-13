@@ -171,5 +171,34 @@ export default {
   },
   requestDecode (type, url, params, urlMethod, iptCharset = 'gbk') {
     return basicRequest(type, url, params, urlMethod, iptCharset)
+  },
+  statisticRequest (param, contxt = null) {
+    let basicParams = Object.assign({}, param)
+    console.log(contxt.$store.state)
+    if (contxt && contxt.$store.state.user.isLogin) basicParams.user_id = contxt.$store.state.user.currentUser.user_id
+    // fly.post(BASICURL + 'ironmart/statisticsProxy', { params: serializeformQuery(basicParams, true) })
+    const baiscUrl = BASICURL + '/ironmart/statisticsProxy'
+    const reqBody = {
+      params: serializeformQuery(basicParams, true)
+    }
+    return new Promise((resolve, reject) => {
+      const body = {
+        url: baiscUrl,
+        method: 'POST',
+        data: reqBody,
+        success (res) {
+          console.log('success', res)
+          if (res.data.returncode === '0') {
+            resolve(res.data)
+          } else {
+            reject(res.data === undefined ? '网络异常' : res.data.errormsg)
+          }
+        },
+        error (err) {
+          reject(err.message || '网络异常')
+        }
+      }
+      mpvue.request(body)
+    })
   }
 }
