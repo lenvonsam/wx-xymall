@@ -162,6 +162,10 @@ page,
   margin-left: 30rpx;
 }
 
+.mt-5 {
+  margin-top: 10rpx;
+}
+
 .mt-35 {
   margin-top: 70rpx;
 }
@@ -198,4 +202,7 @@ page,
 
 .full-width {
   width: 100%;
+}
+.border-radius {
+  border-radius: 10rpx;
 }

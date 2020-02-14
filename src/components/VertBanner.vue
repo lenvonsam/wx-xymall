@@ -1,5 +1,5 @@
 <template lang="pug">
-.marquee-container(style="height: 40rpx")
+.marquee-container(:style="{height: height + 'rpx'}")
   .marquee-content(:style="{transform: 'translate3d(0, -' + (currentIdx * height) + 'rpx, 0)', transition: 'transform ' + noAnimate ? 0 :  duration + 's'}")
     text.marquee-item(v-for="(qe, idx) in quees", :key="idx", @click="jumpNotices(qe.id)") {{qe.title}}
       //- strong 【{{title(qe.title)}}】
@@ -15,7 +15,7 @@ export default {
     },
     interval: {
       type: Number,
-      default: 5000
+      default: 3000
     },
     duration: {
       type: Number,
@@ -27,7 +27,7 @@ export default {
       items: 5,
       currentIdx: 0,
       noAnimate: false,
-      marqueeContent: ''
+      height: 40
     }
   },
   mounted () {

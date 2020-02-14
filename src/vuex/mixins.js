@@ -9,6 +9,8 @@ const wxMixins = {
       apiList,
       pageSize: 10,
       imgProxy: 'http://xymobile.xingyun361.com/',
+      // 型云图片访问地址
+      imgOuterUrl: 'http://web-test.xingyun361.com/',
       phoneReg: /^1[345789]\d{9}$/,
       erpProxy: httpUtil.proxy.erp,
       warehouseProxy: httpUtil.proxy.wh
@@ -105,21 +107,15 @@ const wxMixins = {
       }
     },
     // 节流
-    throttle (func, delay) {
-      let prev = Date.now()
-      console.log('start')
-      return function () {
-        console.log('inner start')
-        const context = this
-        const args = arguments
-        const now = Date.now()
-        const diff = now - prev
-        console.log('throttle diff:>>', diff)
-        if (diff >= delay) {
-          func.apply(context, args)
-          prev = Date.now()
-        }
-      }
+    throttle (func, delay = 100) {
+      let timer = null
+      return (function () {
+        if (timer) return
+        timer = setTimeout(function () {
+          func.apply(this, arguments)
+          timer = null
+        }, delay)
+      })()
     },
     // 一维数组装成二维数组
     arr2DoubleArr (array, full = true, cols = 3) {

@@ -4,7 +4,9 @@
     "pages/mall/main",
     "pages/cart/main",
     "pages/me/main",
-    "pages/login/main"
+    "pages/login/main",
+    "pages/search/main",
+    "pages/cardList/main"
   ],
   "window": {
     "navigationBarTextStyle": "white",

@@ -4,11 +4,13 @@ div
   .login-bg(:style="{height: 'calc(100vh - '+customBar+'px)'}")
     .ft-18.text-blod.text-center 账号密码登录
     .row.padding-tb-sm.border-bottom-line.margin-top-xl
-      .flex-30
+      .flex-30.text-gray
+        icon.cuIcon-people
       .col
         input.no-border(placeholder="请输入用户名", v-model="uname")
     .row.padding-tb-sm.border-bottom-line.margin-top-xl
-      .flex-30
+      .flex-30.text-gray
+        icon.cuIcon-unlock
       .col
         input.no-border(placeholder="请输入密码", type="password", v-model="upwd")
     .row.margin-top
@@ -60,7 +62,7 @@ export default {
         if (this.canClick) {
           this.canClick = false
           const encrptPwd = this.base64Str(this.upwd.trim())
-          const data = await this.ironRequest(this.apiList.xy.login, { user_mark: this.uname.trim(), user_pwd: encrptPwd }, 'post', this)
+          const data = await this.ironRequest(this.apiList.xy.login.url, { user_mark: this.uname.trim(), user_pwd: encrptPwd }, this.apiList.xy.login.method, this)
           console.log('user login', data)
           data.pwd = encrptPwd
           this.setUser(data)
@@ -105,5 +107,7 @@ export default {
   padding-left 50px
   padding-right 50px
   padding-top 50px
+  /deep/[class*='cuIcon-']
+    margin-top -8px
 </style>
 

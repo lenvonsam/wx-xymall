@@ -1,10 +1,16 @@
 <template lang="pug">
 div
-  nav-bar(title="首页")
-  swiper(v-if="gallery.length > 0", :indicator-dots="true", :autoplay="true")
-    swiper-item(v-for="(g,idx) in gallery", :key="idx")
-      img.response(:src="imgOuterUrl + g.url", v-if="imgOuterUrl", style="height: 300rpx")
-  time-line(v-else, type="gallery")
+  nav-bar(title="首页", :serviceIcon="true")
+  .padding.bg-white
+    .padding-sm.padding-lr.margin-bottom-sm(style="background: #f6f6f6;border-radius: 38rpx;", @click="jump('/pages/search/main')")
+      .row.text-gray
+        .flex-30
+          icon.cuIcon-search(style="margin-top: -16rpx")
+        .col 请输入关键词搜索
+    swiper(v-if="gallery.length > 0", :indicator-dots="true", :autoplay="true")
+      swiper-item.border-radius(v-for="(g,idx) in gallery", :key="idx")
+        img.response(:src="imgOuterUrl + g.url", v-if="imgOuterUrl", style="height: 300rpx")
+    time-line(v-else, type="gallery")
   .row.bg-white.padding-tb
     .col.text-center(v-for="(icon,idx) in mainIcons", :key="idx")
       img(:src="icon.url", style="width: 100rpx; height: 100rpx")
@@ -16,31 +22,35 @@ div
       .col.row(style="overflow hidden")
         vert-banner(:quees="notices")
         //- span(v-else) 暂无消息
-      .flex-60.text-gray.ft-12.text-right(@click="mallMore") 更多>>
+      .flex-60.text-gray.ft-12.text-right(@click="jump('/pages/cardList/main?title=型云公告&type=notice')") 更多>>
   .bg-white.padding.margin-top-sm
     .ft-18.text-blod 产品分类
     .margin-top
       .row(v-for="(row,ridx) in mainClassify", :key="ridx", :class="{'margin-top-sm': ridx > 0}")
         .col.text-center(v-for="(col,cidx) in row", :key="cidx")
           .btn-classify {{col.title}}
-      .margin-top.text-center.text-blue.ft-13 查看更多>>
+      .margin-top.text-center.text-blue.ft-13(@click="mallMore") 查看更多>>
   .margin-top-sm.margin-bottom-sm.bg-white.padding
     .text-center.ft-16
       span.ml-15(v-for="(name,idx) in echartType", :key="name", :class="{'text-blue': idx === echartTabIndex}", @click="echartTabClick(name, idx)") {{name}}
     div(:style="{height: echartHeight + 'rpx'}")
       mpvue-echarts(:echarts="echarts", :onInit="initChart")
     .text-center 型云价格指数
+  share-modal(v-model="shareModalShow")
 </template>
 
 <script>
 import { mapState } from 'vuex'
-import echarts from 'echarts'
+// import echarts from '/static'
 import mpvueEcharts from 'mpvue-echarts'
+import shareModal from '../../components/ShareModal.vue'
 import vertBanner from '../../components/VertBanner.vue'
+const echarts = require('../../../static/libs/echarts.min.js')
 let chart = null
 export default {
   data () {
     return {
+      shareModalShow: false,
       echartType: ['H型钢', '工角槽', '普碳开平板'],
       echartTabIndex: 0,
       echarts,
@@ -124,7 +134,8 @@ export default {
   },
   components: {
     mpvueEcharts,
-    vertBanner
+    vertBanner,
+    shareModal
   },
   beforeMount () {
     this.$nextTick(function () {
@@ -138,7 +149,6 @@ export default {
   },
   computed: {
     ...mapState({
-      imgOuterUrl: state => state.imgOuterUrl,
       mainIcons: state => state.mainIcons,
       mainClassify: state => state.mainClassify,
       screenWidth: state => state.screenWidth
@@ -161,7 +171,7 @@ export default {
     },
     async getTrends () {
       try {
-        const res = await this.ironRequest(this.apiList.xy.trend, {}, 'get', this)
+        const res = await this.ironRequest(this.apiList.xy.trend.url, {}, this.apiList.xy.trend.method, this)
         console.log('trends resp', res)
         const lineOptionDataArr = []
         for (let i = 0; i < this.echartType.length; i++) {
@@ -183,7 +193,7 @@ export default {
     },
     async loadBanner () {
       try {
-        const data = await this.ironRequest(this.apiList.xy.banner, {}, 'get', this)
+        const data = await this.ironRequest(this.apiList.xy.banner.url, {}, this.apiList.xy.banner.method, this)
         this.gallery = data.banners
       } catch (e) {
         this.showMsg(e)
@@ -191,18 +201,13 @@ export default {
     },
     async loadNotice () {
       try {
-        const data = await this.ironRequest(this.apiList.xy.notice + '?current_page=0&page_size=5&type=2', {}, 'get', this)
+        const data = await this.ironRequest(this.apiList.xy.notice.url + '?current_page=0&page_size=5&type=2', {}, this.apiList.xy.notice.method, this)
         console.log('notice ', data)
         this.notices = data.notices
         console.log('notices:>>', this.notices)
       } catch (e) {
         this.showMsg(e)
       }
-    },
-    mallClick (item, type, evt) {
-      console.log('item', item)
-      console.log('type', type)
-      console.log('event', evt)
     }
   }
 }

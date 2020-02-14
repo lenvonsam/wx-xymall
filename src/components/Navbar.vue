@@ -6,6 +6,9 @@
       slot(name="backText")
     .action(v-if="leftMenu")
       slot(name="leftMenu")
+    .action.relative(v-if="serviceIcon")
+      .service-btn(style="background-image: url('/static/images/service_icon.png')")
+        button(open-type="contact")
     .action.border-custom(:style="{width: custom.width + 'px', height: custom.height + 'px', marginLeft: 'calc(750rpx - ' + custom.right + 'px)'}", v-if="isCustom")
       text.cuIcon-back(@click="back")
       text.cuIcon-homefill(@click="toHome")
@@ -33,6 +36,10 @@ export default {
       type: Boolean,
       default: false
     },
+    serviceIcon: {
+      type: Boolean,
+      default: false
+    },
     isCustom: {
       type: Boolean,
       default: false
@@ -48,3 +55,18 @@ export default {
 }
 </script>
 
+<style lang="stylus" scoped>
+.service-btn
+  width 20px
+  height 20px
+  background-size cover
+  button
+    position absolute
+    top 0
+    left 0
+    right 0
+    bottom 0
+    background transparent
+    &::after
+      border 0 !important
+</style>

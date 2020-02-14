@@ -11,10 +11,6 @@ export default {
   custom: {},
   // 自定义导航栏内容的高度
   customBar: 0,
-  // 型云图片访问地址
-  imgOuterUrl: 'http://web-test.xingyun361.com',
-  // 七牛访问地址
-  qiniuOuterUrl: 'http://xymobile.xingyun361.com',
   // 首页图片
   mainIcons: [
     {
