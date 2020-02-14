@@ -1,44 +1,66 @@
 <template lang="pug">
-  .padding.solid-bottom.pr-10.pl-10
-    .row
-      .col.text-bold.ft-15
+ .padding.pr-10.pl-10(:class="!mallFlag ? 'card-list' : 'solid-bottom'")
+    template(v-if="mallFlag === 1")
+      .row
+        .col.text-bold.ft-15
+          span {{item[mallTypeObject[itemType].name]}}
+          span.ml-5 {{item[mallTypeObject[itemType].standard]}}
+          //- .sub-mark.ml-5 {{item[mallTypeObject[itemType].supply]}}
+          //- span.ml-5.ft-12(style="color:#666") ({{weightMark}})
+        .col.text-right.ft-16.flex-100
+          span.c-red.ft-13(v-if="item.price === '--'") 开售时间:{{item.show_time}}
+          span.text-blue(v-else="item.show_price === true") ￥{{item[mallTypeObject[itemType].price]}}
+    
+          //- span.c-red.ft-13(v-if="item.price === '--'") 开售时间:{{item.show_time}}
+          //- span.c-red(v-else-if="item.show_price === true") ￥{{item[mallTypeObject[itemType].price]}}
+          //- .blue-buy.ft-12(v-else, @click="cb(item, 'showPrice', $event)") 查看价格
+      .row.pt-5.flex-center.ft-13
+        .col.c-gray
+          span {{item[mallTypeObject[itemType].material]}}
+          //- span.ml-8 {{item[mallTypeObject[itemType].standard]}}
+          span.ml-8 {{item[mallTypeObject[itemType].length]}}米
+          span.ml-8 {{item[mallTypeObject[itemType].wh_name]}}
+          .sub-mark.ml-5 {{item[mallTypeObject[itemType].supply]}}
+        .text-right
+          span ({{weightMark}})
+      //- .row.pt-5.flex-center.ft-13(v-if="item[mallTypeObject[itemType].tolerance]||item[mallTypeObject[itemType].weightRange]")
+        .col.c-gray
+          span(v-if="item[mallTypeObject[itemType].tolerance]") 公差范围: {{item[mallTypeObject[itemType].tolerance]}}
+          span.ml-8(v-if="item[mallTypeObject[itemType].weightRange]") 重量范围: {{item[mallTypeObject[itemType].weightRange]}}
+      //- .row.pt-0.flex-center.ft-13.c-gray(v-if="item.show_price === true")
+      .row.pt-5.flex-center.ft-13.c-gray
+        .col
+          span(v-if="item[mallTypeObject[itemType].max_count] > 0") {{item[mallTypeObject[itemType].max_count]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
+        .col.flex-100.text-right.ft-14
+          .blue-buy(v-if="item.max_count == 0",style="background:#f44336!important", @click="cb(item, 'notice', $event)") 到货通知
+          .blue-buy(@click="cb(item, 'cart', $event)", v-else) 购买
+    template(v-else)
+      .text-bold.ft-15
         span {{item[mallTypeObject[itemType].name]}}
-        span.ml-5 {{item[mallTypeObject[itemType].standard]}}
-        //- .sub-mark.ml-5 {{item[mallTypeObject[itemType].supply]}}
-        //- span.ml-5.ft-12(style="color:#666") ({{weightMark}})
-      .col.text-right.ft-16.flex-100
-        span.c-red.ft-13(v-if="item.price === '--'") 开售时间:{{item.show_time}}
-        span.text-blue(v-else="item.show_price === true") ￥{{item[mallTypeObject[itemType].price]}}
-  
-        //- span.c-red.ft-13(v-if="item.price === '--'") 开售时间:{{item.show_time}}
-        //- span.c-red(v-else-if="item.show_price === true") ￥{{item[mallTypeObject[itemType].price]}}
-        //- .blue-buy.ft-12(v-else, @click="cb(item, 'showPrice', $event)") 查看价格
-    .row.pt-5.flex-center.ft-13
-      .col.c-gray
+        span {{item[mallTypeObject[itemType].supply]}}
+      .text-bold
+        span {{item[mallTypeObject[itemType].standard]}}
+      .text-gray
         span {{item[mallTypeObject[itemType].material]}}
-        //- span.ml-8 {{item[mallTypeObject[itemType].standard]}}
         span.ml-8 {{item[mallTypeObject[itemType].length]}}米
         span.ml-8 {{item[mallTypeObject[itemType].wh_name]}}
-        .sub-mark.ml-5 {{item[mallTypeObject[itemType].supply]}}
-      .text-right
-        span ({{weightMark}})
-    //- .row.pt-5.flex-center.ft-13(v-if="item[mallTypeObject[itemType].tolerance]||item[mallTypeObject[itemType].weightRange]")
-      .col.c-gray
-        span(v-if="item[mallTypeObject[itemType].tolerance]") 公差范围: {{item[mallTypeObject[itemType].tolerance]}}
-        span.ml-8(v-if="item[mallTypeObject[itemType].weightRange]") 重量范围: {{item[mallTypeObject[itemType].weightRange]}}
-    //- .row.pt-0.flex-center.ft-13.c-gray(v-if="item.show_price === true")
-    .row.pt-5.flex-center.ft-13.c-gray
-      .col
+      .text-gray
         span(v-if="item[mallTypeObject[itemType].max_count] > 0") {{item[mallTypeObject[itemType].max_count]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
-      .col.flex-100.text-right.ft-14
-        .blue-buy(v-if="item.max_count == 0",style="background:#f44336!important", @click="cb(item, 'notice', $event)") 到货通知
-        .blue-buy(@click="cb(item, 'cart', $event)", v-else) 购买
-
+      .text-blue ￥{{item[mallTypeObject[itemType].price]}}
+      .text-gray.flex
+        .ft-12.col ({{weightMark}})
+        .text-right.ft-14
+          .blue-buy(v-if="item.max_count == 0",style="background:#f44336!important", @click="cb(item, 'notice', $event)") 到货通知
+          .blue-buy(@click="cb(item, 'cart', $event)", v-else) 购买
 </template>
 
 <script>
 export default {
   props: {
+    mallFlag: {
+      type: Number,
+      default: 1
+    },
     item: {
       type: Object,
       required: true
@@ -134,4 +156,11 @@ export default {
   border-radius 50%
 .ml-8
   margin-left 8px !important
+.card-list
+  width 48%
+  line-height 26px
+  background #fff
+  margin-bottom 15px
+  .blue-buy
+    padding-top 3px
 </style>

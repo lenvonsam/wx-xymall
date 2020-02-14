@@ -3,7 +3,10 @@ export default {
     banner: { url: 'getBanner.shtml', method: 'get' },
     notice: { url: 'getNotice.shtml', method: 'get' },
     trend: { url: 'trends.shtml', method: 'get' },
-    login: { url: 'userLogin.shtml', method: 'post' }
+    login: { url: 'userLogin.shtml', method: 'post' },
+    mallList: { url: 'mallList.shtml', method: 'post' },
+    goodsList: { url: 'goodsList.shtml', method: 'post' },
+    standardList: { url: 'standardList.shtml', method: 'post' }
   },
   erp: {
     // 手机验证码登录
