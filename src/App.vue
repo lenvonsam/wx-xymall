@@ -37,6 +37,7 @@ export default {
         const statusBar = e.statusBarHeight
         console.log('status bar height:>>', e.statusBarHeight)
         me.configVal({ key: 'screenWidth', val: e.screenWidth })
+        me.configVal({ key: 'screenHeight', val: e.screenHeight })
         me.configVal({ key: 'statusBar', val: statusBar })
         const capsule = wx.getMenuButtonBoundingClientRect()
         if (capsule) {

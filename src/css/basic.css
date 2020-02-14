@@ -1391,6 +1391,10 @@ image.loading::after {
   flex-wrap: wrap;
 }
 
+.grid.col-2>view {
+  width: 50%;
+}
+
 .grid.col-3>view {
   width: 33.33%;
 }
