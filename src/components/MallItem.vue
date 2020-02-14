@@ -157,7 +157,7 @@ export default {
 .ml-8
   margin-left 8px !important
 .card-list
-  width 46%
+  width 48%
   line-height 26px
   background #fff
   margin-bottom 15px

@@ -124,8 +124,8 @@ export default {
 .mall-content
   margin-top 150px
 .cardSty
-  padding 0 5px
+  padding 0 15px
   display flex
   flex-wrap wrap
-  justify-content space-around
+  justify-content space-between
 </style>
