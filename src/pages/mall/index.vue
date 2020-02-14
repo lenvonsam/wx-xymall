@@ -94,7 +94,7 @@ export default {
     refresher () {
       const me = this
       this.queryObject.current_page = this.currentPage
-      this.ironRequest(this.apiList.xy.mallList, this.queryObject, 'post', this).then((res) => {
+      this.ironRequest(this.apiList.xy.mallList.url, this.queryObject, this.apiList.xy.mallList.method, this).then((res) => {
         if (res.returncode === '0') {
           if (me.isLoad === 'refresh') {
             if (res.products.length > 0 && me.currentPage === 0) {

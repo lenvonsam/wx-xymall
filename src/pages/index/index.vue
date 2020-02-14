@@ -50,7 +50,7 @@ let chart = null
 export default {
   data () {
     return {
-      shareModalShow: false,
+      shareModalShow: true,
       echartType: ['H型钢', '工角槽', '普碳开平板'],
       echartTabIndex: 0,
       echarts,

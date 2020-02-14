@@ -111,7 +111,7 @@ export default {
     searchVal (newVal) {
       console.log('search', newVal)
       console.log('---', this.searchVal)
-      this.throttle(this.searchChange(), 300)
+      this.throttle(this.searchChange, 300)
     }
   },
   mounted () {

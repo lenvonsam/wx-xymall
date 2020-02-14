@@ -33,7 +33,7 @@ export default {
   },
   watch: {
     searchVal () {
-      this.throttle(this.searchChange(), 300)
+      this.throttle(this.searchChange, 300)
     }
   },
   mounted () {
@@ -95,7 +95,7 @@ export default {
       this.getStandardList()
     },
     getGoods () {
-      this.ironRequest(this.apiList.xy.goodsList, '', 'post', this).then((res) => {
+      this.ironRequest(this.apiList.xy.goodsList.url, {}, this.apiList.xy.goodsList.method, this).then((res) => {
         res.goods.map(item => {
           item.isActive = false
         })
@@ -104,7 +104,7 @@ export default {
       })
     },
     getStandardList () {
-      this.ironRequest(this.apiList.xy.standardList, this.queryObject, 'post', this).then((res) => {
+      this.ironRequest(this.apiList.xy.standardList.url, this.queryObject, this.apiList.xy.standardList.method, this).then((res) => {
         console.log('getStandardList', res)
         this.standardList = res.standards
       })
