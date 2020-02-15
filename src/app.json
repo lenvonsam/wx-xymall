@@ -5,10 +5,10 @@
     "pages/mallFilter/main",
     "pages/cart/main",
     "pages/me/main",
+    "pages/login/main",
     "pages/search/main",
     "pages/cardList/main",
     "pages/h5/main",
-    "pages/login/main",
     "pages/register/main"
   ],
   "window": {

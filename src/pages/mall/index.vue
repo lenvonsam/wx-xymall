@@ -6,10 +6,10 @@ div
     //- .text-center(v-show="isLoad")
       img(src="/static/images/loadRun.gif", style="width: 120px; height: 120px")
     .mt-10(:class="{cardSty: !mallFlag}", v-show="mallItems.length > 0")
-        mall-item(:mallFlag="mallFlag", :cb="mallItemCb", v-for="(item,idx) in mallItems", :item="item", :key="idx")
+      mall-item(:mallFlag="mallFlag", :cb="mallItemCb", v-for="(item,idx) in mallItems", :item="item", :key="idx")
 </template>
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import mallHead from '@/components/MallHead'
 import mallItem from '@/components/MallItem'
 export default {
@@ -25,17 +25,21 @@ export default {
       pullDownRefresh: false,
       currentPage: 0,
       pageSize: 10,
-      mallFlag: 1
+      mallFlag: 1,
+      btnDisable: false
     }
   },
   computed: {
     ...mapState({
+      currentUser: state => state.user.currentUser,
       tempObject: state => state.tempObject,
+      isLogin: state => state.user.isLogin,
       customBar: state => state.customBar
     })
   },
   onShow () {
     Object.assign(this.queryObject, this.tempObject)
+    this.btnDisable = false
     this.mallItems = []
     this.refresher()
   },
@@ -61,6 +65,7 @@ export default {
     this.refresher()
   },
   methods: {
+    ...mapActions(['configVal']),
     selectMall (flag) {
       console.log(flag)
       this.mallFlag = flag
@@ -77,7 +82,68 @@ export default {
       }
       this.refresher()
     },
-    mallItemCb () { },
+    mallItemCb (obj, type, evt) {
+      console.log('type', type)
+      const me = this
+      if (type === 'showPrice') {
+        if (this.isLogin) {
+          this.showMsg('请完善信息，耐心等待审核通过')
+        } else {
+          this.confirm({ content: '请登录后查看价格，去登录' }).then(() => {
+            me.configVal({
+              key: 'tempObject',
+              val: { preRoute: me.$root.$mp.appOptions.path }
+            })
+            me.jump('/pages/login/main')
+          })
+        }
+        return
+      }
+      if (type === 'cart') { this.statisticRequest({ event: 'click_app_mall_add_cart' }, this) }
+
+      if (obj.name === 'H型钢' && obj.price === '--') {
+        this.showMsg(`此商品会在${obj.show_time}后开售`)
+        return
+      }
+      if (this.isLogin) {
+        if (!this.btnDisable) {
+          this.btnDisable = true
+          this.addCart(obj, type, this.currentUser.user_id).then(
+            rt => {
+              me.showMsg('加入购物车成功', '', 1000)
+              // if (rt.type === 'cart') {
+              //   if (this.browserName() === 'wxpub') {
+              //     me.zgRequest(
+              //       me.zgEventStatic(me.currentUser, '加入购物车', {
+              //         productid: obj.id,
+              //         count: 1,
+              //         measure_way: rt.mway
+              //       })
+              //     )
+              //   }
+              //   this.cartEvt = evt
+              // } else {
+              //   me.msgShow(rt.msg, 'positive')
+              // }
+              me.btnDisable = false
+            },
+            err => {
+              me.showMsg(err.message)
+              me.btnDisable = false
+            }
+          )
+        }
+      } else {
+        this.confirm({ content: '请您登录后购买，去登录' }).then(() => {
+          me.configVal({
+            key: 'tempObject',
+            val: { preRoute: me.$root.$mp.appOptions.path }
+          })
+          // me.tab('/pages/login/main')
+          me.jump('/pages/login/main')
+        })
+      }
+    },
     selectTab (val) {
       this.mallItems = []
       this.currentPage = 0
@@ -94,7 +160,12 @@ export default {
     refresher () {
       const me = this
       this.queryObject.current_page = this.currentPage
-      this.ironRequest(this.apiList.xy.mallList.url, this.queryObject, this.apiList.xy.mallList.method, this).then((res) => {
+      this.ironRequest(
+        this.apiList.xy.mallList.url,
+        this.queryObject,
+        this.apiList.xy.mallList.method,
+        this
+      ).then(res => {
         if (res.returncode === '0') {
           if (me.isLoad === 'refresh') {
             if (res.products.length > 0 && me.currentPage === 0) {

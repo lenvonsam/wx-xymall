@@ -163,7 +163,6 @@ export default {
       if (key === 'area') queryObj.region = ''
       if (key === 'material') queryObj.material = ''
       if (key === 'origin') queryObj.supply = ''
-      // debugger
       this.ironRequest(this.sortQueryList[key].reqUrl, queryObj, 'post', this).then(resp => {
         if (resp.returncode === '0') {
           let arr = resp[this.sortQueryList[key].respKey]
