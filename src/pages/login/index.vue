@@ -92,7 +92,7 @@ export default {
       } catch (e) {
         console.log('err', e)
         this.showMsg(e)
-        this.canClick = false
+        this.canClick = true
       }
     }
   }
