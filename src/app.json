@@ -1,10 +1,10 @@
 {
   "pages": [
+    "pages/cart/main",
+    "pages/me/main",
     "pages/index/main",
     "pages/mall/main",
     "pages/mallFilter/main",
-    "pages/cart/main",
-    "pages/me/main",
     "pages/login/main",
     "pages/search/main",
     "pages/cardList/main"
@@ -19,8 +19,7 @@
     "selectedColor": "#2485ff",
     "borderStyle": "white",
 
-    "list": [
-      {
+    "list": [{
         "text": "首页",
         "pagePath": "pages/index/main",
         "iconPath": "static/tabs/home.png",

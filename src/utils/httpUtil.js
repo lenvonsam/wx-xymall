@@ -1,3 +1,5 @@
+import UTF8 from 'utf8'
+import BASE64 from 'base-64'
 const BASICURL = 'https://mobileapp.xingyun361.com/quasarserver'
 // const BASICURL = 'https://mobileapp.xingyun361.com/quasarserver'
 // const BASICURL = 'https://47.97.195.16/quasarserver'
@@ -96,8 +98,8 @@ function basicRequest (type, url, params, urlMethod, inputCharset = 'utf8') {
 }
 
 function ironRequest (reqUrl, param, type, context = null) {
+  debugger
   let basicParams = Object.assign({}, param)
-  console.log('ironRequest:>>', context.$store)
   let ul = reqUrl
   if (context && context.$store.state.user.isLogin && type === 'post') {
     basicParams.user_id = context.$store.state.user.currentUser.user_id
@@ -126,7 +128,7 @@ function ironRequest (reqUrl, param, type, context = null) {
       success (res) {
         console.log('success', res)
         if (res.statusCode === 200) {
-          if (res.data.returncode === undefined) {
+          if (res.returncode === undefined) {
             resolve(res.data)
           } else {
             if (res.data.returncode === '0') {
@@ -194,6 +196,33 @@ export default {
         url: baiscUrl,
         method: 'POST',
         data: reqBody,
+        success (res) {
+          console.log('success', res)
+          if (res.data.returncode === '0') {
+            resolve(res.data)
+          } else {
+            reject(res.data === undefined ? '网络异常' : res.data.errormsg)
+          }
+        },
+        error (err) {
+          reject(err.message || '网络异常')
+        }
+      }
+      mpvue.request(body)
+    })
+  },
+  zgRequest (params) {
+    const basicUrl = BASICURL + 'ironmart/zgProxy'
+    const paramStr = JSON.stringify(params)
+    const bytes = UTF8.encode(paramStr)
+    const base64Param = BASE64.encode(bytes)
+    const reqParam = serializeformQuery({ data: base64Param })
+    // return fly.post(basicUrl, { param: reqParam })
+    return new Promise((resolve, reject) => {
+      const body = {
+        url: basicUrl,
+        method: 'POST',
+        data: reqParam,
         success (res) {
           console.log('success', res)
           if (res.data.returncode === '0') {

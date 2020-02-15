@@ -51,6 +51,7 @@ export default {
   },
   methods: {
     add () {
+      debugger
       this.num++
       if (this.max > 0 && this.num > this.max) {
         this.num = this.max

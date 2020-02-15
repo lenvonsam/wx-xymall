@@ -45,5 +45,39 @@ export default {
     ],
     [{ title: '等边角钢' }, { title: '不等边角钢' }, { title: '工字钢' }],
     [{ title: '普碳开平板' }, { title: '低合金开平板' }, { title: '圆钢' }]
+  ],
+  billIcons: [
+    {
+      icon: '/static/images/dfk.png',
+      dotKey: 'topay',
+      name: '待付款',
+      url: {
+        path: '/bill?tabName=1'
+      }
+    },
+    {
+      icon: '/static/images/submit_orders_icon.png',
+      name: '待确认',
+      dotKey: 'to_confirm_lad',
+      url: {
+        path: '/ladbill/confirm/list'
+      }
+    },
+    {
+      icon: '/static/images/wait_pick_icon.png',
+      name: '待提货',
+      dotKey: 'to_delivery',
+      url: {
+        path: '/bill?tabName=6'
+      }
+    },
+    {
+      icon: '/static/images/billing_Infor.png',
+      name: '待开票',
+      dotKey: 'toinvoice',
+      url: {
+        path: '/invoice'
+      }
+    }
   ]
 }

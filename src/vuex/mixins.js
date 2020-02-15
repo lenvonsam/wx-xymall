@@ -21,8 +21,11 @@ const wxMixins = {
     ironRequest: httpUtil.ironRequest,
     request: httpUtil.request,
     requestDecode: httpUtil.requestDecode,
+    zgRequest: httpUtil.zgRequest,
     jump (url) {
-      mpvue.navigateTo({ url: url })
+      mpvue.navigateTo({
+        url: url
+      })
     },
     back () {
       mpvue.navigateBack(-1)
@@ -31,13 +34,19 @@ const wxMixins = {
       mpvue.reLaunch('/pages/index/main')
     },
     redirect (url) {
-      mpvue.redirectTo({ url: url })
+      mpvue.redirectTo({
+        url: url
+      })
     },
     tab (url) {
-      mpvue.switchTab({ url: url })
+      mpvue.switchTab({
+        url: url
+      })
     },
     makeCall (phone) {
-      mpvue.makePhoneCall({ phoneNumber: phone })
+      mpvue.makePhoneCall({
+        phoneNumber: phone
+      })
     },
     previewImage (url, urlist) {
       mpvue.previewImage({
@@ -138,6 +147,72 @@ const wxMixins = {
     base64Str (str) {
       const bytes = UTF8.encode(str)
       return BASE64.encode(bytes)
+    },
+    addCart (val, type, userId) {
+      return new Promise((resolve, reject) => {
+        if (type === 'notice') {
+          this.ironRequest('arrivalNotice.shtml', {
+            user_id: userId,
+            order_id: val.id
+          }, 'post').then(resp => {
+            if (resp.returncode === '0') {
+              resolve({
+                msg: '到货通知设置成功',
+                type: type
+              })
+            } else {
+              reject(new Error(resp.errormsg))
+            }
+          }, err => {
+            console.log(err.message)
+            reject(new Error('网络异常'))
+          })
+        } else {
+          let mwId = 2
+          if (val.weight.split('/').length === 1) {
+            if (val.weight.indexOf('16理') > 0) {
+              mwId = 3
+            } else if (val.weight.indexOf('磅') > 0) {
+              mwId = 1
+            }
+          }
+          this.ironRequest('addCart.shtml', {
+            user_id: userId,
+            product_id: val.id,
+            count: 1,
+            measure_way: mwId
+          }, 'post').then(resp => {
+            if (resp.returncode === '0') {
+              resolve({
+                type,
+                mway: mwId
+              })
+            } else {
+              reject(new Error(resp.errormsg))
+            }
+          }, err => {
+            console.log(err.message)
+            reject(new Error('网络异常'))
+          })
+        }
+      })
+    },
+    zgEventStatic (userObj, eventName, eventParams) {
+      let time = parseInt(new Date().getTime() / 1000) + ''
+      let platform = this.mobileVersion()
+      return {
+        ts: time,
+        cuid: userObj.nickname,
+        ak: 'd25bd4937c9444d6bd7817cec2bd8d24',
+        sdk: platform,
+        debug: 1,
+        data: [{
+          et: 'cus',
+          eid: eventName,
+          ts: time,
+          pr: eventParams
+        }]
+      }
     }
   }
 }
