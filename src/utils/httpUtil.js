@@ -1,4 +1,4 @@
-const BASICURL = 'https://mobileapp.xingyun361.com/quasarserver'
+const BASICURL = 'https://mobileapp.xingyun361.com/quasarserverdev'
 // const BASICURL = 'https://mobileapp.xingyun361.com/quasarserver'
 // const BASICURL = 'https://47.97.195.16/quasarserver'
 // const BASICURL = 'http://172.16.16.201:8077'
@@ -183,7 +183,9 @@ export default {
   statisticRequest (param, contxt = null) {
     let basicParams = Object.assign({}, param)
     console.log(contxt.$store.state)
-    if (contxt && contxt.$store.state.user.isLogin) basicParams.user_id = contxt.$store.state.user.currentUser.user_id
+    if (contxt && contxt.$store.state.user.isLogin) {
+      basicParams.user_id = contxt.$store.state.user.currentUser.user_id
+    }
     // fly.post(BASICURL + 'ironmart/statisticsProxy', { params: serializeformQuery(basicParams, true) })
     const baiscUrl = BASICURL + '/ironmart/statisticsProxy'
     const reqBody = {

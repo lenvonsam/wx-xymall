@@ -41,7 +41,6 @@ div
 
 <script>
 import { mapState } from 'vuex'
-// import echarts from '/static'
 import mpvueEcharts from 'mpvue-echarts'
 import shareModal from '../../components/ShareModal.vue'
 import vertBanner from '../../components/VertBanner.vue'
@@ -50,7 +49,7 @@ let chart = null
 export default {
   data () {
     return {
-      shareModalShow: true,
+      shareModalShow: false,
       echartType: ['H型钢', '工角槽', '普碳开平板'],
       echartTabIndex: 0,
       echarts,
@@ -156,9 +155,10 @@ export default {
   },
   methods: {
     mallMore () {
-      this.confirm({ title: '您未登录，请先登录' }).then(res => {
-        if (res === 'confirm') this.jump('/pages/login/main')
-      })
+      this.jump('/pages/cardList/main?title=消息中心&type=noticeList')
+      // this.confirm({ title: '您未登录，请先登录' }).then(res => {
+      //   if (res === 'confirm') this.jump('/pages/login/main')
+      // })
     },
     initChart (canvas, width, height) {
       chart = echarts.init(canvas, null, {

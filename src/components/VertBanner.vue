@@ -1,7 +1,7 @@
 <template lang="pug">
 .marquee-container(:style="{height: height + 'rpx'}")
   .marquee-content(:style="{transform: 'translate3d(0, -' + (currentIdx * height) + 'rpx, 0)', transition: 'transform ' + noAnimate ? 0 :  duration + 's'}")
-    text.marquee-item(v-for="(qe, idx) in quees", :key="idx", @click="jumpNotices(qe.id)") {{qe.title}}
+    text.marquee-item(v-for="(qe, idx) in quees", :key="idx", @click="jump('/pages/h5/main?title=公告详情&type=noticeDetail&id=' + qe.id)") {{qe.title}}
       //- strong 【{{title(qe.title)}}】
       //- span.ml-5(style="color: #666") {{content(qe.title)}}
 </template>
@@ -62,9 +62,6 @@ export default {
       } else {
         return ctx
       }
-    },
-    jumpNotices (id) {
-      this.jump({ path: '/notice/' + id })
     }
   }
 }

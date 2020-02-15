@@ -1,7 +1,7 @@
 <template lang="pug">
 .cu-custom(:style="{height: customBar + 'px'}")
   .cu-bar.fixed(:class="bgClass", :style="{height: customBar + 'px', paddingTop: statusBar + 'px'}")
-    .action(v-if="isBack", @click="back")
+    .action(v-if="isBack", @click="navBack")
       span.cuIcon-back
       slot(name="backText")
     .action(v-if="leftMenu")
@@ -28,6 +28,9 @@ export default {
       type: Boolean,
       default: false
     },
+    cb: {
+      default: false
+    },
     title: {
       type: String,
       default: ''
@@ -51,6 +54,15 @@ export default {
       custom: state => state.custom,
       customBar: state => state.customBar
     })
+  },
+  methods: {
+    navBack () {
+      if (this.cb) {
+        this.cb()
+      } else {
+        this.back()
+      }
+    }
   }
 }
 </script>

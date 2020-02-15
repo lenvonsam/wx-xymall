@@ -1,7 +1,7 @@
 <template lang="pug">
-div
+.bg-white.h-100
   nav-bar(title="登录", :isBack="true")
-  .login-bg(:style="{height: 'calc(100vh - '+customBar+'px)'}")
+  .login-bg
     .ft-18.text-blod.text-center 账号密码登录
     .row.padding-tb-sm.border-bottom-line.margin-top-xl
       .flex-30.text-gray
@@ -14,7 +14,7 @@ div
       .col
         input.no-border(placeholder="请输入密码", type="password", v-model="upwd")
     .row.margin-top
-      .col.text-blue 立即注册
+      .col.text-blue(@click="jump('/pages/register/main')") 立即注册
       .col.text-right 忘记密码？
     .mt-50.main-btn(hover-class="hover-gray", @click="remoteLogin") 登录
     .margin-top-sm.text-center.text-blue 手机验证登录
@@ -36,7 +36,6 @@ export default {
   },
   computed: {
     ...mapState({
-      customBar: state => state.customBar,
       currentVersion: state => state.currentVersion
     })
   },
@@ -107,7 +106,5 @@ export default {
   padding-left 50px
   padding-right 50px
   padding-top 50px
-  /deep/[class*='cuIcon-']
-    margin-top -8px
 </style>
 

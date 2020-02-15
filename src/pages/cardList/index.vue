@@ -2,7 +2,7 @@
 div
   nav-bar(:title="pageTitle", :isBack="true")
   .padding(v-if="pageType === 'notice'")
-    .bg-white.margin-bottom(v-for="(data,idx) in listData", :key="idx", style="box-shadow: 0px 0px 2.5px rgba(7,1,2,0.04)")
+    .bg-white.margin-bottom(v-for="(data,idx) in listData", :key="idx", style="box-shadow: 0px 0px 2.5px rgba(7,1,2,0.04)", @click="jump('/pages/h5/main?title=公告详情&type=noticeDetail&id=' + data.id)")
       .padding.border-bottom-line
         div {{data.title}}
         .margin-top(style="color: #4d4d4d") 12333344555
@@ -11,19 +11,33 @@ div
         .col 查看详情
         .col.text-right
           icon.cuIcon-right
+  .bg-white(v-else-if="pageType === 'noticeList'")
+    .row.padding-lr(v-for="(data, idx) in listData", :key="idx", @click="j")
+      .flex-60
+        img(:src="imgProxy + (data.type == 2 ? 'wl_icon.png' : 'xx_icon.png')", style="height: 100rpx; width: 100rpx", v-if="imgProxy")
+      .col.row.border-bottom-line(style="height: 140rpx")
+        .full-width
+          .row
+            .col {{data.title}}
+            .col.text-right
+              time-text(:content="data.time", v-if="data.time")
+          .mt-5.ft-12.text-gray.notice-line
+            div(v-html="data.content")
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
   data () {
     return {
       pageTitle: '',
-      // xyNotice 型云公告
+      // notice 型云公告 noticeList 通知列表
       pageType: 'notice',
       currentPage: 0,
       listData: [],
       listMapKey: {
-        'notice': 'notices'
+        'notice': 'notices',
+        'noticeList': 'notices'
       }
     }
   },
@@ -46,13 +60,21 @@ export default {
     this.listData = []
     this.getListData()
   },
+  computed: {
+    ...mapState({
+      currentUser: state => state.user.currentUser
+    })
+  },
   methods: {
     async getListData () {
       try {
-        let url = ''
+        let url = this.apiList.xy[this.pageType].url
         let params = {}
         if (this.pageType === 'notice') {
-          url = this.apiList.xy[this.pageType].url + '?type=1&current_page=' + this.currentPage + '&page_size=' + this.pageSize
+          url += '?type=1&current_page=' + this.currentPage + '&page_size=' + this.pageSize
+        }
+        if (this.pageType === 'noticeList') {
+          url += '?have_read=-1&user_id=' + this.currentUser.user_id + '&current_page=' + this.currentPage + '&page_size=' + this.pageSize
         }
         const data = await this.ironRequest(url, params, this.apiList.xy[this.pageType].method, this)
         console.log('get data', data)
@@ -74,3 +96,11 @@ export default {
   }
 }
 </script>
+
+<style lang="stylus" scoped>
+.notice-line
+  position relative
+  height 16px
+  overflow hidden
+</style>
+

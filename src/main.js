@@ -7,6 +7,7 @@ import navBar from './components/NavBar.vue'
 import mallItem from './components/MallItem.vue'
 import timeLine from './components/TimeLine.vue'
 import emptyImage from './components/EmptyImage.vue'
+import timeText from './components/TimeText.vue'
 
 Vue.config.productionTip = false
 App.mpType = 'app'
@@ -16,6 +17,7 @@ Vue.use(vuex)
 Vue.component('navBar', navBar)
 Vue.component('mallItem', mallItem)
 Vue.component('timeLine', timeLine)
+Vue.component('timeText', timeText)
 Vue.component('emptyImage', emptyImage)
 
 Vue.prototype.$store = store

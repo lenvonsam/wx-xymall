@@ -10,8 +10,8 @@ const wxMixins = {
       pageSize: 10,
       imgProxy: 'http://xymobile.xingyun361.com/',
       // 型云图片访问地址
-      imgOuterUrl: 'http://web-test.xingyun361.com/',
-      phoneReg: /^1[345789]\d{9}$/,
+      imgOuterUrl: 'http://web-test.xingyun361.com',
+      phoneReg: /^1[3|4|5|8|7|9][0-9]\d{4,8}$/,
       erpProxy: httpUtil.proxy.erp,
       warehouseProxy: httpUtil.proxy.wh
     }

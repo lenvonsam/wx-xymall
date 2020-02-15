@@ -2,8 +2,11 @@ export default {
   xy: {
     banner: { url: 'getBanner.shtml', method: 'get' },
     notice: { url: 'getNotice.shtml', method: 'get' },
+    noticeDetail: { url: 'noticeDetail.shtml', method: 'get' },
+    noticeList: { url: 'noticeList.shtml', method: 'get' },
     trend: { url: 'trends.shtml', method: 'get' },
     login: { url: 'userLogin.shtml', method: 'post' },
+    captcha: { url: 'getCaptcha.shtml', method: 'get' },
     mallList: { url: 'mallList.shtml', method: 'post' },
     goodsList: { url: 'goodsList.shtml', method: 'post' },
     standardList: { url: 'standardList.shtml', method: 'post' }
