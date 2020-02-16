@@ -86,6 +86,7 @@ export default {
     SETUSER (state, usr) {
       try {
         mpvue.setStorageSync('currentUser', usr)
+        mpvue.setStorageSync('loginTime', usr.server_time)
         state.currentUser = usr
         state.isLogin = true
       } catch (e) {
@@ -105,16 +106,34 @@ export default {
     },
     AUTOUSER (state) {
       try {
-        const value = wx.getStorageSync('currentUser')
+        const value = mpvue.getStorageSync('currentUser')
         console.log('value:>>', value)
-        if (value.id > 0) {
-          state.currentUser = value
-          state.isLogin = true
+        if (value.user_mark) {
+          const time = mpvue.getStorageSync('loginTime') || -1
+          if (time < 0) {
+            const now = new Date().getTime()
+            if ((now - time) / (1000 * 3600 * 24) > 30) {
+              state.isLogin = false
+              state.currentUser = {
+                expired: true
+              }
+            } else {
+              mpvue.setStorageSync('loginTime', now)
+              state.currentUser = value
+              state.isLogin = true
+            }
+          } else {
+            state.currentUser = value
+            mpvue.setStorageSync('loginTime', state.currentUser.server_time)
+            state.isLogin = true
+          }
         } else {
+          state.currentUser = {}
           state.isLogin = false
         }
       } catch (e) {
         console.error('autouser:>>', e)
+        state.currentUser = {}
         state.isLogin = false
       }
     },

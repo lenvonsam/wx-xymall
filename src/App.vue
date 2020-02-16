@@ -3,7 +3,8 @@ import { mapActions } from 'vuex'
 export default {
   methods: {
     ...mapActions([
-      'configVal'
+      'configVal',
+      'autoUser'
     ])
   },
   created () {
@@ -29,6 +30,8 @@ export default {
     //   logs.unshift(Date.now())
     //   mpvue.setStorageSync('logs', logs)
     // }
+    // 自动登录
+    this.autoUser()
     const me = this
     // 设置自定义customer bar
     mpvue.getSystemInfo({

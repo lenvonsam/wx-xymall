@@ -211,7 +211,7 @@ page,
   border-radius: 10rpx;
 }
 
-[class*='cuIcon-'] {
+[class*='adjust cuIcon-'] {
   margin-top: -16rpx;
 }
 

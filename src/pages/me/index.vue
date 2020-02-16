@@ -1,12 +1,14 @@
 <template lang="pug">
 div 
-  nav-bar(title="我的", :bgClass="'bg-blue text-white'")
+  nav-bar(title="我的", :bgClass="'bg-blue text-white'", leftMenu)
+    div(slot="leftMenu")
+      img(src="/static/images/notice_w_icon.png", style="width:30rpx; height: 36rpx", @click="jump('/pages/cardList/main?title=消息中心&type=noticeList')", v-if="isLogin")
   .relative
     .bg-blue.flex.padding-sm.text-white.align-center.me-header
       .col(@click="jumpProfile")
         .flex.align-center
           .author
-            img(:src="imgOuterUrl + (currentUser.avatar == undefined ? '' : currentUser.avatar)")
+            img(:src="imgOuterUrl + (currentUser.avatar == undefined ? '' : currentUser.avatar)", v-if="imgOuterUrl")
           .col.padding-left-sm
             .ft-15.padding-bottom-sm {{currentUser.user_mark}}
             .ft-12 {{currentUser.phone}}
@@ -43,16 +45,16 @@ export default {
     return {
       cardList: [
         [
-          {title: '合同回收站', imgPath: '/static/images/recycle_icon.png'},
-          {title: '我的提单', imgPath: '/static/images/order_icon.png'},
-          {title: '我的发票', imgPath: '/static/images/wdfp.png'},
-          {title: '合同修改', imgPath: '/static/images/contract_icon.png'}
+          { title: '合同回收站', imgPath: '/static/images/recycle_icon.png' },
+          { title: '我的提单', imgPath: '/static/images/order_icon.png' },
+          { title: '我的发票', imgPath: '/static/images/wdfp.png' },
+          { title: '合同修改', imgPath: '/static/images/contract_icon.png' }
         ], [
-          {title: '我的加工', imgPath: '/static/images/operating_icon.png'},
-          {title: '我的求购', imgPath: '/static/images/shop_icon.png'}
+          { title: '我的加工', imgPath: '/static/images/operating_icon.png' },
+          { title: '我的求购', imgPath: '/static/images/shop_icon.png' }
         ], [
-          {title: '用户设置', imgPath: '/static/images/wdwld.png'},
-          {title: '在线客服', imgPath: '/static/images/customer_icon.png'}
+          { title: '用户设置', imgPath: '/static/images/wdwld.png' },
+          { title: '在线客服', imgPath: '/static/images/customer_icon.png' }
         ]
       ],
       avatarDirection: 'none',
@@ -93,7 +95,7 @@ export default {
     this.$nextTick(() => {
       const me = this
       if (!this.isLogin) {
-        this.confirm({content: '您还未登录，去登录'}).then(() => {
+        this.confirm({ content: '您还未登录，去登录' }).then(() => {
           me.configVal({
             key: 'tempObject',
             val: { preRoute: me.$root.$mp.appOptions.path }
@@ -102,7 +104,7 @@ export default {
         })
       } else {
         if (this.currentUser.isnew) {
-          this.confirm({content: '您还需要完善公司信息才能正常操作'}).then(() => {
+          this.confirm({ content: '您还需要完善公司信息才能正常操作' }).then(() => {
             me.jump({ path: '/user/auth' })
           })
         }
@@ -204,11 +206,11 @@ export default {
     width 30px
     height 28px
 .me-icon
-  img 
+  img
     width 15px
     height 15px
 .border-radius
-  border-radius 10px    
+  border-radius 10px
 .dot
   position absolute
   background #fff

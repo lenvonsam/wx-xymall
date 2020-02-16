@@ -7,7 +7,7 @@ div
         .padding-sm.padding-lr(style="background: #f6f6f6;border-radius: 38rpx;")
           .row.text-gray
             .flex-30
-              icon.cuIcon-search(style="margin-top: -16rpx")
+              icon.adjust.cuIcon-search
             .col
               input(placeholder="请输入关键词搜索", v-model="searchWord")
       .flex-50.text-center.text-blue(@click="searchClick") 搜索
@@ -15,7 +15,7 @@ div
     .row
       .col 搜索历史
       .col.text-right(v-if="filterArray.length > 0")
-        icon.cuIcon-delete(@click="deletePrompt")
+        icon.adjust.cuIcon-delete(@click="deletePrompt")
     .margin-top-xl.text-center(v-if="filterArray.length === 0") 
       empty-image(url="msg_empty.png")
     .margin-top(v-else)

@@ -5,12 +5,12 @@
     .ft-18.text-blod.text-center 账号密码登录
     .row.padding-tb-sm.border-bottom-line.margin-top-xl
       .flex-30.text-gray
-        icon.cuIcon-people
+        icon.adjust.cuIcon-people
       .col
         input.no-border(placeholder="请输入用户名", v-model="uname")
     .row.padding-tb-sm.border-bottom-line.margin-top-xl
       .flex-30.text-gray
-        icon.cuIcon-unlock
+        icon.adjust.cuIcon-unlock
       .col
         input.no-border(placeholder="请输入密码", type="password", v-model="upwd")
     .row.margin-top

@@ -10,7 +10,7 @@ div
       .padding.row.text-gray
         .col 查看详情
         .col.text-right
-          icon.cuIcon-right
+          icon.adjust.cuIcon-right
   .bg-white(v-else-if="pageType === 'noticeList'")
     .row.padding-lr(v-for="(data, idx) in listData", :key="idx", @click="j")
       .flex-60
