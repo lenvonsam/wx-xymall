@@ -100,7 +100,7 @@ export default {
             key: 'tempObject',
             val: { preRoute: me.$root.$mp.appOptions.path }
           })
-          me.jump('/pages/login/main')
+          me.jump('/pages/account/login/main')
         })
       } else {
         if (this.currentUser.isnew) {
@@ -151,7 +151,7 @@ export default {
     },
     jumpProfile () {
       this.statisticRequest({ event: 'click_app_me_information' }, this)
-      this.jump({ path: '/profile' })
+      this.jump('/pages/account/profile/main')
     },
     jumpBalance () {
       this.statisticRequest({ event: 'click_app_me_balance' }, this)

@@ -22,6 +22,7 @@ const wxMixins = {
     request: httpUtil.request,
     requestDecode: httpUtil.requestDecode,
     zgRequest: httpUtil.zgRequest,
+    ironFileUpload: httpUtil.ironFileUpload,
     jump (url) {
       mpvue.navigateTo({
         url: url
@@ -48,7 +49,7 @@ const wxMixins = {
         phoneNumber: phone
       })
     },
-    previewImage (url, urlist) {
+    previewImage (url, urlist = [url]) {
       mpvue.previewImage({
         current: url,
         urls: urlist
@@ -151,22 +152,29 @@ const wxMixins = {
     addCart (val, type, userId) {
       return new Promise((resolve, reject) => {
         if (type === 'notice') {
-          this.ironRequest('arrivalNotice.shtml', {
-            user_id: userId,
-            order_id: val.id
-          }, 'post').then(resp => {
-            if (resp.returncode === '0') {
-              resolve({
-                msg: '到货通知设置成功',
-                type: type
-              })
-            } else {
-              reject(new Error(resp.errormsg))
+          this.ironRequest(
+            'arrivalNotice.shtml',
+            {
+              user_id: userId,
+              order_id: val.id
+            },
+            'post'
+          ).then(
+            resp => {
+              if (resp.returncode === '0') {
+                resolve({
+                  msg: '到货通知设置成功',
+                  type: type
+                })
+              } else {
+                reject(new Error(resp.errormsg))
+              }
+            },
+            err => {
+              console.log(err.message)
+              reject(new Error('网络异常'))
             }
-          }, err => {
-            console.log(err.message)
-            reject(new Error('网络异常'))
-          })
+          )
         } else {
           let mwId = 2
           if (val.weight.split('/').length === 1) {
@@ -176,24 +184,31 @@ const wxMixins = {
               mwId = 1
             }
           }
-          this.ironRequest('addCart.shtml', {
-            user_id: userId,
-            product_id: val.id,
-            count: 1,
-            measure_way: mwId
-          }, 'post').then(resp => {
-            if (resp.returncode === '0') {
-              resolve({
-                type,
-                mway: mwId
-              })
-            } else {
-              reject(new Error(resp.errormsg))
+          this.ironRequest(
+            'addCart.shtml',
+            {
+              user_id: userId,
+              product_id: val.id,
+              count: 1,
+              measure_way: mwId
+            },
+            'post'
+          ).then(
+            resp => {
+              if (resp.returncode === '0') {
+                resolve({
+                  type,
+                  mway: mwId
+                })
+              } else {
+                reject(new Error(resp.errormsg))
+              }
+            },
+            err => {
+              console.log(err.message)
+              reject(new Error('网络异常'))
             }
-          }, err => {
-            console.log(err.message)
-            reject(new Error('网络异常'))
-          })
+          )
         }
       })
     },
@@ -206,12 +221,14 @@ const wxMixins = {
         ak: 'd25bd4937c9444d6bd7817cec2bd8d24',
         sdk: platform,
         debug: 1,
-        data: [{
-          et: 'cus',
-          eid: eventName,
-          ts: time,
-          pr: eventParams
-        }]
+        data: [
+          {
+            et: 'cus',
+            eid: eventName,
+            ts: time,
+            pr: eventParams
+          }
+        ]
       }
     }
   }

@@ -5,16 +5,25 @@
     "pages/mallFilter/main",
     "pages/cart/main",
     "pages/me/main",
-    "pages/login/main",
     "pages/search/main",
     "pages/cardList/main",
-    "pages/h5/main",
-    "pages/register/main"
+    "pages/h5/main"
   ],
   "window": {
     "navigationBarTextStyle": "white",
     "navigationStyle": "custom"
   },
+  "subPackages": [
+    {
+      "root": "pages/account",
+      "pages": [
+        "login/main",
+        "register/main",
+        "profile/main",
+        "companyInfo/main"
+      ]
+    }
+  ],
   "tabBar": {
     "color": "#999",
     "backgroundColor": "#fafafa",

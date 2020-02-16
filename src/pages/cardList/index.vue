@@ -12,7 +12,7 @@ div
         .col.text-right
           icon.adjust.cuIcon-right
   .bg-white(v-else-if="pageType === 'noticeList'")
-    .row.padding-lr(v-for="(data, idx) in listData", :key="idx", @click="j")
+    .row.padding-lr(v-for="(data, idx) in listData", :key="idx", @click="jumpDetail(data)")
       .flex-60
         img(:src="imgProxy + (data.type == 2 ? 'wl_icon.png' : 'xx_icon.png')", style="height: 100rpx; width: 100rpx", v-if="imgProxy")
       .col.row.border-bottom-line(style="height: 140rpx")
@@ -26,7 +26,7 @@ div
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 export default {
   data () {
     return {
@@ -66,6 +66,18 @@ export default {
     })
   },
   methods: {
+    ...mapActions([
+      'configVal'
+    ]),
+    jumpDetail (obj) {
+      if (obj.type === 2) {
+        const tdno = obj.content.substring(obj.content.indexOf('TD'), obj.content.indexOf('需要'))
+        this.jump({ path: '/ladbill/confirm/detail?no=' + tdno })
+      } else {
+        this.configVal({ key: 'tempObject', val: obj })
+        this.jump('/pages/h5/main?title=消息详情&type=msgDetail')
+      }
+    },
     async getListData () {
       try {
         let url = this.apiList.xy[this.pageType].url

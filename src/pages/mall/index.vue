@@ -94,7 +94,7 @@ export default {
               key: 'tempObject',
               val: { preRoute: me.$root.$mp.appOptions.path }
             })
-            me.jump('/pages/login/main')
+            me.jump('/pages/account/login/main')
           })
         }
         return
@@ -140,7 +140,7 @@ export default {
             val: { preRoute: me.$root.$mp.appOptions.path }
           })
           // me.tab('/pages/login/main')
-          me.jump('/pages/login/main')
+          me.jump('/pages/account/login/main')
         })
       }
     },

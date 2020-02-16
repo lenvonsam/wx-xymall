@@ -10,7 +10,13 @@ div
     div(v-for="(pl,idx) in protocol")
       .ft-16.text-bold.padding-tb(v-if="pl.title") {{pl.title}}
       div(v-if="pl.content", v-html="pl.content", :class="{'pl_info': idx > 0}")
-
+  .padding.bg-white(v-else-if="pageType === 'msgDetail'")
+    div
+      .ft-16.text-blue(style="display:inline-block;") {{tempObject.title}}
+      .xt-mark {{tempObject.type == 0 ? '系统' : '其他'}}
+    .text-gray.ft-12.margin-top-sm {{tempObject.time}}
+    .margin-top-sm
+      div(v-html="tempObject.content")
 </template>
 
 <script>
@@ -25,7 +31,8 @@ export default {
   },
   computed: {
     ...mapState({
-      protocol: state => state.user.protocol
+      protocol: state => state.user.protocol,
+      tempObject: state => state.tempObject
     })
   },
   onShow () {
@@ -66,5 +73,17 @@ export default {
   font-size 14px
   color #444
   line-height 1.8
+.xt-mark
+  position inline-block
+  margin-left 15px
+  display inline-block
+  background #2485FF
+  padding-top 1.5px
+  border-radius 12px
+  text-align center
+  font-size 12px
+  color #fff
+  width 40px
+  height 20px
 </style>
 

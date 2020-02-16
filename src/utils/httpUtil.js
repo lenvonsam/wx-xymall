@@ -232,11 +232,56 @@ export default {
             reject(res.data === undefined ? '网络异常' : res.data.errormsg)
           }
         },
-        error (err) {
+        fail (err) {
           reject(err.message || '网络异常')
         }
       }
       mpvue.request(body)
+    })
+  },
+  ironFileUpload (model) {
+    return new Promise((resolve, reject) => {
+      mpvue.chooseImage({
+        count: 1,
+        sizeType: ['compressed'],
+        success (res) {
+          const filePath = res.tempFilePaths[0]
+          const fileType =
+            filePath.indexOf('.png') > 0 ? 'image/png' : 'image/jpeg'
+          mpvue.getFileSystemManager().readFile({
+            filePath: filePath,
+            encoding: 'base64',
+            success (fdata) {
+              mpvue.request({
+                url: BASICURL + '/ironmart/fileUpload',
+                method: 'POST',
+                data: {
+                  model: model,
+                  filename: model + '-temp',
+                  filetype: fileType,
+                  encryptfile: fdata.data
+                },
+                success (hresp) {
+                  if (hresp.data.success) {
+                    resolve(hresp.data.urls)
+                  } else {
+                    reject(new Error('图片上传失败'))
+                  }
+                },
+                fail (err) {
+                  reject(err)
+                }
+              })
+            },
+            fail (err) {
+              reject(err)
+            }
+          })
+        },
+        fail (err) {
+          reject(err)
+        }
+      })
     })
   }
 }

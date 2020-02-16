@@ -14,7 +14,7 @@
       .col
         input.no-border(placeholder="请输入密码", type="password", v-model="upwd")
     .row.margin-top
-      .col.text-blue(@click="jump('/pages/register/main')") 立即注册
+      .col.text-blue(@click="jump('/pages/account/register/main')") 立即注册
       .col.text-right 忘记密码？
     .mt-50.main-btn(hover-class="hover-gray", @click="remoteLogin") 登录
     .margin-top-sm.text-center.text-blue 手机验证登录
