@@ -1,0 +1,323 @@
+<template lang="pug">
+div
+  nav-bar(title="我的合同", isBack)
+  .head.bg-white(:style="{top: customBar + 'px'}")
+    .serach.flex.align-center.padding-sm
+      .col.search-input.text-gray
+        .flex.align-center
+          .cuIcon-search
+          input.full-width.padding-left-sm(:value="billNo", type="text", placeholder="合同号")
+      .search-btn.text-blue.padding-left-sm(@click="searchOrder") 搜索
+    scroll-view.nav(scroll-x)
+      .flex.text-center
+        .cu-item.flex-sub(v-for="(item,index) in billTab", :class="item.status === tabName?'text-blue cur':''", :key="index", @click="selectTabs(item, index)")
+          span {{item.title}}
+  swiper.bill-content(@change="swiperChange", :current="swiperCount", :style="{height: screenHeight - 186 + 'px'}")
+    swiper-item(v-for="(tabItem, idx) in billTab.length", :key="idx")
+      //- scroll-view(scroll-y, :refresher-triggered="triggered", :refresher-enabled="true", @refresherrefresh="refresher", @scrolltolower="loadMore", :style="{height: screenHeight - 186 +'px'}")
+      template(v-if="isload")
+        time-line(type="mallist")
+      template(v-else)
+        template(v-if="listData.length > 0")
+          scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: screenHeight - 186 +'px'}")
+            //- div(style="height: 1000px")
+            .bg-white.padding-sm.bill-list(v-for="(item, itemIdx) in billTab[idx].data", :key="itemIdx")
+              .flex.justify-between.padding-bottom-sm
+                .col
+                  .flex.align-center
+                    .ft-16.padding-right-sm {{item.no}}
+                    img.ding-icon(src="/static/images/ding.png", v-if="item.is_dx")
+                .text-red {{item.status}}
+              .text-gray
+                .padding-bottom-xs {{item.supply_name}}
+                .flex.justify-between.padding-bottom-xs 
+                  span 共{{item.total_count}}支，{{item.total_weight}}吨
+                  .ft-16.text-black ￥{{item.fact_price}}
+                .flex.justify-between.padding-bottom-xs
+                  .col 吊费：¥{{item.lift_charge}}
+                  template(v-if="item.status === '待付款'")
+                    .flex
+                      .bill-btn.round(@click="payBill(item)") 去付款
+                      .bill-red-btn.round.margin-left-sm(@click="billCancel") 取消
+        .text-center.c-gray.pt-100(v-else)
+          img.w-200(src="/static/images/bill_empty.png")
+          div 您还没有相关合同
+          div 可以看看有哪些想买的        
+</template>
+<script>
+import { mapState } from 'vuex'
+export default {
+  data () {
+    return {
+      swiperCount: 0,
+      billTab: [
+        {title: '全部', status: '0', data: [], isActive: true},
+        {title: '待付款', status: '1', data: [], isActive: false},
+        {title: '待补款', status: '7', data: [], isActive: false},
+        {title: '待提货', status: '6', data: [], isActive: false},
+        {title: '已完成', status: '5', data: [], isActive: false}
+      ],
+      tabName: '0',
+      currentPage: 0,
+      listData: [],
+      finished: false,
+      triggered: false,
+      isload: false,
+      startDate: '',
+      endDate: '',
+      billNo: '',
+      totalPrice: 0,
+      totalWeight: 0,
+      totalCount: 0,
+      allChoosed: false,
+      isTabDisabled: false,
+      pageHeight: 150
+    }
+  },
+  computed: {
+    ...mapState({
+      screenHeight: state => state.screenHeight,
+      currentUser: state => state.user.currentUser,
+      tempObject: state => state.tempObject,
+      isLogin: state => state.user.isLogin,
+      pageSize: state => state.pageSize
+    })
+  },
+  onShow () {
+    // this.finished = true
+  },
+  beforeMount () {
+    if (this.$root.$mp.query.tabName) this.tabName = this.$root.$mp.query.tabName
+    if (this.tempObject.startDate) this.startDate = this.tempObject.startDate
+    if (this.tempObject.endDate) this.endDate = this.tempObject.endDate
+    if (this.tempObject.billNo) this.billNo = this.tempObject.billNo
+    if (this.tempObject.billTabName) this.tabName = this.tempObject.billTabName.toString()
+    this.pageHeight = this.tabName === '1' ? 150 : 100
+    this.loadData()
+  },
+  watch: {
+    listData: {
+      handler (newVal, oldVal) {
+        if (this.tabName === '1') {
+          let filterArr = newVal.filter(item => item.choosed === true)
+          this.totalPrice = 0
+          this.totalWeight = 0
+          this.totalCount = filterArr.length
+          filterArr.map(itm => {
+            this.totalPrice += itm.fact_price
+            this.totalWeight += itm.total_weight
+          })
+          this.totalPrice = Number(this.totalPrice).toFixed(2)
+          this.totalWeight = Number(this.totalWeight).toFixed(3)
+        }
+      },
+      deep: true
+    },
+    allChoosed (newVal, oldVal) {
+      if (newVal) {
+        this.listData.map(itm => {
+          if (itm.status === '待付款') itm.choosed = true
+        })
+      } else {
+        this.listData.map(itm => {
+          itm.choosed = false
+        })
+      }
+    }
+  },
+  methods: {
+    searchOrder () {
+      this.tabName = ''
+      this.startDate = ''
+      this.endDate = ''
+      this.listData = []
+      this.allChoosed = false
+      this.isTabDisabled = true
+      this.pageHeight = this.tabName === '1' ? 150 : 100
+      this.refresher()
+    },
+    swiperChange (e) {
+      console.log(e.mp.detail.current)
+      const idx = e.mp.detail.current
+      this.swiperCount = idx
+      this.tabName = this.billTab[idx].status
+      this.billTab[idx].data = []
+      this.currentPage = 0
+      this.startDate = ''
+      this.billNo = ''
+      this.endDate = ''
+      this.listData = []
+      this.allChoosed = false
+      this.isTabDisabled = true
+      this.pageHeight = this.tabName.status === '1' ? 150 : 100
+      this.loadData()
+    },
+    refresher () {
+      console.log('triggered', this.triggered)
+      const me = this
+      this.finished = true
+      this.isLoad = true
+      this.currentPage = 0
+      const reqUrl = `orderList.shtml?user_id=${me.currentUser.user_id}&status=${this.tabName}&current_page=${this.currentPage}&page_size=${this.pageSize}&order_no=${this.billNo}&start_date=${this.startDate}&end_date=${this.endDate}`
+      // const reqUrl = `orderList.shtml?user_id=${this.currentUser.user_id}&status=${this.tabName}&current_page=${this.currentPage}&page_size=${this.pageSize}&order_no=${this.billNo}&start_date=${this.startDate}&end_date=${this.endDate}`
+      this.ironRequest(reqUrl, {}, 'get', this).then(resp => {
+        const idx = me.swiperCount
+        if (resp.returncode === '0') {
+          let arr = resp.orders
+          if (arr.length > 0 && me.currentPage === 0) {
+            const list = []
+            arr.map(itm => {
+              itm.choosed = false
+              list.push(itm)
+              this.billTab[idx].data.push(itm)
+            })
+            me.listData = list
+            me.finished = false
+            me.isLoad = false
+          } else if (arr.length === 0 && me.currentPage === 0) {
+            me.listData = []
+            this.billTab[idx].data = []
+            me.finished = true
+            me.isload = false
+          }
+        } else {
+          me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
+          me.isload = false
+        }
+        me.isTabDisabled = false
+        me.triggered = false
+        console.log('triggered', this.triggered)
+        wx.stopPullDownRefresh()
+      })
+    },
+    selectTabs (item, idx) {
+      this.tabName = item.status
+      // this.scrollLeft = (index - 1) * 60
+      this.swiperCount = idx
+      // this.billTab.map((item, index) => {
+      //   item.isActive = this.tabName === item.status
+      // })
+      // this.billTab[idx].data = []
+      // this.currentPage = 0
+      // this.startDate = ''
+      // this.billNo = ''
+      // this.endDate = ''
+      // this.listData = []
+      // this.allChoosed = false
+      // this.isTabDisabled = true
+      // this.pageHeight = item.status === '1' ? 150 : 100
+      // this.refresher()
+    },
+    rowBillItem (obj, type) {
+      if (type === 'cancel') {
+        if (this.tabName === '1') this.listData = this.listData.filter(item => item.id !== obj.id)
+        if (this.tabName === '0') {
+          let idx = this.listData.findIndex(itm => itm.id === obj.id)
+          this.listData[idx].status = '已取消'
+        }
+      } else if (type === 'toggle') {
+        let idx = this.listData.findIndex(item => item.id === obj.id)
+        this.listData[idx].choosed = !this.listData[idx].choosed
+      }
+    },
+    batchPay () {
+      let filterArr = this.listData.filter(itm => itm.choosed === true)
+      if (filterArr.length > 0) {
+        let orderNos = filterArr.map(itm => itm.no).join(',')
+        this.jump({ path: '/mall/pay', query: { pageType: 'offlinePay', orderNo: orderNos, price: this.totalPrice } })
+      }
+    },
+    loadData () {
+      if (this.currentPage === 0) {
+        this.isload = true
+      } else {
+        this.isload = false
+      }
+      let reqUrl = `orderList.shtml?user_id=MTAyMQ==&status=${this.tabName}&current_page=${this.currentPage}&page_size=${this.pageSize}&order_no=${this.billNo}&start_date=${this.startDate}&end_date=${this.endDate}`
+      // let reqUrl = `orderList.shtml?user_id=${this.currentUser.user_id}&status=${this.tabName}&current_page=${this.currentPage}&page_size=${this.pageSize}&order_no=${this.billNo}&start_date=${this.startDate}&end_date=${this.endDate}`
+      const me = this
+      this.ironRequest(reqUrl, {}, 'get', this).then(resp => {
+        const idx = me.swiperCount
+        if (resp && resp.returncode === '0') {
+          let arr = resp.orders
+          if (arr.length === 0 && me.currentPage === 0) {
+            me.listData = []
+            this.billTab[idx].data = []
+            me.finished = true
+            me.isload = false
+          } else if (arr.length > 0 && me.currentPage === 0) {
+            arr.map(itm => {
+              itm.choosed = false
+              me.listData.push(itm)
+              this.billTab[idx].data.push(itm)
+            })
+            me.finished = false
+            me.isload = false
+          } else if (arr.length > 0 && me.currentPage > 0) {
+            arr.map(item => {
+              item.choosed = false
+              me.listData.push(item)
+              this.billTab[idx].data.push(item)
+            })
+            me.finished = false
+            me.isload = false
+          } else {
+            me.finished = true
+            me.isload = false
+            me.currentPage--
+          }
+        } else {
+          me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
+          me.isload = false
+        }
+        me.isTabDisabled = false
+      })
+    },
+    loadMore () {
+      if (!this.isLoad) {
+        this.currentPage++
+        this.isTabDisabled = true
+        this.loadData()
+      }
+    },
+    jumpSearch () {
+      this.statisticRequest({ event: 'click_app_myorder_search' }, this)
+      this.jump({ path: '/bill/search' })
+    },
+    payBill (item) {
+      if (this.tabName === '0') this.statisticRequest({ event: 'click_app_myorder_all_pay' }, this)
+      if (this.tabName === '1') this.statisticRequest({ event: 'click_app_myorder_needpay_pay' }, this)
+      this.jump(`/pages/pay/main?pageType=offlinePay&orderNo=${item.no}&price=${item.fact_price}`)
+    }
+  }
+}
+</script>
+<style lang="stylus" scoped>
+.head
+  position fixed
+  left 0
+  right 0
+  z-index 99
+  height 98px
+// .bill-box  
+.search-input
+  background #F6F6F6
+  padding 5px 10px
+  border-radius 35px
+
+.bill-list
+  border-bottom 1px #DCDCDC solid
+.bill-btn,.bill-red-btn
+  padding 5px 10px
+  text-align center
+  color #0081ff
+.bill-btn
+  border 1px #0081ff solid
+.bill-red-btn
+  border 1px #e54d42 solid
+  color #e54d42
+.bill-content
+  height 100%
+  margin-top 108px
+  // padding-bottom 108px
+</style>

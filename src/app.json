@@ -1,10 +1,15 @@
 {
   "pages": [
+    "pages/me/main",
+    "pages/billEdit/main",
+    "pages/billEditList/main",
+    "pages/cart/main",
+    "pages/pay/main",
+    "pages/bill/main",
+    
     "pages/index/main",
     "pages/mall/main",
     "pages/mallFilter/main",
-    "pages/cart/main",
-    "pages/me/main",
     "pages/login/main",
     "pages/search/main",
     "pages/cardList/main",

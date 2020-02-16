@@ -31,7 +31,7 @@ div
             .dot(v-if="rowCountObj[bicon.dotKey] > 0", :class="{'max': rowCountObj[bicon.dotKey] > 9}") {{rowCountObj[bicon.dotKey] > 99 ? '99+' : rowCountObj[bicon.dotKey]}}
           .padding-top-xs {{bicon.name}}
     .margin-top-sm.me-icon.bg-white(v-for="(cardItem, index) in cardList", :key="index")
-      .padding-sm.flex.solid-bottom.border-radius.align-center(v-for="(item, idx) in cardItem", :key="idx")
+      .padding-sm.flex.solid-bottom.border-radius.align-center(v-for="(item, idx) in cardItem", :key="idx", @click="jump(item.url)")
         .col
           .flex.align-center
             img(:src="item.imgPath")
@@ -48,7 +48,7 @@ export default {
           { title: '合同回收站', imgPath: '/static/images/recycle_icon.png' },
           { title: '我的提单', imgPath: '/static/images/order_icon.png' },
           { title: '我的发票', imgPath: '/static/images/wdfp.png' },
-          { title: '合同修改', imgPath: '/static/images/contract_icon.png' }
+          { title: '合同修改', imgPath: '/static/images/contract_icon.png', url: '/pages/billEditList/main' }
         ], [
           { title: '我的加工', imgPath: '/static/images/operating_icon.png' },
           { title: '我的求购', imgPath: '/static/images/shop_icon.png' }
@@ -158,15 +158,16 @@ export default {
       this.jump({ path: '/balance' })
     },
     jumpBillMore () {
-      this.statisticRequest({ event: 'click_app_me_myorder_more' }, this)
-      this.jump({ path: '/bill' })
+      // this.statisticRequest({ event: 'click_app_me_myorder_more' }, this)
+      this.jump('/pages/bill/main')
     },
     jumpBicon (url) {
-      if (url.path === '/bill?tabName=1') this.statisticRequest({ event: 'click_app_me_to_pay_order' }, this)
-      if (url.path === '/ladbill/confirm/list') this.statisticRequest({ event: 'click_app_me_to_confirm' }, this)
-      if (url.path === '/ladbill?tabName=4') this.statisticRequest({ event: 'click_app_me_to_pay_contract' }, this)
-      if (url.path === '/invoice') this.statisticRequest({ event: 'click_app_me_to_invoice' }, this)
-      this.jump(url)
+      // if (url.path === '/bill?tabName=1') this.statisticRequest({ event: 'click_app_me_to_pay_order' }, this)
+      // if (url.path === '/ladbill/confirm/list') this.statisticRequest({ event: 'click_app_me_to_confirm' }, this)
+      // if (url.path === '/ladbill?tabName=4') this.statisticRequest({ event: 'click_app_me_to_pay_contract' }, this)
+      // if (url.path === '/invoice') this.statisticRequest({ event: 'click_app_me_to_invoice' }, this)
+      console.log('url', url)
+      this.jump(url.path)
     },
     serviceCallUrl () {
       this.statisticRequest({ event: 'click_app_me_tel' }, this)

@@ -2,6 +2,7 @@ import apiList from '../utils/apiList'
 import httpUtil from '../utils/httpUtil'
 import UTF8 from 'utf8'
 import BASE64 from 'base-64'
+import { mapState } from 'vuex'
 
 const wxMixins = {
   data () {
@@ -15,6 +16,11 @@ const wxMixins = {
       erpProxy: httpUtil.proxy.erp,
       warehouseProxy: httpUtil.proxy.wh
     }
+  },
+  computed: {
+    ...mapState({
+      screenWidth: state => state.screenWidth
+    })
   },
   methods: {
     statisticRequest: httpUtil.statisticRequest,
@@ -213,6 +219,11 @@ const wxMixins = {
           pr: eventParams
         }]
       }
+    },
+    getRpx (px) {
+      console.log('getRpx', this.screenWidth)
+      debugger
+      return px * 750 / this.screenWidth
     }
   }
 }
