@@ -7,7 +7,7 @@
       .s-empty-content(v-if="(carts.length + soldCarts.length) == 0")
         div(style="padding-top: 20%")
           .text-center
-            img(src="~assets/imgs/cart_empty.png", style="width: 200px;")
+            img(src="/static/images/cart_empty.png", style="width: 200px;")
           .text-center.padding.c-gray 购物车空空如也
           .text-center
             .cart-empty-btn(@click="tab('/pages/mall/main')") ^_^去商城逛逛吧
@@ -51,11 +51,11 @@
                         span.ml-10 {{cart.price === '--' ? '--' : cart.lift_charge > 0 ? '￥' + cart.lift_charge + '/吨' : cart.lift_charge == 0 ? '无' : '线下结算'}}
                         //- span.ml-10 ( 库存{{cart.amount_left}} 支 )
                     .col.text-right
-                      //- input.blue.radio(type="radio")
+                      //- input(type="radio")
                       radio-group.block(v-model="cart.measure_way_id")
                         .margin-bottom-xs(v-for="(r, rIdx) in cart.radios", :key="rIdx")
                           radio.blue.radio(:checked="cart.measure_way_id === r.m_way", @click="weightChoose(r.m_way, cart)")
-                            span.padding-left-xs {{r.label}}
+                          span.padding-left-xs {{r.label}}
                         //- q-radio.pb-5(v-model="cart.measure_way_id", :val="r.m_way", :label="r.label", color="grey-5", @focus="weightChoose(r.m_way, cart)")
                   div(v-if="cart.tolerance_range || cart.weight_range")
                     span(v-if="cart.tolerance_range") 公差范围:
@@ -213,14 +213,14 @@ export default {
     //   })
     // })
 
-    // if (!this.isLogin) {
-    //   const me = this
-    //   this.confirm({ content: '您还未登录，去登录' }).then(() => {
-    //     me.configVal({ key: 'tempObject', val: { preRoute: me.$root.$mp.appOptions.path } })
-    //     me.jump('/pages/login/main')
-    //   })
-    //   return
-    // }
+    if (!this.isLogin) {
+      const me = this
+      this.confirm({ content: '您还未登录，去登录' }).then(() => {
+        me.configVal({ key: 'tempObject', val: { preRoute: me.$root.$mp.appOptions.path } })
+        me.jump('/pages/login/main')
+      })
+      return
+    }
     if (this.tempObject.type) {
       this.pickway = this.tempObject.type
       if (this.pickway === 1) {
@@ -251,7 +251,7 @@ export default {
       const me = this
       this.confirm({content: '确定清空购物车？'}).then(() => {
         me.btnDisable = true
-        me.ironRequest('cartEmpty.shtml', { user_id: 'MTAyMQ==' }, 'post', this).then(resp => {
+        me.ironRequest('cartEmpty.shtml', { user_id: me.currentUser.user_id }, 'post', this).then(resp => {
           if (resp && resp.returncode === '0') {
             me.showMsg('清空成功')
             me.btnDisable = false
@@ -348,24 +348,24 @@ export default {
           // me.$ironLoad.show()
           me.ironRequest('generateOrder.shtml', body, 'post', this).then(resp => {
             // me.$ironLoad.hide()
-            if (resp.data && resp.data.returncode === '0') {
+            if (resp && resp.returncode === '0') {
               me.btnDisable = false
-              if (resp.data.order_size > 1) {
+              if (resp.order_size > 1) {
                 me.confirm({ content: `您批量生成${resp.order_size}个合同，请到待付款依次支付` }).then(() => {
-                  me.jump({ path: '/bill?tabName=1' })
+                  me.jump('/pages/bill/main?tabName=1')
                 })
               } else {
                 // 跳转到支付确认页面
-                me.jump({ path: '/mall/pay', query: { orderNo: resp.data.order_no, price: resp.data.deal_price, pageType: 'offlinePay' } })
+                me.jump(`/pages/pay/main?orderNo=${resp.order_no}&price=${resp.deal_price}&pageType=offlinePay`)
               }
             } else {
-              me.showMsg(resp.data === undefined ? '网络异常' : resp.data.errormsg)
+              me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
               me.btnDisable = false
             }
           }).catch(err => {
             console.log(err.message)
             me.btnDisable = false
-            me.$ironLoad.hide()
+            // me.$ironLoad.hide()
             me.showMsg()
           })
         })
@@ -374,16 +374,17 @@ export default {
       }
     },
     weightChoose (val, rowItem) {
-      rowItem.measure_way_id = val
-      if (val === 2) {
-        rowItem.weight = rowItem.radios[0].weight
-        rowItem.price = rowItem.radios[0].price
-        rowItem.originPrice = rowItem.radios[0].originPrice
-      } else {
-        rowItem.weight = rowItem.radios[1].weight
-        rowItem.price = rowItem.radios[1].price
-        rowItem.originPrice = rowItem.radios[1].price
-      }
+      // debugger
+      // rowItem.measure_way_id = val
+      // if (val === 2) {
+      //   rowItem.weight = rowItem[0].weight
+      //   rowItem.price = rowItem[0].price
+      //   rowItem.originPrice = rowItem[0].originPrice
+      // } else {
+      //   rowItem.weight = rowItem[1].weight
+      //   rowItem.price = rowItem[1].price
+      //   rowItem.originPrice = rowItem[1].price
+      // }
       this.ironRequest('cartUpdate.shtml', { cart_id: rowItem.cart_id, user_id: this.currentUser.user_id, measure_way: val, count: rowItem.count }, 'post', this).then(res => {
       })
     },
@@ -412,9 +413,11 @@ export default {
       }
     },
     loadCartData () {
+      debugger
       this.isLoad = false
       // user_id: 'MTAyMQ==',
-      this.ironRequest('cartList.shtml?user_id=MTAyMQ==', {}, 'get', this).then(resp => {
+      const me = this
+      this.ironRequest('cartList.shtml?user_id=' + me.currentUser.user_id, {}, 'get', this).then(resp => {
         // this.ironRequest('cartList.shtml?user_id=' + this.currentUser.user_id, {}, 'get', this).then(resp => {
         this.isLoad = true
         // debugger
@@ -585,14 +588,12 @@ radio.radio[checked]::after
   height 0px
   z-index 3
   top 0
-  left 3px
+  left 0
   right 0
   bottom 0
   margin auto
   border-radius 100%
   border 6px solid #fff !important
-radio.radio[checked]::after
-  margin auto 2px
 .address-dialog
   position fixed
   left 0

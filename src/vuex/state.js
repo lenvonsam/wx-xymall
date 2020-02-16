@@ -52,7 +52,7 @@ export default {
       dotKey: 'topay',
       name: '待付款',
       url: {
-        path: '/bill?tabName=1'
+        path: '/pages/bill/main?tabName=1'
       }
     },
     {
@@ -68,7 +68,7 @@ export default {
       name: '待提货',
       dotKey: 'to_delivery',
       url: {
-        path: '/bill?tabName=6'
+        path: '/pages/bill/main?tabName=6'
       }
     },
     {
