@@ -1,16 +1,19 @@
 <template lang="pug">
 div
   nav-bar(title="合同修改", isBack)
-  .flex.text-center.nav.bg-white
+  .flex.text-center.nav.bg-white.relative
+    .tab-line
     .cu-item.flex-sub(v-for="(item,index) in billTab", :class="item.status === tabName?'text-blue cur':''", :key="index", @click="selectTabs(item, index)")
       span {{item.title}}
+  .padding-sm.ft-12(style="background: #FEF7E7;")
+    span.text-orange 友情提示：仅展示允许修改的合同，修改后出库进行结算
   template(v-if="isload")
     time-line(type="mallist")  
   template(v-else) 
-    template(v-if="listData.length > 0")   
-      scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: screenHeight - 120 +'px'}")
+    template(v-if="listData.length > 0")
+      scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: screenHeight - 140 +'px'}")  
         .margin-top-sm.bg-white
-          .padding-sm(v-for="(item, itemIdx) in listData", :key="itemIdx")
+          .padding-sm.solid-bottom(v-for="(item, itemIdx) in listData", :key="itemIdx")
             .flex.align-center
               .ft-16.padding-right-sm {{item.tstc_no}}
               img.ding-icon(src="/static/images/ding.png")
@@ -21,12 +24,11 @@ div
                 p 吊费：¥{{item.lift_price}}
               .card-right
                 .ft-16.padding-bottom-xs.text-bold.text-black ￥{{item.price}}
-                .text-red(v-if="itm.status === 18") 修改中
-                .bill-btn.round(v-else) {{tabName == '1' ? '申请修改' : '去确认'}}
+                .text-red(v-if="item.status === 18") 修改中
+                .bill-btn.round(v-else, @click="jump(`/pages/modifyDetail/main?id=${item.discussid}&type=${item.tabName}`)") {{tabName == '1' ? '申请修改' : '去确认'}}
     .text-center.c-gray.pt-100(v-else)
-      img.w-200(src="/static/images/bill_empty.png")
-      div 您还没有相关合同
-      div 可以看看有哪些想买的            
+      img.img-empty(src="/static/images/bill_empty.png")
+      div 您暂时没有相关合同           
 </template>
 <script>
 import { mapState } from 'vuex'
@@ -124,9 +126,12 @@ export default {
       })
     },
     loadMore () {
-      this.currentPage++
-      this.isTabDisabled = true
-      this.loadData()
+      debugger
+      if (!this.isLoad) {
+        this.currentPage++
+        this.isTabDisabled = true
+        this.loadData()
+      }
     }
   }
 }
@@ -141,4 +146,28 @@ export default {
 .bill-red-btn
   border 1px #e54d42 solid
   color #e54d42
+.nav
+  .tab-line
+    display block
+    content ''
+    height 25px
+    width 2px
+    position absolute
+    left 50%
+    margin-left -1px
+    top 10px
+    background #e6e6e6
+.nav .cu-item.cur
+  border-bottom none 
+  position relative
+  &:after
+    display block
+    content ''
+    width 26px
+    height 2px
+    background #0081ff
+    position absolute
+    bottom 0
+    left 50%
+    margin-left -13px
 </style>
