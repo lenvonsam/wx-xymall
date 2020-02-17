@@ -127,7 +127,10 @@ function ironRequest (reqUrl, param, type, context = null) {
       success (res) {
         console.log('success', res)
         if (res.statusCode === 200) {
-          if (res.returncode === undefined) {
+          if (
+            res.returncode === undefined &&
+            res.data.returncode === undefined
+          ) {
             resolve(res.data)
           } else {
             if (res.data.returncode === '0') {

@@ -24,7 +24,8 @@
         "login/main",
         "register/main",
         "profile/main",
-        "companyInfo/main"
+        "companyInfo/main",
+        "twoTab/main"
       ]
     }
   ],

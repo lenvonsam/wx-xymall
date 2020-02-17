@@ -1,0 +1,168 @@
+<template lang="pug">
+div
+  nav-bar(:title="titleMap[type].title", isBack)
+  scroll-view.nav.bg-white.border-bottom-line(scroll-x)
+    .flex.text-center
+      .cu-item.flex-sub(v-for="(item,index) in tabs", :class="item.tab === tabName?'text-blue cur':''", :key="index", @click="selectTab(item.tab)")
+        span {{item.title}}
+  .bg-white(v-if="tabName === 'tab1'")
+    template(v-if="type === 'loginPwd' || type === 'payPwd'")
+      .warning(v-if="type === 'payPwd'") 温馨提示：初始密码为管理员登录密码
+      .row.padding.border-bottom-line
+        .flex-100 旧密码
+        .col.text-right
+          input.text-right(placeholder="请输入旧密码", type="password",v-model="val1")
+      .row.padding.border-bottom-line
+        .flex-100 新密码
+        .col.text-right
+          input.text-right(placeholder="请输入新密码", type="password", v-model="val2")
+      .row.padding
+        .flex-100 确认密码
+        .col.text-right
+          input.text-right(placeholder="请再次确认新密码", type="password",v-model="val3")
+  .bg-white(v-else)
+    template(v-if="type === 'loginPwd'|| type === 'payPwd'")
+      .row.padding.border-bottom-line
+        .flex-100 手机号
+        .col
+          input.no-border(readOnly, :value="val1")
+      .row.padding.border-bottom-line
+        .flex-100 验证码
+        .col
+          input(placeholder="请输入验证码", type="number", v-model="val2")
+        .flex-90.text-center(style="border-left: 1rpx solid #ddd")
+          auth-btn(:phone="currentUser.phone", v-if="currentUser.phone", :codeType="5")
+      .row.padding
+        .flex-100 新密码
+        .col
+          input(placeholder="请输入密码", type="password",v-model="val3")
+  .margin-top-xl.padding
+    .main-btn(hover-class="hover-gray", @click="tabHandler") 完成
+</template>
+
+<script>
+import { mapState, mapActions } from 'vuex'
+import authBtn from '@/components/AuthBtn.vue'
+export default {
+  data () {
+    return {
+      tabName: 'tab1',
+      type: 'loginPwd',
+      canClick: true,
+      tabs: [
+        { title: '', tab: 'tab1' },
+        { title: '', tab: 'tab2' }
+      ],
+      titleMap: {
+        loginPwd: {
+          title: '修改登录密码',
+          tab1: '使用原密码修改',
+          tab2: '手机验证码修改'
+        },
+        payPwd: {
+          title: '修改支付密码',
+          tab1: '使用原密码修改',
+          tab2: '手机验证码修改'
+        }
+      },
+      val1: '',
+      val2: '',
+      val3: ''
+    }
+  },
+  computed: {
+    ...mapState({
+      currentUser: state => state.user.currentUser
+    })
+  },
+  components: {
+    authBtn
+  },
+  onShow () {
+    this.type = 'loginPwd'
+    this.val1 = ''
+    this.val2 = ''
+    this.val3 = ''
+    const query = this.$root.$mp.query
+    if (query.type) this.type = query.type
+    console.log('title:>>', this.title)
+    this.tabs[0].title = this.titleMap[this.type].tab1
+    this.tabs[1].title = this.titleMap[this.type].tab2
+  },
+  methods: {
+    ...mapActions([
+      'exitUser'
+    ]),
+    selectTab (tab) {
+      this.tabName = tab
+      this.val1 = ''
+      this.val2 = ''
+      this.val3 = ''
+      if (this.tabName === 'tab2') {
+        if (this.type === 'loginPwd' || this.type === 'payPwd') {
+          this.val1 = this.maskPhone(this.currentUser.phone)
+        }
+      }
+    },
+    tabHandler () {
+      if (this.validate()) {
+        if (this.type === 'loginPwd' || this.type === 'payPwd') {
+          this.loginPwdHandler()
+        }
+      }
+    },
+    validate () {
+      let result = true
+      if (this.val1.trim().length === 0 || this.val2.trim().length === 0 || this.val3.trim().length === 0) {
+        result = false
+      }
+      if (!result) this.showMsg('不能为空')
+      return result
+    },
+    async loginPwdHandler () {
+      const queryObject = {
+        user_id: this.currentUser.user_id,
+        action_type: 1
+      }
+      if (this.type === 'payPwd') queryObject.action_type = 2
+      if (this.tabName === 'tab1') {
+        if (this.val3 !== this.val2) {
+          this.showMsg('密码不一致')
+          return
+        }
+        queryObject.new_pwd = this.base64Str(this.val2.trim())
+        queryObject.old_pwd = this.base64Str(this.val1.trim())
+      } else {
+        queryObject.new_pwd = this.base64Str(this.val3)
+        queryObject.capatcha = this.val2
+        queryObject.user_phone = this.currentUser.phone
+      }
+      try {
+        if (this.canClick) {
+          this.canClick = false
+          const me = this
+          await this.ironRequest(this.apiList.xy.resetPwd.url, queryObject, this.apiList.xy.resetPwd.method, this)
+          this.confirm({ title: '友情提示', content: '登录密码重置成功，请重新登录' }).then(res => {
+            if (res === 'confirm') {
+              me.exitUser()
+              me.canClick = true
+              me.redirect('/pages/account/login/main?type=2')
+            }
+          })
+        }
+      } catch (e) {
+        this.canClick = true
+        this.showMsg(e)
+      }
+    }
+  }
+}
+</script>
+
+<style lang="stylus" scoped>
+.warning
+  background #fefcee
+  font-size 14px
+  color #e6763d
+  padding 8px 10px
+</style>

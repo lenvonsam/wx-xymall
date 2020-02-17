@@ -7,6 +7,7 @@ export default {
     searchHistory: { url: 'searchHistory.shtml', method: 'post' },
     updateProfile: { url: 'updateProfile.shtml', method: 'post' },
     queryProfile: { url: 'queryProfile.shtml', method: 'get' },
+    resetPwd: { url: 'resetPwd.shtml', method: 'post' },
     companyInfo: { url: 'companyInformation.shtml', method: 'get' },
     trend: { url: 'trends.shtml', method: 'get' },
     login: { url: 'userLogin.shtml', method: 'post' },
