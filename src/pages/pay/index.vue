@@ -70,10 +70,10 @@ div
           img.mt-3.choose-icon.h-16(src="~assets/imgs/btn_ck_n.png", v-else)
           span.pl-5 发送供应商开户信息至手机
       .footer(v-if="pageType == 'offlinePay'")
-        button.text-white.bg-blue.full-width.r-3.no-shadow(@click="billPay") 
+        button.main-btn(@click="billPay") 
           span(v-if="currentBalance < payMountInfo") 已线下转账补款
           span(v-else) 点击付款
-        .info.c-gray
+        .info.c-gray.padding-top-xs
           span(v-if="currentBalance < payMountInfo") 点击按钮，线下收到货款，此单自动完成
           span(v-else) 点击按钮，此单自动完成
 </template>

@@ -6,7 +6,7 @@ div
       .col.search-input.text-gray
         .flex.align-center
           .cuIcon-search
-          input.full-width.padding-left-sm(:value="billNo", type="text", placeholder="合同号")
+          input.full-width.padding-left-sm(v-model="billNo", type="text", placeholder="合同号")
       .search-btn.text-blue.padding-left-sm(@click="searchOrder") 搜索
     scroll-view.nav(scroll-x)
       .flex.text-center
@@ -21,7 +21,7 @@ div
         template(v-if="listData.length > 0")
           scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: screenHeight - 186 +'px'}")
             //- div(style="height: 1000px")
-            .bg-white.padding-sm.bill-list(v-for="(item, itemIdx) in billTab[idx].data", :key="itemIdx")
+            .bg-white.padding-sm.bill-list(v-for="(item, itemIdx) in billTab[idx].data", :key="itemIdx", @click="jumpDetail(item)")
               .flex.justify-between.padding-bottom-sm
                 .col
                   .flex.align-center
@@ -38,11 +38,10 @@ div
                   template(v-if="item.status === '待付款'")
                     .flex
                       .bill-btn.round(@click="payBill(item)") 去付款
-                      .bill-red-btn.round.margin-left-sm(@click="billCancel") 取消
+                      .bill-red-btn.round.margin-left-sm(@click="billCancel(item)") 取消
         .text-center.c-gray.pt-100(v-else)
-          img.w-200(src="/static/images/bill_empty.png")
-          div 您还没有相关合同
-          div 可以看看有哪些想买的        
+          img.img-empty(src="/static/images/bill_empty.png")
+          .empty-content 您暂时没有相关合同
 </template>
 <script>
 import { mapState } from 'vuex'
@@ -71,7 +70,8 @@ export default {
       totalCount: 0,
       allChoosed: false,
       isTabDisabled: false,
-      pageHeight: 150
+      pageHeight: 150,
+      btnDisable: false
     }
   },
   computed: {
@@ -88,6 +88,8 @@ export default {
   },
   beforeMount () {
     if (this.$root.$mp.query.tabName) this.tabName = this.$root.$mp.query.tabName
+    const idx = this.billTab.findIndex(item => item.status === this.tabName)
+    this.swiperCount = idx
     if (this.tempObject.startDate) this.startDate = this.tempObject.startDate
     if (this.tempObject.endDate) this.endDate = this.tempObject.endDate
     if (this.tempObject.billNo) this.billNo = this.tempObject.billNo
@@ -127,12 +129,14 @@ export default {
   },
   methods: {
     searchOrder () {
-      this.tabName = ''
       this.startDate = ''
       this.endDate = ''
       this.listData = []
       this.allChoosed = false
       this.isTabDisabled = true
+      this.swiperCount = 0
+      this.tabName = '0'
+      this.billTab[0].data = []
       this.pageHeight = this.tabName === '1' ? 150 : 100
       this.refresher()
     },
@@ -144,7 +148,7 @@ export default {
       this.billTab[idx].data = []
       this.currentPage = 0
       this.startDate = ''
-      this.billNo = ''
+      // this.billNo = ''
       this.endDate = ''
       this.listData = []
       this.allChoosed = false
@@ -153,13 +157,13 @@ export default {
       this.loadData()
     },
     refresher () {
+      console.log('billNo', this.billNo)
       console.log('triggered', this.triggered)
       const me = this
       this.finished = true
       this.isLoad = true
       this.currentPage = 0
       const reqUrl = `orderList.shtml?user_id=${me.currentUser.user_id}&status=${this.tabName}&current_page=${this.currentPage}&page_size=${this.pageSize}&order_no=${this.billNo}&start_date=${this.startDate}&end_date=${this.endDate}`
-      // const reqUrl = `orderList.shtml?user_id=${this.currentUser.user_id}&status=${this.tabName}&current_page=${this.currentPage}&page_size=${this.pageSize}&order_no=${this.billNo}&start_date=${this.startDate}&end_date=${this.endDate}`
       this.ironRequest(reqUrl, {}, 'get', this).then(resp => {
         const idx = me.swiperCount
         if (resp.returncode === '0') {
@@ -191,6 +195,7 @@ export default {
       })
     },
     selectTabs (item, idx) {
+      debugger
       this.tabName = item.status
       // this.scrollLeft = (index - 1) * 60
       this.swiperCount = idx
@@ -233,8 +238,7 @@ export default {
       } else {
         this.isload = false
       }
-      let reqUrl = `orderList.shtml?user_id=MTAyMQ==&status=${this.tabName}&current_page=${this.currentPage}&page_size=${this.pageSize}&order_no=${this.billNo}&start_date=${this.startDate}&end_date=${this.endDate}`
-      // let reqUrl = `orderList.shtml?user_id=${this.currentUser.user_id}&status=${this.tabName}&current_page=${this.currentPage}&page_size=${this.pageSize}&order_no=${this.billNo}&start_date=${this.startDate}&end_date=${this.endDate}`
+      let reqUrl = `orderList.shtml?user_id=${this.currentUser.user_id}&status=${this.tabName}&current_page=${this.currentPage}&page_size=${this.pageSize}&order_no=${this.billNo}&start_date=${this.startDate}&end_date=${this.endDate}`
       const me = this
       this.ironRequest(reqUrl, {}, 'get', this).then(resp => {
         const idx = me.swiperCount
@@ -280,9 +284,41 @@ export default {
         this.loadData()
       }
     },
-    jumpSearch () {
-      this.statisticRequest({ event: 'click_app_myorder_search' }, this)
-      this.jump({ path: '/bill/search' })
+    // jumpSearch () {
+    //   this.statisticRequest({ event: 'click_app_myorder_search' }, this)
+    //   this.jump({ path: '/bill/search' })
+    // },
+    jumpDetail (item) {
+      this.jump(`/pages/billDetail/main?id=${item.no}`)
+    },
+    billCancel (item) {
+      if (this.tabName === '0') this.statisticRequest({ event: 'click_app_myorder_all_cancel' }, this)
+      if (this.tabName === '1') this.statisticRequest({ event: 'click_app_myorder_needpay_cancel' }, this)
+      const me = this
+      this.confirm({content: '您确定要取消合同吗？'}).then(() => {
+        debugger
+        if (!me.btnDisable) {
+          me.btnDisable = true
+          // me.$ironLoad.show()
+          me.ironRequest('cancelOrder.shtml', { user_id: me.currentUser.user_id, discussid: item.id }, 'post', this).then(res => {
+            // me.$ironLoad.hide()
+            me.btnDisable = false
+            if (res && res.returncode === '0') {
+              me.showMsg('合同已取消', 'positive')
+              this.listData = []
+              this.allChoosed = false
+              this.isTabDisabled = true
+              me.billTab[me.swiperCount].data = []
+              // me.pageHeight = this.tabName === '1' ? 150 : 100
+
+              me.refresher()
+              // me.cb(me.billObject, 'cancel')
+            } else {
+              me.showMsg(res === undefined ? '网络异常' : res.errormsg)
+            }
+          })
+        }
+      })
     },
     payBill (item) {
       if (this.tabName === '0') this.statisticRequest({ event: 'click_app_myorder_all_pay' }, this)

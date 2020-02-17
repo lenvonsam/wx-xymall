@@ -241,6 +241,69 @@ const wxMixins = {
       console.log('getRpx', this.screenWidth)
       debugger
       return px * 750 / this.screenWidth
+    },
+    calc (options) {
+      /**
+       * 统一计算价格、重量
+       * options:{
+       *   type        计重方式 1:磅计 2:理计 3:16理计 4:10理计
+       *   att8        米重
+       *   att9        16理重
+       *   att10       10理重
+       *   att14       长度
+       *   att12       公差
+       *   price       单价
+       *   amount      数量
+       * }
+       */
+      var opt = {
+        type: 0,
+        att8: 0,
+        att9: 0,
+        att10: 0,
+        att14: 0,
+        att12: 0,
+        price: 1,
+        amount: 1,
+        goods_id: 0,
+        juanban: 0
+      }
+      Object.assign(opt, options)
+      let one = 0
+      let weight = 0
+      let price = 0
+      switch (opt.type) {
+        case 1:
+          one = (parseFloat(opt.att14) * parseFloat(opt.att8) * (1 - parseFloat(opt.att12)) * 1.05).toFixed(6)
+          // 当物资是【花纹板187】【普碳开平板185】【低合金开平板186】【碳钢板278】【普板253】【中板280】【低合金中板211】的时候计算公式：板材磅重计算公式=米重*长度*105%
+          if (opt.goods_id === 187 || opt.goods_id === 185 || opt.goods_id === 186 || opt.goods_id === 278 || opt.goods_id === 253 || opt.goods_id === 280 || opt.goods_id === 211) {
+            // 型云板材上浮5%改为2% --0617 zm
+            one = (parseFloat(opt.att14) * parseFloat(opt.att8) * 1.02).toFixed(6)
+          }
+          break
+        case 2:
+          one = (parseFloat(opt.att14) * parseFloat(opt.att8)).toFixed(6)
+          break
+        case 3:
+          one = (parseFloat(opt.att14) * parseFloat(opt.att9)).toFixed(6)
+          break
+        case 4:
+          one = (parseFloat(opt.att14) * parseFloat(opt.att10)).toFixed(6)
+          break
+        default:
+          one = 0
+          break
+      }
+      if (opt.goods_id === 183 || opt.goods_id === 188 || opt.goods_id === 226 || opt.goods_id === 184) {
+        one = opt.juanban
+      }
+      weight = one * parseFloat(opt.amount)
+      weight = weight.toFixed(3)
+
+      price = weight * parseFloat(opt.price)
+      price = price.toFixed(2)
+
+      return { one: one, weight: Number(weight), price: Number(price) }
     }
   }
 }
