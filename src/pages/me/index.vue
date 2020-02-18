@@ -45,9 +45,9 @@ export default {
     return {
       cardList: [
         [
-          { title: '合同回收站', imgPath: '/static/images/recycle_icon.png' },
+          { title: '合同回收站', imgPath: '/static/images/recycle_icon.png', url: '/pages/billRecycle/main' },
           { title: '我的提单', imgPath: '/static/images/order_icon.png' },
-          { title: '我的发票', imgPath: '/static/images/wdfp.png' },
+          { title: '我的发票', imgPath: '/static/images/wdfp.png', url: '/pages/invoice/main' },
           { title: '合同修改', imgPath: '/static/images/contract_icon.png', url: '/pages/modify/main' }
         ], [
           { title: '我的加工', imgPath: '/static/images/operating_icon.png' },

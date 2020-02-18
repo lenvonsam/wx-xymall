@@ -6,17 +6,32 @@ div
     .margin-top.text-bold.margin-bottom(style="font-size:30px") {{currentUser.account_balance}}
   .bg-white.relative.padding.padding-tb-sm(style="height: 50px")
     .row.text-gray
-      .flex-80
+      .flex-80(@click="checkTab('type')")
         span {{typeLabel}}
-        icon.cuIcon-triangledownfill
-      .flex-80
+        icon.cuIcon-triangleupfill.text-blue(v-if="activeName === 'type'")
+        icon.cuIcon-triangledownfill(v-else)
+      .flex-80(@click="checkTab('time')")
         span {{monthLabel}}
-        icon.cuIcon-triangleupfill
+        icon.cuIcon-triangleupfill.text-blue(v-if="activeName === 'time'")
+        icon.cuIcon-triangledownfill(v-else)
       .col.text-right 展示近6个月明细
-  .padding-top
+    .float-bar(:style="{height: screenHeight - customBar - 120 - 51 + 'px'}", v-if="floatBarShow")
+      .bg-white.padding-tb-sm
+        .check-btn(v-for="(itm,idx) in tabList", :key="idx", @click="selectKey(itm)", :class="{'active': selectActive == itm.val}") {{itm.label}}
+  div(style="padding-top: 15px")
     template(v-if="isLoad")
-      scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: screenHeight - customBar - 170 +'px'}")
-        div 123333
+      scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: screenHeight - customBar - 185 +'px'}")
+        .bg-white.padding.border-bottom-line.row(v-for="(item,idx) in listData", :key="idx")
+          .col
+            div {{item.content}}
+            .text-gray.ft-12.margin-top {{item.time}}
+          .col.text-right
+            .ft-16(:class="{'text-red': item.action == 1, 'text-green': item.action == 0}")            
+              span(v-if="item.action == 0") +
+              span(v-else) -
+              span {{item.price}}
+            .text-gray.margin-top(v-if="item.nowAvlbFund") {{item.nowAvlbFund}}
+        .padding.text-gray.ft-13.text-center(v-if="loading") 努力加载中...
     time-line(type="mallist", v-else)
 </template>
 
@@ -42,7 +57,9 @@ export default {
       typeLabel: '全部',
       monthLabel: '时间',
       typeStatus: '',
-      month: 0
+      loading: false,
+      month: 0,
+      floatBarShow: false
     }
   },
   computed: {
@@ -57,13 +74,19 @@ export default {
   },
   onShow () {
     this.currentPage = 0
+    this.loading = false
     this.loadData()
-    const height = this.screenHeight - this.customBar - 170 - 15
+    const height = this.screenHeight - this.customBar - 185
     console.log('fullheight:>>', this.screenHeight, 'height:>>', height)
   },
   methods: {
     loadMore () {
-      console.log('load more data')
+      const me = this
+      this.throttle(function () {
+        console.log(me)
+        me.currentPage++
+        me.loadData()
+      }, 300)
     },
     selectKey (item) {
       if (this.isTabDisabled) return false
@@ -79,11 +102,9 @@ export default {
           break
       }
       this.currentPage = 0
-      this.queryParams.current_page = this.currentPage
       this.listData = []
-      this.finished = false
       this.activeName = ''
-      this.pageHeight = 219
+      this.floatBarShow = false
       // this.isLoad = true
       this.loadData()
     },
@@ -115,19 +136,15 @@ export default {
         this.selectActive = this.month
       }
       this.activeName = flag === this.activeName ? '' : flag
-      if (this.activeName !== '') {
-        this.pageHeight = 331
-      } else {
-        this.pageHeight = 219
-      }
+      this.floatBarShow = true
     },
     async loadData () {
       try {
         this.isTabDisabled = true
-        console.log('this.currentPage', this.currentPage)
         if (this.currentPage === 0) {
           this.isload = false
         }
+        if (this.currentPage > 0) this.loading = true
         const me = this
         // this.$ironLoad.show()
         const data = await this.ironRequest(this.apiList.xy.creditRecordList.url, {
@@ -151,6 +168,7 @@ export default {
             list.push(obj)
           })
         }
+        console.log('list', list)
         if (arr.length === 0 && me.currentPage === 0) {
           me.listData = []
         } else if (arr.length > 0 && me.currentPage === 0) {
@@ -160,11 +178,37 @@ export default {
         } else {
           me.currentPage--
         }
+        this.loading = false
         this.isTabDisabled = false
       } catch (e) {
+        this.loading = false
         this.showMsg(e)
       }
     }
   }
 }
 </script>
+
+<style lang="stylus" scoped>
+.float-bar
+  position absolute
+  top 51px
+  left 0
+  right 0
+  z-index 10
+  background rgba(0, 0, 0, 0.3)
+.check-btn
+  background #ffffff
+  text-align center
+  margin 0 10px 10px
+  border-radius 15px
+  border 1px solid #eee
+  color #888
+  width 100px
+  height 35px
+  padding-top 8px
+  display inline-block
+  &.active
+    border 1px solid #2485FF
+    color #2485FF
+</style>

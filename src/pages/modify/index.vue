@@ -25,7 +25,7 @@ div
               .card-right
                 .ft-16.padding-bottom-xs.text-bold.text-black ￥{{item.price}}
                 .text-red(v-if="item.status === 18") 修改中
-                .bill-btn.round(v-else, @click="jump(`/pages/modifyDetail/main?id=${item.discussid}&type=${item.tabName}`)") {{tabName == '1' ? '申请修改' : '去确认'}}
+                .bill-btn.round(v-else, @click="jump(`/pages/modifyDetail/main?id=${item.discussid}&type=${tabName}`)") {{tabName == '1' ? '申请修改' : '去确认'}}
     .text-center.c-gray.pt-100(v-else)
       img.img-empty(src="/static/images/bill_empty.png")
       div 您暂时没有相关合同           
@@ -64,7 +64,8 @@ export default {
       pageSize: state => state.pageSize
     })
   },
-  beforeMount () {
+  onShow () {
+    this.listData = []
     if (this.$root.$mp.query.tabName) this.tabName = this.$root.$mpd.query.tabName
     this.loadData()
   },

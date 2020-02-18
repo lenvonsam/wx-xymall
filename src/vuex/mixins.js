@@ -124,6 +124,10 @@ const wxMixins = {
         }
       }
     },
+    mobileReg (mobile) {
+      var reg = /^1[3|4|5|8|7|9][0-9]\d{4,8}$/
+      return reg.test(mobile)
+    },
     // 节流
     throttle (func, delay = 100) {
       let timer = null
