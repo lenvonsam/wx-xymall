@@ -55,7 +55,7 @@ div
                       radio.blue.radio(:checked="bill.measure_way === r.m_way", @click="weightChoose(r.m_way, bill)")
                       span.padding-left-xs {{r.label}}
                 .flex.padding-xs.justify-end.align-end(v-if="contractDetail.status !== 18")
-                  .col(style="flex: 0 0 90px;")
+                  .col
                     count-step(v-model="bill.count", @input="rowCartCount(bill)", @blur="rowCartCount(bill)", :max="bill.amount_left")
                   .padding-left-xs {{bill.weight}}吨
     .text-center.c-gray.pt-100(v-else)
@@ -78,9 +78,9 @@ div
       
       .solid-top.solid-top-sm.row(v-if="contractDetail.status === 19")
         .col.padding-right-xs
-          button.text-white.bg-red(@click="overruleShow = true") 驳回
+          button.text-white.bg-red(@click="overrule()") 驳回
         .col.padding-left-xs
-          button.text-white.bg-blue(@click="agreeEditShow=true") 同意修改
+          button.text-white.bg-blue(@click="agreeEdit()") 同意修改
       .solid-top.solid-top-sm(v-else-if="contractDetail.status === 18")
         button.bg-gray 修改审核中
       .solid-top.solid-top-sm.row(v-else-if="contractDetail.status === 12 || contractDetail.status === 14 || contractDetail.status === 15")
@@ -176,7 +176,7 @@ export default {
         this.showMsg()
       })
     },
-    applyEdit (done) {
+    applyEdit () {
       this.confirm({content: '请确认修改合同'}).then(() => {
         const seqList = []
         const orderList = []
@@ -215,15 +215,14 @@ export default {
         })
       })
     },
-    agreeEdit (done) {
-      this.agreeEditShow = false
+    agreeEdit () {
       const params = {
         id: this.contractDetail.id,
         contract_id: this.contractDetail.contract_id
       }
-      this.$ironLoad.show()
+      // this.$ironLoad.show()
       this.ironRequest('confirm_contract_app.shtml', params, 'post', this).then(res => {
-        this.$ironLoad.hide()
+        // this.$ironLoad.hide()
         if (res.returncode === '0') {
           this.showMsg(res.msg ? res.msg : '修改成功', 'positive')
           this.back()

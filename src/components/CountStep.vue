@@ -85,7 +85,7 @@ export default {
   display flex
   border 1px solid #ddd
   border-radius 2px
-  width 130px
+  width 100px
   height 25px
   .min
     border-right 1px solid #ddd

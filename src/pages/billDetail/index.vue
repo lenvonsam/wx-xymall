@@ -158,7 +158,7 @@ export default {
     this.ironRequest('orderDetail.shtml?tstc_no=' + this.$root.$mp.query.id, {}, 'get', this).then(resp => {
       if (resp && resp.returncode === '0') {
         this.billDetail = resp
-        this.billDetail.status_desc = '待付款'
+        // this.billDetail.status_desc = '待付款'
         if (this.billDetail.status_desc === '待补款') {
           this.navBarTitle = '待补款详情'
         }

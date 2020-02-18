@@ -7,9 +7,9 @@
       .s-empty-content(v-if="(carts.length + soldCarts.length) == 0")
         div(style="padding-top: 20%")
           .text-center
-            img(src="/static/images/cart_empty.png", style="width: 200px;")
-          .text-center.padding.c-gray 购物车空空如也
-          .text-center
+            img.img-empty(src="/static/images/cart_empty.png")
+          .text-center.empty-content 购物车空空如也
+          .text-center.margin-top-sm
             .cart-empty-btn(@click="tab('/pages/mall/main')") ^_^去商城逛逛吧
       .s-content-wrap(v-else, :style="{top: customBar+'px'}")
         .s-content
@@ -20,13 +20,13 @@
                 .padding-left-xs 提货方式
                 .padding-left-xs.cuIcon-unfold
             .text-center
-              .padding-xs(v-show="isEdit") 完成
+              .padding-xs(v-show="isEdit", @click="openEdit") 完成
               .flex(v-show="!isEdit")
-                .padding-xs.mr-5 编辑
+                .padding-xs.mr-5(@click="openEdit") 编辑
                 .padding-xs(@click="clearCarts") 清空
           scroll-view.scroll-view(scroll-y, :style="{top:customBar + 40 + 'px', height: screenHeight - customBar - 132 + 'px'}")
             .cart-items(v-for="(cart, cartIdx) in carts", :key="cartIdx")
-              .cart-item.padding-left-sm.padding-right-sm.padding-top-sm
+              .cart-item.padding-sm
                 .flex.flex-center.align-center
                   .col.flex-25(@click="cart.choosed = !cart.choosed", style="padding-top: 5px;")
                     img.choose-icon(src="/static/images/blue_check.png", v-if="cart.choosed")
@@ -34,39 +34,35 @@
                   .col(@click="cart.choosed = !cart.choosed")
                     span {{cart.product_name}}
                     span.padding-left-xs {{cart.product_standard}}
-                    //- span.sub-mark.ml-10 {{cart.product_supply}}
                   .text-blue ￥{{cart.price}}/吨
-                  //- .col.flex-25.text-right(@click="delCartRow(cart.cart_id)")
                 .content.ft-13
                   .flex.flex-center
-                    .col
+                    div
                       div
                         span {{cart.product_material}}
-                        //- span.ml-5 {{cart.product_standard}}
                         span.ml-5 {{cart.product_length}}米
                         span.ml-5 {{cart.wh_name}}
                         span.sub-mark.ml-5 {{cart.product_supply}}
                       .pt-5
                         span 吊费:
                         span.ml-10 {{cart.price === '--' ? '--' : cart.lift_charge > 0 ? '￥' + cart.lift_charge + '/吨' : cart.lift_charge == 0 ? '无' : '线下结算'}}
-                        //- span.ml-10 ( 库存{{cart.amount_left}} 支 )
+                      .pt-5(v-if="cart.tolerance_range || cart.weight_range")
+                        span(v-if="cart.tolerance_range") 公差范围:
+                        span.ml-10.mr-10(v-if="cart.tolerance_range") {{cart.tolerance_range}}
+                      .pt-5
+                        span(v-if="cart.weight_range") 重量范围:
+                        span.ml-10(v-if="cart.weight_range") {{cart.weight_range}} 
                     .col.text-right
-                      //- input(type="radio")
-                      radio-group.block(v-model="cart.measure_way_id")
-                        .margin-bottom-xs(v-for="(r, rIdx) in cart.radios", :key="rIdx")
-                          radio.blue.radio(:checked="cart.measure_way_id === r.m_way", @click="weightChoose(r.m_way, cart)")
-                          span.padding-left-xs {{r.label}}
-                        //- q-radio.pb-5(v-model="cart.measure_way_id", :val="r.m_way", :label="r.label", color="grey-5", @focus="weightChoose(r.m_way, cart)")
-                  div(v-if="cart.tolerance_range || cart.weight_range")
-                    span(v-if="cart.tolerance_range") 公差范围:
-                    span.ml-10.mr-10(v-if="cart.tolerance_range") {{cart.tolerance_range}}
-                    span.padding-left-sm(v-if="cart.weight_range") 重量范围:
-                    span.ml-10(v-if="cart.weight_range") {{cart.weight_range}}
-                  .flex.padding-xs.justify-end
-                    .col(style="flex: 0 0 130px;")
-                      count-step(v-model="cart.count", @click.native="rowCartCount(cart)", @blur="rowCartCount(cart)", :max="cart.amount_left")
-                    span {{cart.countWeight}}吨
-
+                      .flex.flex-direction.justify-between
+                        radio-group.block(v-model="cart.measure_way_id")
+                          .margin-bottom-xs(v-for="(r, rIdx) in cart.radios", :key="rIdx")
+                            radio.blue.radio(:checked="cart.measure_way_id === r.m_way", @click="weightChoose(r.m_way, cart)")
+                            span.padding-left-xs {{r.label}}
+                        .flex.padding-xs.justify-end.align-end
+                          .col(style="flex: 0 0 60px;")
+                            count-step(v-model="cart.count", @click.native="rowCartCount(cart)", @blur="rowCartCount(cart)", :max="cart.amount_left")
+                          .padding-left-xs {{cart.countWeight}}吨
+                  
             .pb-10(v-if="soldCarts.length > 0", :class="{'pt-10': carts.length === 0}")
               .bg-white
                 .row.padding.flex-center.border-bottom-line
@@ -92,19 +88,19 @@
 
     .s-footer(v-if="carts.length > 0")
       .cart-footer
-        .row.flex-center(@click="choosedAll", style="padding-left: 10px;")
+        .col.row.flex-center(@click="choosedAll", style="padding-left: 10px;")
           .flex.flex-center
             img.choose-icon(src="/static/images/blue_check.png", v-if="allChoosed")
             img.choose-icon(src="/static/images/btn_ck_n.png", v-else)
           .padding-xs 全选
-        .col.cart-footer-col
+        .col.cart-footer-col(v-show="!isEdit")
           .text-right.flex.justify-end
             span 合计：
             b.c-red ￥{{totalPrice}}
           .text-right.ft-12(style="color:#999;") 共{{totalCount}}件 ，{{totalWeight}}吨
-        .col.cart-settle-btn(@click="goToSettle")
+        .cart-settle-btn(@click="goToSettle")
           .ft-20
-            span 结算
+            span {{isEdit ? '删除' : '结算'}}
     .address-dialog(@click="openPickWay", :style="{top: customBar + 40 + 'px'}", v-show="pickWayShow")
       .bg-white
         .solid-top.padding(v-for="(item, index) in pickWayList")
@@ -236,6 +232,9 @@ export default {
     ...mapActions([
       'configVal'
     ]),
+    openEdit () {
+      this.isEdit = !this.isEdit
+    },
     openPickWay () {
       this.pickWayShow = !this.pickWayShow
     },
@@ -309,6 +308,11 @@ export default {
       let filterArray = this.carts.filter(itm => itm.choosed === true)
       let canSellArray = filterArray.filter(itm => itm.price.indexOf('--') >= 0)
       const me = this
+      if (this.isEdit) {
+        // 删除
+        this.delCartRow(filterArray)
+        return false
+      }
       if (canSellArray.length > 0) {
         this.showMsg('商品9点之后开售')
         return
@@ -393,18 +397,23 @@ export default {
       this.ironRequest('cartUpdate.shtml', { cart_id: obj.cart_id, user_id: this.currentUser.user_id, measure_way: obj.measure_way_id, count: obj.count }, 'post', this).then(res => {
       })
     },
-    delCartRow (id) {
+    delCartRow (row) {
       if (!this.btnDisable) {
         const me = this
+        const idsList = []
+        row.map(item => {
+          idsList.push(item.cart_id)
+        })
+        debugger
         this.confirm({ content: '您确定要删除吗?' }).then(() => {
           me.btnDisable = true
-          me.ironRequest('cartDel.shtml', { cart_id: id }, 'post', me).then(res => {
-            if (res.data.returncode === '0') {
+          me.ironRequest('cartDel.shtml', { cart_ids: idsList.toString() }, 'post', me).then(res => {
+            if (res.returncode === '0') {
               me.confirm({ content: '删除成功' }).then(() => {
-                me.carts = me.carts.filter(item => item.cart_id !== id)
-                let count = this.cartCount
-                count--
-                me.configVal({ key: 'cartCount', val: count })
+                me.carts = me.carts.filter(item => {
+                  return idsList.indexOf(item.cart_id) === -1
+                })
+                me.configVal({ key: 'cartCount', val: me.carts.length })
                 me.btnDisable = false
               })
             }
@@ -558,6 +567,7 @@ export default {
     flex-basis 28%
   .cart-settle-btn
     display flex
+    width 250rpx
     background #F95353
     align-items center
     color #fff
