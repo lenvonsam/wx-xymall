@@ -1,6 +1,6 @@
 export default {
   // 版本
-  currentVersion: '1.0.7',
+  currentVersion: '0.0.1',
   // 临时存储对象
   tempObject: {},
   // 屏幕宽度

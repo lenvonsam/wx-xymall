@@ -151,7 +151,7 @@ page,
 .pt-5 {
   padding-top: 10rpx;
 }
-.pt-100{
+.pt-100 {
   padding-top: 100rpx;
 }
 .pr-10 {
@@ -199,6 +199,10 @@ page,
   background: #ddd;
 }
 
+.choose-icon {
+  width: 32rpx;
+}
+
 .cu-dialog.visible {
   overflow: visible;
 }
@@ -228,26 +232,26 @@ page,
   padding-top: 100rpx;
 }
 
-.ding-icon{
+.ding-icon {
   width: 20px;
   height: 20px;
 }
-.w-200{
+.w-200 {
   width: 200px;
 }
-.img-empty{
+.img-empty {
   width: 340rpx;
   height: 293rpx;
 }
-.empty-content{
+.empty-content {
   padding-top: 10rpx;
   font-size: 28rpx;
-  color: #C8C8C8;
+  color: #c8c8c8;
 }
-.flex-100{
-  flex: 0 0 100
+.flex-100 {
+  flex: 0 0 100;
 }
-.sub-mark{
+.sub-mark {
   display: inline-block;
   padding: 1px 5px;
   background: #3da7ff;
@@ -257,7 +261,7 @@ page,
   box-shadow: 1px 2px 5px rgba(61, 167, 255, 0.3);
   letter-spacing: 1px;
 }
-      
+
 .mt-half-rem {
   margin-top: 20rpx;
 }

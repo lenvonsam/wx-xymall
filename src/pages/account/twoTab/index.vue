@@ -31,7 +31,7 @@ div
         .col
           input(placeholder="请输入验证码", type="number", v-model="val2")
         .flex-90.text-center(style="border-left: 1rpx solid #ddd")
-          auth-btn(:phone="currentUser.phone", v-if="currentUser.phone", :codeType="5")
+          auth-btn(:phone="currentUser.phone", v-if="currentUser.phone", :codeType="type === 'loginPwd' ? 5 : 6")
       .row.padding
         .flex-100 新密码
         .col
@@ -80,6 +80,7 @@ export default {
   },
   onShow () {
     this.type = 'loginPwd'
+    this.tabName = 'tab1'
     this.val1 = ''
     this.val2 = ''
     this.val3 = ''

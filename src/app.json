@@ -26,7 +26,13 @@
         "register/main",
         "profile/main",
         "companyInfo/main",
-        "twoTab/main"
+        "twoTab/main",
+        "changePhone/main",
+        "setting/main",
+        "balance/main",
+        "charge/main",
+        "withdraw/main",
+        "balanceList/main"
       ]
     }
   ],

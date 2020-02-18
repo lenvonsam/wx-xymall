@@ -40,6 +40,10 @@ export default {
     })
   },
   onShow () {
+    this.uname = ''
+    this.upwd = ''
+    this.backType = 1
+    this.canClick = true
     if (this.$root.$mp.query.type) this.backType = Number(this.$root.$mp.query.type)
     else this.backType = 1
   },

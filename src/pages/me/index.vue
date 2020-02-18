@@ -2,7 +2,7 @@
 div 
   nav-bar(title="我的", :bgClass="'bg-blue text-white'", leftMenu)
     div(slot="leftMenu")
-      img(src="/static/images/notice_w_icon.png", style="width:30rpx; height: 36rpx", @click="jump('/pages/cardList/main?title=消息中心&type=noticeList')", v-if="isLogin")
+      img(src="/static/images/notice_w_icon.png", style="width:30rpx; height: 36rpx", @click="jump('/pages/cardList/main?title=消息中心&type=noticeList')", v-if="showNoticeIcon")
   .relative
     .bg-blue.flex.padding-sm.text-white.align-center.me-header
       .col(@click="jumpProfile")
@@ -13,7 +13,7 @@ div
             .ft-15.padding-bottom-sm {{currentUser.user_mark}}
             .ft-12 {{currentUser.phone}}
       .cuIcon-right.ft-25   
-    .account.bg-white.flex.align-center
+    .account.bg-white.flex.align-center(@click="jump('/pages/account/balance/main')")
       .ft-16.text-bold 账户余额
       .col.ft-16.text-right
         span.text-blue.text-bold ￥ {{currentUser.account_balance}}
@@ -53,13 +53,14 @@ export default {
           { title: '我的加工', imgPath: '/static/images/operating_icon.png' },
           { title: '我的求购', imgPath: '/static/images/shop_icon.png' }
         ], [
-          { title: '用户设置', imgPath: '/static/images/wdwld.png' },
+          { title: '用户设置', imgPath: '/static/images/wdwld.png', url: '/pages/account/setting/main' },
           { title: '在线客服', imgPath: '/static/images/customer_icon.png' }
         ]
       ],
       avatarDirection: 'none',
       // 全部订单下面一行的数字显示
-      rowCountObj: {}
+      rowCountObj: {},
+      showNoticeIcon: false
     }
   },
   computed: {
@@ -75,18 +76,20 @@ export default {
     })
   },
   onShow () {
+    this.showNoticeIcon = false
     if (this.isLogin) {
-      this.ironRequest('toOperCounts.shtml?user_id=' + this.currentUser.user_id, {}, 'get', this).then(resp => {
-        // console.log(resp.data)
-        if (resp.data && resp.data.returncode === '0') {
-          this.rowCountObj = resp.data
-        }
-      })
+      this.showNoticeIcon = this.currentUser.message_switch === '1'
+      // this.ironRequest('toOperCounts.shtml?user_id=' + this.currentUser.user_id, {}, 'get', this).then(resp => {
+      //   // console.log(resp.data)
+      //   if (resp.data && resp.data.returncode === '0') {
+      //     this.rowCountObj = resp.data
+      //   }
+      // })
       this.ironRequest('balanceList.shtml?type=0&only_all=1&user_id=' + this.currentUser.user_id, {}, 'get', this).then(resp => {
         if (resp.data && resp.data.returncode === '0') {
           let obj = this.currentUser
           obj.account_balance = resp.data.balance
-          this.setCurrentUser(obj)
+          this.setUser(obj)
         }
       })
     }
@@ -113,7 +116,7 @@ export default {
   },
   methods: {
     ...mapActions([
-      'setCurrentUser',
+      'setUser',
       'configVal'
     ]),
     jumpToPage (obj) {

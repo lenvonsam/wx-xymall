@@ -17,6 +17,11 @@ div
     .text-gray.ft-12.margin-top-sm {{tempObject.time}}
     .margin-top-sm
       div(v-html="tempObject.content")
+  div(v-else-if="pageType === 'aboutUs'")
+    img.full-width(:src="imgProxy + 's_bg1.png'", v-if="imgProxy")
+    .padding
+      div(v-html="aboutUsInfo")
+    img.full-width(:src="imgProxy + 's_bg2.png'", v-if="imgProxy")
 </template>
 
 <script>
@@ -41,7 +46,7 @@ export default {
     const query = this.$root.$mp.query
     if (query.title) this.pageTitle = query.title
     if (query.type) this.pageType = query.type
-    if (this.pageType !== 'registProtocol') this.getRemoteInfo()
+    if (this.pageType !== 'registProtocol' || this.pageTitle !== 'aboutUs') this.getRemoteInfo()
   },
   methods: {
     async getRemoteInfo () {

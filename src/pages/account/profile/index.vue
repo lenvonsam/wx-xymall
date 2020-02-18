@@ -44,7 +44,7 @@ export default {
         url: '/pages/account/twoTab/main?type=payPwd'
       }, {
         name: '修改手机号码',
-        url: '/profile/update/phone'
+        url: '/pages/account/changePhone/main'
       }]
     }
   },

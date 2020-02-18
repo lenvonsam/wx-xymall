@@ -149,7 +149,6 @@ export default {
       })
     },
     billPay () {
-      debugger
       const me = this
       if ((this.payPwd.toString().trim().length === 0 && this.pageType === 'offlinePay') || (this.payPwd.toString().trim().length === 0 && (this.pageType === 'ladPay' && (this.currentBalance > this.payMountInfo)))) {
         this.showMsg('请输入支付密码')

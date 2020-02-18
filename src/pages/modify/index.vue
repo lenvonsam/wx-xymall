@@ -126,7 +126,6 @@ export default {
       })
     },
     loadMore () {
-      debugger
       if (!this.isLoad) {
         this.currentPage++
         this.isTabDisabled = true

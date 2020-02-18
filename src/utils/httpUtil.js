@@ -133,7 +133,7 @@ function ironRequest (reqUrl, param, type, context = null) {
           ) {
             resolve(res.data)
           } else {
-            if (res.data.returncode === '0') {
+            if (Number(res.data.returncode) === 0) {
               resolve(res.data)
             } else {
               reject(res.data.errormsg)

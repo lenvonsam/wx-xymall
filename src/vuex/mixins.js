@@ -14,7 +14,9 @@ const wxMixins = {
       imgOuterUrl: 'http://web-test.xingyun361.com',
       phoneReg: /^1[3|4|5|8|7|9][0-9]\d{4,8}$/,
       erpProxy: httpUtil.proxy.erp,
-      warehouseProxy: httpUtil.proxy.wh
+      warehouseProxy: httpUtil.proxy.wh,
+      aboutUsInfo:
+        '<p><span style="font-size: 12px;"></span><span style="font-size: 12px;"></span><span style="font-size: 11px;"><span style="font-size: 12px;">&nbsp; &nbsp; &nbsp; 江苏智恒达型云网络科技有限公司创建于2015年11月，隶属于江苏智恒达投资集团有限公司，坐落于长三角中心城市—江苏常州，依托华东地区特大的实体钢贸资源，型云网络科技有限公司紧抓行业内的用户痛点，以型钢为切入点，打通钢铁交易环节中所有的壁垒，把上游钢厂-在线交易-支付结算-仓储加工-物流运输-供应链金融-大数据信息进行了整合贯通，真正为客户提供更全面、更高效、更便捷、成本更低的服务。</span></span><br><span style="font-size: 12px;">&nbsp; &nbsp; &nbsp; 型云是互联网思维与线下钢贸经验的结晶，是依托于实体的大宗电商变革者，为用户提供集在线交易、供应链金融、支付结算、仓储加工、物流配送于一体的增值服务，是云端之上的钢铁全产业链生态圈。</span><br><span style="font-size: 12px;">&nbsp; &nbsp; &nbsp; 我们本着“四更”的服务宗旨，建设买卖双方市场真正的良性闭环，让钢铁大宗借互联网之风在云端腾飞！</span><br><span style="font-size: 12px;">&nbsp; &nbsp; &nbsp; 智恒达集团是一家拥有20年历史的大型钢铁贸易集团，自备及在建大型室内库4万余平方米，现货库存5万余吨，在途资源4万余吨，为马鞍山钢铁集团、山东莱芜钢铁集团、首钢长治钢铁集团、河北津西钢铁集团、日照钢铁集团、河北邯郸钢铁在江苏及常州的区域总代理。整个销售网络早已覆盖苏皖地区80多个县级以上城市，辐射全国，是华东地区特大钢铁集散中心。</span><span style="font-size: 12px;"></span><span style="font-size: 12px;"></span><br></p>'
     }
   },
   computed: {
@@ -273,11 +275,26 @@ const wxMixins = {
       let price = 0
       switch (opt.type) {
         case 1:
-          one = (parseFloat(opt.att14) * parseFloat(opt.att8) * (1 - parseFloat(opt.att12)) * 1.05).toFixed(6)
+          one = (
+            parseFloat(opt.att14) *
+            parseFloat(opt.att8) *
+            (1 - parseFloat(opt.att12)) *
+            1.05
+          ).toFixed(6)
           // 当物资是【花纹板187】【普碳开平板185】【低合金开平板186】【碳钢板278】【普板253】【中板280】【低合金中板211】的时候计算公式：板材磅重计算公式=米重*长度*105%
-          if (opt.goods_id === 187 || opt.goods_id === 185 || opt.goods_id === 186 || opt.goods_id === 278 || opt.goods_id === 253 || opt.goods_id === 280 || opt.goods_id === 211) {
+          if (
+            opt.goods_id === 187 ||
+            opt.goods_id === 185 ||
+            opt.goods_id === 186 ||
+            opt.goods_id === 278 ||
+            opt.goods_id === 253 ||
+            opt.goods_id === 280 ||
+            opt.goods_id === 211
+          ) {
             // 型云板材上浮5%改为2% --0617 zm
-            one = (parseFloat(opt.att14) * parseFloat(opt.att8) * 1.02).toFixed(6)
+            one = (parseFloat(opt.att14) * parseFloat(opt.att8) * 1.02).toFixed(
+              6
+            )
           }
           break
         case 2:
@@ -293,7 +310,12 @@ const wxMixins = {
           one = 0
           break
       }
-      if (opt.goods_id === 183 || opt.goods_id === 188 || opt.goods_id === 226 || opt.goods_id === 184) {
+      if (
+        opt.goods_id === 183 ||
+        opt.goods_id === 188 ||
+        opt.goods_id === 226 ||
+        opt.goods_id === 184
+      ) {
         one = opt.juanban
       }
       weight = one * parseFloat(opt.amount)
