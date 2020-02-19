@@ -935,93 +935,63 @@ image.loading::after {
   text-align: right;
 }
 
-.text-red,
-.line-red,
-.lines-red {
+.text-red {
   color: #e54d42;
 }
 
-.text-orange,
-.line-orange,
-.lines-orange {
+.text-orange {
   color: #f37b1d;
 }
 
-.text-yellow,
-.line-yellow,
-.lines-yellow {
+.text-yellow {
   color: #fbbd08;
 }
 
-.text-olive,
-.line-olive,
-.lines-olive {
+.text-olive {
   color: #8dc63f;
 }
 
-.text-green,
-.line-green,
-.lines-green {
+.text-green {
   color: #39b54a;
 }
 
-.text-cyan,
-.line-cyan,
-.lines-cyan {
+.text-cyan {
   color: #1cbbb4;
 }
 
-.text-blue,
-.line-blue,
-.lines-blue {
-  color: #0081ff;
+.text-blue {
+  color: var(--blue);
 }
 
-.text-purple,
-.line-purple,
-.lines-purple {
+.text-purple {
   color: #6739b6;
 }
 
-.text-mauve,
-.line-mauve,
-.lines-mauve {
+.text-mauve {
   color: #9c26b0;
 }
 
-.text-pink,
-.line-pink,
-.lines-pink {
+.text-pink {
   color: #e03997;
 }
 
-.text-brown,
-.line-brown,
-.lines-brown {
+.text-brown {
   color: #a5673f;
 }
 
-.text-grey,
-.line-grey,
-.lines-grey {
+.text-grey {
   color: #8799a3;
 }
 
-.text-gray,
-.line-gray,
-.lines-gray {
+.text-gray {
   color: #aaa;
 }
 
-.text-black,
-.line-black,
-.lines-black {
+.text-black {
   color: #333;
 }
 
-.text-white,
-.line-white,
-.lines-white {
+.text-white {
   color: #fff;
 }
 
@@ -1112,7 +1082,84 @@ image.loading::after {
 .solids-left::after {
   border-left: 4rpx solid #eee;
 }
+/* ==================
+          背景
+ ==================== */
 
+ .line-red::after,
+ .lines-red::after {
+   border-color: var(--red);
+ }
+ 
+ .line-orange::after,
+ .lines-orange::after {
+   border-color: var(--orange);
+ }
+ 
+ .line-yellow::after,
+ .lines-yellow::after {
+   border-color: var(--yellow);
+ }
+ 
+ .line-olive::after,
+ .lines-olive::after {
+   border-color: var(--olive);
+ }
+ 
+ .line-green::after,
+ .lines-green::after {
+   border-color: var(--green);
+ }
+ 
+ .line-cyan::after,
+ .lines-cyan::after {
+   border-color: var(--cyan);
+ }
+ 
+ .line-blue::after,
+ .lines-blue::after {
+   border-color: var(--blue);
+ }
+ 
+ .line-purple::after,
+ .lines-purple::after {
+   border-color: var(--purple);
+ }
+ 
+ .line-mauve::after,
+ .lines-mauve::after {
+   border-color: var(--mauve);
+ }
+ 
+ .line-pink::after,
+ .lines-pink::after {
+   border-color: var(--pink);
+ }
+ 
+ .line-brown::after,
+ .lines-brown::after {
+   border-color: var(--brown);
+ }
+ 
+ .line-grey::after,
+ .lines-grey::after {
+   border-color: var(--grey);
+ }
+ 
+ .line-gray::after,
+ .lines-gray::after {
+   border-color: var(--gray);
+ }
+ 
+ .line-black::after,
+ .lines-black::after {
+   border-color: var(--black);
+ }
+ 
+ .line-white::after,
+ .lines-white::after {
+   border-color: var(--white);
+ }
 /* ==================
             布局
    ==================== */

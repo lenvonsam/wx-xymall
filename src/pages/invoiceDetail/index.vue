@@ -26,29 +26,30 @@ div
         .invoice-left
           span.text-red *
           span 发票领取方式
-        //- .col.text-right.text-gray {{pickVal}}
-        picker.col.text-right.text-gray(@change="pickCb", :value="pickIdx", :range="pickItems")
-          .text-right.text-gray {{pickVal}}
-        .text-right.text-gray.cuIcon-right(v-if="queryId == '0'")
+        template(v-if="queryId == '0'")
+          picker.col.text-right.text-gray(@change="pickCb", :value="pickIdx", :range="pickItems")
+            .text-right.text-gray {{pickVal}}
+          .text-right.text-gray.cuIcon-right
+        .col.text-right.text-gray(v-else) {{pickVal}}
       div(v-if="pickVal == '快递邮寄'")
         .solid-bottom.item
           .invoice-left
             span.text-red *
             span.ml-5.ft-15 收件人
           .col.text-right
-            input.text-gray.text-right(:placeholder="queryId != '0'?'':'请输入收件人'", v-model="receiver", :diabaled="queryId != '0'", :readOnly="queryId != '0'")
+            input.text-gray.text-right(:placeholder="queryId != '0'?'':'请输入收件人'", v-model="receiver", :disabled="queryId != '0'")
         .solid-bottom.item
           .invoice-left
             span.text-red *
             span.ml-5.ft-15 手机号
           .col.text-right
-            input.text-gray.text-right(:placeholder="queryId != '0'?'':'请输入手机号'", v-model="receiverMobile", :diabaled="queryId != '0'", :readOnly="queryId != '0'")
+            input.text-gray.text-right(:placeholder="queryId != '0'?'':'请输入手机号'", v-model="receiverMobile", :disabled="queryId != '0'")
         .solid-bottom.item
           .invoice-left
             span.text-red *
             span.ml-5.ft-15 发票地址
           .col.text-right
-            input.text-gray.text-right(:placeholder="queryId != '0'?'':'请输入地址'", v-model="receiverAddr", :diabaled="queryId != '0'", :readOnly="queryId != '0'")
+            input.text-gray.text-right(:placeholder="queryId != '0'?'':'请输入地址'", v-model="receiverAddr", :disabled="queryId != '0'")
   .pt-half-rem(v-if="pickVal == '快递邮寄' && (queryId == '2' || queryId == '2' || queryId == '3')")
     .bg-white
       .row.padding.flex-center.border-bottom-line
@@ -107,7 +108,7 @@ export default {
     if (this.queryId === '0') {
       this.pageTitle = '申请发票'
     } else {
-      this.pageTitle = this.$root.$mp.name
+      this.pageTitle = this.$root.$mp.query.name
     }
 
     this.nosArray = this.tempObject.contract_no.split(',')

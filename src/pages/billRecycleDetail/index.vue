@@ -50,7 +50,7 @@
         .empty-content 您暂时没有相关合同
       .s-footer(v-if="carts.length > 0")
         .cart-footer.align-center
-          .col.row.flex-center(@click="choosedAll()", style="padding-left: 10px;")
+          .row.flex-center(@click="choosedAll()", style="padding-left: 10px;")
             .flex.flex-center
               img.choose-icon(src="/static/images/blue_check.png", v-if="allChoosed")
               img.choose-icon(src="/static/images/btn_ck_n.png", v-else)

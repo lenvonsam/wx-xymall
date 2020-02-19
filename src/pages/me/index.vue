@@ -46,12 +46,12 @@ export default {
       cardList: [
         [
           { title: '合同回收站', imgPath: '/static/images/recycle_icon.png', url: '/pages/billRecycle/main' },
-          { title: '我的提单', imgPath: '/static/images/order_icon.png' },
+          { title: '我的提单', imgPath: '/static/images/order_icon.png', url: '/pages/ladbill/main' },
           { title: '我的发票', imgPath: '/static/images/wdfp.png', url: '/pages/invoice/main' },
           { title: '合同修改', imgPath: '/static/images/contract_icon.png', url: '/pages/modify/main' }
         ], [
-          { title: '我的加工', imgPath: '/static/images/operating_icon.png' },
-          { title: '我的求购', imgPath: '/static/images/shop_icon.png' }
+          { title: '我的加工', imgPath: '/static/images/operating_icon.png', url: '/pages/process/main' },
+          { title: '我的求购', imgPath: '/static/images/shop_icon.png', url: '/pages/askBuy/main' }
         ], [
           { title: '用户设置', imgPath: '/static/images/wdwld.png' },
           { title: '在线客服', imgPath: '/static/images/customer_icon.png' }

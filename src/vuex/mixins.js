@@ -3,7 +3,10 @@ import httpUtil from '../utils/httpUtil'
 import UTF8 from 'utf8'
 import BASE64 from 'base-64'
 import { mapState } from 'vuex'
-
+function formatNumber (n) {
+  n = n.toString()
+  return n[1] ? n : '0' + n
+}
 const wxMixins = {
   data () {
     return {
@@ -308,6 +311,53 @@ const wxMixins = {
       price = price.toFixed(2)
 
       return { one: one, weight: Number(weight), price: Number(price) }
+    },
+    date2Str (date) {
+      if (date) {
+        let n = date
+        if (typeof date === 'number') {
+          n = new Date(date)
+        }
+        const years = n.getFullYear()
+        const month = n.getMonth() + 1
+        const day = n.getDate()
+        return [years, month, day].map(formatNumber).join('-')
+      } else {
+        return ''
+      }
+    },
+    date2Time (date) {
+      if (date) {
+        let n = date
+        if (typeof date === 'number') {
+          n = new Date(date)
+        }
+        const years = n.getFullYear()
+        const month = n.getMonth() + 1
+        const day = n.getDate()
+        const hours = n.getHours()
+        const mins = n.getMinutes()
+        const secs = n.getSeconds()
+        return (
+          [years, month, day].map(formatNumber).join('-') +
+          ' ' + [hours, mins, secs].map(formatNumber).join(':')
+        )
+      } else {
+        return ''
+      }
+    },
+    validateNull (arr, context) {
+      let result = true
+      for (let i = 0; i < arr.length; i++) {
+        let item = arr[i]
+        let val = context[item]
+        if (val.toString().trim().length === 0) {
+          this.showMsg('必填字段不能为空')
+          result = false
+          break
+        }
+      }
+      return result
     }
   }
 }

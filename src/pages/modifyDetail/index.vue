@@ -34,11 +34,11 @@ div
                 div(v-if="bill.tolerance_range || bill.weight_range")
                   span(v-if="bill.tolerance_range") 公差范围:
                   span.padding-left-xs(v-if="bill.tolerance_range") {{bill.tolerance_range}}
-                  template(v-if="contractDetail.status === 18")
+                  template(v-if="contractDetail.status === 18 || contractDetail.status === 19")
                     span.padding-left-sm(v-if="bill.weight_range") 重量范围:
                     span.padding-left-xs(v-if="bill.weight_range") {{bill.weight_range}}
                   div
-                    template(v-if="contractDetail.status === 18")
+                    template(v-if="contractDetail.status === 18 || contractDetail.status === 19")
                       span(v-if="bill.left_qtt") 旧单数量:
                       span.padding-left-xs(v-if="bill.left_qtt") {{bill.left_qtt}} 支
                       span.padding-left-sm(v-if="bill.provided_qtt") 旧单重量:
@@ -54,7 +54,7 @@ div
                     div(v-for="(r, rIdx) in bill.radios", :key="rIdx")
                       radio.blue.radio(:checked="bill.measure_way === r.m_way", @click="weightChoose(r.m_way, bill)")
                       span.padding-left-xs {{r.label}}
-                .flex.padding-xs.justify-end.align-end(v-if="contractDetail.status !== 18")
+                .flex.padding-xs.justify-end.align-end(v-if="contractDetail.status !== 18 && contractDetail.status !== 19")
                   .col
                     count-step(v-model="bill.count", @input="rowCartCount(bill)", @blur="rowCartCount(bill)", :max="bill.amount_left")
                   .padding-left-xs {{bill.weight}}吨
@@ -220,14 +220,17 @@ export default {
         id: this.contractDetail.id,
         contract_id: this.contractDetail.contract_id
       }
+      const me = this
       // this.$ironLoad.show()
       this.ironRequest('confirm_contract_app.shtml', params, 'post', this).then(res => {
         // this.$ironLoad.hide()
         if (res.returncode === '0') {
-          this.showMsg(res.msg ? res.msg : '修改成功', 'positive')
-          this.back()
+          me.showMsg(res.msg ? res.msg : '修改成功', 'positive')
+          setTimeout(() => {
+            me.back()
+          }, 3000)
         } else {
-          this.showMsg(res.msg ? res.msg : '操作失败')
+          me.showMsg(res.msg ? res.msg : '操作失败')
         }
       }).catch(err => {
         console.log('err', err.message)
@@ -239,12 +242,15 @@ export default {
         id: this.contractDetail.id,
         contract_id: this.contractDetail.contract_id
       }
+      const me = this
       this.ironRequest('reject_contract_app.shtml', params, 'post', this).then(res => {
         if (res.returncode === '0') {
-          this.showMsg('驳回成功', 'positive')
-          this.back()
+          me.showMsg('驳回成功', 'positive')
+          setTimeout(() => {
+            me.back()
+          }, 3000)
         } else {
-          this.showMsg(res.data.msg)
+          me.showMsg(res.data.msg)
         }
       }).catch(err => {
         console.log('err', err.message)
