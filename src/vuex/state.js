@@ -15,19 +15,23 @@ export default {
   mainIcons: [
     {
       url: '/static/images/ht_icon.png',
-      title: '合同付款'
+      title: '合同付款',
+      path: '/pages/bill/main?tabName=1'
     },
     {
       url: '/static/images/td_icon.png',
-      title: '我的提单'
+      title: '我的提单',
+      path: '/pages/ladbill/main'
     },
     {
       url: '/static/images/fp_icon.png',
-      title: '发票申请'
+      title: '发票申请',
+      path: '/pages/invoice/main'
     },
     {
       url: '/static/images/zh_icon.png',
-      title: '帮我找货'
+      title: '帮我找货',
+      path: '/pages/askBuyCreate/main'
     }
   ],
   // 首页产品分类

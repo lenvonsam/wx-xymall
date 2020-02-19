@@ -33,7 +33,7 @@ div
               div
                 .bill-btn.round(@click="jump('/pages/billRecycleDetail/main?no=' + item.no)") 恢复
     .text-center.c-gray.pt-100(v-else)
-      img.img-empty(src="/static/images/bill_empty.png")
+      empty-image(url="bill_empty.png", className="img-empty")
       .empty-content 您暂时没有相关合同
 </template>
 <script>
@@ -123,14 +123,14 @@ export default {
   right 0
   z-index 99
   // height 64px
-// .bill-box  
+// .bill-box
 .search-input
   background #F6F6F6
   padding 5px 10px
   border-radius 35px
 .bill-list
   border-bottom 1px #DCDCDC solid
-.bill-btn,.bill-red-btn
+.bill-btn, .bill-red-btn
   padding 5px 15px
   text-align center
   color #0081ff
@@ -141,5 +141,5 @@ export default {
   color #e54d42
 .bill-content
   height 100%
-  margin-top 108px   
+  margin-top 108px
 </style>

@@ -70,7 +70,7 @@ export default {
           data.pwd = encrptPwd
           this.setUser(data)
           this.configVal({ key: 'oldVersion', val: this.currentVersion })
-          this.getRemoteSearchHistory()
+          this.getRemoteSearchHistory(data)
           if (data.isnew) {
             this.canClick = true
             this.confirm({ title: '您是新用户，请先完成公司信息' }).then(res => {
@@ -90,7 +90,7 @@ export default {
               } else {
                 me.tab('/pages/index/main')
               }
-            }, 3000)
+            }, 2000)
           }
         }
       } catch (e) {
@@ -99,9 +99,9 @@ export default {
         this.canClick = true
       }
     },
-    async getRemoteSearchHistory () {
+    async getRemoteSearchHistory (userData) {
       try {
-        const data = await this.ironRequest(this.apiList.xy.searchHistory.url + '?user_id=' + this.currentUser.user_id, {}, this.apiList.xy.searchHistory.method, this)
+        const data = await this.ironRequest(this.apiList.xy.searchHistory.url + '?user_id=' + userData.user_id, {}, this.apiList.xy.searchHistory.method, this)
         const obj = this.currentUser
         obj.localSearchs = data.history === '' ? [] : JSON.parse(data.history)
         this.setUser(obj)

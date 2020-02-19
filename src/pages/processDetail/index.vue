@@ -75,9 +75,8 @@ export default {
   },
   watch: {
     processType (newVal, oldVal) {
-      debugger
       if (!this.pno) {
-        this.rowCount = [{height: '', width: '', length: '', sheet_count: ''}]
+        this.rowCount = [{ height: '', width: '', length: '', sheet_count: '' }]
       }
     }
   },
@@ -100,7 +99,6 @@ export default {
             }
             list.push(obj)
           })
-          debugger
           this.rowCount = list
         }
       }).catch(err => {
@@ -108,16 +106,16 @@ export default {
         this.showMsg()
       })
     } else {
-      this.rowCount = [{height: '', width: '', length: '', sheet_count: ''}]
+      this.rowCount = [{ height: '', width: '', length: '', sheet_count: '' }]
     }
   },
   methods: {
     delProcess () {
       const me = this
       if (!this.btnDisable) {
-        this.confirm({content: '您确定要删除吗?'}).then(() => {
+        this.confirm({ content: '您确定要删除吗?' }).then(() => {
           me.btnDisable = true
-          me.ironRequest('processDel.shtml', {process_no: this.pno}, 'post', me).then(resp => {
+          me.ironRequest('processDel.shtml', { process_no: this.pno }, 'post', me).then(resp => {
             if (resp && resp.returncode === '0') {
               me.showMsg('删除成功')
               setTimeout(() => {
@@ -141,14 +139,13 @@ export default {
     },
     pickerItemCb (type, idx) {
       if (type === 'add') {
-        this.rowCount.push({height: '', width: '', length: '', sheet_count: ''})
+        this.rowCount.push({ height: '', width: '', length: '', sheet_count: '' })
       } else {
         this.rowCount[idx] = null
       }
       this.$forceUpdate()
     },
     createProcess () {
-      debugger
       if (this.validateItemsNull()) {
         // 厚度
         const heigthStr = this.rowObj.height.toString()
@@ -190,7 +187,6 @@ export default {
       }
     },
     validateItemsNull () {
-      debugger
       let result = true
       let $myDate = new Date()
       let $month = $myDate.getMonth() + 1
@@ -244,15 +240,14 @@ export default {
 <style lang="stylus" scoped>
 .padding
   padding 10px 0
-
 .bottom-footer
   position fixed
   left 0
   right 0
-  bottom 0  
+  bottom 0
   z-index 6
 .process
-  padding-bottom 70px  
+  padding-bottom 70px
 .bg-red
   background #e54d42
 </style>

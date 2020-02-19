@@ -40,7 +40,7 @@ div
                       .bill-btn.round(@click="payBill(item)") 去付款
                       .bill-red-btn.round.margin-left-sm(@click="billCancel(item)") 取消
         .text-center.c-gray.pt-100(v-else)
-          img.img-empty(src="/static/images/bill_empty.png")
+          empty-image(url="bill_empty.png", className="img-empty")
           .empty-content 您暂时没有相关合同
 </template>
 <script>
@@ -50,11 +50,11 @@ export default {
     return {
       swiperCount: 0,
       billTab: [
-        {title: '全部', status: '0', data: [], isActive: true},
-        {title: '待付款', status: '1', data: [], isActive: false},
-        {title: '待补款', status: '7', data: [], isActive: false},
-        {title: '待提货', status: '6', data: [], isActive: false},
-        {title: '已完成', status: '5', data: [], isActive: false}
+        { title: '全部', status: '0', data: [], isActive: true },
+        { title: '待付款', status: '1', data: [], isActive: false },
+        { title: '待补款', status: '7', data: [], isActive: false },
+        { title: '待提货', status: '6', data: [], isActive: false },
+        { title: '已完成', status: '5', data: [], isActive: false }
       ],
       tabName: '0',
       currentPage: 0,
@@ -296,7 +296,7 @@ export default {
       if (this.tabName === '0') this.statisticRequest({ event: 'click_app_myorder_all_cancel' }, this)
       if (this.tabName === '1') this.statisticRequest({ event: 'click_app_myorder_needpay_cancel' }, this)
       const me = this
-      this.confirm({content: '您确定要取消合同吗？'}).then(() => {
+      this.confirm({ content: '您确定要取消合同吗？' }).then(() => {
         if (!me.btnDisable) {
           me.btnDisable = true
           // me.$ironLoad.show()
@@ -335,15 +335,14 @@ export default {
   right 0
   z-index 99
   height 98px
-// .bill-box  
+// .bill-box
 .search-input
   background #F6F6F6
   padding 5px 10px
   border-radius 35px
-
 .bill-list
   border-bottom 1px #DCDCDC solid
-.bill-btn,.bill-red-btn
+.bill-btn, .bill-red-btn
   padding 5px 10px
   text-align center
   color #0081ff

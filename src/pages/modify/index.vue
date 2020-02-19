@@ -27,7 +27,7 @@ div
                 .text-red(v-if="item.status === 18") 修改中
                 .bill-btn.round(v-else, @click="jump(`/pages/modifyDetail/main?id=${item.discussid}&type=${tabName}`)") {{tabName == '1' ? '申请修改' : '去确认'}}
     .text-center.c-gray.pt-100(v-else)
-      img.img-empty(src="/static/images/bill_empty.png")
+      empty-image(url="bill_empty.png", className="img-empty")
       div 您暂时没有相关合同           
 </template>
 <script>
@@ -37,8 +37,8 @@ export default {
     return {
       swiperCount: 0,
       billTab: [
-        {title: '可修改合同', status: '1', data: [], isActive: true},
-        {title: '修改中', status: '2', data: [], isActive: false}
+        { title: '可修改合同', status: '1', data: [], isActive: true },
+        { title: '修改中', status: '2', data: [], isActive: false }
       ],
       isTabDisabled: false,
       tabName: '1',
@@ -137,7 +137,7 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
-.bill-btn,.bill-red-btn
+.bill-btn, .bill-red-btn
   padding 5px 10px
   text-align center
   color #0081ff
@@ -158,7 +158,7 @@ export default {
     top 10px
     background #e6e6e6
 .nav .cu-item.cur
-  border-bottom none 
+  border-bottom none
   position relative
   &:after
     display block

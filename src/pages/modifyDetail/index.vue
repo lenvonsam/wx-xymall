@@ -59,7 +59,7 @@ div
                     count-step(v-model="bill.count", @input="rowCartCount(bill)", @blur="rowCartCount(bill)", :max="bill.amount_left")
                   .padding-left-xs {{bill.weight}}吨
     .text-center.c-gray.pt-100(v-else)
-      img.img-empty(src="/static/images/bill_empty.png")
+      empty-image(url="bill_empty.png", className="img-empty")
       .empty-content 您暂时没有相关合同
     .bottom-option.bg-white.flex.align-center.justify-between(v-if="isEdit")
       .flex.align-center(@click="choosedAll()")

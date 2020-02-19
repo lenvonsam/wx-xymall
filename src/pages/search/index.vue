@@ -43,7 +43,8 @@ export default {
   },
   methods: {
     ...mapActions([
-      'setUser'
+      'setUser',
+      'configVal'
     ]),
     deletePrompt () {
       const me = this
@@ -62,7 +63,9 @@ export default {
       }
       const index = this.filterArray.findIndex(itm => itm === this.searchWord.trim())
       if (index < 0) this.filterArray.unshift(this.searchWord.trim())
+      this.configVal({ key: 'tempObject', val: { search: this.searchWord } })
       this.setLocalSearch()
+      this.tab('/pages/mall/main')
     },
     setLocalSearch () {
       const user = Object.assign({}, this.currentUser)

@@ -21,7 +21,7 @@ div
               .col.ft-15 规格
               span {{item.standard}}
     .text-center.pt-100(v-else)
-      img.img-empty(src="/static/images/bill_empty.png")
+      empty-image(url="bill_empty.png", className="img-empty")
       .empty-content 您暂时没有加工数据
     .bottom-footer.bg-white.padding-sm
       .main-btn(@click="jump('/pages/askBuyCreate/main')") 发布求购
@@ -58,10 +58,10 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
-  .bottom-footer
-    position fixed
-    left 0
-    right 0
-    bottom 0  
-    z-index 6
+.bottom-footer
+  position fixed
+  left 0
+  right 0
+  bottom 0
+  z-index 6
 </style>

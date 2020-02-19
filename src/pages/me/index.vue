@@ -31,12 +31,19 @@ div
             .dot(v-if="rowCountObj[bicon.dotKey] > 0", :class="{'max': rowCountObj[bicon.dotKey] > 9}") {{rowCountObj[bicon.dotKey] > 99 ? '99+' : rowCountObj[bicon.dotKey]}}
           .padding-top-xs {{bicon.name}}
     .margin-top-sm.me-icon.bg-white(v-for="(cardItem, index) in cardList", :key="index")
-      .padding-sm.flex.solid-bottom.border-radius.align-center(v-for="(item, idx) in cardItem", :key="idx", @click="jump(item.url)")
+      .padding-sm.flex.solid-bottom.align-center(v-for="(item, idx) in cardItem", :key="idx", @click="jump(item.url)")
         .col
           .flex.align-center
             img(:src="item.imgPath")
             .padding-left-sm {{item.title}}
         .cuIcon-right.text-gray
+    .bg-white.me-icon.padding-sm.flex.solid-bottom.align-center.relative
+      button(open-type="contact", style="position: absolute; left:0;right: 0; top:0; bottom: 0; z-index: 10; background: transparent")
+      .col
+        .flex.align-center
+          img(src="/static/images/customer_icon.png")
+          .padding-left-sm 在线客服
+      .cuIcon-right.text-gray
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
@@ -53,8 +60,7 @@ export default {
           { title: '我的加工', imgPath: '/static/images/operating_icon.png', url: '/pages/process/main' },
           { title: '我的求购', imgPath: '/static/images/shop_icon.png', url: '/pages/askBuy/main' }
         ], [
-          { title: '用户设置', imgPath: '/static/images/wdwld.png', url: '/pages/account/setting/main' },
-          { title: '在线客服', imgPath: '/static/images/customer_icon.png' }
+          { title: '用户设置', imgPath: '/static/images/wdwld.png', url: '/pages/account/setting/main' }
         ]
       ],
       avatarDirection: 'none',
