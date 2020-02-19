@@ -14,21 +14,24 @@ div
           scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: pageHeight +'px'}")
             .pt-half-rem(v-for="(item,idx) in listData", :key="idx", :class="{'pb-half-rem': (idx == listData.length - 1)}")
               .bg-white
-                .row.padding(@click="chooseSameInvoiceNo(item)")
-                  .col.flex-25.flex.flex-center(v-if="tabName == '0' || tabName == '2'")
-                    img.choose-icon(src="/static/images/blue_check.png", v-if="item.checked")
-                    img.choose-icon(src="/static/images/btn_ck_n.png", v-else)
-                  .col.ft-14(:class="{'pl-5': tabName == '0' || tabName == '2'}")
-                    .pb-half-rem.c-gray.ft-14 {{item.contract_no}}
-                    .pb-half-rem {{item.title}}
-                    .text-gray
-                      span 重量：
-                      span.ml-5 {{item.weight}}吨
-                      span.ml-5 数量：
-                      span.ml-5 {{item.amount}}支
-                  .text-right(:class="tabName != '1' ? 'flex flex-direction justify-between' : ''")
+                .flex.padding(@click="chooseSameInvoiceNo(item)")
+                  //- .col.flex-25.flex.flex-center(v-if="tabName == '0' || tabName == '2'")
+                  .row.col
+                    .col.flex-25.flex.flex-center(v-if="tabName == '0' || tabName == '2'")
+                      img.choose-icon(src="/static/images/blue_check.png", v-if="item.checked")
+                      img.choose-icon(src="/static/images/btn_ck_n.png", v-else)
+                    .col.ft-14(:class="{'pl-5': tabName == '0' || tabName == '2'}")                      
+                      .pb-half-rem.c-gray.ft-14 {{item.contract_no}}
+                      .pb-half-rem {{item.title}}
+                      .text-gray
+                        span 重量：
+                        span.ml-5 {{item.weight}}吨
+                        span.ml-5 数量：
+                        span.ml-5 {{item.amount}}支
+                  .text-right.flex.flex-direction.align-end(:class="tabName == '2' ? 'justify-between' : 'justify-center'")
                     .text-blue.ft-18 ￥{{item.price}}
                     .invoice-detail-btn.margin-top-sm(v-if="tabName != '0' && item.price > 0", @click="jumpDetail(item)") 查看详情
+                    .text-gray(v-if="tabName == '2'") 吊费：{{item.lift_price}}
         .text-center.c-gray.pt-100(v-else)
           img.img-empty(src="/static/images/bill_empty.png")     
           .empty-content 您暂时没有相关发票
@@ -106,8 +109,6 @@ export default {
   },
   onShow () {
     this.pageHeight = this.screenHeight - 150
-  },
-  beforeMount () {
     if (this.tempObject.tabName) {
       this.tabName = this.tempObject.tabName
     }
@@ -189,8 +190,12 @@ export default {
       // this.configVal({key: 'tempObject', val: obj})
       // this.jump({path: '/invoice/detail', query: {id: this.tabName}})
       this.ironRequest('invoiceDetail.shtml?id=' + obj.id, {}, 'get', this).then(resp => {
-        this.configVal({ key: 'tempObject', val: resp })
-        this.jump('/pages/invoiceDetail/main?id=' + this.tabName)
+        if (resp.returncode === '0') {
+          this.configVal({ key: 'tempObject', val: resp })
+          this.jump(`/pages/invoiceDetail/main?id=${this.tabName}&name=查看详情`)
+        } else {
+          this.showMsg('查看失败')
+        }
       })
     },
     invoiceAction () {

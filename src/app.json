@@ -1,10 +1,21 @@
 {
   "pages": [
+    "pages/me/main",
+    "pages/askBuy/main",
+    "pages/askBuyCreate/main",
+    
+    "pages/process/main",
+    "pages/processDetail/main",
+    
+    
+    
+    "pages/ladbill/main",
+    "pages/ladbillDetail/main",
     "pages/index/main",
     "pages/modify/main",
     "pages/invoice/main",
     "pages/invoiceDetail/main",
-    "pages/me/main",
+    
     "pages/billRecycle/main",
     "pages/billRecycleDetail/main",
     "pages/bill/main",
