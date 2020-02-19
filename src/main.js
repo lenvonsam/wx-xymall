@@ -8,6 +8,7 @@ import mallItem from './components/MallItem.vue'
 import timeLine from './components/TimeLine.vue'
 import emptyImage from './components/EmptyImage.vue'
 import timeText from './components/TimeText.vue'
+import alert from './components/Alert.vue'
 
 Vue.config.productionTip = false
 App.mpType = 'app'
@@ -19,6 +20,7 @@ Vue.component('mallItem', mallItem)
 Vue.component('timeLine', timeLine)
 Vue.component('timeText', timeText)
 Vue.component('emptyImage', emptyImage)
+Vue.component('alert', alert)
 
 Vue.prototype.$store = store
 

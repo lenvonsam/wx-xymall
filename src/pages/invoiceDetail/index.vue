@@ -103,7 +103,6 @@ export default {
     }
   },
   beforeMount () {
-    debugger
     this.queryId = this.$root.$mp.query.id
     if (this.queryId === '0') {
       this.pageTitle = '申请发票'
@@ -205,16 +204,14 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
-.padding {
-  padding-top: 15px;
-  padding-bottom: 15px;
-}
-.border-bottom-line {
-  border-bottom: 1px solid #eee;
-}
+.padding
+  padding-top 15px
+  padding-bottom 15px
+.border-bottom-line
+  border-bottom 1px solid #eee
 .item
   padding 15px
   display flex
   justify-content space-between
-  align-items center  
+  align-items center
 </style>

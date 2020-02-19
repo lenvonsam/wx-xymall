@@ -120,7 +120,6 @@ export default {
     }
   },
   beforeMount () {
-    debugger
     if (this.tempObject.type) {
       this.pickWay = this.tempObject.type
       if (this.pickWay === 1) {

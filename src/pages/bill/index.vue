@@ -197,7 +197,6 @@ export default {
       })
     },
     selectTabs (item, idx) {
-      debugger
       this.tabName = item.status
       // this.scrollLeft = (index - 1) * 60
       this.swiperCount = idx
@@ -298,7 +297,6 @@ export default {
       if (this.tabName === '1') this.statisticRequest({ event: 'click_app_myorder_needpay_cancel' }, this)
       const me = this
       this.confirm({content: '您确定要取消合同吗？'}).then(() => {
-        debugger
         if (!me.btnDisable) {
           me.btnDisable = true
           // me.$ironLoad.show()

@@ -40,7 +40,14 @@
         "login/main",
         "register/main",
         "profile/main",
-        "companyInfo/main"
+        "companyInfo/main",
+        "twoTab/main",
+        "changePhone/main",
+        "setting/main",
+        "balance/main",
+        "charge/main",
+        "withdraw/main",
+        "balanceList/main"
       ]
     }
   ],

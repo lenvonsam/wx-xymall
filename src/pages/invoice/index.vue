@@ -222,7 +222,6 @@ export default {
             title,
             type
           }
-          debugger
           if (nos.split(',').length === 1) {
             this.ironRequest('invoiceDetail.shtml?id=' + filterArray[0].id, {}, 'get', this).then(resp => {
               if (resp.returncode === '0') {
@@ -317,7 +316,6 @@ export default {
       this.swiperCount = idx
     },
     swiperChange (e) {
-      debugger
       const idx = e.mp.detail.current
       console.log(idx)
       this.swiperCount = idx

@@ -287,7 +287,6 @@ export default {
       console.log('rowCartCount', item.count)
       console.log('rowCartWeight', item.weight)
       console.log('row', item)
-      debugger
       const lift = this.wh_lift.lift
       let isLift = this.wh_lift[item.wh_name]
       if (this.contractDetail.is_lift !== 1) {
@@ -346,7 +345,6 @@ export default {
     },
     loadData () {
       this.isLoad = false
-      debugger
       this.type = this.$root.$mp.query.type
       let apiUrl = 'contract_edit_detail_app.shtml'
       if (this.type === '2') {
@@ -356,7 +354,6 @@ export default {
         this.isLoad = true
         let goodsPriceNew = 0
         let liftPriceNew = 0
-        debugger
         if (resp.returncode === '0') {
           this.contractDetail = resp
           // this.contractDetail.status = 19

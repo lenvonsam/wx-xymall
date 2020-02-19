@@ -1,28 +1,37 @@
 <template lang="pug">
 div
   nav-bar(:title="pageTitle", :isBack="true")
-  .padding(v-if="pageType === 'notice'")
-    .bg-white.margin-bottom(v-for="(data,idx) in listData", :key="idx", style="box-shadow: 0px 0px 2.5px rgba(7,1,2,0.04)", @click="jump('/pages/h5/main?title=公告详情&type=noticeDetail&id=' + data.id)")
-      .padding.border-bottom-line
-        div {{data.title}}
-        .margin-top(style="color: #4d4d4d") 12333344555
-        .text-right.ft-12.text-gray.mt-5 2019-03-39 10:00
-      .padding.row.text-gray
-        .col 查看详情
-        .col.text-right
-          icon.adjust.cuIcon-right
-  .bg-white(v-else-if="pageType === 'noticeList'")
-    .row.padding-lr(v-for="(data, idx) in listData", :key="idx", @click="jumpDetail(data)")
-      .flex-60
-        img(:src="imgProxy + (data.type == 2 ? 'wl_icon.png' : 'xx_icon.png')", style="height: 100rpx; width: 100rpx", v-if="imgProxy")
-      .col.row.border-bottom-line(style="height: 140rpx")
-        .full-width
-          .row
-            .col {{data.title}}
-            .col.text-right
-              time-text(:content="data.time", v-if="data.time")
-          .mt-5.ft-12.text-gray.notice-line
-            div(v-html="data.content")
+  template(v-if="isLoad")
+    .padding(v-if="pageType === 'notice'")
+      .bg-white.margin-bottom(v-for="(data,idx) in listData", :key="idx", style="box-shadow: 0px 0px 2.5px rgba(7,1,2,0.04)", @click="jump('/pages/h5/main?title=公告详情&type=noticeDetail&id=' + data.id)")
+        .padding.border-bottom-line
+          div {{data.title}}
+          .margin-top(style="color: #4d4d4d") 12333344555
+          .text-right.ft-12.text-gray.mt-5 2019-03-39 10:00
+        .padding.row.text-gray
+          .col 查看详情
+          .col.text-right
+            icon.adjust.cuIcon-right
+    .bg-white(v-else-if="pageType === 'noticeList'")
+      .row.padding-lr(v-for="(data, idx) in listData", :key="idx", @click="jumpDetail(data)")
+        .flex-60
+          img(:src="imgProxy + (data.type == 2 ? 'wl_icon.png' : 'xx_icon.png')", style="height: 100rpx; width: 100rpx", v-if="imgProxy")
+        .col.row.border-bottom-line(style="height: 140rpx")
+          .full-width
+            .row
+              .col {{data.title}}
+              .col.text-right
+                time-text(:content="data.time", v-if="data.time")
+            .mt-5.ft-12.text-gray.notice-line
+              div(v-html="data.content")
+    .bg-white(v-else-if="pageType === 'queryWithdrawList'")
+      .padding.border-bottom-line(v-for="(data, idx) in listData", :key="idx")
+        .row
+          .col
+            .ft-16 {{data.status}}
+            .ft-12.margin-top-sm.text-gray.text-right {{data.time}}
+          .flex-100.ft-16.text-gray ￥{{data.price}}
+  time-line(v-else, type="mainres")
 </template>
 
 <script>
@@ -30,6 +39,7 @@ import { mapState, mapActions } from 'vuex'
 export default {
   data () {
     return {
+      isLoad: false,
       pageTitle: '',
       // notice 型云公告 noticeList 通知列表
       pageType: 'notice',
@@ -37,7 +47,8 @@ export default {
       listData: [],
       listMapKey: {
         'notice': 'notices',
-        'noticeList': 'notices'
+        'noticeList': 'notices',
+        'queryWithdrawList': 'withdraw'
       }
     }
   },
@@ -80,6 +91,7 @@ export default {
     },
     async getListData () {
       try {
+        if (this.currentPage === 0) this.isLoad = false
         let url = this.apiList.xy[this.pageType].url
         let params = {}
         if (this.pageType === 'notice') {
@@ -90,6 +102,7 @@ export default {
         }
         const data = await this.ironRequest(url, params, this.apiList.xy[this.pageType].method, this)
         console.log('get data', data)
+        this.isLoad = true
         const arr = data[this.listMapKey[this.pageType]]
         if (this.currentPage === 0 && arr.length > 0) {
           this.listData = arr

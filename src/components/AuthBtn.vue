@@ -27,6 +27,11 @@ export default {
       timeInterval: null
     }
   },
+  beforeMount () {
+    this.clearTime()
+    this.canGetCode = true
+    this.btnTxt = '发送验证码'
+  },
   methods: {
     getCode () {
       console.log('phone val', this.phone)

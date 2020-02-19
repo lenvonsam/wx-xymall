@@ -38,19 +38,13 @@ export default {
     return {
       jumpArray: [{
         name: '修改登录密码',
-        url: {
-          path: '/profile/update/loginPwd'
-        }
+        url: '/pages/account/twoTab/main'
       }, {
         name: '修改支付密码',
-        url: {
-          path: '/profile/update/payPwd'
-        }
+        url: '/pages/account/twoTab/main?type=payPwd'
       }, {
         name: '修改手机号码',
-        url: {
-          path: '/profile/update/phone'
-        }
+        url: '/pages/account/changePhone/main'
       }]
     }
   },

@@ -213,7 +213,7 @@ export default {
       const me = this
       this.confirm({ content: '您还未登录，去登录' }).then(() => {
         me.configVal({ key: 'tempObject', val: { preRoute: me.$root.$mp.appOptions.path } })
-        me.jump('/pages/login/main')
+        me.jump('/pages/account/login/main')
       })
       return
     }
@@ -404,7 +404,6 @@ export default {
         row.map(item => {
           idsList.push(item.cart_id)
         })
-        debugger
         this.confirm({ content: '您确定要删除吗?' }).then(() => {
           me.btnDisable = true
           me.ironRequest('cartDel.shtml', { cart_ids: idsList.toString() }, 'post', me).then(res => {
@@ -422,7 +421,6 @@ export default {
       }
     },
     loadCartData () {
-      debugger
       this.isLoad = false
       // user_id: 'MTAyMQ==',
       const me = this

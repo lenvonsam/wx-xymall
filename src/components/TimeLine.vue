@@ -31,13 +31,13 @@
         .animated-background.h-20.mt-10
           .placeholder-line(style="left: 60%; right: 0")
     template(v-else-if="type=='mainres'")
-      .bg-white.padding(v-for="(n,index) in 3", :class="{'border-bottom-line': index < 2}")
+      .bg-white.padding(v-for="(n,index) in 3", :class="{'border-bottom-line': index < 2}", :key="index")
         .animated-background.h-20
           .placeholder-line(style="left: 40%; right: 15%")
         .animated-background.h-20.mt-10
           .placeholder-line(style="left: 40%; right: 15%")
     template(v-else-if="type=='classify'")
-      .padding(v-for="(n,idx) in 3")
+      .padding(v-for="(n,idx) in 3", :key="idx")
         .row.bg-white
           .col.flex-100
             .animated-background.h-20
@@ -62,7 +62,7 @@
           .col.padding
             .animated-background.h-20
     template(v-else-if="type=='mallist'")
-      .padding.bg-white.border-bottom-line(v-for="n in 3")
+      .padding.bg-white.border-bottom-line(v-for="(n,idx) in 3", :key="idx")
         .row.padding-bottom-half
           .col.flex-25
             .animated-background.h-20
