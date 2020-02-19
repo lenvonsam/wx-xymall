@@ -12,7 +12,7 @@ export default {
     codeType: {
       type: Number,
       required: false,
-      default: 1 // 1注册 2忘记密码 3修改手机号（原手机） 4 修改手机号（新手机）5 登录密码 6支付
+      default: 1 // 1注册 2忘记密码 3修改手机号（原手机） 4 修改手机号（新手机）5 登录密码 6支付 7手机号登录
     },
     timeCount: {
       type: Number,

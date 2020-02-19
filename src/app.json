@@ -36,7 +36,8 @@
         "balance/main",
         "charge/main",
         "withdraw/main",
-        "balanceList/main"
+        "balanceList/main",
+        "phoneLogin/main"
       ]
     }
   ],

@@ -36,11 +36,9 @@ export default {
       currentUser: state => state.user.currentUser
     })
   },
-  beforeMount () {
-    console.log('beforeMount', this.currentUser)
-    if (this.currentUser.localSearchs) this.filterArray = this.currentUser.localSearchs
-  },
   onShow () {
+    this.filterArray = []
+    if (this.currentUser.localSearchs) this.filterArray = this.currentUser.localSearchs
     this.searchWord = ''
   },
   methods: {
@@ -53,6 +51,7 @@ export default {
         if (res === 'confirm') {
           me.filterArray = []
           me.setLocalSearch()
+          me.ironRequest(this.apiList.xy.searchHistory.url, { user_id: me.currentUser.user_id, history: JSON.stringify(me.filterArray) }, me.apiList.xy.searchHistory.method, me)
         }
       })
     },

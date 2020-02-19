@@ -6,8 +6,8 @@ div
       .bg-white.margin-bottom(v-for="(data,idx) in listData", :key="idx", style="box-shadow: 0px 0px 2.5px rgba(7,1,2,0.04)", @click="jump('/pages/h5/main?title=公告详情&type=noticeDetail&id=' + data.id)")
         .padding.border-bottom-line
           div {{data.title}}
-          .margin-top(style="color: #4d4d4d") 12333344555
-          .text-right.ft-12.text-gray.mt-5 2019-03-39 10:00
+          .margin-top.text-cut(style="color: #4d4d4d") {{data.summary}}
+          .text-right.ft-12.text-gray.margin-top-sm {{data.audittime}}
         .padding.row.text-gray
           .col 查看详情
           .col.text-right

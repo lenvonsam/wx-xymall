@@ -15,9 +15,9 @@
         input.no-border(placeholder="请输入密码", type="password", v-model="upwd")
     .row.margin-top
       .col.text-blue(@click="jump('/pages/account/register/main')") 立即注册
-      .col.text-right 忘记密码？
+      .col.text-right(@click="jump('/pages/account/phoneLogin/main?type=forgetPwd')") 忘记密码？
     .mt-50.main-btn(hover-class="hover-gray", @click="remoteLogin") 登录
-    .margin-top-sm.text-center.text-blue 手机验证登录
+    .margin-top-sm.text-center.text-blue(@click="jump('/pages/account/phoneLogin/main')") 手机验证登录
 
 
         
@@ -70,6 +70,7 @@ export default {
           data.pwd = encrptPwd
           this.setUser(data)
           this.configVal({ key: 'oldVersion', val: this.currentVersion })
+          this.getRemoteSearchHistory()
           if (data.isnew) {
             this.canClick = true
             this.confirm({ title: '您是新用户，请先完成公司信息' }).then(res => {
@@ -96,6 +97,16 @@ export default {
         console.log('err', e)
         this.showMsg(e)
         this.canClick = true
+      }
+    },
+    async getRemoteSearchHistory () {
+      try {
+        const data = await this.ironRequest(this.apiList.xy.searchHistory.url + '?user_id=' + this.currentUser.user_id, {}, this.apiList.xy.searchHistory.method, this)
+        const obj = this.currentUser
+        obj.localSearchs = data.history === '' ? [] : JSON.parse(data.history)
+        this.setUser(obj)
+      } catch (e) {
+        console.error(e)
       }
     }
   }
