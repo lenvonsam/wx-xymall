@@ -107,6 +107,7 @@
         .solid-top.padding(v-for="(item, index) in pickWayList")
           .text-bold.ft-15 {{item.title}}
           .text-gray.padding-top-sm {{item.content}}
+    alert(title="您还未登录，请先登录", v-model="alertShow", :cb="alertCb")
 </template>
 
 <script>
@@ -116,6 +117,7 @@ import timeLine from '@/components/TimeLine.vue'
 export default {
   data () {
     return {
+      alertShow: false,
       totalPrice: 0,
       totalWeight: 0,
       totalCount: 0,
@@ -185,42 +187,8 @@ export default {
     }
   },
   onShow () {
-    console.log('customBar', this.customBar)
-    // this.$nextTick(() => {
-    //   this.$parent.$on('cartEmpty', () => {
-    //     const me = this
-    //     if (!me.btnDisable) {
-    //       this.confirm({ content: '是否清空购物车' }).then(() => {
-    //         me.btnDisable = true
-    //         me.ironRequest('cartEmpty.shtml', { user_id: me.currentUser.user_id }, 'post', this).then(resp => {
-    //           if (resp.data.returncode === '0') {
-    //             me.carts = []
-    //             me.allChoosed = false
-    //             me.configVal({ key: 'cartCount', val: 0 })
-    //             me.showMsg('购物清空成功').then(() => {
-    //               me.btnDisable = false
-    //             })
-    //           } else {
-    //             me.btnDisable = false
-    //             me.showMsg(resp.data === undefined ? '网络异常' : resp.data.errormsg)
-    //           }
-    //         }).catch(err => {
-    //           console.log(err.message)
-    //           me.showMsg('网络异常')
-    //           me.btnDisable = false
-    //           me.allChoosed = false
-    //         })
-    //       })
-    //     }
-    //   })
-    // })
-
     if (!this.isLogin) {
-      const me = this
-      this.confirm({ content: '您还未登录，去登录' }).then(() => {
-        me.configVal({ key: 'tempObject', val: { preRoute: me.$root.$mp.appOptions.path } })
-        me.jump('/pages/account/login/main')
-      })
+      this.alertShow = true
       return
     }
     if (this.tempObject.type) {
@@ -238,6 +206,9 @@ export default {
     ...mapActions([
       'configVal'
     ]),
+    alertCb () {
+      this.jump('/pages/account/login/main')
+    },
     openEdit () {
       this.isEdit = !this.isEdit
     },

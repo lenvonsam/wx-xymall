@@ -16,7 +16,7 @@
       .flex-90.text-center(style="border-left: 1rpx solid #888")
         auth-btn(:phone="phone")
     .row.margin-top.ft-12
-      .flex-30
+      .flex-20
         checkbox(style="transform: scale(0.8,0.8)", :checked="acceptProtocol", color="#0081ff")
       .col
         span(@click="acceptProtocol = !acceptProtocol") 我已经阅读并同意

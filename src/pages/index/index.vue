@@ -11,9 +11,9 @@ div
       swiper-item.border-radius(v-for="(g,idx) in gallery", :key="idx")
         img.response(:src="imgOuterUrl + g.url", v-if="imgOuterUrl", style="height: 300rpx")
     time-line(v-else, type="gallery")
-  .row.bg-white.padding-tb
+  .row.bg-white.padding-bottom-sm
     .col.text-center(v-for="(icon,idx) in mainIcons", :key="idx", @click="iconJump(icon.path)")
-      img(:src="icon.url", style="width: 100rpx; height: 100rpx")
+      img(:src="icon.url", style="width: 106rpx; height: 112rpx")
       .mt-5 {{icon.title}}
   .bg-white.padding.margin-top-sm
     .row

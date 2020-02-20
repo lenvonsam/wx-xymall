@@ -107,26 +107,6 @@ export default {
       this.alertShow = true
     }
   },
-  mounted () {
-    this.$nextTick(() => {
-      const me = this
-      if (!this.isLogin) {
-        this.confirm({ content: '您还未登录，去登录' }).then(() => {
-          me.configVal({
-            key: 'tempObject',
-            val: { preRoute: me.$root.$mp.appOptions.path }
-          })
-          me.jump('/pages/account/login/main')
-        })
-      } else {
-        if (this.currentUser.isnew) {
-          this.confirm({ content: '您还需要完善公司信息才能正常操作' }).then(() => {
-            me.jump('/pages/account/companyUpdate/main')
-          })
-        }
-      }
-    })
-  },
   methods: {
     ...mapActions([
       'setUser',
@@ -249,6 +229,6 @@ export default {
 /deep/ button::after
   border 0px !important
 .item
-  height 45px  
+  height 45px
   line-height 45px
 </style>

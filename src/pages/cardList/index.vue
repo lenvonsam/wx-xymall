@@ -29,8 +29,9 @@ div
         .row
           .col
             .ft-16 {{data.status}}
-            .ft-12.margin-top-sm.text-gray.text-right {{data.time}}
-          .flex-100.ft-16.text-gray ￥{{data.price}}
+            .ft-12.margin-top-sm.text-gray {{data.time}}
+          .flex-100.ft-16.text-gray.text-right
+            span ￥{{data.price}}
   time-line(v-else, type="mainres")
 </template>
 
