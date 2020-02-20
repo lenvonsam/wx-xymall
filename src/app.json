@@ -11,7 +11,6 @@
     "pages/modify/main",
     "pages/invoice/main",
     "pages/invoiceDetail/main",
-
     "pages/billRecycle/main",
     "pages/billRecycleDetail/main",
     "pages/bill/main",

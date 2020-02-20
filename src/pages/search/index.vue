@@ -19,7 +19,7 @@ div
     .margin-top-xl.text-center(v-if="filterArray.length === 0") 
       empty-image(url="msg_empty.png")
     .margin-top(v-else)
-      .search-btn(v-for="(n,idx) in filterArray", :key="idx") {{n}}
+      .search-btn(v-for="(n,idx) in filterArray", :key="idx", @click="searchClick(n)") {{n}}
 </template>
 
 <script>
@@ -56,11 +56,18 @@ export default {
         }
       })
     },
-    searchClick () {
+    searchClick (searchName) {
+      if (typeof (searchName) === 'string') {
+        this.configVal({ key: 'tempObject', val: { search: searchName } })
+        this.setLocalSearch()
+        this.tab('/pages/mall/main')
+        return false
+      }
       if (this.searchWord.toString().trim().length === 0) {
         this.showMsg('请输入内容')
         return
       }
+      debugger
       const index = this.filterArray.findIndex(itm => itm === this.searchWord.trim())
       if (index < 0) this.filterArray.unshift(this.searchWord.trim())
       this.configVal({ key: 'tempObject', val: { search: this.searchWord } })

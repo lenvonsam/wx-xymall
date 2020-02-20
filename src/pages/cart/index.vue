@@ -326,49 +326,53 @@ export default {
         } else if (dongGangArray.length > 0) {
           msgs = ['常州东港库物资最快次日可提']
         }
-        this.confirm({ content: msgs + '是否确认提交' }).then(() => {
-          me.btnDisable = true
-          let price = filterArray.map(i => i.price).join(',')
-          let num = filterArray.map(i => `${i.count}`).join(',')
-          let billId = filterArray.map(i => `${i.cart_id}`).join(',')
-          let measureId = filterArray.map(i => `${i.measure_way_id}`).join(',')
-          // 增加重量字段，便于以后日志查询
-          let weightStr = filterArray.map(i => `${i.weight}`).join(',')
-          let body = {
-            user_id: me.currentUser.user_id,
-            amount_s: num,
-            o_priceStr: price,
-            orderIdStr: billId,
-            jl_types: measureId,
-            csg_way: me.pickway === 1 ? 51 : 1,
-            weightStr: weightStr
-          }
-          if (me.pickway === 1) {
-            body.mobile = me.pwPhone
-            body.end_addr = me.pwAddr + ' ' + me.pwAddrDetail
-          }
-          // me.$ironLoad.show()
-          me.ironRequest('generateOrder.shtml', body, 'post', this).then(resp => {
-            // me.$ironLoad.hide()
-            if (resp && resp.returncode === '0') {
-              me.btnDisable = false
-              if (resp.order_size > 1) {
-                me.confirm({ content: `您批量生成${resp.order_size}个合同，请到待付款依次支付` }).then(() => {
-                  me.jump('/pages/bill/main?tabName=1')
-                })
-              } else {
-                // 跳转到支付确认页面
-                me.jump(`/pages/pay/main?orderNo=${resp.order_no}&price=${resp.deal_price}&pageType=offlinePay`)
-              }
-            } else {
-              me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
-              me.btnDisable = false
+        this.confirm({ content: msgs + '是否确认提交' }).then((res) => {
+          if (res === 'confirm') {
+            me.btnDisable = true
+            let price = filterArray.map(i => i.price).join(',')
+            let num = filterArray.map(i => `${i.count}`).join(',')
+            let billId = filterArray.map(i => `${i.cart_id}`).join(',')
+            let measureId = filterArray.map(i => `${i.measure_way_id}`).join(',')
+            // 增加重量字段，便于以后日志查询
+            let weightStr = filterArray.map(i => `${i.weight}`).join(',')
+            let body = {
+              user_id: me.currentUser.user_id,
+              amount_s: num,
+              o_priceStr: price,
+              orderIdStr: billId,
+              jl_types: measureId,
+              csg_way: me.pickway === 1 ? 51 : 1,
+              weightStr: weightStr
             }
-          }).catch(err => {
-            me.btnDisable = false
+            if (me.pickway === 1) {
+              body.mobile = me.pwPhone
+              body.end_addr = me.pwAddr + ' ' + me.pwAddrDetail
+            }
+            // me.$ironLoad.show()
+            me.ironRequest('generateOrder.shtml', body, 'post', this).then(resp => {
             // me.$ironLoad.hide()
-            me.showMsg(err || '网络异常')
-          })
+              if (resp && resp.returncode === '0') {
+                me.btnDisable = false
+                if (resp.order_size > 1) {
+                  me.confirm({ content: `您批量生成${resp.order_size}个合同，请到待付款依次支付` }).then((res) => {
+                    if (res === 'confirm') {
+                      me.jump('/pages/bill/main?tabName=1')
+                    }
+                  })
+                } else {
+                // 跳转到支付确认页面
+                  me.jump(`/pages/pay/main?orderNo=${resp.order_no}&price=${resp.deal_price}&pageType=offlinePay`)
+                }
+              } else {
+                me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
+                me.btnDisable = false
+              }
+            }).catch(err => {
+              me.btnDisable = false
+              // me.$ironLoad.hide()
+              me.showMsg(err || '网络异常')
+            })
+          }
         })
       } else {
         this.showMsg('请选择结算商品', 'warning')
@@ -401,19 +405,20 @@ export default {
         row.map(item => {
           idsList.push(item.cart_id)
         })
-        this.confirm({ content: '您确定要删除吗?' }).then(() => {
-          me.btnDisable = true
-          me.ironRequest('cartDel.shtml', { cart_ids: idsList.toString() }, 'post', me).then(res => {
-            if (res.returncode === '0') {
-              me.confirm({ content: '删除成功' }).then(() => {
+        this.confirm({ content: '您确定要删除吗?' }).then((res) => {
+          if (res === 'confirm') {
+            me.btnDisable = true
+            me.ironRequest('cartDel.shtml', { cart_ids: idsList.toString() }, 'post', me).then(res => {
+              if (res.returncode === '0') {
+                this.showMsg('删除成功')
                 me.carts = me.carts.filter(item => {
                   return idsList.indexOf(item.cart_id) === -1
                 })
                 me.configVal({ key: 'cartCount', val: me.carts.length })
                 me.btnDisable = false
-              })
-            }
-          })
+              }
+            })
+          }
         })
       }
     },
