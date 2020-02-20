@@ -193,8 +193,7 @@ export default {
         this.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
       }
     }).catch(err => {
-      console.log(err.message)
-      this.showMsg()
+      this.showMsg(err || '网络异常')
     })
   },
   methods: {
@@ -242,9 +241,9 @@ export default {
       let arr = choosedList.filter(itm => itm.sold_out === 1)
       let arrSec = choosedList.filter(itm => itm.price.indexOf('--') >= 0)
       if (arr.length > 0) {
-        this.confirm({content: '商品货源不足,请去商城继续选购'})
+        this.showMsg({content: '商品货源不足,请去商城继续选购'})
       } else if (arrSec.length > 0) {
-        this.confirm({content: '商品9点之后开售'})
+        this.showMsg({content: '商品9点之后开售'})
       } else {
         if (!this.btnDisable) {
           let heFeiArray = choosedList.filter(itm => itm.wh_name.indexOf('合肥') >= 0)
@@ -257,49 +256,52 @@ export default {
           } else if (dongGangArray.length > 0) {
             msgs = '常州东港库物资最快次日可提'
           }
-          this.confirm({content: msgs + '一经结算将无法更改商品数量'}).then(() => {
-            me.btnDisable = true
-            let amounts = me.carts.map(itm => itm.count).join(',')
-            let prices = me.carts.map(itm => itm.price).join(',')
-            let ids = me.carts.map(itm => itm.id).join(',')
-            let measureWays = me.carts.map(itm => itm.measure_way_id).join(',')
-            let pickway = me.pickWay === 0 ? 1 : 51
-            let body = {
-              user_id: me.currentUser.user_id,
-              amount_s: amounts,
-              o_priceStr: prices,
-              jl_types: measureWays,
-              csg_way: pickway,
-              orderIdStr: ids
-            }
-            if (pickway === 51) {
-              body.mobile = me.pwPhone
-              body.end_addr = me.pwAddr + ' ' + me.pwAddrDetail
-            }
-            // me.$ironLoad.show()
-            me.ironRequest('generateOrder.shtml', body, 'post', me).then(resp => {
-              if (resp && resp.returncode === '0') {
-                me.btnDisable = false
-                if (resp.order_size > 1) {
-                  me.confirm({content: `您批量生成${resp.order_size}个合同，请到待付款依次支付`}).then(() => {
-                    me.redirect('/pages/bill/main?tabName=1')
-                  })
-                } else {
+          this.confirm({content: msgs + '一经结算将无法更改商品数量'}).then((res) => {
+            if (res === 'confirm') {
+              me.btnDisable = true
+              let amounts = me.carts.map(itm => itm.count).join(',')
+              let prices = me.carts.map(itm => itm.price).join(',')
+              let ids = me.carts.map(itm => itm.id).join(',')
+              let measureWays = me.carts.map(itm => itm.measure_way_id).join(',')
+              let pickway = me.pickWay === 0 ? 1 : 51
+              let body = {
+                user_id: me.currentUser.user_id,
+                amount_s: amounts,
+                o_priceStr: prices,
+                jl_types: measureWays,
+                csg_way: pickway,
+                orderIdStr: ids
+              }
+              if (pickway === 51) {
+                body.mobile = me.pwPhone
+                body.end_addr = me.pwAddr + ' ' + me.pwAddrDetail
+              }
+              // me.$ironLoad.show()
+              me.ironRequest('generateOrder.shtml', body, 'post', me).then(resp => {
+                if (resp && resp.returncode === '0') {
+                  me.btnDisable = false
+                  if (resp.order_size > 1) {
+                    me.confirm({content: `您批量生成${resp.order_size}个合同，请到待付款依次支付`}).then((res) => {
+                      if (res === 'confirm') {
+                        me.redirect('/pages/bill/main?tabName=1')
+                      }
+                    })
+                  } else {
                   // 跳转到支付确认页面
                   // me.jump({path: 'billConfirm', query: {order_id: resp.order_id, csg_way: isDelivery}})
-                  me.redirect(`/pages/pay/main?orderNo=${resp.order_no}&price=${me.totalObject.totalPrice}&pageType=offlinePay`)
+                    me.redirect(`/pages/pay/main?orderNo=${resp.order_no}&price=${me.totalObject.totalPrice}&pageType=offlinePay`)
+                  }
+                } else {
+                  me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
+                  me.btnDisable = false
                 }
-              } else {
-                me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
+              // me.$ironLoad.hide()
+              }).catch(err => {
+                // me.$ironLoad.hide()
                 me.btnDisable = false
-              }
-              // me.$ironLoad.hide()
-            }).catch(err => {
-              console.log(err.message)
-              // me.$ironLoad.hide()
-              me.btnDisable = false
-              me.showMsg()
-            })
+                me.showMsg(err)
+              })
+            }
           })
         }
       }
@@ -326,8 +328,10 @@ export default {
         this.showMsg('请选择需要删除的物资')
         return false
       }
-      this.confirm({content: '您确定要删除吗？'}).then(() => {
-        me.carts = list
+      this.confirm({content: '您确定要删除吗？'}).then((res) => {
+        if (res === 'confirm') {
+          me.carts = list
+        }
       })
     },
     jumpToPickway () {

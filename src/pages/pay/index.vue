@@ -134,8 +134,7 @@ export default {
         if (this.pageType === 'balance') this.chooseType = 'offpay'
       }
     }).catch(err => {
-      console.log(err.message)
-      this.showMsg()
+      this.showMsg(err || '网络异常')
     })
   },
   methods: {
@@ -189,6 +188,8 @@ export default {
                 body.contract_no = this.$route.query.contractNo
               }
               this.ironRequest(reqUrl, body, 'post', this).then(resp => {
+                console.log('res', resp)
+                debugger
                 if (resp.returncode === '0') {
                   this.confirm({content: '银行转账信息提交成功，请耐心等待审批'}).then(() => {
                     me.btnDisable = false
@@ -199,9 +200,8 @@ export default {
                   me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
                 }
               }).catch(err => {
-                console.log(err.message)
                 this.btnDisable = false
-                this.showMsg()
+                me.showMsg(err || '网络异常')
               })
             } else {
               // 余额充值
@@ -213,19 +213,21 @@ export default {
                 credent_pics: ''
               }
               this.ironRequest('recharge.shtml', body, 'post', this).then(resp => {
+                debugger
                 if (resp.returncode === '0') {
-                  this.confirm({content: '银行转账信息提交成功，请耐心等待审批'}).then(() => {
+                  this.confirm({content: '银行转账信息提交成功，请耐心等待审批'}).then((res) => {
+                    if (res === 'confirm') {
+                      me.back()
+                    }
                     me.btnDisable = false
-                    me.back()
                   })
                 } else {
                   me.btnDisable = false
                   me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
                 }
               }).catch(err => {
-                console.log(err.message)
                 this.btnDisable = false
-                this.showMsg()
+                me.showMsg(err || '网络异常')
               })
             }
           } else {
@@ -250,14 +252,18 @@ export default {
             me.ironRequest(reqUrl, body, 'post', me).then(res => {
               if (res && res.returncode === '0') {
                 if (me.pageType === 'offlinePay') {
-                  me.confirm({content: '支付成功！请联系司机去平台仓库提货!'}).then(() => {
+                  me.confirm({content: '支付成功！请联系司机去平台仓库提货!'}).then((res) => {
+                    if (res === 'confirm') {
+                      me.redirect('/pages/bill/main?tabName=6')
+                    }
                     me.btnDisable = false
-                    me.redirect('/pages/bill/main?tabName=6')
                   })
                 } else {
-                  me.alertDialog('支付成功!').then(() => {
+                  me.confirm('支付成功!').then((res) => {
+                    if (res === 'confirm') {
+                      me.redirect('/pages/bill/main?tabName=0')
+                    }
                     me.btnDisable = false
-                    me.redirect({ path: '/contract' })
                   })
                 }
               } else {
@@ -265,8 +271,7 @@ export default {
                 me.showMsg(res === undefined ? '网络异常' : res.errormsg)
               }
             }).catch(err => {
-              console.log(err.message)
-              me.showMsg()
+              me.showMsg(err)
               me.btnDisable = false
             })
           }

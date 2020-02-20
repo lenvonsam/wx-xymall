@@ -306,9 +306,8 @@ export default {
         }
         this.isTabDisabled = false
       }).catch(err => {
-        console.log(err.message)
         this.isTabDisabled = false
-        this.showMsg()
+        me.showMsg(err || '网络异常')
       })
     },
     selectTabs (item, idx) {

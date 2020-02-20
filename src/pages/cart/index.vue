@@ -260,8 +260,7 @@ export default {
             me.btnDisable = false
           }
         }).catch(err => {
-          console.log(err.message)
-          me.showMsg('网络异常')
+          me.showMsg(err || '网络异常')
           me.btnDisable = false
         })
       })
@@ -281,8 +280,7 @@ export default {
               me.btnDisable = false
             }
           }).catch(err => {
-            console.log(err.message)
-            me.showMsg('网络异常')
+            me.showMsg(err || '网络异常')
             me.btnDisable = false
           })
         })
@@ -367,10 +365,9 @@ export default {
               me.btnDisable = false
             }
           }).catch(err => {
-            console.log(err.message)
             me.btnDisable = false
             // me.$ironLoad.hide()
-            me.showMsg()
+            me.showMsg(err || '网络异常')
           })
         })
       } else {
@@ -498,9 +495,8 @@ export default {
           // if (done) done()
         }
       }).catch(err => {
-        console.log(err.message)
         this.isLoad = true
-        this.msgShow()
+        me.showMsg(err || '网络异常')
         // if (done) done()
       })
     }

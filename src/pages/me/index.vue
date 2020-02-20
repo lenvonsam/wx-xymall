@@ -149,7 +149,7 @@ export default {
             window.location.href = url
           }
         }).catch(err => {
-          console.log(err.message)
+          console.log(err)
           me.confirm('在线客服忙，是否要联系人工客服').then(() => {
             window.location.href = 'tel://4008788361'
           })

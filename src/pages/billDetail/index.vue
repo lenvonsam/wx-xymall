@@ -164,8 +164,7 @@ export default {
         }
       }
     }).catch(err => {
-      console.log(err.message)
-      this.showMsg()
+      this.showMsg(err || '网络异常')
     })
   },
   methods: {
@@ -177,24 +176,28 @@ export default {
       this.statisticRequest({ event: 'click_app_myorder_detail_cancel' }, this)
       const me = this
       if (!this.btnDisable) {
-        this.confirm({content: '您确定要取消合同吗？'}).then(() => {
-          me.btnDisable = true
-          me.ironRequest('cancelOrder.shtml', { user_id: me.currentUser.user_id, discussid: me.billDetail.discussid }, 'post', me).then(resp => {
-            if (resp && resp.returncode === '0') {
-              me.confirm({content: '合同取消成功'}).then(() => {
+        this.confirm({content: '您确定要取消合同吗？'}).then((res) => {
+          if (res === 'confirm') {
+            me.btnDisable = true
+            me.ironRequest('cancelOrder.shtml', { user_id: me.currentUser.user_id, discussid: me.billDetail.discussid }, 'post', me).then(resp => {
+              if (resp && resp.returncode === '0') {
+                me.confirm({content: '合同取消成功'}).then((res) => {
+                  if (res === 'confirm') {
+                    me.btnDisable = false
+                    setTimeout(() => {
+                      me.back()
+                    }, 3000)
+                  }
+                })
+              } else {
+                me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
                 me.btnDisable = false
-                setTimeout(() => {
-                  me.back()
-                }, 3000)
-              })
-            } else {
-              me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
-              me.btnDisable = false
-            }
-          })
+              }
+            })
+          }
         }, err => {
           console.log(err)
-          me.showMsg()
+          me.showMsg(err)
           me.btnDisable = false
         })
       }

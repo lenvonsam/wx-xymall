@@ -105,12 +105,11 @@ export default {
             this.currentPage--
           }
         } else {
-          this.msgShow(resp === undefined ? '网络异常' : resp.errormsg)
+          this.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
           this.isload = false
         }
       }).catch(err => {
-        console.log(err.message)
-        this.msgShow()
+        this.showMsg(err || '网络异常')
       })
     }
   }

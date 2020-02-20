@@ -127,8 +127,7 @@ export default {
               me.showMsg(resp === undefined ? '网路异常' : resp.errormsg)
             }
           }).catch(err => {
-            console.log(err.message)
-            me.showMsg()
+            me.showMsg(err || '网络异常')
             me.btnDisable = false
           })
         })

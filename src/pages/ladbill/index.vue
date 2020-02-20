@@ -114,8 +114,7 @@ export default {
               me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
             }
           }).catch(err => {
-            console.log(err.message)
-            me.showMsg()
+            me.showMsg(err || '网络异常')
           })
         })
       }
@@ -135,8 +134,7 @@ export default {
               this.btnDisable = false
             }
           }).catch(err => {
-            console.log(err.message)
-            this.showMsg()
+            me.showMsg(err || '网络异常')
             this.btnDisable = false
           })
         }
@@ -213,8 +211,7 @@ export default {
           this.isload = true
         }
       }).catch(err => {
-        console.log(err.message)
-        this.showMsg('网络异常')
+        me.showMsg(err || '网络异常')
         this.isload = true
       })
     }
