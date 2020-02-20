@@ -42,7 +42,8 @@ export default {
   },
   computed: {
     ...mapState({
-      currentVersion: state => state.currentVersion
+      currentVersion: state => state.currentVersion,
+      currentUser: state => state.user.currentUser
     })
   },
   components: {
@@ -108,15 +109,15 @@ export default {
               me.resetVal()
               me.setUser(data)
               me.configVal({ key: 'oldVersion', val: me.currentVersion })
-              me.getRemoteSearchHistory()
+              me.getRemoteSearchHistory(data)
               if (data.isnew) {
                 me.confirm({ title: '您是新用户，请先完成公司信息' }).then(res => {
                   if (res === 'confirm') {
-                    me.showMsg('jump to company profile')
+                    me.jump('/pages/account/companyUpdate/main')
                   }
                 })
               } else {
-                me.toHome()
+                me.tab('/pages/index/main')
               }
             } else {
               me.resetVal()
@@ -129,9 +130,9 @@ export default {
         this.canClick = true
       }
     },
-    async getRemoteSearchHistory () {
+    async getRemoteSearchHistory (userData) {
       try {
-        const data = await this.ironRequest(this.apiList.xy.searchHistory.url + '?user_id=' + this.currentUser.user_id, {}, this.apiList.xy.searchHistory.method, this)
+        const data = await this.ironRequest(this.apiList.xy.searchHistory.url + '?user_id=' + userData.user_id, {}, this.apiList.xy.searchHistory.method, this)
         const obj = this.currentUser
         obj.localSearchs = data.history === '' ? [] : JSON.parse(data.history)
         this.setUser(obj)

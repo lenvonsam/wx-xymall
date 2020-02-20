@@ -15,6 +15,7 @@ export default {
     queryWithdrawList: { url: 'queryWithdrawList.shtml', method: 'get' },
     creditRecordList: { url: 'creditRecordList.shtml', method: 'post' },
     companyInfo: { url: 'companyInformation.shtml', method: 'get' },
+    companyUpdate: { url: 'companyUpdate.shtml', method: 'post' },
     trend: { url: 'trends.shtml', method: 'get' },
     login: { url: 'userLogin.shtml', method: 'post' },
     smsLogin: { url: 'smsLogin.shtml', method: 'post' },

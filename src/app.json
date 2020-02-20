@@ -44,7 +44,8 @@
         "charge/main",
         "withdraw/main",
         "balanceList/main",
-        "phoneLogin/main"
+        "phoneLogin/main",
+        "companyUpdate/main"
       ]
     }
   ],

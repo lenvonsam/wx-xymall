@@ -36,7 +36,8 @@ export default {
   },
   computed: {
     ...mapState({
-      currentVersion: state => state.currentVersion
+      currentVersion: state => state.currentVersion,
+      currentUser: state => state.user.currentUser
     })
   },
   onShow () {
@@ -73,10 +74,10 @@ export default {
           this.getRemoteSearchHistory(data)
           if (data.isnew) {
             this.canClick = true
+            const me = this
             this.confirm({ title: '您是新用户，请先完成公司信息' }).then(res => {
               if (res === 'confirm') {
-                // jump to company profile
-                this.showMsg('jump to company profile')
+                me.jump('/pages/account/companyUpdate/main')
               }
             })
           } else {
@@ -103,7 +104,7 @@ export default {
       try {
         const data = await this.ironRequest(this.apiList.xy.searchHistory.url + '?user_id=' + userData.user_id, {}, this.apiList.xy.searchHistory.method, this)
         const obj = this.currentUser
-        obj.localSearchs = data.history === '' ? [] : JSON.parse(data.history)
+        obj.localSearchs = data.history === undefined ? [] : JSON.parse(data.history)
         this.setUser(obj)
       } catch (e) {
         console.error(e)

@@ -251,6 +251,8 @@ export default {
           const filePath = res.tempFilePaths[0]
           const fileType =
             filePath.indexOf('.png') > 0 ? 'image/png' : 'image/jpeg'
+          let suffix = '.png'
+          if (fileType === 'image/jpeg') suffix = '.jpg'
           mpvue.getFileSystemManager().readFile({
             filePath: filePath,
             encoding: 'base64',
@@ -260,7 +262,7 @@ export default {
                 method: 'POST',
                 data: {
                   model: model,
-                  filename: model + '-temp',
+                  filename: model + '-temp' + suffix,
                   filetype: fileType,
                   encryptfile: fdata.data
                 },

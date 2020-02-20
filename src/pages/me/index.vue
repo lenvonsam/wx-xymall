@@ -44,6 +44,7 @@ div
           img(src="/static/images/customer_icon.png")
           .padding-left-sm 在线客服
       .cuIcon-right.text-gray
+    alert(title="您还未登录，请先登录", v-model="alertShow", :cb="alertCb")
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
@@ -66,7 +67,8 @@ export default {
       avatarDirection: 'none',
       // 全部订单下面一行的数字显示
       rowCountObj: {},
-      showNoticeIcon: false
+      showNoticeIcon: false,
+      alertShow: false
     }
   },
   computed: {
@@ -76,13 +78,13 @@ export default {
       isLogin: state => state.user.isLogin,
       currentUser: state => state.user.currentUser,
       tempObject: state => state.tempObject,
-      imgOuterUrl: state => state.imgOuterUrl,
       serviceCall: state => state.serviceCall,
       chatUrl: state => state.chatUrl
     })
   },
   onShow () {
     this.showNoticeIcon = false
+    this.alertShow = false
     if (this.isLogin) {
       this.showNoticeIcon = this.currentUser.message_switch === '1'
       // this.ironRequest('toOperCounts.shtml?user_id=' + this.currentUser.user_id, {}, 'get', this).then(resp => {
@@ -98,6 +100,8 @@ export default {
           this.setUser(obj)
         }
       })
+    } else {
+      this.alertShow = true
     }
   },
   mounted () {
@@ -114,7 +118,7 @@ export default {
       } else {
         if (this.currentUser.isnew) {
           this.confirm({ content: '您还需要完善公司信息才能正常操作' }).then(() => {
-            me.jump({ path: '/user/auth' })
+            me.jump('/pages/account/companyUpdate/main')
           })
         }
       }
@@ -125,6 +129,9 @@ export default {
       'setUser',
       'configVal'
     ]),
+    alertCb () {
+      this.jump('/pages/account/login/main')
+    },
     jumpToPage (obj) {
       console.log('jumpToPage', obj)
       if (obj.url.path === '/bill/modify') this.statisticRequest({ event: 'click_app_me_modify' }, this)
@@ -236,4 +243,6 @@ export default {
   border 2px solid #e54d42
   border-radius 50%
   font-weight 700
+/deep/ button::after
+  border 0px !important
 </style>

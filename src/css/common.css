@@ -41,6 +41,9 @@ page,
   overflow: auto;
   z-index: 10;
 }
+.fixed {
+  position: fixed;
+}
 
 .text-black,
 .line-black,
@@ -104,6 +107,14 @@ page,
 
 .ft-25 {
   font-size: 50rpx;
+}
+
+.flex-10 {
+  flex: 0 0 20rpx;
+}
+
+.flex-15 {
+  flex: 0 0 30rpx;
 }
 
 .flex-20 {
@@ -247,9 +258,6 @@ page,
   padding-top: 10rpx;
   font-size: 28rpx;
   color: #c8c8c8;
-}
-.flex-100 {
-  flex: 0 0 100;
 }
 .sub-mark {
   display: inline-block;
