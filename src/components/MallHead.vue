@@ -115,12 +115,7 @@ export default {
   },
   watch: {
     mallTabVal () {
-      this.tabVal = this.mallTabVal
-      const idx = this.sortList[0].data.findIndex(item => {
-        return this.mallTabVal === item.id
-      })
-      this.sortList[0].data[idx].isActive = true
-      this.selectTab(this.sortList[0].data[idx], idx)
+      this.mallTabValChange()
     }
     // searchVal (newVal) {
     //   console.log('search', newVal)
@@ -128,16 +123,22 @@ export default {
     //   this.throttle(this.searchChange, 300)
     // }
   },
+  beforeMount () {
+    this.sortCb('name')
+  },
   onShow () {
     console.log('tempObject', this.tempObject.search)
     this.searchVal = this.tempObject.search || ''
   },
-  mounted () {
-    this.$nextTick(() => {
-      this.sortCb('name')
-    })
-  },
   methods: {
+    mallTabValChange () {
+      this.tabVal = this.mallTabVal
+      const idx = this.sortList[0].data.findIndex(item => {
+        return this.mallTabVal === item.id
+      })
+      this.sortList[0].data[idx].isActive = true
+      this.selectTab(this.sortList[0].data[idx], idx)
+    },
     filterCancel (sortIdx) {
       if (this.temporary.length > 0) {
         this.temporary.map(item => {
@@ -193,19 +194,12 @@ export default {
     selectTab (item, index) {
       this.tabVal = item.id
       this.scrollLeft = (index - 1) * 60
-      // const idx = this.sortList[0].data.findIndex(item => {
-      //   return this.tabVal === item.id
-      // })
       this.sortList[0].data.map((item, index) => {
         item.isActive = this.tabVal === item.id
       })
-      // this.sortList[0].data[idx].isActive = true
-      // this.selectTab(this.sortList[0].data[idx], idx)
       this.$emit('selectTab', item.id)
     },
     sortCb (key) {
-      // let result = (key !== 'name' && key !== 'more')
-      // if (result) {
       if (this.tabVal) {
         this.queryObject.name = this.tabVal
       }
@@ -220,7 +214,6 @@ export default {
 
           if (arr.length > 0) {
             arr.unshift({ name: '全部', isActive: false })
-            console.log('sortCb', arr)
             const idx = this.sortList.findIndex((item) => {
               return item.key === key
             })
@@ -249,9 +242,9 @@ export default {
           } else {
             this.activeTab = key
           }
+          this.mallTabValChange()
         }
       })
-      // }
     },
     sortRest (key) {
       const keyArray = ['area', 'name', 'material', 'origin', 'more']

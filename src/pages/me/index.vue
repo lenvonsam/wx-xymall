@@ -28,7 +28,8 @@ div
         .col(v-for="(bicon, biconIdx) in billIcons", :key="biconIdx", @click="jumpBicon(bicon.url)")
           .relative.contract-img
             img(:src="bicon.icon")
-            .dot(v-if="rowCountObj[bicon.dotKey] > 0", :class="{'max': rowCountObj[bicon.dotKey] > 9}") {{rowCountObj[bicon.dotKey] > 99 ? '99+' : rowCountObj[bicon.dotKey]}}
+            .dot(v-if="rowCountObj[bicon.dotKey] > 0", :class="{'max': rowCountObj[bicon.dotKey] > 9}") 
+              label {{rowCountObj[bicon.dotKey] > 99 ? '99+' : rowCountObj[bicon.dotKey]}}
           .padding-top-xs {{bicon.name}}
     .margin-top-sm.me-icon.bg-white(v-for="(cardItem, index) in cardList", :key="index")
       .item.padding-sm.flex.align-center(v-for="(item, idx) in cardItem", :key="idx", @click="jumpToPage(item.url)")
@@ -240,12 +241,13 @@ export default {
   text-align center
   font-size 12px
   display inline-block
-  height 18px
-  width 18px
-  line-height 18px
+  height 22px
+  width 22px
   border 2px solid #e54d42
+  box-sizing content-box
   border-radius 50%
   font-weight 700
+  line-height 22px
 /deep/ button::after
   border 0px !important
 .item
