@@ -27,7 +27,7 @@
           scroll-view.scroll-view(scroll-y, :style="{top:customBar + 40 + 'px', height: screenHeight - customBar - 132 + 'px'}")
             .cart-items(v-for="(cart, cartIdx) in carts", :key="cartIdx")
               .cart-item.padding-sm
-                .flex.flex-center.align-center
+                .flex.flex-center.align-center.ft-15.text-bold
                   .col.flex-25(@click="cart.choosed = !cart.choosed", style="padding-top: 5px;")
                     img.choose-icon(src="/static/images/blue_check.png", v-if="cart.choosed")
                     img.choose-icon(src="/static/images/btn_ck_n.png", v-else)
@@ -44,7 +44,8 @@
                         span.ml-5 {{cart.wh_name}}
                         span.sub-mark.ml-5 {{cart.product_supply}}
                       .pt-5
-                        span 吊费:
+                        span {{cart.amount_left}}支 / {{cart.weight_left}}吨
+                        span.padding-left-xs 吊费:
                         span.ml-10 {{cart.price === '--' ? '--' : cart.lift_charge > 0 ? '￥' + cart.lift_charge + '/吨' : cart.lift_charge == 0 ? '无' : '线下结算'}}
                       .pt-5(v-if="cart.tolerance_range || cart.weight_range")
                         span(v-if="cart.tolerance_range") 公差范围:
@@ -61,7 +62,7 @@
                         .flex.padding-xs.justify-end.align-end
                           .col(style="flex: 0 0 60px;")
                             count-step(v-model="cart.count", @click.native="rowCartCount(cart)", @blur="rowCartCount(cart)", :max="cart.amount_left")
-                          .padding-left-xs {{cart.countWeight}}吨
+                          .padding-left-xs {{cart.countWeight}}吨 
                   
             .pb-10(v-if="soldCarts.length > 0", :class="{'pt-10': carts.length === 0}")
               .bg-white
@@ -97,7 +98,7 @@
           .text-right.flex.justify-end
             span 合计：
             b.c-red ￥{{totalPrice}}
-          .text-right.ft-12(style="color:#999;") 共{{totalCount}}件 ，{{totalWeight}}吨
+          .text-right.ft-12(style="color:#999;") 共{{totalCount}}件 ，{{totalWeight}}吨，吊费: {{totalLiftCharge}}
         .cart-settle-btn(@click="goToSettle")
           .ft-20
             span {{isEdit ? '删除' : '结算'}}
@@ -160,17 +161,22 @@ export default {
         this.totalCount = filterArray.length
         this.totalPrice = 0
         this.totalWeight = 0
+        this.totalLiftCharge = 0
         if (filterArray.length > 0) {
           filterArray.map(itm => {
             if (itm.price.indexOf('--') < 0) {
               if (Number(itm.lift_charge) > 0) {
-                this.totalPrice += itm.price * Number((itm.count * itm.weight).toFixed(3)) + (Number((itm.count * itm.weight).toFixed(3)) * itm.lift_charge)
+                const countWeight = Number((itm.count * itm.weight).toFixed(3))
+                const countLiftWeight = countWeight * itm.lift_charge
+                this.totalPrice += itm.price * countWeight + countLiftWeight
+                this.totalLiftCharge += countLiftWeight
               } else {
                 this.totalPrice += itm.price * Number((itm.count * itm.weight).toFixed(3))
               }
               this.totalWeight += Number((itm.weight * itm.count).toFixed(3))
             }
           })
+          this.totalLiftCharge = Number(this.totalLiftCharge).toFixed(3)
           this.totalPrice = Number(this.totalPrice).toFixed(2)
           this.totalWeight = Number(this.totalWeight).toFixed(3)
         }

@@ -35,9 +35,9 @@
           .blue-buy(v-if="item.max_count == 0",style="background:#f44336!important", @click="cb(item, 'notice', $event)") 到货通知
           .blue-buy(@click="cb(item, 'cart', $event)", v-else) 购买
     template(v-else)
-      .text-bold.ft-15
-        span {{item[mallTypeObject[itemType].name]}}
-        span {{item[mallTypeObject[itemType].supply]}}
+      .ft-15.row
+        span.text-bold {{item[mallTypeObject[itemType].name]}}
+        .supply.margin-left-sm {{item[mallTypeObject[itemType].supply]}}
       .text-bold
         span {{item[mallTypeObject[itemType].standard]}}
       .text-gray
@@ -46,9 +46,9 @@
         span.ml-8 {{item[mallTypeObject[itemType].wh_name]}}
       .text-gray
         span(v-if="item[mallTypeObject[itemType].max_count] > 0") {{item[mallTypeObject[itemType].max_count]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
-      .text-blue ￥{{item[mallTypeObject[itemType].price]}}
+      .text-blue.ft-15.text-bold ￥{{item[mallTypeObject[itemType].price]}}
       .text-gray.flex
-        .ft-12.col ({{weightMark}})
+        .ft-11.col ({{weightMark}})
         .text-right.ft-14
           .blue-buy(v-if="item.max_count == 0",style="background:#f44336!important", @click="cb(item, 'notice', $event)") 到货通知
           .blue-buy(@click="cb(item, 'cart', $event)", v-else) 购买
@@ -163,4 +163,11 @@ export default {
   margin-bottom 15px
   .blue-buy
     padding-top 3px
+.supply
+  background #F6F6F6
+  padding 0 8px
+  text-align center
+  font-size 14px
+  border-radius 10px
+  color #262626
 </style>

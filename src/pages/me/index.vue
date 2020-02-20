@@ -31,11 +31,11 @@ div
             .dot(v-if="rowCountObj[bicon.dotKey] > 0", :class="{'max': rowCountObj[bicon.dotKey] > 9}") {{rowCountObj[bicon.dotKey] > 99 ? '99+' : rowCountObj[bicon.dotKey]}}
           .padding-top-xs {{bicon.name}}
     .margin-top-sm.me-icon.bg-white(v-for="(cardItem, index) in cardList", :key="index")
-      .padding-sm.flex.solid-bottom.align-center(v-for="(item, idx) in cardItem", :key="idx", @click="jumpToPage(item.url)")
+      .item.padding-sm.flex.align-center(v-for="(item, idx) in cardItem", :key="idx", @click="jumpToPage(item.url)")
         .col
-          .flex.align-center
+          .row
             img(:src="item.imgPath")
-            .padding-left-sm {{item.title}}
+            .margin-left-sm.col.solid-bottom {{item.title}}
         .cuIcon-right.text-gray
     .bg-white.me-icon.padding-sm.flex.solid-bottom.align-center.relative
       button(open-type="contact", style="position: absolute; left:0;right: 0; top:0; bottom: 0; z-index: 10; background: transparent")
@@ -248,4 +248,7 @@ export default {
   font-weight 700
 /deep/ button::after
   border 0px !important
+.item
+  height 45px  
+  line-height 45px
 </style>
