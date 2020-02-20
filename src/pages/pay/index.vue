@@ -143,7 +143,7 @@ export default {
     },
     backInfo () {
       const me = this
-      this.confirm({content: '您的合同在120min内未支付将做违约处理，请尽快完成支付，确认要离开收银台？'}).then(() => {
+      this.confirm({ content: '您的合同在120min内未支付将做违约处理，请尽快完成支付，确认要离开收银台？' }).then(() => {
         me.back()
       })
     },
@@ -158,7 +158,7 @@ export default {
         let encyptPwd = me.base64Str(this.payPwd)
         const msgs = '磅计物资提货时，如需实提补款，平台将从余额扣取相应金额'
         console.log('1')
-        this.confirm({content: msgs}).then(() => {
+        this.confirm({ content: msgs }).then(() => {
           console.log(this.chooseType)
           if (this.chooseType === 'offpay') {
             // 线下转账/或预约支付
@@ -189,9 +189,8 @@ export default {
               }
               this.ironRequest(reqUrl, body, 'post', this).then(resp => {
                 console.log('res', resp)
-                debugger
                 if (resp.returncode === '0') {
-                  this.confirm({content: '银行转账信息提交成功，请耐心等待审批'}).then(() => {
+                  this.confirm({ content: '银行转账信息提交成功，请耐心等待审批' }).then(() => {
                     me.btnDisable = false
                     me.back()
                   })
@@ -213,9 +212,8 @@ export default {
                 credent_pics: ''
               }
               this.ironRequest('recharge.shtml', body, 'post', this).then(resp => {
-                debugger
                 if (resp.returncode === '0') {
-                  this.confirm({content: '银行转账信息提交成功，请耐心等待审批'}).then((res) => {
+                  this.confirm({ content: '银行转账信息提交成功，请耐心等待审批' }).then((res) => {
                     if (res === 'confirm') {
                       me.back()
                     }
@@ -252,7 +250,7 @@ export default {
             me.ironRequest(reqUrl, body, 'post', me).then(res => {
               if (res && res.returncode === '0') {
                 if (me.pageType === 'offlinePay') {
-                  me.confirm({content: '支付成功！请联系司机去平台仓库提货!'}).then((res) => {
+                  me.confirm({ content: '支付成功！请联系司机去平台仓库提货!' }).then((res) => {
                     if (res === 'confirm') {
                       me.redirect('/pages/bill/main?tabName=6')
                     }
@@ -285,137 +283,107 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
-  .h-16 {
-  height: 16px;
-}
-.mt-3 {
-  margin-top: 3px;
-}
-.pay-head {
-  color: #fff;
-  .section-one {
-    padding: 10px 20px;
-    .balance {
-      font-size: 38px;
-      font-weight: bold;
-      padding: 10px 0;
-      text-align: center;
-      overflow: hidden;
-    }
-  }
-  .section-footer {
-    text-align: center;
-    padding-bottom: 10px;
-    .add-pay {
-      padding: 10px;
-      background: rgb(254, 252, 238);
-      width: 30px;
-      border-radius: 15px;
-      margin: 0 auto;
-      color: #f95353;
-    }
-    .pay-info {
-      padding: 15px;
-      width: 200px;
-      border-radius: 3px;
-      margin: 0 auto;
-      background: rgba(157, 200, 255, 0.5);
-    }
-  }
-}
-.pay-body {
-  padding: 10px;
-  .input-area {
-    background: #fff;
-    padding: 20px 16px;
-    font-size: 15px;
-    input {
-      border: none;
-      outline: none;
-    }
-  }
-  .pay-area {
-    padding: 20% 0rem 10px 0rem;
-  }
-  .offline-pay-area {
-    .head {
-      padding: 10px 0rem;
-    }
-    .body {
-      background: #fff;
-      padding: 16px;
-      .row + .row {
-        margin-top: 16px;
-      }
-    }
-    .footer {
-      padding-top: 10px;
-      .info {
+.h-16
+  height 16px
+.mt-3
+  margin-top 3px
+.pay-head
+  color #fff
+  .section-one
+    padding 10px 20px
+    .balance
+      font-size 38px
+      font-weight bold
+      padding 10px 0
+      text-align center
+      overflow hidden
+  .section-footer
+    text-align center
+    padding-bottom 10px
+    .add-pay
+      padding 10px
+      background rgb(254, 252, 238)
+      width 30px
+      border-radius 15px
+      margin 0 auto
+      color #f95353
+    .pay-info
+      padding 15px
+      width 200px
+      border-radius 3px
+      margin 0 auto
+      background rgba(157, 200, 255, 0.5)
+.pay-body
+  padding 10px
+  .input-area
+    background #fff
+    padding 20px 16px
+    font-size 15px
+    input
+      border none
+      outline none
+  .pay-area
+    padding 20% 0rem 10px 0rem
+  .offline-pay-area
+    .head
+      padding 10px 0rem
+    .body
+      background #fff
+      padding 16px
+      .row + .row
+        margin-top 16px
+    .footer
+      padding-top 10px
+      .info
         // text-align: center;
         // padding-top: 1rem;
-      }
-    }
-  }
-}
-.bg-pic {
-  background-position: center;
-  background-size: cover;
-  width: 60px;
-  height: 60px;
-}
-.pre-pic {
-  position: relative;
-  margin-right: 10px;
-  display: inline-block;
-  box-shadow: 2px 3px 5px #ddd;
-  img {
-    width: 60px;
-    height: 60px;
-    object-fit: cover;
-    object-position: center;
-  }
-  .del {
-    position: absolute;
-    background-size: cover;
-    background-position: center;
-    height: 15px;
-    width: 15px;
-    top: 0px;
-    right: 0px;
-    z-index: 20;
-  }
-}
-.pay-tabs {
-  padding: 15px;
-  span {
-    padding: 14px;
-  }
-}
-.pay-tab-active {
-  border-bottom: 1px #3da7ff solid;
-  color: #3da7ff;
-}
-.pay-tabs-card {
-  .tishi {
-    margin-top: 10px;
-    padding: 10px;
-    color: #f95353;
-    background: rgb(254, 252, 238);
-  }
-  .pay-tabs-content {
-    margin-top: 10px;
-    padding: 20px;
-    background: #fff;
-    .price {
-      font-size: 25px;
-      margin-top: 6px;
-    }
-  }
-  .pay-pw {
-    padding: 10px;
-    align-items: center;
-    margin-top: 10px;
-    background: #fff;
-  }
-}
+.bg-pic
+  background-position center
+  background-size cover
+  width 60px
+  height 60px
+.pre-pic
+  position relative
+  margin-right 10px
+  display inline-block
+  box-shadow 2px 3px 5px #ddd
+  img
+    width 60px
+    height 60px
+    object-fit cover
+    object-position center
+  .del
+    position absolute
+    background-size cover
+    background-position center
+    height 15px
+    width 15px
+    top 0px
+    right 0px
+    z-index 20
+.pay-tabs
+  padding 15px
+  span
+    padding 14px
+.pay-tab-active
+  border-bottom 1px #3da7ff solid
+  color #3da7ff
+.pay-tabs-card
+  .tishi
+    margin-top 10px
+    padding 10px
+    color #f95353
+    background rgb(254, 252, 238)
+  .pay-tabs-content
+    margin-top 10px
+    padding 20px
+    background #fff
+    .price
+      font-size 25px
+      margin-top 6px
+  .pay-pw
+    padding 10px
+    align-items center
+    margin-top 10px
+    background #fff
 </style>

@@ -137,7 +137,6 @@ export default {
       }
     },
     searchHandler () {
-      debugger
       const list = ['standard', 'material', 'supply']
       const filters = {}
       this.sortList.map((item, idx) => {
@@ -326,7 +325,7 @@ export default {
 .sort-content
   max-height calc(100vh - 180px)
   overflow auto
-.btn-cancel,.btn-sure
+.btn-cancel, .btn-sure
   text-align center
   border-radius 5px
   padding 10px
@@ -337,5 +336,5 @@ export default {
 .btn-sure
   color #fff
   border 1px solid #2485FF
-  background #2485FF  
+  background #2485FF
 </style>

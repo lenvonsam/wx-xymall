@@ -252,7 +252,6 @@ export default {
             this.canHttp = false
           }
         }
-        debugger
         if (this.canHttp && this.canClick) {
           this.canClick = false
           this.remoteUpdateCompany()
