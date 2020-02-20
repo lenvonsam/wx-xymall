@@ -4,10 +4,11 @@
     .h-left.ft-25(@click="openFilter")
       .cuIcon-sort.lg.text-gra
       .ft-14 分类
-    .search.col
+    .search.col(@click="jump('/pages/search/main')")
       .flex.align-center
         .cuIcon-search.text-gra.ft-18
-        input.full-width.pl-10(id="mallSearchInput", type="text", placeholder="品名、材质、规格、产地", v-model="searchVal")
+        input.full-width.pl-10(id="mallSearchInput", :disabled="true", type="text", placeholder="品名、材质、规格、产地", v-model="searchVal")
+        //- input.full-width.pl-10(id="mallSearchInput", type="text", placeholder="品名、材质、规格、产地", v-model="searchVal")
   .relative
     .mt-15.text-center.flex.align-center
       .col.tab-content
@@ -46,6 +47,7 @@
           .btn-sure.margin-left-sm.col(@click="searchHandler()") 确定            
 </template>
 <script>
+import { mapState } from 'vuex'
 export default {
   props: {
     mallTabVal: {
@@ -106,6 +108,11 @@ export default {
       supplys: []
     }
   },
+  computed: {
+    ...mapState({
+      tempObject: state => state.tempObject
+    })
+  },
   watch: {
     mallTabVal () {
       this.tabVal = this.mallTabVal
@@ -114,17 +121,20 @@ export default {
       })
       this.sortList[0].data[idx].isActive = true
       this.selectTab(this.sortList[0].data[idx], idx)
-    },
-    searchVal (newVal) {
-      console.log('search', newVal)
-      console.log('---', this.searchVal)
-      this.throttle(this.searchChange, 300)
     }
+    // searchVal (newVal) {
+    //   console.log('search', newVal)
+    //   console.log('---', this.searchVal)
+    //   this.throttle(this.searchChange, 300)
+    // }
+  },
+  onShow () {
+    console.log('tempObject', this.tempObject.search)
+    this.searchVal = this.tempObject.search || ''
   },
   mounted () {
     this.$nextTick(() => {
       this.sortCb('name')
-      console.log('app', this.customBar)
     })
   },
   methods: {
