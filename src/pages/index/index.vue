@@ -28,7 +28,7 @@ div
     .margin-top
       .row(v-for="(row,ridx) in mainClassify", :key="ridx", :class="{'margin-top-sm': ridx > 0}")
         .col.text-center(v-for="(col,cidx) in row", :key="cidx")
-          .btn-classify(@click="classifyClick(col.title)") {{col.title}}
+          .btn-classify(@click="classifyClick(col.id)") {{col.title}}
       .margin-top.text-center.text-blue.ft-13(@click="mallMore") 查看更多>>
   .margin-top-sm.margin-bottom-sm.bg-white.padding
     .text-center.ft-16
@@ -97,8 +97,9 @@ export default {
         mpvue.setStorageSync('firstShare', true)
       }
     },
-    classifyClick (title) {
+    classifyClick (id) {
       // this.configVal({ key: 'tempObject', val: { name: title } })
+      this.configVal({ key: 'tempObject', val: { name: id } })
       this.tab('/pages/mall/main')
     },
     iconJump (path) {

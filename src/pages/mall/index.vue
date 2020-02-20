@@ -38,10 +38,15 @@ export default {
     })
   },
   onShow () {
-    Object.assign(this.queryObject, this.tempObject)
-    this.btnDisable = false
-    this.mallItems = []
-    this.refresher()
+    this.queryObject = {}
+    if (this.tempObject.search) {
+      Object.assign(this.queryObject, this.tempObject)
+    }
+    if (!this.tempObject.name) {
+      this.btnDisable = false
+      this.mallItems = []
+      this.refresher()
+    }
   },
   mounted () {
     this.$nextTick(() => {

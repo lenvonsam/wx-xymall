@@ -38,17 +38,20 @@ export default {
   mainClassify: [
     [
       {
-        title: '普碳H型钢'
+        title: '普碳H型钢',
+        id: '169'
       },
       {
-        title: '低合金H型钢'
+        title: '低合金H型钢',
+        id: '256'
       },
       {
-        title: '槽钢'
+        title: '槽钢',
+        id: '168'
       }
     ],
-    [{ title: '等边角钢' }, { title: '不等边角钢' }, { title: '工字钢' }],
-    [{ title: '普碳开平板' }, { title: '低合金开平板' }, { title: '圆钢' }]
+    [{ title: '等边角钢', id: '167' }, { title: '不等边角钢', id: '179' }, { title: '工字钢', id: '175' }],
+    [{ title: '普碳开平板', id: '185' }, { title: '低合金开平板', id: '186' }, { title: '圆钢', id: '272,181' }]
   ],
   billIcons: [
     {
