@@ -9,8 +9,10 @@ div
       .filter-right-search.flex.align-center
         .cuIcon-search
         input.pl-10(id="searchInput", type="text", placeholder="搜索规格", v-model="searchVal")
-      scroll-view.padding-top-sm.filter-right-content(scroll-y, :style="{height: screenHeight - customBar - 60 + 'px'}")
-        .filter-right-list(v-for="(item, index) in standardList", :key="index", @click="selectStandard(item.name)") {{item.name}}
+      scroll-view.padding-top-sm.filter-right-content(scroll-y, :scroll-into-view="searchCurId", :style="{height: screenHeight - customBar - 60 + 'px'}")
+        .filter-right-list(:id="'idx-' + item.first", v-for="(item, index) in standardList", :key="index", @click="selectStandard(item.name)") {{item.name}}
+    .filter-cur
+      .tag.text-gray(:class="{'active': searchIdx === item+1}", v-for="item in 9", :key="item", @click="selectTag(item)") {{item+1}}  
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
@@ -18,18 +20,22 @@ export default {
   data () {
     return {
       currentPage: 0,
-      pageSize: 100,
+      pageSize: 1000,
       filterNameList: [],
       filterLeftSty: '',
       standardList: [],
-      searchVal: ''
+      searchVal: '',
+      searchIdx: 1
     }
   },
   computed: {
     ...mapState({
       customBar: state => state.customBar,
       screenHeight: state => state.screenHeight
-    })
+    }),
+    searchCurId: function () {
+      return 'idx-' + this.searchIdx
+    }
   },
   watch: {
     searchVal () {
@@ -75,7 +81,7 @@ export default {
     selectStandard (val) {
       const res = {
         name: this.queryObject.name,
-        standard: val
+        standards: val
       }
       this.configVal({ key: 'tempObject', val: res })
       this.back(-1)
@@ -106,8 +112,16 @@ export default {
     getStandardList () {
       this.ironRequest(this.apiList.xy.standardList.url, this.queryObject, this.apiList.xy.standardList.method, this).then((res) => {
         console.log('getStandardList', res)
+        this.searchIdx = 1
+        res.standards.map(item => {
+          item.first = item.name.substr(0, 1)
+        })
         this.standardList = res.standards
       })
+    },
+    selectTag (idx) {
+      console.log('idx', idx)
+      this.searchIdx = idx
     }
   }
 }
@@ -142,4 +156,18 @@ export default {
   overflow auto
   .filter-right-list
     line-height 40px
+.filter-cur
+  position fixed
+  right 5px
+  top 150px
+  .tag
+    text-align center
+    width 20px
+    height 20px
+    line-height 20px
+    margin-bottom 20px
+    border-radius 100%
+    &.active
+      background #2485FF
+      color #fff
 </style>
