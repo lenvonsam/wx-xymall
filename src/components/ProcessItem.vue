@@ -1,5 +1,5 @@
 <template lang="pug">
-.padding-sm
+.margin-top-sm
   .bg-white.padding-sm
     .round
       .flex

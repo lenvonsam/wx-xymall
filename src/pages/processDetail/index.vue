@@ -1,7 +1,7 @@
 <template lang="pug">
 div
   nav-bar(title="发布加工", isBack)
-  .bg-white.padding-sm
+  .bg-white.padding-top-sm.padding-left-sm.padding-right-sm
     template(v-if="pno")
       .row.solid-bottom.padding
         .title.padding-left-xs 客户名称
@@ -127,8 +127,7 @@ export default {
               me.showMsg(resp === undefined ? '网路异常' : resp.errormsg)
             }
           }).catch(err => {
-            console.log(err.message)
-            me.showMsg()
+            me.showMsg(err || '网络异常')
             me.btnDisable = false
           })
         })

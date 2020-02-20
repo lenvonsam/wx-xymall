@@ -1,7 +1,7 @@
 <template lang="pug">
 div
   nav-bar(title="商城")
-  mall-head(:mallTabVal="tempObject.name", @selectMall="selectMall", @selectTab="selectTab", @searchChange="searchChange")
+  mall-head(:mallTabVal="tempObject.name", @filter="multipleFilter", @selectMall="selectMall", @selectTab="selectTab", @searchChange="searchChange")
   .mall-content(:class="{'bg-white': mallFlag}")
     //- .text-center(v-show="isLoad")
       img(src="/static/images/loadRun.gif", style="width: 120px; height: 120px")
@@ -66,6 +66,25 @@ export default {
   },
   methods: {
     ...mapActions(['configVal']),
+    multipleFilter (filter) {
+      console.log('filter', filter)
+      const obj = {}
+      Object.keys(filter).forEach((key) => {
+        if (filter[key].length > 0) {
+          obj[`${key}s`] = filter[key].toString()
+        }
+      })
+      this.mallItems = []
+      this.currentPage = 0
+      this.isLoad = 'refresher'
+      this.queryObject = {
+        current_page: this.currentPage,
+        page_size: this.pageSize,
+        only_available: 1
+      }
+      Object.assign(this.queryObject, obj)
+      this.refresher()
+    },
     selectMall (flag) {
       console.log(flag)
       this.mallFlag = flag

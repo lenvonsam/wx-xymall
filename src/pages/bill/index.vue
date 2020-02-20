@@ -296,8 +296,8 @@ export default {
       if (this.tabName === '0') this.statisticRequest({ event: 'click_app_myorder_all_cancel' }, this)
       if (this.tabName === '1') this.statisticRequest({ event: 'click_app_myorder_needpay_cancel' }, this)
       const me = this
-      this.confirm({ content: '您确定要取消合同吗？' }).then(() => {
-        if (!me.btnDisable) {
+      this.confirm({ content: '您确定要取消合同吗？' }).then((res) => {
+        if (!me.btnDisable && res === 'confirm') {
           me.btnDisable = true
           // me.$ironLoad.show()
           me.ironRequest('cancelOrder.shtml', { user_id: me.currentUser.user_id, discussid: item.id }, 'post', this).then(res => {

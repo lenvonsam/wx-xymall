@@ -31,7 +31,7 @@ div
             .dot(v-if="rowCountObj[bicon.dotKey] > 0", :class="{'max': rowCountObj[bicon.dotKey] > 9}") {{rowCountObj[bicon.dotKey] > 99 ? '99+' : rowCountObj[bicon.dotKey]}}
           .padding-top-xs {{bicon.name}}
     .margin-top-sm.me-icon.bg-white(v-for="(cardItem, index) in cardList", :key="index")
-      .padding-sm.flex.solid-bottom.align-center(v-for="(item, idx) in cardItem", :key="idx", @click="jump(item.url)")
+      .padding-sm.flex.solid-bottom.align-center(v-for="(item, idx) in cardItem", :key="idx", @click="jumpToPage(item.url)")
         .col
           .flex.align-center
             img(:src="item.imgPath")
@@ -87,17 +87,20 @@ export default {
     this.alertShow = false
     if (this.isLogin) {
       this.showNoticeIcon = this.currentUser.message_switch === '1'
-      // this.ironRequest('toOperCounts.shtml?user_id=' + this.currentUser.user_id, {}, 'get', this).then(resp => {
-      //   // console.log(resp.data)
-      //   if (resp.data && resp.data.returncode === '0') {
-      //     this.rowCountObj = resp.data
-      //   }
-      // })
+      this.ironRequest('toOperCounts.shtml?user_id=' + this.currentUser.user_id, {}, 'get', this).then(resp => {
+        // console.log(resp.data)
+        if (resp && resp.returncode === '0') {
+          this.rowCountObj = resp
+          this.$forceUpdate()
+        }
+      })
       this.ironRequest('balanceList.shtml?type=0&only_all=1&user_id=' + this.currentUser.user_id, {}, 'get', this).then(resp => {
-        if (resp.data && resp.data.returncode === '0') {
+        if (resp && resp.returncode === '0') {
           let obj = this.currentUser
-          obj.account_balance = resp.data.balance
+          obj.account_balance = resp.balance
+          this.currentUser.account_balance = resp.balance
           this.setUser(obj)
+          this.$forceUpdate()
         }
       })
     } else {
@@ -132,23 +135,23 @@ export default {
     alertCb () {
       this.jump('/pages/account/login/main')
     },
-    jumpToPage (obj) {
-      console.log('jumpToPage', obj)
-      if (obj.url.path === '/bill/modify') this.statisticRequest({ event: 'click_app_me_modify' }, this)
-      if (obj.url.path === '/bill/recycle') this.statisticRequest({ event: 'click_app_me_recycle' }, this)
-      if (obj.url.path === '/ladbill') this.statisticRequest({ event: 'click_app_me_lad' }, this)
-      if (obj.url.path === '/invoice') this.statisticRequest({ event: 'click_app_me_invoice' }, this)
-      if (obj.url.path === '/contract') this.statisticRequest({ event: 'click_app_me_contract' }, this)
-      if (obj.url.path === '/process') this.statisticRequest({ event: 'click_app_me_process' }, this)
-      if (obj.url.path === '/askBuy') this.statisticRequest({ event: 'click_app_me_demand' }, this)
-      if (obj.url.path === '/address') this.statisticRequest({ event: 'click_app_me_address' }, this)
-      if (obj.url.path === '/onlineService') {
+    jumpToPage (url) {
+      console.log('jumpToPage', url)
+      if (url === '/pages/modify/main') this.statisticRequest({ event: 'click_app_me_modify' }, this)
+      if (url === '/pages/recycle/main') this.statisticRequest({ event: 'click_app_me_recycle' }, this)
+      if (url === '/pages/ladbill/main') this.statisticRequest({ event: 'click_app_me_lad' }, this)
+      if (url === '/pages/invoice/main') this.statisticRequest({ event: 'click_app_me_invoice' }, this)
+      if (url === '/pages/contract/main') this.statisticRequest({ event: 'click_app_me_contract' }, this)
+      if (url === '/pages/process/main') this.statisticRequest({ event: 'click_app_me_process' }, this)
+      if (url === '/pages/askBuy/main') this.statisticRequest({ event: 'click_app_me_demand' }, this)
+      if (url === '/pages/address/main') this.statisticRequest({ event: 'click_app_me_address' }, this)
+      if (url === '/pages/onlineService/main') {
         this.statisticRequest({ event: 'click_app_me_kf' }, this)
         const me = this
         this.lcRequest('online', { peers: ['wy', 'syl', 'zyt', 'fh', 'wqf', 'lzy'] }).then(resp => {
           let res = JSON.parse(resp.data)
           if (res.results.length === 0) {
-            me.confirmDialog('在线客服忙，是否要联系人工客服').then(() => {
+            me.confirm('在线客服忙，是否要联系人工客服').then(() => {
               window.location.href = 'tel://4008788361'
             })
           } else {
@@ -156,13 +159,13 @@ export default {
             window.location.href = url
           }
         }).catch(err => {
-          console.log(err.message)
-          me.confirmDialog('在线客服忙，是否要联系人工客服').then(() => {
+          console.log(err)
+          me.confirm('在线客服忙，是否要联系人工客服').then(() => {
             window.location.href = 'tel://4008788361'
           })
         })
       } else {
-        this.jump(obj.url)
+        this.jump(url)
       }
     },
     jumpProfile () {

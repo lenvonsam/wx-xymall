@@ -45,8 +45,7 @@ export default {
       }
       this.isload = false
     }).catch(err => {
-      console.log(err.message)
-      this.showMsg()
+      this.showMsg(err || '网络异常')
       this.isload = false
     })
   },

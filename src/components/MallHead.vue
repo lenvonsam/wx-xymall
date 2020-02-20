@@ -30,17 +30,20 @@
         .cuIcon-list(@click="selectMall(1)", :class="mallFlag ? 'text-blue' : 'text-gra'")
         .cuIcon-cascades.ml-5(@click="selectMall(0)", :class="!mallFlag ? 'text-blue' : 'text-gra'")
     //- 筛选 品名、材质、规格、产地
-    .filter-box(@click.prevent="sortClose", v-show="activeTab === sort.key", v-for="(sort, sortIdx) in sortList", :key="sortIdx")
-      .bg-white.padding-sm
+    .filter-box(@click.prevent="sortClose(sortIdx)", v-show="activeTab === sort.key", v-for="(sort, sortIdx) in sortList", :key="sortIdx")
+      .bg-white.padding-sm.ft-11(@click.stop="")
         .flex.align-center.justify-between
           .flex.text-bold.align-center.ft-16
             .dotted.bg-blue
             span.pl-10 {{sort.title}}
-          .cuIcon-fold.ft-16(@click="sortClose")
+          .cuIcon-fold.ft-16(@click="sortClose(sortIdx)")
         .grid.col-3.padding-top-sm.sort-content
           .sort-list(v-if="sort.data.length > 0", v-for="(item, index) in sort.data", :key="index")
             .sort-name(:class="{active: item.isActive}", @click.stop="selectSort(sortIdx, index)") {{item.name}}
               .check.cuIcon-check.bg-blue(v-show="item.isActive")
+        .row.padding-sm.justify-around(v-if="sortIdx !== 0")
+          .btn-cancel.col(@click="filterCancel(sortIdx)") 重选 
+          .btn-sure.margin-left-sm.col(@click="searchHandler()") 确定            
 </template>
 <script>
 export default {
@@ -62,6 +65,7 @@ export default {
       tabVal: '',
       activeTab: '',
       queryObject: {},
+      temporary: [],
       sortList: [
         { label: '品名', key: 'name', data: [], selectSort: [], title: '全部品名' },
         { label: '规格', key: 'standard', data: [], selectSort: [], title: '全部规格' },
@@ -96,7 +100,10 @@ export default {
       },
       isActive: true,
       searchVal: '',
-      mallFlag: 1
+      mallFlag: 1,
+      standards: [],
+      materials: [],
+      supplys: []
     }
   },
   watch: {
@@ -121,6 +128,32 @@ export default {
     })
   },
   methods: {
+    filterCancel (sortIdx) {
+      if (this.temporary.length > 0) {
+        this.temporary.map(item => {
+          this.sortList[sortIdx].data[item].isActive = !this.sortList[sortIdx].data[item].isActive
+        })
+        this.temporary = []
+      }
+    },
+    searchHandler () {
+      debugger
+      const list = ['standard', 'material', 'supply']
+      const filters = {}
+      this.sortList.map((item, idx) => {
+        filters[item.key] = []
+        if (list.indexOf(item.key) !== -1 && item.data) {
+          item.data.map(itemKey => {
+            if (itemKey.isActive) {
+              filters[item.key].push(itemKey.name === '全部' ? '' : itemKey.name)
+            }
+          })
+        }
+      })
+      this.$emit('filter', filters)
+      this.temporary = []
+      this.sortClose()
+    },
     openFilter () {
       this.jump('/pages/mallFilter/main')
     },
@@ -128,16 +161,24 @@ export default {
       this.$emit('searchChange', this.searchVal)
     },
     selectSort (sortIdx, idx) {
-      if (idx === 0) {
+      this.temporary.push(idx)
+      if (idx === 0 || sortIdx === 0) {
         this.sortList[sortIdx].data.map(item => {
           item.isActive = false
         })
-      } else {
+      } else if (!sortIdx) {
         this.sortList[sortIdx].data[0].isActive = false
       }
-      this.sortList[sortIdx].data[idx].isActive = true
+      this.sortList[sortIdx].data[idx].isActive = !this.sortList[sortIdx].data[idx].isActive
+      if (sortIdx === 0) {
+        this.selectTab(this.sortList[sortIdx].data[idx], idx)
+        this.sortClose()
+      }
     },
-    sortClose () {
+    sortClose (sortIdx) {
+      if (sortIdx) {
+        this.filterCancel(sortIdx)
+      }
       this.activeTab = ''
     },
     selectTab (item, index) {
@@ -169,13 +210,20 @@ export default {
           const tabList = []
 
           if (arr.length > 0) {
-            arr.unshift({ name: '全部' })
+            arr.unshift({ name: '全部', isActive: false })
             console.log('sortCb', arr)
             const idx = this.sortList.findIndex((item) => {
               return item.key === key
             })
             arr.map(item => {
               item.isActive = false
+              const resActive = this.sortList[idx].data.filter((itemFilter) => {
+                if (itemFilter.name === item.name && itemFilter.isActive) {
+                  item.isActive = true
+                }
+                return itemFilter.name === item.name && itemFilter.isActive
+              })
+              console.log('resActive', resActive)
               if (key === 'name') {
                 const obj = {
                   name: item.name,
@@ -278,4 +326,16 @@ export default {
 .sort-content
   max-height calc(100vh - 180px)
   overflow auto
+.btn-cancel,.btn-sure
+  text-align center
+  border-radius 5px
+  padding 10px
+  font-size 14px
+.btn-cancel
+  border 1px solid #EEEEEE
+  background #fff
+.btn-sure
+  color #fff
+  border 1px solid #2485FF
+  background #2485FF  
 </style>

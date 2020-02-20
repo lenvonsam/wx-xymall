@@ -116,6 +116,7 @@ export default {
       current_page: this.currentPage,
       page_size: this.pageSize
     }
+    this.tabName = this.$root.$mp.query.tabName || 0
     this.loadData()
   },
   methods: {
@@ -306,9 +307,8 @@ export default {
         }
         this.isTabDisabled = false
       }).catch(err => {
-        console.log(err.message)
         this.isTabDisabled = false
-        this.showMsg()
+        me.showMsg(err || '网络异常')
       })
     },
     selectTabs (item, idx) {

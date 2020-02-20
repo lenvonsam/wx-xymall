@@ -80,7 +80,7 @@ export default {
       name: '待开票',
       dotKey: 'toinvoice',
       url: {
-        path: '/invoice'
+        path: '/pages/invoice/main?tabName=1'
       }
     }
   ]
