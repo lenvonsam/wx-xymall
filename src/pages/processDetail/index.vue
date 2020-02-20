@@ -1,7 +1,7 @@
 <template lang="pug">
 div
   nav-bar(title="发布加工", isBack)
-  .bg-white.padding-sm
+  .bg-white.padding-top-sm.padding-left-sm.padding-right-sm
     template(v-if="pno")
       .row.solid-bottom.padding
         .title.padding-left-xs 客户名称
