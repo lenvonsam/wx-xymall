@@ -176,7 +176,7 @@ export default {
               this.totalWeight += Number((itm.weight * itm.count).toFixed(3))
             }
           })
-          this.totalLiftCharge = Number(this.totalLiftCharge).toFixed(3)
+          this.totalLiftCharge = Number(this.totalLiftCharge).toFixed(2)
           this.totalPrice = Number(this.totalPrice).toFixed(2)
           this.totalWeight = Number(this.totalWeight).toFixed(3)
         }
