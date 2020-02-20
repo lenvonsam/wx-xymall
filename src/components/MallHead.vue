@@ -7,7 +7,7 @@
     .search.col(@click="jump('/pages/search/main')")
       .flex.align-center
         .cuIcon-search.text-gra.ft-18
-        input.full-width.pl-10(id="mallSearchInput", :disabled="true", type="text", placeholder="品名、材质、规格、产地", v-model="searchVal")
+        input.full-width.pl-10(id="mallSearchInput", :disabled="true", type="text", placeholder="品名、材质、规格、产地(空格好隔开)", v-model="searchVal")
         //- input.full-width.pl-10(id="mallSearchInput", type="text", placeholder="品名、材质、规格、产地", v-model="searchVal")
   .relative
     .mt-15.text-center.flex.align-center

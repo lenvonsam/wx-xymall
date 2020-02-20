@@ -220,8 +220,7 @@ const wxMixins = {
               }
             },
             err => {
-              console.log(err.message)
-              reject(new Error('网络异常'))
+              reject(err || new Error('网络异常'))
             }
           )
         }

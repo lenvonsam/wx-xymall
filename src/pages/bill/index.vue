@@ -37,8 +37,8 @@ div
                   .col 吊费：¥{{item.lift_charge}}
                   template(v-if="item.status === '待付款'")
                     .flex
-                      .bill-btn.round(@click="payBill(item)") 去付款
-                      .bill-red-btn.round.margin-left-sm(@click="billCancel(item)") 取消
+                      .bill-btn.round(@click.stop="payBill(item)") 去付款
+                      .bill-red-btn.round.margin-left-sm(@click.stop="billCancel(item)") 取消
         .text-center.c-gray.pt-100(v-else)
           empty-image(url="bill_empty.png", className="img-empty")
           .empty-content 您暂时没有相关合同
