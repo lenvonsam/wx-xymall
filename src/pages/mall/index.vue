@@ -1,7 +1,7 @@
 <template lang="pug">
 div
   nav-bar(title="商城")
-  mall-head(:mallTabVal="tempObject.name", @filter="multipleFilter", @selectMall="selectMall", @selectTab="selectTab", @searchChange="searchChange")
+  mall-head(:mallTabVal="mallTabVal", @filter="multipleFilter", @selectMall="selectMall", @selectTab="selectTab", @searchChange="searchChange")
   .mall-content(:class="{'bg-white': mallFlag}")
     //- .text-center(v-show="isLoad")
       img(src="/static/images/loadRun.gif", style="width: 120px; height: 120px")
@@ -19,6 +19,7 @@ export default {
   },
   data () {
     return {
+      mallTabVal: '',
       mallItems: [],
       queryObject: {},
       isLoad: 'refresher',
@@ -38,6 +39,7 @@ export default {
     })
   },
   onShow () {
+    debugger
     this.queryObject = {}
     if (this.tempObject.search || this.tempObject.name === '') {
       Object.assign(this.queryObject, this.tempObject)
@@ -47,6 +49,8 @@ export default {
       this.mallItems = []
       this.refresher()
     }
+    this.mallTabVal = this.tempObject.name || ''
+    console.log('mallTabVal', this.mallTabVal)
   },
   mounted () {
     this.$nextTick(() => {
