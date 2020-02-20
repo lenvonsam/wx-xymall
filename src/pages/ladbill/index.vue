@@ -23,7 +23,7 @@ div
             lab-bill-item(v-for="(item,itemIdx) in billTab[idx].data", :key="itemIdx", :ladObject="item", :cb="labObjectCb")
             .text-center.c-gray.padding(v-if="finished && billTab[idx].data.length > 8") 加载完成
         .text-center.text-gray.pt-100(v-else)
-          img.img-empty(src="/static/images/bill_empty.png")
+          empty-image(url="bill_empty.png", className="img-empty")
           .empty-content 您暂时没有相关提单
 </template>
 <script>
@@ -34,9 +34,9 @@ export default {
     return {
       swiperCount: 0,
       billTab: [
-        {title: '全部', status: '-2', data: [], isActive: true},
-        {title: '待提货', status: '0', data: [], isActive: false},
-        {title: '已完成', status: '3', data: [], isActive: false}
+        { title: '全部', status: '-2', data: [], isActive: true },
+        { title: '待提货', status: '0', data: [], isActive: false },
+        { title: '已完成', status: '3', data: [], isActive: false }
       ],
       tabName: '-2',
       currentPage: 0,
@@ -103,8 +103,8 @@ export default {
       const me = this
       if (type === 'cancel') {
         // 提单待出库取消
-        this.confirm({content: '您确定要取消提单吗？'}).then(() => {
-          me.ironRequest('cancelTdOrder.shtml', {user_id: me.currentUser.user_id, td_no: obj.no}, 'post', me).then(resp => {
+        this.confirm({ content: '您确定要取消提单吗？' }).then(() => {
+          me.ironRequest('cancelTdOrder.shtml', { user_id: me.currentUser.user_id, td_no: obj.no }, 'post', me).then(resp => {
             if (resp && resp.returncode === '0') {
               me.showMsg('取消成功')
               me.currentPage = 0
@@ -123,7 +123,7 @@ export default {
         // 确认货物
         if (!this.btnDisable) {
           this.btnDisable = true
-          this.ironRequest('confirmReceipt.shtml', {user_id: this.currentUser.user_id, order_id: obj.id}, 'post', this).then(resp => {
+          this.ironRequest('confirmReceipt.shtml', { user_id: this.currentUser.user_id, order_id: obj.id }, 'post', this).then(resp => {
             if (resp && resp.returncode === '0') {
               me.showMsg('确认成功')
               me.btnDisable = false
@@ -142,8 +142,8 @@ export default {
         }
       }
       if (type === 'pay') {
-        if (this.tabName === '-2') this.statisticRequest({event: 'click_app_mylad_all_pay'}, this)
-        if (this.tabName === '4') this.statisticRequest({event: 'click_app_mylad_needpay_pay'}, this)
+        if (this.tabName === '-2') this.statisticRequest({ event: 'click_app_mylad_all_pay' }, this)
+        if (this.tabName === '4') this.statisticRequest({ event: 'click_app_mylad_needpay_pay' }, this)
         // 提单支付
         this.jump(`/pages/pay/main?pageType=ladPay&orderNo=${obj.no}&price=${obj.pay_price}&contractNo=${obj.contract_no}`)
       }
@@ -226,5 +226,4 @@ export default {
   background #F6F6F6
   padding 5px 10px
   border-radius 35px
-
 </style>

@@ -33,7 +33,7 @@ div
                     .invoice-detail-btn.margin-top-sm(v-if="tabName != '0' && item.price > 0", @click="jumpDetail(item)") 查看详情
                     .text-gray(v-if="tabName == '2'") 吊费：{{item.lift_price}}
         .text-center.c-gray.pt-100(v-else)
-          img.img-empty(src="/static/images/bill_empty.png")     
+          empty-image(url="bill_empty.png", className="img-empty")
           .empty-content 您暂时没有相关发票
   .s-footer(v-if="tabName == '0' || tabName == '2'")
     .invoice-footer.align-center.justify-between
@@ -56,10 +56,10 @@ export default {
       swiperCount: 0,
       tabName: '0',
       tabList: [
-        {title: '申请发票', status: '0', data: [], isActive: true},
-        {title: '待开发票', status: '1', data: [], isActive: false},
-        {title: '发票确认', status: '2', data: [], isActive: false},
-        {title: '已收发票', status: '3', data: [], isActive: false}
+        { title: '申请发票', status: '0', data: [], isActive: true },
+        { title: '待开发票', status: '1', data: [], isActive: false },
+        { title: '发票确认', status: '2', data: [], isActive: false },
+        { title: '已收发票', status: '3', data: [], isActive: false }
       ],
       listData: [],
       totalWeight: 0,
@@ -245,7 +245,7 @@ export default {
           // 发票确认
           this.ironRequest('confirmInvoice.shtml', { user_id: this.currentUser.user_id, id: ids }, 'post', this).then(resp => {
             if (resp && resp.returncode === '0') {
-              this.confirm({content: '发票确认成功'}).then(() => {
+              this.confirm({ content: '发票确认成功' }).then(() => {
                 me.listData = []
                 me.loadData()
               })
@@ -345,33 +345,28 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
-.h-16 {
-  height: 16px;
-}
-.invoice-detail-btn {
-  border 1px #0081ff solid 
+.h-16
+  height 16px
+.invoice-detail-btn
+  border 1px #0081ff solid
   color #0081ff
   border-radius 30px
   text-align center
   width 80px
   padding 5px 3px
-}
-.invoice-footer {
-  padding-left: 10px;
-  height: 50px;
-  width: 100%;
-  background: #fff;
-  display: flex;
-  .apply {
-    background: #3da7ff;
-    color: #fff;
-    font-size: 16px;
-    height: 50px;
-  }
-}
-.padding {
-  padding: 10px;
-}
+.invoice-footer
+  padding-left 10px
+  height 50px
+  width 100%
+  background #fff
+  display flex
+  .apply
+    background #3da7ff
+    color #fff
+    font-size 16px
+    height 50px
+.padding
+  padding 10px
 .s-footer
   position fixed
   left 0
@@ -381,6 +376,6 @@ export default {
   height 50px
 .main-btn
   width 120px
-  height 40px  
+  height 40px
   font-size 15px
 </style>

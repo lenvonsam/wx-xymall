@@ -7,7 +7,7 @@
       .s-empty-content(v-if="(carts.length + soldCarts.length) == 0")
         div(style="padding-top: 20%")
           .text-center
-            img.img-empty(src="/static/images/cart_empty.png")
+            empty-image(url="cart_empty.png", className="img-empty")
           .text-center.empty-content 购物车空空如也
           .text-center.margin-top-sm
             .cart-empty-btn(@click="tab('/pages/mall/main')") ^_^去商城逛逛吧

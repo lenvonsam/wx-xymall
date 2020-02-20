@@ -40,6 +40,7 @@ export default {
     authBtn
   },
   onShow () {
+    this.canClick = true
   },
   methods: {
     resetVal () {
@@ -54,7 +55,10 @@ export default {
     },
     async remoteRegister () {
       try {
-        console.log(this.acceptProtocol)
+        if (this.phone.trim().length === 0) {
+          this.showMsg('手机号不能为空')
+          return
+        }
         if (!this.phoneReg.test(this.phone)) {
           this.showMsg('请输入正确手机号')
           return
@@ -70,24 +74,18 @@ export default {
         if (this.canClick) {
           this.canClick = false
         }
+        // 18015816879
         // TODO 接口正在修改
-        // const data = await this.ironRequest(this.apiList.xy.)
-        // this.ironRequest('userRegister.shtml', body, 'post', this).then(resp => {
-        //   if (resp.data && resp.data.returncode === '0') {
-        //     me.exitCurrentUser()
-        //     me.btnDisable = false
-        //     me.configVal({ key: 'registerMsg', val: '注册成功' })
-        //     me.back()
-        //   }
-        //   else {
-        //     this.msgShow(resp.data === undefined ? '网络异常' : resp.data.errormsg)
-        //     this.btnDisable = false
-        //   }
-        // }).catch(err => {
-        //   console.log(err.message)
-        //   this.msgShow()
-        //   this.btnDisable = false
-        // })
+        await this.ironRequest(this.apiList.xy.userRegister.url, {
+          user_phone: this.phone,
+          msg_code: this.code
+        }, this.apiList.xy.userRegister.method, this)
+        const me = this
+        me.showMsg('注册成功')
+        setTimeout(function () {
+          me.resetVal()
+          me.back()
+        }, 2000)
       } catch (e) {
         this.showMsg(e)
         this.canClick = true

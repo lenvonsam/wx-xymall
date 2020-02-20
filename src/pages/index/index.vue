@@ -12,7 +12,7 @@ div
         img.response(:src="imgOuterUrl + g.url", v-if="imgOuterUrl", style="height: 300rpx")
     time-line(v-else, type="gallery")
   .row.bg-white.padding-tb
-    .col.text-center(v-for="(icon,idx) in mainIcons", :key="idx")
+    .col.text-center(v-for="(icon,idx) in mainIcons", :key="idx", @click="iconJump(icon.path)")
       img(:src="icon.url", style="width: 100rpx; height: 100rpx")
       .mt-5 {{icon.title}}
   .bg-white.padding.margin-top-sm
@@ -28,7 +28,7 @@ div
     .margin-top
       .row(v-for="(row,ridx) in mainClassify", :key="ridx", :class="{'margin-top-sm': ridx > 0}")
         .col.text-center(v-for="(col,cidx) in row", :key="cidx")
-          .btn-classify {{col.title}}
+          .btn-classify(@click="classifyClick(col.title)") {{col.title}}
       .margin-top.text-center.text-blue.ft-13(@click="mallMore") 查看更多>>
   .margin-top-sm.margin-bottom-sm.bg-white.padding
     .text-center.ft-16
@@ -40,7 +40,7 @@ div
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import mpvueEcharts from 'mpvue-echarts'
 import shareModal from '../../components/ShareModal.vue'
 import vertBanner from '../../components/VertBanner.vue'
@@ -58,7 +58,8 @@ export default {
       lineOptionData: [],
       gallery: [],
       notices: {},
-      lineOptions: lineOpts
+      lineOptions: lineOpts,
+      alertShow: false
     }
   },
   components: {
@@ -70,6 +71,7 @@ export default {
     this.$nextTick(function () {
       this.loadBanner()
       this.loadNotice()
+      this.showShareBanner()
     })
   },
   onShow () {
@@ -80,15 +82,36 @@ export default {
     ...mapState({
       mainIcons: state => state.mainIcons,
       mainClassify: state => state.mainClassify,
-      screenWidth: state => state.screenWidth
+      screenWidth: state => state.screenWidth,
+      isLogin: state => state.user.isLogin
     })
   },
   methods: {
+    ...mapActions([
+      'configVal'
+    ]),
+    showShareBanner () {
+      const firstShare = mpvue.getStorageSync('firstShare') || false
+      if (!firstShare) {
+        this.shareModalShow = true
+        mpvue.setStorageSync('firstShare', true)
+      }
+    },
+    classifyClick (title) {
+      // this.configVal({ key: 'tempObject', val: { name: title } })
+      this.tab('/pages/mall/main')
+    },
+    iconJump (path) {
+      if (this.isLogin) {
+        this.jump(path)
+      } else {
+        this.confirm({ title: '友情提示', content: '您未登录，请先登录' }).then(res => {
+          if (res === 'confirm') this.jump('/pages/account/login/main')
+        })
+      }
+    },
     mallMore () {
-      // this.jump('/pages/cardList/main?title=消息中心&type=noticeList')
-      this.confirm({ title: '您未登录，请先登录' }).then(res => {
-        if (res === 'confirm') this.jump('/pages/account/login/main')
-      })
+      this.tab('/pages/mall/main')
     },
     initChart (canvas, width, height) {
       chart = echarts.init(canvas, null, {
@@ -132,9 +155,7 @@ export default {
     async loadNotice () {
       try {
         const data = await this.ironRequest(this.apiList.xy.notice.url + '?current_page=0&page_size=5&type=2', {}, this.apiList.xy.notice.method, this)
-        console.log('notice ', data)
         this.notices = data.notices
-        console.log('notices:>>', this.notices)
       } catch (e) {
         this.showMsg(e)
       }

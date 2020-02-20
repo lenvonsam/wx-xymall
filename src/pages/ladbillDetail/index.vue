@@ -26,7 +26,6 @@ export default {
     }
   },
   beforeMount () {
-    debugger
     this.ironRequest('orderLadDetail.shtml?td_no=' + this.$root.$mp.query.id, {}, 'get', this).then(resp => {
       if (resp && resp.returncode === '0') {
         this.detailObject = resp
@@ -41,6 +40,6 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
-  .list
-    padding 10px 0
+.list
+  padding 10px 0
 </style>

@@ -240,8 +240,8 @@ page,
   width: 200px;
 }
 .img-empty {
-  width: 340rpx;
-  height: 293rpx;
+  width: 340rpx !important;
+  height: 293rpx !important;
 }
 .empty-content {
   padding-top: 10rpx;

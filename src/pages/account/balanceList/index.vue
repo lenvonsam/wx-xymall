@@ -20,18 +20,21 @@ div
         .check-btn(v-for="(itm,idx) in tabList", :key="idx", @click="selectKey(itm)", :class="{'active': selectActive == itm.val}") {{itm.label}}
   div(style="padding-top: 15px")
     template(v-if="isLoad")
-      scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: screenHeight - customBar - 185 +'px'}")
-        .bg-white.padding.border-bottom-line.row(v-for="(item,idx) in listData", :key="idx")
-          .col
-            div {{item.content}}
-            .text-gray.ft-12.margin-top {{item.time}}
-          .col.text-right
-            .ft-16(:class="{'text-red': item.action == 1, 'text-green': item.action == 0}")            
-              span(v-if="item.action == 0") +
-              span(v-else) -
-              span {{item.price}}
-            .text-gray.margin-top(v-if="item.nowAvlbFund") {{item.nowAvlbFund}}
-        .padding.text-gray.ft-13.text-center(v-if="loading") 努力加载中...
+      template(v-if="listData.length > 0")
+        scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: screenHeight - customBar - 185 +'px'}")
+          .bg-white.padding.border-bottom-line.row(v-for="(item,idx) in listData", :key="idx")
+            .col
+              div {{item.content}}
+              .text-gray.ft-12.margin-top {{item.time}}
+            .col.text-right
+              .ft-16(:class="{'text-red': item.action == 1, 'text-green': item.action == 0}")            
+                span(v-if="item.action == 0") +
+                span(v-else) -
+                span {{item.price}}
+              .text-gray.margin-top(v-if="item.nowAvlbFund") {{item.nowAvlbFund}}
+          .padding.text-gray.ft-13.text-center(v-if="loading") 努力加载中...
+      .text-center.padding-top-xl(v-else)
+        empty-image(url="bill_empty.png", className="img-empty")
     time-line(type="mallist", v-else)
 </template>
 
@@ -69,12 +72,17 @@ export default {
       customBar: state => state.customBar
     })
   },
-  beforeMount () {
-    this.getMonth()
-  },
   onShow () {
+    this.getMonth()
+    this.typeLabel = '全部'
+    this.monthLabel = '时间'
     this.currentPage = 0
+    this.typeStatus = ''
+    this.month = 0
+    this.activeName = ''
     this.loading = false
+    this.isload = false
+    this.floatBarShow = false
     this.loadData()
     const height = this.screenHeight - this.customBar - 185
     console.log('fullheight:>>', this.screenHeight, 'height:>>', height)
@@ -83,13 +91,12 @@ export default {
     loadMore () {
       const me = this
       this.throttle(function () {
-        console.log(me)
         me.currentPage++
         me.loadData()
       }, 300)
     },
     selectKey (item) {
-      if (this.isTabDisabled) return false
+      // if (this.isTabDisabled) return false
       this.selectActive = item.val
       switch (this.activeName) {
         case 'type':
@@ -105,7 +112,7 @@ export default {
       this.listData = []
       this.activeName = ''
       this.floatBarShow = false
-      // this.isLoad = true
+      this.isLoad = false
       this.loadData()
     },
     getMonth () {
@@ -136,11 +143,15 @@ export default {
         this.selectActive = this.month
       }
       this.activeName = flag === this.activeName ? '' : flag
-      this.floatBarShow = true
+      if (this.activeName === '') {
+        this.floatBarShow = false
+      } else {
+        this.floatBarShow = true
+      }
     },
     async loadData () {
       try {
-        this.isTabDisabled = true
+        // this.isTabDisabled = true
         if (this.currentPage === 0) {
           this.isload = false
         }
@@ -179,7 +190,7 @@ export default {
           me.currentPage--
         }
         this.loading = false
-        this.isTabDisabled = false
+        // this.isTabDisabled = false
       } catch (e) {
         this.loading = false
         this.showMsg(e)

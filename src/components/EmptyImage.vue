@@ -1,11 +1,15 @@
 <template lang="pug">
-img(:src="imgProxy + url")
+img(:src="imgProxy + url", :class="className")
 </template>
 
 <script>
 export default {
   props: {
-    url: ['String']
+    url: ['String'],
+    className: {
+      type: String,
+      default: ''
+    }
   },
   data () {
     return {}
