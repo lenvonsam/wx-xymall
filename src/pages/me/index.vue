@@ -85,17 +85,20 @@ export default {
     this.showNoticeIcon = false
     if (this.isLogin) {
       this.showNoticeIcon = this.currentUser.message_switch === '1'
-      // this.ironRequest('toOperCounts.shtml?user_id=' + this.currentUser.user_id, {}, 'get', this).then(resp => {
-      //   // console.log(resp.data)
-      //   if (resp.data && resp.data.returncode === '0') {
-      //     this.rowCountObj = resp.data
-      //   }
-      // })
+      this.ironRequest('toOperCounts.shtml?user_id=' + this.currentUser.user_id, {}, 'get', this).then(resp => {
+        // console.log(resp.data)
+        if (resp && resp.returncode === '0') {
+          this.rowCountObj = resp
+          this.$forceUpdate()
+        }
+      })
       this.ironRequest('balanceList.shtml?type=0&only_all=1&user_id=' + this.currentUser.user_id, {}, 'get', this).then(resp => {
-        if (resp.data && resp.data.returncode === '0') {
+        if (resp && resp.returncode === '0') {
           let obj = this.currentUser
-          obj.account_balance = resp.data.balance
+          obj.account_balance = resp.balance
+          this.currentUser.account_balance = resp.balance
           this.setUser(obj)
+          this.$forceUpdate()
         }
       })
     }

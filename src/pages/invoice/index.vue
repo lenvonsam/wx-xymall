@@ -116,6 +116,7 @@ export default {
       current_page: this.currentPage,
       page_size: this.pageSize
     }
+    this.tabName = this.$root.$mp.query.tabName || 0
     this.loadData()
   },
   methods: {
