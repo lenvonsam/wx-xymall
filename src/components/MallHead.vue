@@ -206,7 +206,7 @@ export default {
         this.sortList[sortIdx].data.map(item => {
           item.isActive = false
         })
-      } else if (!sortIdx) {
+      } else if (sortIdx !== 0) {
         this.sortList[sortIdx].data[0].isActive = false
       }
       this.sortList[sortIdx].data[idx].isActive = !this.sortList[sortIdx].data[idx].isActive
@@ -353,7 +353,7 @@ export default {
     border 1px #eeeeee solid
     border-radius 35px
     line-height 30px
-    overflow hidden
+    // overflow hidden
     position relative
     &.active
       border-color #0081ff

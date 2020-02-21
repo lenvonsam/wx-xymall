@@ -33,7 +33,8 @@ export default {
       mallFlag: 1,
       btnDisable: false,
       goodsNameList: [],
-      swiperCount: 0
+      swiperCount: 0,
+      filterObj: {}
     }
   },
   computed: {
@@ -93,9 +94,10 @@ export default {
     multipleFilter (filter) {
       console.log('filter', filter)
       const obj = {}
+      debugger
       Object.keys(filter).forEach((key) => {
         if (filter[key].length > 0) {
-          obj[`${key}s`] = filter[key].toString()
+          obj[`${key}s`] = filter[key][0] === '全部' ? '' : filter[key].toString()
         }
       })
       this.mallItems = []
@@ -104,8 +106,10 @@ export default {
       this.queryObject = {
         current_page: this.currentPage,
         page_size: this.pageSize,
+        name: this.mallTabVal,
         only_available: 1
       }
+      this.filterObj = obj
       Object.assign(this.queryObject, obj)
       this.refresher()
     },
@@ -187,8 +191,11 @@ export default {
       }
     },
     selectTab (val) {
+      debugger
       this.mallItems = []
       this.currentPage = 0
+      this.mallTabVal = val
+
       this.queryObject = {
         current_page: this.currentPage,
         page_size: this.pageSize,
@@ -196,6 +203,7 @@ export default {
         name: val,
         only_available: 1
       }
+      Object.assign(this.queryObject, this.filterObj)
       this.isLoad = 'refresh'
       this.refresher()
     },

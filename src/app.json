@@ -1,5 +1,6 @@
 {
   "pages": [
+    "pages/cart/main",
     "pages/mall/main",
     "pages/index/main",
     "pages/ladbillConfirm/main",
@@ -19,7 +20,7 @@
     "pages/billRecycleDetail/main",
     "pages/bill/main",
     "pages/billDetail/main",
-    "pages/cart/main",
+    
     "pages/pay/main",
     "pages/modifyDetail/main",
     "pages/mallFilter/main",

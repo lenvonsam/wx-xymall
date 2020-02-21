@@ -89,7 +89,7 @@
 
     .s-footer(v-if="carts.length > 0")
       .cart-footer
-        .col.row.flex-center(@click="choosedAll", style="padding-left: 10px;")
+        .row.flex-center(@click="choosedAll", style="padding-left: 10px;")
           .flex.flex-center
             img.choose-icon(src="/static/images/blue_check.png", v-if="allChoosed")
             img.choose-icon(src="/static/images/btn_ck_n.png", v-else)
@@ -98,10 +98,9 @@
           .text-right.flex.justify-end
             span 合计：
             b.c-red ￥{{totalPrice}}
-          .text-right.ft-12(style="color:#999;") 共{{totalCount}}件 ，{{totalWeight}}吨，吊费: {{totalLiftCharge}}
-        .cart-settle-btn(@click="goToSettle")
-          .ft-20
-            span {{isEdit ? '删除' : '结算'}}
+          .text-right.ft-12(style="color:#999;") 共{{totalCount}}件 ，{{totalWeight}}吨，吊费: {{totalLiftCharge}}元
+        .cart-settle-btn.ft-20(@click="goToSettle")
+          span {{isEdit ? '删除' : '结算'}}
     .address-dialog(@click="openPickWay", :style="{top: customBar + 40 + 'px'}", v-show="pickWayShow")
       .bg-white
         .solid-top.padding(v-for="(item, index) in pickWayList")
@@ -120,6 +119,7 @@ export default {
       alertShow: false,
       totalPrice: 0,
       totalWeight: 0,
+      totalLiftCharge: 0,
       totalCount: 0,
       pickway: 0,
       pwPhone: '',
@@ -178,6 +178,7 @@ export default {
               this.totalWeight += Number((itm.weight * itm.count).toFixed(3))
             }
           })
+          debugger
           this.totalLiftCharge = Number(this.totalLiftCharge).toFixed(2)
           this.totalPrice = Number(this.totalPrice).toFixed(2)
           this.totalWeight = Number(this.totalWeight).toFixed(3)
@@ -227,6 +228,7 @@ export default {
       const me = this
       this.confirm({content: '确定清空购物车？'}).then(() => {
         me.btnDisable = true
+        this.showLoading()
         me.ironRequest('cartEmpty.shtml', { user_id: me.currentUser.user_id }, 'post', this).then(resp => {
           if (resp && resp.returncode === '0') {
             me.showMsg('清空成功')
@@ -240,6 +242,7 @@ export default {
           me.showMsg(err || '网络异常')
           me.btnDisable = false
         })
+        this.hideLoading()
       })
     },
     emptySoldItems () {
@@ -295,13 +298,13 @@ export default {
       if (filterArray.length > 0 && !this.btnDisable) {
         let heFeiArray = filterArray.filter(itm => itm.wh_name.indexOf('合肥') >= 0)
         let dongGangArray = filterArray.filter(itm => itm.wh_name.indexOf('常州东港') >= 0)
-        let msgs = []
+        let msgs = ''
         if (heFeiArray.length > 0 && dongGangArray.length > 0) {
-          msgs = ['所选物资包含合肥仓库', '常州东港库物资最快次日可提']
+          msgs = '所选物资包含合肥仓库,常州东港库物资最快次日可提'
         } else if (heFeiArray.length > 0) {
-          msgs = ['所选物资包含合肥仓库']
+          msgs = '所选物资包含合肥仓库'
         } else if (dongGangArray.length > 0) {
-          msgs = ['常州东港库物资最快次日可提']
+          msgs = '常州东港库物资最快次日可提'
         }
         this.confirm({ content: msgs + '是否确认提交' }).then((res) => {
           if (res === 'confirm') {
@@ -539,7 +542,7 @@ export default {
     flex-basis 28%
   .cart-settle-btn
     display flex
-    width 250rpx
+    width 200rpx
     background #F95353
     align-items center
     color #fff
