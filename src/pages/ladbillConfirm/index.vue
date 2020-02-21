@@ -43,11 +43,12 @@ export default {
       isLogin: state => state.user.isLogin
     })
   },
-  beforeMount () {
+  onShow () {
     this.loadData()
   },
   methods: {
     loadData () {
+      this.showLoading()
       const reqUrl = 'orderLadList.shtml'
       const type = 'post'
       const p = {
@@ -64,7 +65,12 @@ export default {
       this.ironRequest(reqUrl, p, type, this).then(resp => {
         if (resp.returncode === '0') {
           console.log('resp', resp)
+          this.listData = resp.order_lads
         }
+        this.hideLoading()
+      }).catch(err => {
+        this.hideLoading()
+        this.showMsg(err || '网络错误')
       })
     },
     loadMore () {

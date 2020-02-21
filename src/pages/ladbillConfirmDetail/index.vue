@@ -24,7 +24,7 @@ div
               span.padding-left-xs {{item.product_length}}米
               span.padding-left-xs {{item.warehouse}}号门
               .sub-mark.ml-5 {{item.product_supply}}
-            span (理计)
+            span ({{item.metering}})
           .padding-bottom-xs {{item.product_count}}支/{{item.weight}}吨
       .solid-top.padding-top-sm.row.text-bold.justify-between
         span 总支数：{{totalCount}}支
@@ -130,8 +130,9 @@ div
         if (!this.btnDisable) {
           this.btnDisable = true
           const me = this
-          me.$ironLoad.show()
-          this.ironRequest('cancelTdOrder.shtml', {user_id: this.currentUser.user_id, td_no: this.$route.query.no}, 'post', this).then(resp => {
+          // me.$ironLoad.show()
+          this.showLoading()
+          this.ironRequest('cancelTdOrder.shtml', {user_id: this.currentUser.user_id, td_no: this.$root.$mp.query.no}, 'post', this).then(resp => {
             // me.$ironLoad.hide()
             if (resp && resp.returncode === '0') {
               this.showMsg('提单驳回成功')
@@ -143,8 +144,10 @@ div
               this.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
               this.btnDisable = false
             }
+            this.hideLoading()
           }).catch(err => {
             console.log(err)
+            this.hideLoading()
             // me.$ironLoad.hide()
             this.showMsg(err || '网络错误')
             this.btnDisable = false
