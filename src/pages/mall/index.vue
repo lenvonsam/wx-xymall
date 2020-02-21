@@ -1,12 +1,16 @@
 <template lang="pug">
 div
   nav-bar(title="商城")
-  mall-head(:mallTabVal="mallTabVal", @filter="multipleFilter", @selectMall="selectMall", @selectTab="selectTab", @searchChange="searchChange")
-  .mall-content(:class="{'bg-white': mallFlag}")
-    //- .text-center(v-show="isLoad")
-      img(src="/static/images/loadRun.gif", style="width: 120px; height: 120px")
-    .mt-10(:class="{cardSty: !mallFlag}", v-show="mallItems.length > 0")
-      mall-item(:mallFlag="mallFlag", :cb="mallItemCb", v-for="(item,idx) in mallItems", :item="item", :key="idx")
+  mall-head(:mallTabVal="mallTabVal", @getName="getName", @filter="multipleFilter", @selectMall="selectMall", @selectTab="selectTab", @searchChange="searchChange")
+  .mall-content
+    .mt-10(:class="{cardSty: !mallFlag}")
+      //- swiper.bill-content(@change="swiperChange", :current="swiperCount", :style="{height: screenHeight - 186 + 'px'}")
+        swiper-item(v-for="(tabItem, tabIdx) in goodsNameList.length", :key="tabIdx")
+      template(v-if="mallItems.length > 0")
+        mall-item(:mallFlag="mallFlag", :cb="mallItemCb", v-for="(item,idx) in mallItems", :item="item", :key="idx")
+      .col.text-center.text-gray.pt-100(v-else)
+        empty-image(url="bill_empty.png", className="img-empty")
+        .empty-content 您暂时没有相关合同
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
@@ -27,7 +31,9 @@ export default {
       currentPage: 0,
       pageSize: 10,
       mallFlag: 1,
-      btnDisable: false
+      btnDisable: false,
+      goodsNameList: [],
+      swiperCount: 0
     }
   },
   computed: {
@@ -35,7 +41,8 @@ export default {
       currentUser: state => state.user.currentUser,
       tempObject: state => state.tempObject,
       isLogin: state => state.user.isLogin,
-      customBar: state => state.customBar
+      customBar: state => state.customBar,
+      screenHeight: state => state.screenHeight
     })
   },
   onShow () {
@@ -53,13 +60,15 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
-      this.queryObject = {
-        current_page: this.currentPage,
-        page_size: this.pageSize,
-        search: '',
-        only_available: 1
+      if (this.goodsNameList.length > 0) {
+        this.queryObject = {
+          current_page: this.currentPage,
+          page_size: this.pageSize,
+          search: '',
+          only_available: 1
+        }
+        this.refresher()
       }
-      this.refresher()
     })
   },
   onReachBottom () {
@@ -74,6 +83,13 @@ export default {
   },
   methods: {
     ...mapActions(['configVal']),
+    swiperChange (e) {
+      console.log(e.mp.detail.current)
+    },
+    getName (list) {
+      console.log('goodsName', list)
+      this.goodsNameList = list
+    },
     multipleFilter (filter) {
       console.log('filter', filter)
       const obj = {}
@@ -184,6 +200,7 @@ export default {
       this.refresher()
     },
     refresher () {
+      this.showLoading()
       const me = this
       this.queryObject.current_page = this.currentPage
       this.ironRequest(
@@ -209,9 +226,10 @@ export default {
             }
           }
         } else {
-          me.msgShow(res === undefined ? '网络异常' : res.errormsg)
+          me.showMsg(res === undefined ? '网络异常' : res.errormsg)
           return false
         }
+        this.hideLoading()
       })
     }
   }

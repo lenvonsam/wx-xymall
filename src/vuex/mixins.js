@@ -50,6 +50,12 @@ const wxMixins = {
         url: url
       })
     },
+    showLoading () {
+      wx.showLoading({title: '加载中…'})
+    },
+    hideLoading () {
+      wx.hideLoading()
+    },
     tab (url) {
       mpvue.switchTab({
         url: url

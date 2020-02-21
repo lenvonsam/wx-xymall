@@ -1,5 +1,5 @@
 <template lang="pug">
- .padding.pr-10.pl-10(:class="!mallFlag ? 'card-list' : 'solid-bottom'")
+ .padding.pr-10.pl-10(:class="!mallFlag ? 'card-list' : 'solid-bottom bg-white'")
     template(v-if="mallFlag === 1")
       .row
         .col.text-bold.ft-15

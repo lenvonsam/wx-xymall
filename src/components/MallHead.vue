@@ -1,5 +1,5 @@
 <template lang="pug">
-.bg-white.full-width.text-gra.shop-head(:style="{top: customBar+'px'}")
+.bg-white.full-width.text-gra.shop-head(:style="{top: customBar+'px'}", @touchmove.stop="catchtouchmove")
   .flex.align-center.pl-10.pr-10
     .h-left.ft-25(@click="openFilter")
       .cuIcon-sort.lg.text-gra
@@ -19,13 +19,13 @@
         .cuIcon-unfold.text-xl(@click="activeTab = 'name'")
     .padding-sm.flex.align-center.solid-top
       .col.filter-list.bg-gray.flex(@click.prevent="sortCb('standard')")
-        .col.text-center 规格
+        .col.text-center.text-cut {{standardStr || '规格'}}
         .cuIcon-unfold
       .col.filter-list.bg-gray.flex(@click.prevent="sortCb('material')")
-        .col.text-center 材质
+        .col.text-center.text-cut {{materialStr || '材质'}}
         .cuIcon-unfold
       .col.filter-list.bg-gray.flex(@click.prevent="sortCb('origin')")
-        .col.text-center 产地
+        .col.text-center.text-cut {{originStr || '产地'}}
         .cuIcon-unfold
       .setting-list.flex.ft-25
         .cuIcon-list(@click="selectMall(1)", :class="mallFlag ? 'text-blue' : 'text-gra'")
@@ -34,14 +34,19 @@
     .filter-box(@click.prevent="sortClose(sortIdx)", v-show="activeTab === sort.key", v-for="(sort, sortIdx) in sortList", :key="sortIdx")
       .bg-white.padding-sm.ft-11(@click.stop="")
         .flex.align-center.justify-between
-          .flex.text-bold.align-center.ft-16
+          .flex.align-center
             .dotted.bg-blue
-            span.pl-10 {{sort.title}}
+            span.pl-10.text-bold.ft-16 {{sort.title}}
+            .search-input.row.bg-gray.margin-left-sm.text-gray(v-if="activeTab === 'standard'")
+              .cuIcon-search.ft-16
+              input.full-width.pl-10(@input="standardChange" type="text", placeholder="请输入规格快速查询")
           .cuIcon-fold.ft-16(@click="sortClose(sortIdx)")
-        .grid.col-3.padding-top-sm.sort-content
-          .sort-list(v-if="sort.data.length > 0", v-for="(item, index) in sort.data", :key="index")
-            .sort-name(:class="{active: item.isActive}", @click.stop="selectSort(sortIdx, index)") {{item.name}}
-              .check.cuIcon-check.bg-blue(v-show="item.isActive")
+        //- div(@catchtouchmove="catchtouchmove")  
+        scroll-view(scroll-y, style="max-height: 200px", @scrolltolower="loadMore")
+          .grid.col-3.padding-top-sm.sort-content
+            .sort-list(v-if="sort.data.length > 0", v-for="(item, index) in sort.data", :key="index")
+              .sort-name(:class="{active: item.isActive}", @click.stop="selectSort(sortIdx, index)") {{item.name}}
+                .check.cuIcon-check.bg-blue(v-show="item.isActive")
         .row.padding-sm.justify-around(v-if="sortIdx !== 0")
           .btn-cancel.col(@click="selectSort(sortIdx, 0)") 重选 
           .btn-sure.margin-left-sm.col(@click="searchHandler()") 确定            
@@ -66,13 +71,18 @@ export default {
       scrollLeft: 0,
       tabVal: '',
       activeTab: '',
-      queryObject: {},
+      pageSize: 29,
+      currentPage: 0,
+      queryObject: {
+        current_page: 0,
+        page_size: 29
+      },
       temporary: [],
       sortList: [
-        { label: '品名', key: 'name', data: [], selectSort: [], title: '全部品名' },
-        { label: '规格', key: 'standard', data: [], selectSort: [], title: '全部规格' },
-        { label: '材质', key: 'material', data: [], selectSort: [], title: '全部材质' },
-        { label: '产地', key: 'origin', data: [], selectSort: [], title: '全部产地' }
+        { label: '品名', key: 'name', data: [], selectSort: [], title: '品名展示' },
+        { label: '规格', key: 'standard', data: [], selectSort: [], title: '规格展示' },
+        { label: '材质', key: 'material', data: [], selectSort: [], title: '材质展示' },
+        { label: '产地', key: 'origin', data: [], selectSort: [], title: '产地展示' }
       ],
       sortQueryList: {
         'standard': {
@@ -105,7 +115,12 @@ export default {
       mallFlag: 1,
       standards: [],
       materials: [],
-      supplys: []
+      supplys: [],
+      standardStr: '',
+      materialStr: '',
+      originStr: '',
+      filterStr: '',
+      isMore: false
     }
   },
   computed: {
@@ -128,9 +143,13 @@ export default {
   },
   onShow () {
     console.log('tempObject', this.tempObject.search)
+    this.currentPage = 0
     this.searchVal = this.tempObject.search || ''
   },
   methods: {
+    catchtouchmove () {
+      return false
+    },
     mallTabValChange () {
       this.tabVal = this.mallTabVal
       const idx = this.sortList[0].data.findIndex(item => {
@@ -148,24 +167,35 @@ export default {
       }
     },
     searchHandler () {
-      const list = ['standard', 'material', 'supply']
+      const list = ['standard', 'material', 'origin']
       const filters = {}
       this.sortList.map((item, idx) => {
         filters[item.key] = []
         if (list.indexOf(item.key) !== -1 && item.data) {
           item.data.map(itemKey => {
             if (itemKey.isActive) {
-              filters[item.key].push(itemKey.name === '全部' ? '' : itemKey.name)
+              filters[item.key].push(itemKey.name)
             }
           })
         }
       })
       this.$emit('filter', filters)
+      this.standardStr = filters['standard'].toString()
+      this.materialStr = filters['material'].toString()
+      this.originStr = filters['origin'].toString()
       this.temporary = []
       this.sortClose()
     },
     openFilter () {
       this.jump('/pages/mallFilter/main')
+    },
+    standardChange (e) {
+      this.throttle(() => {
+        this.sortList[1].data = []
+        this.queryObject.search = e.mp.detail.value
+        this.currentPage = 0
+        this.sortCb('standard')
+      }, 300)
     },
     searchChange () {
       this.$emit('searchChange', this.searchVal)
@@ -199,21 +229,30 @@ export default {
       })
       this.$emit('selectTab', item.id)
     },
+    loadMore () {
+      if (this.activeTab === 'standard') {
+        this.isMore = true
+        this.currentPage++
+        this.sortCb(this.activeTab)
+      }
+    },
     sortCb (key) {
       if (this.tabVal) {
         this.queryObject.name = this.tabVal
       }
+      this.queryObject.current_page = this.currentPage
       let queryObj = Object.assign({}, this.queryObject)
       if (key === 'area') queryObj.region = ''
       if (key === 'material') queryObj.material = ''
       if (key === 'origin') queryObj.supply = ''
+      this.showLoading()
       this.ironRequest(this.sortQueryList[key].reqUrl, queryObj, 'post', this).then(resp => {
         if (resp.returncode === '0') {
           let arr = resp[this.sortQueryList[key].respKey]
+
           const tabList = []
 
           if (arr.length > 0) {
-            arr.unshift({ name: '全部', isActive: false })
             const idx = this.sortList.findIndex((item) => {
               return item.key === key
             })
@@ -234,15 +273,25 @@ export default {
                 tabList.push(obj)
               }
             })
-            this.sortList[idx].data = arr
+            if ((this.currentPage === 0 || key !== 'standard') && !this.isMore) {
+              arr.unshift({ name: '全部', id: '', isActive: false })
+              this.sortList[idx].data = arr
+            } else {
+              this.sortList[idx].data.push(...arr)
+              this.isMore = false
+            }
+          } else if (this.currentPage !== 0) {
+            this.currentPage--
           }
           if (key === 'name') {
-            tabList[0].id = ''
+            tabList.unshift({ name: '全部', id: '', isActive: true })
             this.sortList[0].data = tabList
             this.mallTabValChange()
+            this.$emit('getName', tabList)
           } else {
             this.activeTab = key
           }
+          this.hideLoading()
         }
       })
     },
@@ -272,7 +321,8 @@ export default {
 .tab-more
   width 50px
 .filter-list
-  margin 0 10px
+  margin 0 5px
+  width 30%
   line-height 30px
   padding 0 5px
   border-radius 5px
@@ -303,14 +353,15 @@ export default {
     border 1px #eeeeee solid
     border-radius 35px
     line-height 30px
+    overflow hidden
     position relative
     &.active
       border-color #0081ff
       color #0081ff
     .check
       position absolute
-      right -2px
-      bottom -2px
+      right 0px
+      bottom -1px
       color #ffffff
       width 15px
       height 15px
@@ -326,8 +377,8 @@ export default {
   z-index 2
   background ragb(0, 0, 0, 0.5)
 .sort-content
-  max-height calc(100vh - 180px)
-  overflow auto
+  // max-height 200px
+  // overflow auto
 .btn-cancel, .btn-sure
   text-align center
   border-radius 5px
@@ -340,4 +391,13 @@ export default {
   color #fff
   border 1px solid #2485FF
   background #2485FF
+.search-input
+  border-radius 30px
+  height 30px
+  padding 0 10px
+  line-height 30px
+  width 200px
+  input::-webkit-input-placeholder  
+    font-size 11px
+    font-weight 500
 </style>

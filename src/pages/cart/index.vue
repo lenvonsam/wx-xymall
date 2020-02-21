@@ -385,7 +385,6 @@ export default {
       }
     },
     weightChoose (val, rowItem) {
-      // debugger
       // rowItem.measure_way_id = val
       // if (val === 2) {
       //   rowItem.weight = rowItem[0].weight
@@ -430,12 +429,9 @@ export default {
     },
     loadCartData () {
       this.isLoad = false
-      // user_id: 'MTAyMQ==',
       const me = this
       this.ironRequest('cartList.shtml?user_id=' + me.currentUser.user_id, {}, 'get', this).then(resp => {
-        // this.ironRequest('cartList.shtml?user_id=' + this.currentUser.user_id, {}, 'get', this).then(resp => {
         this.isLoad = true
-        // debugger
         if (resp.returncode === '0') {
           let arr = resp.carts
           this.soldCarts = resp.sold_out_carts

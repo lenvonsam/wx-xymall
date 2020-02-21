@@ -1,10 +1,9 @@
 {
   "pages": [
+    "pages/mall/main",
     "pages/index/main",
     "pages/ladbillConfirm/main",
     "pages/ladbillConfirmDetail/main",
-    
-    
     
     "pages/me/main",
     "pages/askBuy/main",
@@ -23,7 +22,6 @@
     "pages/cart/main",
     "pages/pay/main",
     "pages/modifyDetail/main",
-    "pages/mall/main",
     "pages/mallFilter/main",
     "pages/search/main",
     "pages/cardList/main",

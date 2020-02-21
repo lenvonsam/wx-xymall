@@ -8,7 +8,7 @@ div
     .flex-twice.bg-white.padding-sm
       .filter-right-search.flex.align-center
         .cuIcon-search
-        input.pl-10(id="searchInput", type="text", placeholder="搜索规格", v-model="searchVal")
+        input.pl-10(type="text", placeholder="搜索规格", v-model="searchVal")
       scroll-view.padding-top-sm.filter-right-content(scroll-y, :scroll-into-view="searchCurId", :style="{height: screenHeight - customBar - 60 + 'px'}")
         .filter-right-list(:id="'idx-' + item.first", v-for="(item, index) in standardList", :key="index", @click="selectStandard(item.name)") {{item.name}}
     .filter-cur
