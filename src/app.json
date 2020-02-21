@@ -1,6 +1,11 @@
 {
   "pages": [
     "pages/index/main",
+    "pages/ladbillConfirm/main",
+    "pages/ladbillConfirmDetail/main",
+    
+    
+    
     "pages/me/main",
     "pages/askBuy/main",
     "pages/askBuyCreate/main",

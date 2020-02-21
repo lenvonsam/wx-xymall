@@ -67,7 +67,7 @@ export default {
       name: '待确认',
       dotKey: 'to_confirm_lad',
       url: {
-        path: '/ladbill/confirm/list'
+        path: '/pages/ladbillConfirm/main'
       }
     },
     {
