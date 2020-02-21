@@ -7,14 +7,14 @@ div
     .bg-white.flex.padding-sm
       .col
         span {{billDetail.tstc_no}}
-        copy-btn
+        copy-btn(:copyUrl="billDetail.tstc_no")
       .col.text-right(v-if="billDetail.status_desc === '待补款'")
         span.text-blue 待补款:
         span.padding-left-sm.text-red.text-bold ￥{{billDetail.paid_price_desc}}  
       .col.flex-100.text-blue.text-right(v-else, :class="{'text-red': billDetail.status_desc == '违约'}") {{billDetail.status_desc}}        
     .bg-white.margin-top-sm.text-content
       .padding-sm.text-black.text-bold.solid-bottom.ft-15 商品信息
-      .ft-13.padding-sm.solid-bottom.relative(v-for="(item, idx) in billDetail.order_items")
+      .ft-13.padding-sm.solid-bottom.relative(v-for="(item, idx) in billDetail.order_items", :key="idx")
         .flex
           .col
             span.ft-15 {{item.name}}
@@ -176,12 +176,12 @@ export default {
       this.statisticRequest({ event: 'click_app_myorder_detail_cancel' }, this)
       const me = this
       if (!this.btnDisable) {
-        this.confirm({content: '您确定要取消合同吗？'}).then((res) => {
+        this.confirm({ content: '您确定要取消合同吗？' }).then((res) => {
           if (res === 'confirm') {
             me.btnDisable = true
             me.ironRequest('cancelOrder.shtml', { user_id: me.currentUser.user_id, discussid: me.billDetail.discussid }, 'post', me).then(resp => {
               if (resp && resp.returncode === '0') {
-                me.confirm({content: '合同取消成功'}).then((res) => {
+                me.confirm({ content: '合同取消成功' }).then((res) => {
                   if (res === 'confirm') {
                     me.btnDisable = false
                     setTimeout(() => {
@@ -207,18 +207,16 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-.bill-item-line {
-  border: 0.5px solid #ddd;
-  height: 0.5px;
-  position: absolute;
-  bottom: 0px;
-  right: 0px;
-  left: 0.5rem;
-}
-.confirm-mark {
-  width: 50px;
-  height: 50px;
-  background-size: cover;
-  background-position: center;
-}
+.bill-item-line
+  border 0.5px solid #ddd
+  height 0.5px
+  position absolute
+  bottom 0px
+  right 0px
+  left 0.5rem
+.confirm-mark
+  width 50px
+  height 50px
+  background-size cover
+  background-position center
 </style>

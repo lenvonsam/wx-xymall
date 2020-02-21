@@ -5,6 +5,8 @@ export default {
   tempObject: {},
   // 屏幕宽度
   screenWidth: 375,
+  // 屏幕高度
+  screenHeight: 667,
   // 导航栏高度
   statusBar: 0,
   // 自定义导航栏对象

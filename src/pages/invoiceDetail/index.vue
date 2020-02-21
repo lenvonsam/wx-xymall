@@ -5,8 +5,8 @@ div
     .solid-bottom.item
       .invoice-left 合同编号
       .col.text-right.text-gray
-        .padding-bottom-xs(v-for="no in nosArray") {{no}}
-    .solid-bottom.item(v-for="itm in listArray")
+        .padding-bottom-xs(v-for="(no,idx) in nosArray", :key="idx") {{no}}
+    .solid-bottom.item(v-for="(itm,idx) in listArray", :key="idx")
       .invoice-left {{itm.name}}
       .text-gray {{tempObject[itm.key]}}
     //- .row.solid-bottom.flex-center(v-if="queryId == 0")

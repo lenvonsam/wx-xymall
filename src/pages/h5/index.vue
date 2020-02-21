@@ -7,7 +7,7 @@ div
       .margin-top
         div(v-html="obj.content", style="color: rgba(77, 77, 77, 1)")
   .padding.bg-white(v-else-if="pageType === 'registProtocol'")
-    div(v-for="(pl,idx) in protocol")
+    div(v-for="(pl,idx) in protocol", :key="idx")
       .ft-16.text-bold.padding-tb(v-if="pl.title") {{pl.title}}
       div(v-if="pl.content", v-html="pl.content", :class="{'pl_info': idx > 0}")
   .padding.bg-white(v-else-if="pageType === 'msgDetail'")

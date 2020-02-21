@@ -11,18 +11,22 @@ div
       .col.text-center.text-gray.pt-100(v-else)
         empty-image(url="bill_empty.png", className="img-empty")
         .empty-content 您暂时没有相关合同
+  modal-intro(v-model="modalIntroShow", :images="introImages", :cb="modalIntroCb")
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
 import mallHead from '@/components/MallHead'
 import mallItem from '@/components/MallItem'
+import modalIntro from '@/components/ModalIntro.vue'
 export default {
   components: {
     mallHead,
-    mallItem
+    mallItem,
+    modalIntro
   },
   data () {
     return {
+      introImages: ['mall_good.png', 'mall_standard.png'],
       mallTabVal: '',
       mallItems: [],
       queryObject: {},
@@ -33,7 +37,10 @@ export default {
       mallFlag: 1,
       btnDisable: false,
       goodsNameList: [],
-      swiperCount: 0
+      swiperCount: 0,
+      modalIntroShow: false,
+      // 1 商城引导 2 商城分类引导
+      introType: 1
     }
   },
   computed: {
@@ -46,6 +53,7 @@ export default {
     })
   },
   onShow () {
+    // this.modalIntroShow = true
     this.queryObject = {}
     if (this.tempObject.search || this.tempObject.name === '') {
       Object.assign(this.queryObject, this.tempObject)
@@ -60,6 +68,7 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
+      this.showShareMall()
       if (this.goodsNameList.length > 0) {
         this.queryObject = {
           current_page: this.currentPage,
@@ -83,6 +92,13 @@ export default {
   },
   methods: {
     ...mapActions(['configVal']),
+    showShareMall () {
+      const firstShare = mpvue.getStorageSync('firstShareMall') || false
+      if (!firstShare) {
+        this.modalIntroShow = true
+        mpvue.setStorageSync('firstShareMall', true)
+      }
+    },
     swiperChange (e) {
       console.log(e.mp.detail.current)
     },

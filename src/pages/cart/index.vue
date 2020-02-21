@@ -104,7 +104,7 @@
             span {{isEdit ? '删除' : '结算'}}
     .address-dialog(@click="openPickWay", :style="{top: customBar + 40 + 'px'}", v-show="pickWayShow")
       .bg-white
-        .solid-top.padding(v-for="(item, index) in pickWayList")
+        .solid-top.padding(v-for="(item, index) in pickWayList", :key="index")
           .text-bold.ft-15 {{item.title}}
           .text-gray.padding-top-sm {{item.content}}
     alert(title="您还未登录，请先登录", v-model="alertShow", :cb="alertCb")
@@ -133,9 +133,9 @@ export default {
       isEdit: false,
       pickWayShow: false,
       pickWayList: [
-        {title: '自提点1-常州东港库', content: '江苏省常州市武进区湖塘-常州东港A库(1，2，3，4，5，6，7号门)G库(8，9，10，11号门)'},
-        {title: '自提点2-合肥徽商库', content: '合肥市庐阳区徽商钢材市场'},
-        {title: '自提点3-合肥东港库', content: '合肥市大兴镇南淝河旁，合肥东港码头w'}
+        { title: '自提点1-常州东港库', content: '江苏省常州市武进区湖塘-常州东港A库(1，2，3，4，5，6，7号门)G库(8，9，10，11号门)' },
+        { title: '自提点2-合肥徽商库', content: '合肥市庐阳区徽商钢材市场' },
+        { title: '自提点3-合肥东港库', content: '合肥市大兴镇南淝河旁，合肥东港码头w' }
       ]
     }
   },
@@ -225,7 +225,7 @@ export default {
     },
     clearCarts () {
       const me = this
-      this.confirm({content: '确定清空购物车？'}).then(() => {
+      this.confirm({ content: '确定清空购物车？' }).then(() => {
         me.btnDisable = true
         me.ironRequest('cartEmpty.shtml', { user_id: me.currentUser.user_id }, 'post', this).then(resp => {
           if (resp && resp.returncode === '0') {
@@ -327,7 +327,7 @@ export default {
             }
             // me.$ironLoad.show()
             me.ironRequest('generateOrder.shtml', body, 'post', this).then(resp => {
-            // me.$ironLoad.hide()
+              // me.$ironLoad.hide()
               if (resp && resp.returncode === '0') {
                 me.btnDisable = false
                 if (resp.order_size > 1) {
@@ -337,7 +337,7 @@ export default {
                     }
                   })
                 } else {
-                // 跳转到支付确认页面
+                  // 跳转到支付确认页面
                   me.jump(`/pages/pay/main?orderNo=${resp.order_no}&price=${resp.deal_price}&pageType=offlinePay`)
                 }
               } else {
@@ -511,8 +511,6 @@ export default {
       border-radius 4px
       box-shadow 1px 2px 5px rgba(61, 167, 255, 0.3)
       letter-spacing 1px
-    // .content
-      // color $mainGray
     .count-step
       height 30px
       width 120px
@@ -581,6 +579,6 @@ radio.radio[checked]::after
   left 0
   right 0
   z-index 99
-  background rgba(0,0,0,0.5)
+  background rgba(0, 0, 0, 0.5)
   bottom 0
 </style>

@@ -4,14 +4,11 @@ span.copy-btn(@click="clickCopy") 复制
 <script>
 export default {
   props: {
-    copyContent: {
-      type: String,
-      default: ''
-    }
+    copyUrl: [String]
   },
   methods: {
     clickCopy () {
-      this.copyText(this.copyContent)
+      this.copyText(this.copyUrl)
     }
   }
 }

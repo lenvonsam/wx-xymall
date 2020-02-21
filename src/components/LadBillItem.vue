@@ -13,7 +13,7 @@
           .text-gray(v-else-if="ladObject.status == '待付款' && ladObject.pay_price == 0") 审核中
           .text-gray(v-else) {{ladObject.status}}
       div(@click="jump('/pages/ladbillDetail/main?id=' + ladObject.no + '&status='+ladObject.status)")
-        .text-gray.solid-bottom.padding-sm.text-content(v-for="(itm, idx) in ladObject.order_items")
+        .text-gray.solid-bottom.padding-sm.text-content(v-for="(itm, idx) in ladObject.order_items", :key="idx")
           .text-black.padding-bottom-xs
             .row.ft-15
               .col
@@ -45,43 +45,42 @@
 </template>
 
 <script>
-  import copyBtn from '@/components/CopyBtn.vue'
-  export default {
-    props: {
-      ladObject: {
-        type: Object,
-        required: true
-      },
-      cb: {
-        type: Function,
-        required: true
-      }
+import copyBtn from '@/components/CopyBtn.vue'
+export default {
+  props: {
+    ladObject: {
+      type: Object,
+      required: true
     },
-    computed: {
-      copyRow () {
-        return this.ladObject
-      }
-    },
-    mounted () {
-      console.log('ladObject', this.copyRow)
-    },
-    components: {
-      copyBtn
+    cb: {
+      type: Function,
+      required: true
     }
+  },
+  computed: {
+    copyRow () {
+      return this.ladObject
+    }
+  },
+  mounted () {
+    console.log('ladObject', this.copyRow)
+  },
+  components: {
+    copyBtn
   }
+}
 </script>
 
 <style lang="stylus", scoped>
-.lad-warehouse-mark {
-  display: inline-block;
-  padding: 1px 5px;
-  background-color: #3da7ff;
-  font-size: 12px;
-  letter-spacing: 1px;
-  color: #fff;
-  text-align: center;
-  border-radius: 3px;
+.lad-warehouse-mark
+  display inline-block
+  padding 1px 5px
+  background-color #3da7ff
+  font-size 12px
+  letter-spacing 1px
+  color #fff
+  text-align center
+  border-radius 3px
   // box-shadow: 2px 3px 5px #ddd;
-  box-shadow: 1px 2px 5px rgba(61, 167, 255,.3);
-}
+  box-shadow 1px 2px 5px rgba(61, 167, 255, 0.3)
 </style>
