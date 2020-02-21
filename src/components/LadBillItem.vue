@@ -13,7 +13,7 @@
           .text-gray(v-else-if="ladObject.status == '待付款' && ladObject.pay_price == 0") 审核中
           .text-gray(v-else) {{ladObject.status}}
       div(@click="jump('/pages/ladbillDetail/main?id=' + ladObject.no + '&status='+ladObject.status)")
-        .text-gray.solid-bottom.padding-sm.text-content(v-for="(itm, idx) in ladObject.order_items")
+        .text-gray.solid-bottom.padding-sm.text-content(v-for="(itm, ladIdx) in ladObject.order_items", :key="ladIdx")
           .text-black.padding-bottom-xs
             .row.ft-15
               .col

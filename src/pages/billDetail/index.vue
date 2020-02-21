@@ -14,7 +14,7 @@ div
       .col.flex-100.text-blue.text-right(v-else, :class="{'text-red': billDetail.status_desc == '违约'}") {{billDetail.status_desc}}        
     .bg-white.margin-top-sm.text-content
       .padding-sm.text-black.text-bold.solid-bottom.ft-15 商品信息
-      .ft-13.padding-sm.solid-bottom.relative(v-for="(item, idx) in billDetail.order_items")
+      .ft-13.padding-sm.solid-bottom.relative(v-for="(item, idx) in billDetail.order_items", :key="idx")
         .flex
           .col
             span.ft-15 {{item.name}}
@@ -31,7 +31,7 @@ div
         .text-gray(v-if="item.tolerance_range || item.weight_range")
           span.padding-right-sm(v-if="item.tolerance_range") 公差范围 {{item.tolerance_range}}
           span(v-if="item.weight_range") 重量范围 {{item.weight_range}}
-        .bill-item-line(v-if="idx < (billDetail.order_items.length - 1)") 
+        //- .bill-item-line(v-if="idx < (billDetail.order_items.length - 1)") 
     template(v-if="billDetail.status_desc !== '待付款'")     
       .bg-white.mt-half-rem
         .text-black.padding-sm.text-bold.solid-bottom 合同基本信息

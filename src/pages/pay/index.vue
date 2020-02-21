@@ -66,9 +66,9 @@ div
           .col.flex-80 银行账号
           .col.c-gray 10613501040017200
         .row(@click="sendSmsChoosed", v-if="pageType == 'offlinePay'")
-          img.mt-3.choose-icon.h-16(src="~assets/imgs/blue_check.png", v-if="smsNotify")
-          img.mt-3.choose-icon.h-16(src="~assets/imgs/btn_ck_n.png", v-else)
-          span.pl-5 发送供应商开户信息至手机
+          img.choose-icon(src="/static/images/blue_check.png", v-if="smsNotify")
+          img.choose-icon(src="/static/images/btn_ck_n.png", v-else)
+          span.padding-left-xs 发送供应商开户信息至手机
       .footer(v-if="pageType == 'offlinePay'")
         button.main-btn(@click="billPay") 
           span(v-if="currentBalance < payMountInfo") 已线下转账补款
@@ -140,6 +140,7 @@ export default {
   methods: {
     sendSmsChoosed () {
       this.smsNotify = !this.smsNotify
+      this.$forceUpdate()
     },
     backInfo () {
       const me = this
@@ -301,10 +302,10 @@ export default {
     text-align center
     padding-bottom 10px
     .add-pay
-      padding 10px
+      padding 15px
       background rgb(254, 252, 238)
-      width 30px
-      border-radius 15px
+      width 200px
+      border-radius 3px
       margin 0 auto
       color #f95353
     .pay-info

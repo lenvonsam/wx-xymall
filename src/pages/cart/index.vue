@@ -24,7 +24,7 @@
               .flex(v-show="!isEdit")
                 .padding-xs.mr-5(@click="openEdit") 编辑
                 .padding-xs(@click="clearCarts") 清空
-          scroll-view.scroll-view(scroll-y, :style="{top:customBar + 40 + 'px', height: screenHeight - customBar - 132 + 'px'}")
+          scroll-view.scroll-view(scroll-y, :style="{top:custom.top + 40 + 'px', height: screenHeight - custom.top - custom.bottom - 140 + 'px'}")
             .cart-items(v-for="(cart, cartIdx) in carts", :key="cartIdx")
               .cart-item.padding-sm
                 .flex.flex-center.align-center.ft-15.text-bold
@@ -88,7 +88,7 @@
 
 
     .s-footer(v-if="carts.length > 0")
-      .cart-footer
+      .cart-footer.justify-between
         .row.flex-center(@click="choosedAll", style="padding-left: 10px;")
           .flex.flex-center
             img.choose-icon(src="/static/images/blue_check.png", v-if="allChoosed")
@@ -145,6 +145,7 @@ export default {
   },
   computed: {
     ...mapState({
+      custom: state => state.custom,
       customBar: state => state.customBar,
       screenHeight: state => state.screenHeight,
       currentUser: state => state.user.currentUser,
@@ -328,9 +329,9 @@ export default {
               body.mobile = me.pwPhone
               body.end_addr = me.pwAddr + ' ' + me.pwAddrDetail
             }
-            // me.$ironLoad.show()
+            this.showLoading()
             me.ironRequest('generateOrder.shtml', body, 'post', this).then(resp => {
-            // me.$ironLoad.hide()
+              this.hideLoading()
               if (resp && resp.returncode === '0') {
                 me.btnDisable = false
                 if (resp.order_size > 1) {
@@ -349,7 +350,7 @@ export default {
               }
             }).catch(err => {
               me.btnDisable = false
-              // me.$ironLoad.hide()
+              this.hideLoading()
               me.showMsg(err || '网络异常')
             })
           }
@@ -359,16 +360,16 @@ export default {
       }
     },
     weightChoose (val, rowItem) {
-      // rowItem.measure_way_id = val
-      // if (val === 2) {
-      //   rowItem.weight = rowItem[0].weight
-      //   rowItem.price = rowItem[0].price
-      //   rowItem.originPrice = rowItem[0].originPrice
-      // } else {
-      //   rowItem.weight = rowItem[1].weight
-      //   rowItem.price = rowItem[1].price
-      //   rowItem.originPrice = rowItem[1].price
-      // }
+      rowItem.measure_way_id = val
+      if (val === 2) {
+        rowItem.weight = rowItem.radios[0].weight
+        rowItem.price = rowItem.radios[0].price
+        rowItem.originPrice = rowItem.radios[0].originPrice
+      } else {
+        rowItem.weight = rowItem.radios[1].weight
+        rowItem.price = rowItem.radios[1].price
+        rowItem.originPrice = rowItem.radios[1].price
+      }
       this.ironRequest('cartUpdate.shtml', { cart_id: rowItem.cart_id, user_id: this.currentUser.user_id, measure_way: val, count: rowItem.count }, 'post', this).then(res => {
       })
     },
