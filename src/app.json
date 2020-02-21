@@ -28,7 +28,7 @@
     "pages/h5/main"
   ],
   "window": {
-    "navigationBarTextStyle": "white",
+    "navigationBarTextStyle": "black",
     "navigationStyle": "custom"
   },
   "subPackages": [

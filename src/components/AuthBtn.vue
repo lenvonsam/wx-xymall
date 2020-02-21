@@ -54,7 +54,7 @@ export default {
           let timeTxt = me.timeCount
           me.timeInterval = setInterval(() => {
             if (timeTxt > 0) {
-              me.btnTxt = `${timeTxt}`
+              me.btnTxt = `${timeTxt}s后重发`
               timeTxt--
             } else {
               me.btnTxt = '重新获取'
