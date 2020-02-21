@@ -103,11 +103,7 @@
           span {{isEdit ? '删除' : '结算'}}
     .address-dialog(@click="openPickWay", :style="{top: customBar + 40 + 'px'}", v-show="pickWayShow")
       .bg-white
-<<<<<<< HEAD
-        .solid-top.padding(v-for="(item, index) in pickWayList", :key="index")
-=======
         .solid-top.padding(v-for="(item, pickIdx) in pickWayList", :key="pickIdx")
->>>>>>> 8f0ebcbe45d2562389038194f150e9a394ef938b
           .text-bold.ft-15 {{item.title}}
           .text-gray.padding-top-sm {{item.content}}
     alert(title="您还未登录，请先登录", v-model="alertShow", :cb="alertCb")
