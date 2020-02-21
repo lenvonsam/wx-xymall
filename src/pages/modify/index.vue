@@ -16,7 +16,7 @@ div
           .padding-sm.solid-bottom(v-for="(item, itemIdx) in listData", :key="itemIdx")
             .flex.align-center
               .ft-16.padding-right-sm {{item.tstc_no}}
-              img.ding-icon(src="/static/images/ding.png")
+              img.ding-icon(src="/static/images/ding.png", v-if="item.contract_type == 12")
             .flex.justify-between.text-gray.align-center.margin-top-sm
               .col.text-content
                 p {{item.client_name}}
