@@ -278,7 +278,6 @@ export default {
               this.sortList[idx].data = arr
             } else {
               this.sortList[idx].data.push(...arr)
-              this.isMore = false
             }
           } else if (this.currentPage !== 0) {
             this.currentPage--
@@ -291,6 +290,7 @@ export default {
           } else {
             this.activeTab = key
           }
+          this.isMore = false
           this.hideLoading()
         }
       })
