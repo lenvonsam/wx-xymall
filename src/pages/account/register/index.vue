@@ -5,12 +5,12 @@
     .ft-18.text-center 快速注册
     .row.padding-tb-sm.border-bottom-line.margin-top-xl
       .flex-30.row
-        .register-icon.phone(style="background-image: url('/static/images/phone_icon.png')")
+        .register-icon.phone(:style="{backgroundImage: 'url(' + imgProxy + 'phone_icon.png)'}", v-if="imgProxy")
       .col
         input.no-border(placeholder="请输入手机号", v-model="phone", type="number", :maxlength="11")
     .row.padding-tb-sm.border-bottom-line.margin-top-xl
       .flex-30.row
-        .register-icon.code(style="background-image:url('/static/images/code_icon.png')")
+        .register-icon.code(:style="{backgroundImage:'url(' + imgProxy + 'code_icon.png)'}", v-if="imgProxy")
       .col
         input.no-border(placeholder="请输入验证码", type="number", v-model="code")
       .flex-90.text-center(style="border-left: 1rpx solid #888")

@@ -7,7 +7,8 @@
     .action(v-if="leftMenu")
       slot(name="leftMenu")
     .action.relative(v-if="serviceIcon")
-      .service-btn(style="background-image: url('/static/images/service_icon.png')")
+      .service-btn
+        img(src="/static/images/service_icon.png")
         button(open-type="contact")
     .action.border-custom(:style="{width: custom.width + 'px', height: custom.height + 'px', marginLeft: 'calc(750rpx - ' + custom.right + 'px)'}", v-if="isCustom")
       text.cuIcon-back(@click="back")
@@ -69,9 +70,9 @@ export default {
 
 <style lang="stylus" scoped>
 .service-btn
-  width 20px
-  height 20px
-  background-size cover
+  img
+    width 20px
+    height 20px
   button
     position absolute
     top 0

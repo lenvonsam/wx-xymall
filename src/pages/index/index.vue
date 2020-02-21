@@ -7,9 +7,9 @@ div
         .flex-30
           icon.cuIcon-search(style="margin-top: -16rpx")
         .col 请输入关键词搜索
-    swiper(v-if="gallery.length > 0", :indicator-dots="true", :autoplay="true")
+    swiper(v-if="gallery.length > 0", :indicator-dots="true", :autoplay="true", indicator-active-color="#fff", indicator-color="rgba(255, 255, 255, .3)")
       swiper-item.border-radius(v-for="(g,idx) in gallery", :key="idx")
-        img.response(:src="imgOuterUrl + g.url", v-if="imgOuterUrl", style="height: 300rpx")
+        img.response(:src="imgOuterUrl + g.url", v-if="imgOuterUrl", style="height: 300rpx", mode="widthFix")
     time-line(v-else, type="gallery")
   .row.bg-white.padding-bottom-sm
     .col.text-center(v-for="(icon,idx) in mainIcons", :key="idx", @click="iconJump(icon.path)")
@@ -69,14 +69,26 @@ export default {
   },
   beforeMount () {
     this.$nextTick(function () {
-      this.loadBanner()
-      this.loadNotice()
       this.showShareBanner()
     })
   },
+  onShareAppMessage () {
+    return {
+      title: '型云商城',
+      path: 'pages/index/main',
+      success () {
+        this.showMsg('转发成功')
+      },
+      error () {
+        this.showMsg('转发失败')
+      }
+    }
+  },
   onShow () {
-    this.echartHeight = (this.screenWidth - 30) / 4 * 6
+    this.echartHeight = (200 / 345) * (this.screenWidth - 30)
+    this.loadBanner()
     this.getTrends()
+    this.loadNotice()
   },
   computed: {
     ...mapState({

@@ -39,7 +39,6 @@ export default {
     })
   },
   onShow () {
-    debugger
     this.queryObject = {}
     if (this.tempObject.search || this.tempObject.name === '') {
       Object.assign(this.queryObject, this.tempObject)
