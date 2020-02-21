@@ -39,8 +39,7 @@ export default {
       goodsNameList: [],
       swiperCount: 0,
       modalIntroShow: false,
-      // 1 商城引导 2 商城分类引导
-      introType: 1
+      filterObj: {}
     }
   },
   computed: {
@@ -53,7 +52,6 @@ export default {
     })
   },
   onShow () {
-    // this.modalIntroShow = true
     this.queryObject = {}
     if (this.tempObject.search || this.tempObject.name === '') {
       Object.assign(this.queryObject, this.tempObject)
@@ -111,7 +109,7 @@ export default {
       const obj = {}
       Object.keys(filter).forEach((key) => {
         if (filter[key].length > 0) {
-          obj[`${key}s`] = filter[key].toString()
+          obj[`${key}s`] = filter[key][0] === '全部' ? '' : filter[key].toString()
         }
       })
       this.mallItems = []
@@ -120,8 +118,10 @@ export default {
       this.queryObject = {
         current_page: this.currentPage,
         page_size: this.pageSize,
+        name: this.mallTabVal,
         only_available: 1
       }
+      this.filterObj = obj
       Object.assign(this.queryObject, obj)
       this.refresher()
     },
@@ -205,6 +205,8 @@ export default {
     selectTab (val) {
       this.mallItems = []
       this.currentPage = 0
+      this.mallTabVal = val
+
       this.queryObject = {
         current_page: this.currentPage,
         page_size: this.pageSize,
@@ -212,6 +214,7 @@ export default {
         name: val,
         only_available: 1
       }
+      Object.assign(this.queryObject, this.filterObj)
       this.isLoad = 'refresh'
       this.refresher()
     },

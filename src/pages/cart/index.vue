@@ -24,7 +24,7 @@
               .flex(v-show="!isEdit")
                 .padding-xs.mr-5(@click="openEdit") 编辑
                 .padding-xs(@click="clearCarts") 清空
-          scroll-view.scroll-view(scroll-y, :style="{top:customBar + 40 + 'px', height: screenHeight - customBar - 132 + 'px'}")
+          scroll-view.scroll-view(scroll-y, :style="{top:custom.top + 40 + 'px', height: screenHeight - custom.top - custom.bottom - 140 + 'px'}")
             .cart-items(v-for="(cart, cartIdx) in carts", :key="cartIdx")
               .cart-item.padding-sm
                 .flex.flex-center.align-center.ft-15.text-bold
@@ -88,8 +88,8 @@
 
 
     .s-footer(v-if="carts.length > 0")
-      .cart-footer
-        .col.row.flex-center(@click="choosedAll", style="padding-left: 10px;")
+      .cart-footer.justify-between
+        .row.flex-center(@click="choosedAll", style="padding-left: 10px;")
           .flex.flex-center
             img.choose-icon(src="/static/images/blue_check.png", v-if="allChoosed")
             img.choose-icon(src="/static/images/btn_ck_n.png", v-else)
@@ -98,13 +98,16 @@
           .text-right.flex.justify-end
             span 合计：
             b.c-red ￥{{totalPrice}}
-          .text-right.ft-12(style="color:#999;") 共{{totalCount}}件 ，{{totalWeight}}吨，吊费: {{totalLiftCharge}}
-        .cart-settle-btn(@click="goToSettle")
-          .ft-20
-            span {{isEdit ? '删除' : '结算'}}
+          .text-right.ft-12(style="color:#999;") 共{{totalCount}}件 ，{{totalWeight}}吨，吊费: {{totalLiftCharge}}元
+        .cart-settle-btn.ft-20(@click="goToSettle")
+          span {{isEdit ? '删除' : '结算'}}
     .address-dialog(@click="openPickWay", :style="{top: customBar + 40 + 'px'}", v-show="pickWayShow")
       .bg-white
+<<<<<<< HEAD
         .solid-top.padding(v-for="(item, index) in pickWayList", :key="index")
+=======
+        .solid-top.padding(v-for="(item, pickIdx) in pickWayList", :key="pickIdx")
+>>>>>>> 8f0ebcbe45d2562389038194f150e9a394ef938b
           .text-bold.ft-15 {{item.title}}
           .text-gray.padding-top-sm {{item.content}}
     alert(title="您还未登录，请先登录", v-model="alertShow", :cb="alertCb")
@@ -120,6 +123,7 @@ export default {
       alertShow: false,
       totalPrice: 0,
       totalWeight: 0,
+      totalLiftCharge: 0,
       totalCount: 0,
       pickway: 0,
       pwPhone: '',
@@ -145,6 +149,7 @@ export default {
   },
   computed: {
     ...mapState({
+      custom: state => state.custom,
       customBar: state => state.customBar,
       screenHeight: state => state.screenHeight,
       currentUser: state => state.user.currentUser,
@@ -227,6 +232,7 @@ export default {
       const me = this
       this.confirm({ content: '确定清空购物车？' }).then(() => {
         me.btnDisable = true
+        this.showLoading()
         me.ironRequest('cartEmpty.shtml', { user_id: me.currentUser.user_id }, 'post', this).then(resp => {
           if (resp && resp.returncode === '0') {
             me.showMsg('清空成功')
@@ -240,6 +246,7 @@ export default {
           me.showMsg(err || '网络异常')
           me.btnDisable = false
         })
+        this.hideLoading()
       })
     },
     emptySoldItems () {
@@ -295,13 +302,13 @@ export default {
       if (filterArray.length > 0 && !this.btnDisable) {
         let heFeiArray = filterArray.filter(itm => itm.wh_name.indexOf('合肥') >= 0)
         let dongGangArray = filterArray.filter(itm => itm.wh_name.indexOf('常州东港') >= 0)
-        let msgs = []
+        let msgs = ''
         if (heFeiArray.length > 0 && dongGangArray.length > 0) {
-          msgs = ['所选物资包含合肥仓库', '常州东港库物资最快次日可提']
+          msgs = '所选物资包含合肥仓库,常州东港库物资最快次日可提'
         } else if (heFeiArray.length > 0) {
-          msgs = ['所选物资包含合肥仓库']
+          msgs = '所选物资包含合肥仓库'
         } else if (dongGangArray.length > 0) {
-          msgs = ['常州东港库物资最快次日可提']
+          msgs = '常州东港库物资最快次日可提'
         }
         this.confirm({ content: msgs + '是否确认提交' }).then((res) => {
           if (res === 'confirm') {
@@ -325,9 +332,9 @@ export default {
               body.mobile = me.pwPhone
               body.end_addr = me.pwAddr + ' ' + me.pwAddrDetail
             }
-            // me.$ironLoad.show()
+            this.showLoading()
             me.ironRequest('generateOrder.shtml', body, 'post', this).then(resp => {
-              // me.$ironLoad.hide()
+              this.hideLoading()
               if (resp && resp.returncode === '0') {
                 me.btnDisable = false
                 if (resp.order_size > 1) {
@@ -346,7 +353,7 @@ export default {
               }
             }).catch(err => {
               me.btnDisable = false
-              // me.$ironLoad.hide()
+              this.hideLoading()
               me.showMsg(err || '网络异常')
             })
           }
@@ -356,16 +363,16 @@ export default {
       }
     },
     weightChoose (val, rowItem) {
-      // rowItem.measure_way_id = val
-      // if (val === 2) {
-      //   rowItem.weight = rowItem[0].weight
-      //   rowItem.price = rowItem[0].price
-      //   rowItem.originPrice = rowItem[0].originPrice
-      // } else {
-      //   rowItem.weight = rowItem[1].weight
-      //   rowItem.price = rowItem[1].price
-      //   rowItem.originPrice = rowItem[1].price
-      // }
+      rowItem.measure_way_id = val
+      if (val === 2) {
+        rowItem.weight = rowItem.radios[0].weight
+        rowItem.price = rowItem.radios[0].price
+        rowItem.originPrice = rowItem.radios[0].originPrice
+      } else {
+        rowItem.weight = rowItem.radios[1].weight
+        rowItem.price = rowItem.radios[1].price
+        rowItem.originPrice = rowItem.radios[1].price
+      }
       this.ironRequest('cartUpdate.shtml', { cart_id: rowItem.cart_id, user_id: this.currentUser.user_id, measure_way: val, count: rowItem.count }, 'post', this).then(res => {
       })
     },
@@ -537,7 +544,7 @@ export default {
     flex-basis 28%
   .cart-settle-btn
     display flex
-    width 250rpx
+    width 200rpx
     background #F95353
     align-items center
     color #fff

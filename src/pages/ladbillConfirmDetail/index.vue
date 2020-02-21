@@ -11,7 +11,7 @@ div
       span *请务必仔细确认物资提货人信息进行确认，如有疑问，请及时联系型云客服
     .bg-white.padding-sm
       .ft-16.text-bold 商品信息
-      .margin-top-sm(v-for="item in ladObject.order_items")
+      .margin-top-sm(v-for="(item, idx) in ladObject.order_items", :key="idx")
         .row.justify-between.ft-15
           .col.text-bold
             span {{item.product_name}}

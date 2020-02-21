@@ -10,7 +10,7 @@ div
       .search-btn.text-blue.padding-left-sm(@click="searchOrder") 搜索
     scroll-view.nav(scroll-x)
       .flex.text-center
-        .cu-item.flex-sub(v-for="(item,index) in billTab", :class="item.status === tabName?'text-blue cur':''", :key="index", @click="selectTabs(item, index)")
+        .cu-item.flex-sub(v-for="(item,billIdx) in billTab", :class="item.status === tabName?'text-blue cur':''", :key="billIdx", @click="selectTabs(item, billIdx)")
           span {{item.title}}
   swiper.bill-content(@change="swiperChange", :current="swiperCount", :style="{height: screenHeight - 186 + 'px'}")
     swiper-item(v-for="(tabItem, idx) in billTab.length", :key="idx")

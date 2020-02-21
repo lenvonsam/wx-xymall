@@ -438,6 +438,7 @@ export default {
   left 0
   right 0
   background #fff
+  z-index 99
 .cart-footer
   flex 5
   min-height 50px
@@ -510,4 +511,6 @@ button
   font-size 16px
   height 30px
   width 100px  
+.scroll-view
+  margin-bottom 80px  
 </style>

@@ -226,7 +226,7 @@ export default {
         this.sortList[sortIdx].data.map(item => {
           item.isActive = false
         })
-      } else if (!sortIdx) {
+      } else if (sortIdx !== 0) {
         this.sortList[sortIdx].data[0].isActive = false
       }
       this.sortList[sortIdx].data[idx].isActive = !this.sortList[sortIdx].data[idx].isActive
@@ -298,7 +298,6 @@ export default {
               this.sortList[idx].data = arr
             } else {
               this.sortList[idx].data.push(...arr)
-              this.isMore = false
             }
           } else if (this.currentPage !== 0) {
             this.currentPage--
@@ -311,6 +310,7 @@ export default {
           } else {
             this.activeTab = key
           }
+          this.isMore = false
           this.hideLoading()
         }
       })
@@ -373,7 +373,7 @@ export default {
     border 1px #eeeeee solid
     border-radius 35px
     line-height 30px
-    overflow hidden
+    // overflow hidden
     position relative
     &.active
       border-color #0081ff

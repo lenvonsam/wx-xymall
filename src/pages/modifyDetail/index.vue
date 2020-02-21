@@ -12,8 +12,8 @@ div
     time-line(type="mallist")  
   template(v-else) 
     template(v-if="modifyList.length > 0")   
-      .scroll-view.bg-white(scroll-y, :style="{top:customBar + 40 + 'px'}")
-        .bill-items.solid-bottom.padding-bottom-sm(v-for="(bill, billIdx) in modifyList", :key="billIdx")
+      .scroll-view
+        .bill-items.bg-white.solid-bottom.padding-bottom-sm(v-for="(bill, billIdx) in modifyList", :key="billIdx")
           .bill-item.padding-left-sm.padding-right-sm.padding-top-sm
             .flex.flex-center.align-center(@click="selectBill(bill)")
               .col.flex-25(style="padding-top: 5px;")
@@ -533,6 +533,7 @@ export default {
   right: 0;
   line-height: 25px;
   height: 50px
+  z-index 99
 }
 .bottom-panel {
   position: fixed;
@@ -544,6 +545,7 @@ export default {
   right: 0;
   line-height: 25px;
   height: 120px;
+  z-index 99
 }
 radio.radio[checked]::after
   content ''
@@ -569,4 +571,6 @@ button
   font-size 16px
   height 30px
   width 100px  
+.scroll-view
+  padding-bottom 120px
 </style>
