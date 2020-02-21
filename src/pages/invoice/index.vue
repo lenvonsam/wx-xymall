@@ -3,7 +3,7 @@ div
   nav-bar(title="我的发票", isBack)
   scroll-view.nav.bg-white(scroll-x)
     .flex.text-center
-      .cu-item.flex-sub(v-for="(item,index) in tabList", :class="item.status === tabName?'text-blue cur':''", :key="index", @click="selectTabs(item, index)")
+      .cu-item.flex-sub(v-for="(item,index) in tabList", :class="item.status === tabName ? 'text-blue cur':''", :key="index", @click="selectTabs(item, index)")
         span {{item.title}}
   swiper.bill-content(@change="swiperChange", :current="swiperCount", :style="{height: pageHeight + 'px'}")
     swiper-item(v-for="(tabItem, tabIdx) in tabList.length", :key="tabIdx")
@@ -116,7 +116,7 @@ export default {
       current_page: this.currentPage,
       page_size: this.pageSize
     }
-    this.tabName = this.$root.$mp.query.tabName || 0
+    this.tabName = this.$root.$mp.query.tabName || '0'
     this.loadData()
   },
   methods: {
