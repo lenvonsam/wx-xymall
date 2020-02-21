@@ -43,7 +43,7 @@
             .sort-name(:class="{active: item.isActive}", @click.stop="selectSort(sortIdx, index)") {{item.name}}
               .check.cuIcon-check.bg-blue(v-show="item.isActive")
         .row.padding-sm.justify-around(v-if="sortIdx !== 0")
-          .btn-cancel.col(@click="filterCancel(sortIdx)") 重选 
+          .btn-cancel.col(@click="selectSort(sortIdx, 0)") 重选 
           .btn-sure.margin-left-sm.col(@click="searchHandler()") 确定            
 </template>
 <script>
@@ -239,10 +239,10 @@ export default {
           if (key === 'name') {
             tabList[0].id = ''
             this.sortList[0].data = tabList
+            this.mallTabValChange()
           } else {
             this.activeTab = key
           }
-          this.mallTabValChange()
         }
       })
     },

@@ -39,7 +39,6 @@ export default {
     })
   },
   onShow () {
-    debugger
     this.queryObject = {}
     if (this.tempObject.search || this.tempObject.name === '') {
       Object.assign(this.queryObject, this.tempObject)
@@ -138,7 +137,6 @@ export default {
           this.btnDisable = true
           this.addCart(obj, type, this.currentUser.user_id).then(
             rt => {
-              debugger
               me.showMsg('加入购物车成功', '', 1000)
               // if (rt.type === 'cart') {
               //   if (this.browserName() === 'wxpub') {
