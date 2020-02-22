@@ -21,7 +21,7 @@ div
         template(v-if="billTab[idx].data.length > 0")
           scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: screenHeight - 186 +'px'}")
             lab-bill-item(v-for="(item,itemIdx) in billTab[idx].data", :key="itemIdx", :ladObject="item", :cb="labObjectCb")
-            .text-center.c-gray.padding(v-if="finished && billTab[idx].data.length > 8") 加载完成
+            .text-center.text-gray.padding(v-if="finished && billTab[idx].data.length > 10") 加载完成
         .text-center.text-gray.pt-100(v-else)
           empty-image(url="bill_empty.png", className="img-empty")
           .empty-content 您暂时没有相关提单
@@ -39,6 +39,7 @@ export default {
         { title: '已完成', status: '3', data: [], isActive: false }
       ],
       tabName: '-2',
+      pageSize: 10,
       currentPage: 0,
       finished: true,
       isload: false,
@@ -46,7 +47,7 @@ export default {
       carNo: '',
       startDate: '',
       endDate: '',
-      listData: [],
+      // listData: [],
       btnDisable: false,
       search: ''
     }
@@ -57,7 +58,6 @@ export default {
   computed: {
     ...mapState({
       currentUser: state => state.user.currentUser,
-      pageSize: state => state.pageSize,
       tempObject: state => state.tempObject,
       screenHeight: state => state.screenHeight,
       isLogin: state => state.user.isLogin
@@ -87,7 +87,7 @@ export default {
       this.billTab[idx].data = []
       this.currentPage = 0
       this.finished = true
-      this.listData = []
+      // this.listData = []
       this.loadData()
     },
     searchOrder () {
@@ -95,7 +95,7 @@ export default {
       this.billTab[idx].data = []
       this.currentPage = 0
       this.finished = true
-      this.listData = []
+      // this.listData = []
       this.loadData()
       // this.swiperCount = 0
     },
@@ -108,7 +108,8 @@ export default {
             if (resp && resp.returncode === '0') {
               me.showMsg('取消成功')
               me.currentPage = 0
-              me.listData = []
+              // me.listData = []
+              me.billTab[me.swiperCount].data = []
               me.loadData()
             } else {
               me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
@@ -127,7 +128,8 @@ export default {
               me.showMsg('确认成功')
               me.btnDisable = false
               me.currentPage = 0
-              me.listData = []
+              // me.listData = []
+              me.billTab[me.swiperCount].data = []
               me.loadData()
             } else {
               this.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
@@ -187,18 +189,18 @@ export default {
           let arr = resp.order_lads
           this.isload = false
           if (arr.length === 0 && this.currentPage === 0) {
-            me.listData = []
+            // me.listData = []
             me.billTab[idx].data = []
             me.finished = true
           } else if (arr.length > 0 && this.currentPage === 0) {
-            me.listData = arr
+            // me.listData = arr
             me.billTab[idx].data = arr
-            if (arr.length > 8) me.finished = false
+            if (arr.length > 10) me.finished = false
           } else if (arr.length > 0 && this.currentPage > 0) {
             arr.map(itm => {
-              me.listData.push(itm)
               me.billTab[idx].data.push(itm)
             })
+            // me.listData = me.billTab[idx].data
             me.finished = false
           } else {
             me.finished = true
