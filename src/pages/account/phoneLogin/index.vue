@@ -14,9 +14,9 @@
       .col
         input.no-border(placeholder="请输入验证码", type="number", v-model="code")
       .flex-90.text-center(style="border-left: 1rpx solid #888", v-show="pageType == 'smsLogin'")
-        auth-btn(:phone="phone", :codeType="7", v-if="pageType == 'smsLogin'")
+        auth-btn(:phone="phone", :codeType="7", v-if="pageType == 'smsLogin' && codeBtnShow")
       .flex-90.text-center(style="border-left: 1rpx solid #888", v-show="pageType == 'forgetPwd'")
-        auth-btn(:phone="phone", :codeType="2", v-if="pageType == 'forgetPwd'")
+        auth-btn(:phone="phone", :codeType="2", v-if="pageType == 'forgetPwd' && codeBtnShow")
     .row.padding-tb-sm.margin-top-xl.border-bottom-line(v-if="pageType === 'forgetPwd'")
       .flex-30
         icon.adjust.cuIcon-lock.text-gray
@@ -37,7 +37,8 @@ export default {
       phone: '',
       code: '',
       pwd: '',
-      canClick: true
+      canClick: true,
+      codeBtnShow: false
     }
   },
   computed: {
@@ -50,10 +51,17 @@ export default {
     authBtn
   },
   onShow () {
+    this.codeBtnShow = true
     this.canClick = true
     this.pageType = 'smsLogin'
     if (this.$root.$mp.query.type) this.pageType = this.$root.$mp.query.type
     console.log('pageType:>>', this.pageType)
+  },
+  onUnload () {
+    this.codeBtnShow = false
+    this.phone = ''
+    this.code = ''
+    this.pwd = ''
   },
   methods: {
     ...mapActions([

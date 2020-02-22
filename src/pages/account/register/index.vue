@@ -45,7 +45,9 @@ export default {
     this.codeBtnShow = true
   },
   onUnload () {
+    console.log('unload')
     this.codeBtnShow = false
+    this.resetVal()
   },
   methods: {
     resetVal () {
@@ -78,19 +80,20 @@ export default {
         }
         if (this.canClick) {
           this.canClick = false
+          // 18015816879
+          // TODO 接口正在修改
+          await this.ironRequest(this.apiList.xy.userRegister.url, {
+            user_phone: this.phone,
+            msg_code: this.code
+          }, this.apiList.xy.userRegister.method, this)
+          const me = this
+          me.showMsg('注册成功')
+          setTimeout(function () {
+            me.canClick = true
+            me.resetVal()
+            me.back()
+          }, 2000)
         }
-        // 18015816879
-        // TODO 接口正在修改
-        await this.ironRequest(this.apiList.xy.userRegister.url, {
-          user_phone: this.phone,
-          msg_code: this.code
-        }, this.apiList.xy.userRegister.method, this)
-        const me = this
-        me.showMsg('注册成功')
-        setTimeout(function () {
-          me.resetVal()
-          me.back()
-        }, 2000)
       } catch (e) {
         this.showMsg(e)
         this.canClick = true
