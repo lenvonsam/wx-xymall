@@ -42,7 +42,7 @@
               input.full-width.pl-10(@input="standardChange" type="text", placeholder="请输入规格快速查询")
           .cuIcon-fold.ft-16(@click="sortClose(sortIdx)")
         //- div(@catchtouchmove="catchtouchmove")  
-        scroll-view(scroll-y, style="max-height: 200px", @scrolltolower="loadMore")
+        scroll-view(scroll-y, style="max-height: 300px", @scrolltolower="loadMore")
           .grid.col-3.padding-top-sm.sort-content
             .sort-list(v-if="sort.data.length > 0", v-for="(item, index) in sort.data", :key="index")
               .sort-name(:class="{active: item.isActive}", @click.stop="selectSort(sortIdx, index)") {{item.name}}
@@ -223,11 +223,11 @@ export default {
     },
     selectTab (item, index) {
       this.tabVal = item.id
-      this.scrollLeft = (index - 1) * 60
       this.sortList[0].data.map((item, index) => {
         item.isActive = this.tabVal === item.id
       })
-      this.$emit('selectTab', item.id)
+      this.scrollLeft = (index - 1) * 60
+      this.$emit('selectTab', {id: item.id, idx: index})
     },
     loadMore () {
       if (this.activeTab === 'standard') {

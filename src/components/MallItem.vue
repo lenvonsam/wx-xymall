@@ -8,9 +8,9 @@
           //- .sub-mark.ml-5 {{item[mallTypeObject[itemType].supply]}}
           //- span.ml-5.ft-12(style="color:#666") ({{weightMark}})
         .col.text-right.ft-16.flex-100
-          span.c-red.ft-13(v-if="item.price === '--'") 开售时间:{{item.show_time}}
-          span.text-blue(v-else="item.show_price === true") ￥{{item[mallTypeObject[itemType].price]}}
-    
+          span.text-red.ft-13(v-if="item.price === '--'") 开售时间:{{item.show_time}}
+          span.text-blue(v-else-if="item.show_price === true") ￥{{item[mallTypeObject[itemType].price]}}
+          .blue-buy.ft-12(v-else, @click="cb(item, 'showPrice', $event)") 查看价格
           //- span.c-red.ft-13(v-if="item.price === '--'") 开售时间:{{item.show_time}}
           //- span.c-red(v-else-if="item.show_price === true") ￥{{item[mallTypeObject[itemType].price]}}
           //- .blue-buy.ft-12(v-else, @click="cb(item, 'showPrice', $event)") 查看价格
