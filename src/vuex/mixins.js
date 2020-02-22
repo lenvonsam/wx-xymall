@@ -16,6 +16,8 @@ const wxMixins = {
       // 型云图片访问地址
       imgOuterUrl: 'http://web-test.xingyun361.com',
       phoneReg: /^1[3|4|5|8|7|9][0-9]\d{4,8}$/,
+      // 6-12为字母数字下划线
+      pwdReg: /^[\w]{6,12}$/,
       erpProxy: httpUtil.proxy.erp,
       warehouseProxy: httpUtil.proxy.wh,
       aboutUsInfo:

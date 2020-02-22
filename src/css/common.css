@@ -206,6 +206,12 @@ page,
   letter-spacing: 6rpx;
 }
 
+.main-btn.reverse {
+  background: #fff;
+  color: #2485ff;
+  border: 1rpx solid #2485ff;
+}
+
 .hover-gray {
   background: #ddd;
 }

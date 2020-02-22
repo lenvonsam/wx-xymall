@@ -150,9 +150,16 @@ export default {
     },
     billPay () {
       const me = this
-      if ((this.payPwd.toString().trim().length === 0 && this.pageType === 'offlinePay') || (this.payPwd.toString().trim().length === 0 && (this.pageType === 'ladPay' && (this.currentBalance > this.payMountInfo)))) {
-        this.showMsg('请输入支付密码')
-        return
+      if (this.pageType === 'offlinePay' || (this.pageType === 'ladPay' && (this.currentBalance > this.payMountInfo))) {
+        if (this.payPwd.toString().trim().length === 0) {
+          this.showMsg('请输入支付密码')
+          return
+        }
+        if (!this.pwdReg.test(this.payPwd)) {
+          this.showMsg('请输入6-12位密码，只能是数字、字母和下划线')
+          this.canHttp = false
+          return
+        }
       }
       if (!this.btnDisable) {
         let ordernos = this.orderNos.join(',')

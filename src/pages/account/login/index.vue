@@ -63,6 +63,10 @@ export default {
           this.showMsg('密码不能为空')
           return
         }
+        if (!this.pwdReg.test(this.upwd)) {
+          this.showMsg('请输入6-12位密码，只能是数字、字母和下划线')
+          return
+        }
         if (this.canClick) {
           this.canClick = false
           const encrptPwd = this.base64Str(this.upwd.trim())
@@ -78,6 +82,8 @@ export default {
             this.confirm({ title: '您是新用户，请先完成公司信息' }).then(res => {
               if (res === 'confirm') {
                 me.jump('/pages/account/companyUpdate/main')
+              } else {
+                me.tab('/pages/index/main')
               }
             })
           } else {

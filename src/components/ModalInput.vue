@@ -3,7 +3,7 @@
   .cu-dialog.bg-white(style="mix-height: 280rpx; width: 70%")
     .padding.text-xl.text-black.text-center {{title}}
     .padding
-      input(:placeholder="placeholder", v-model="inputVal", type="password", v-if="type === 'password'")
+      input(:placeholder="placeholder", v-model="inputVal", type="password", v-if="type === 'password'", :maxlength="12")
       input(:placeholder="placeholder", v-model="inputVal", v-else)
     .padding.row
       .col.text-center
@@ -56,6 +56,10 @@ export default {
     btnClick (val) {
       if (this.inputVal.trim().length === 0) {
         this.showMsg('不能为空')
+        return
+      }
+      if (!this.pwdReg.test(this.inputVal)) {
+        this.showMsg('请输入6-12位密码，只能是数字、字母和下划线')
         return
       }
       if (this.cb) {

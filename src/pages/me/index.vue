@@ -13,7 +13,7 @@ div
             .ft-15.padding-bottom-sm {{currentUser.user_mark}}
             .ft-12 {{currentUser.phone}}
       .cuIcon-right.ft-25   
-    .account.bg-white.flex.align-center(@click="jump('/pages/account/balance/main')")
+    .account.bg-white.flex.align-center(@click="jumpBalance")
       .ft-16.text-bold 账户余额
       .col.ft-16.text-right
         span.text-blue.text-bold ￥ {{currentUser.account_balance}}
@@ -45,7 +45,7 @@ div
           img(src="/static/images/customer_icon.png")
           .padding-left-sm 在线客服
       .cuIcon-right.text-gray
-    alert(title="您还未登录，请先登录", v-model="alertShow", :cb="alertCb")
+    alert(:title="alertText", v-model="alertShow", :cb="alertCb")
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
@@ -69,7 +69,8 @@ export default {
       // 全部订单下面一行的数字显示
       rowCountObj: {},
       showNoticeIcon: false,
-      alertShow: false
+      alertShow: false,
+      alertText: ''
     }
   },
   computed: {
@@ -88,6 +89,12 @@ export default {
     this.alertShow = false
     this.rowCountObj = {}
     if (this.isLogin) {
+      this.alertShow = false
+      if (this.currentUser.isnew) {
+        this.alertText = '您还需要完善公司信息才能正常工作'
+        this.alertShow = true
+        return
+      }
       this.showNoticeIcon = this.currentUser.message_switch === '1'
       this.ironRequest('toOperCounts.shtml?user_id=' + this.currentUser.user_id, {}, 'get', this).then(resp => {
         // console.log(resp.data)
@@ -106,6 +113,7 @@ export default {
         }
       })
     } else {
+      this.alertText = '您还未登录，请先登录'
       this.alertShow = true
     }
   },
@@ -115,7 +123,11 @@ export default {
       'configVal'
     ]),
     alertCb () {
-      this.jump('/pages/account/login/main')
+      if (this.isLogin) {
+        this.jump('/pages/account/companyUpdate/main?type=2')
+      } else {
+        this.jump('/pages/account/login/main')
+      }
     },
     jumpToPage (url) {
       console.log('jumpToPage', url)
@@ -127,28 +139,7 @@ export default {
       if (url === '/pages/process/main') this.statisticRequest({ event: 'click_app_me_process' }, this)
       if (url === '/pages/askBuy/main') this.statisticRequest({ event: 'click_app_me_demand' }, this)
       if (url === '/pages/address/main') this.statisticRequest({ event: 'click_app_me_address' }, this)
-      if (url === '/pages/onlineService/main') {
-        this.statisticRequest({ event: 'click_app_me_kf' }, this)
-        const me = this
-        this.lcRequest('online', { peers: ['wy', 'syl', 'zyt', 'fh', 'wqf', 'lzy'] }).then(resp => {
-          let res = JSON.parse(resp.data)
-          if (res.results.length === 0) {
-            me.confirm('在线客服忙，是否要联系人工客服').then(() => {
-              window.location.href = 'tel://4008788361'
-            })
-          } else {
-            let url = `${me.chatUrl}targetName=${res.results[0]}&username=${this.currentUser.user_mark}&nickname=${this.currentUser.nickname}`
-            window.location.href = url
-          }
-        }).catch(err => {
-          console.log(err)
-          me.confirm('在线客服忙，是否要联系人工客服').then(() => {
-            window.location.href = 'tel://4008788361'
-          })
-        })
-      } else {
-        this.jump(url)
-      }
+      this.jump(url)
     },
     jumpProfile () {
       this.statisticRequest({ event: 'click_app_me_information' }, this)
@@ -156,10 +147,10 @@ export default {
     },
     jumpBalance () {
       this.statisticRequest({ event: 'click_app_me_balance' }, this)
-      this.jump({ path: '/balance' })
+      this.jump('/pages/account/balance/main')
     },
     jumpBillMore () {
-      // this.statisticRequest({ event: 'click_app_me_myorder_more' }, this)
+      this.statisticRequest({ event: 'click_app_me_myorder_more' }, this)
       this.jump('/pages/bill/main')
     },
     jumpBicon (url) {
@@ -167,7 +158,6 @@ export default {
       // if (url.path === '/ladbill/confirm/list') this.statisticRequest({ event: 'click_app_me_to_confirm' }, this)
       // if (url.path === '/ladbill?tabName=4') this.statisticRequest({ event: 'click_app_me_to_pay_contract' }, this)
       // if (url.path === '/invoice') this.statisticRequest({ event: 'click_app_me_to_invoice' }, this)
-      console.log('url', url)
       this.jump(url.path)
     },
     serviceCallUrl () {

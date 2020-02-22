@@ -64,7 +64,7 @@ export default {
   },
   data () {
     return {
-      modalIntroImages: ['mall_classify.png', 'mall_classify_num.png'],
+      modalIntroImages: ['mall_classify_num.png'],
       modalIntroShow: false,
       sidebarListAreaShow: false,
       sidebarListNameShow: false,
