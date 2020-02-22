@@ -109,7 +109,6 @@ export default {
   },
   onShow () {
     this.pageHeight = this.screenHeight - 150
-    debugger
     if (this.tempObject.tabName) {
       this.tabName = this.tempObject.tabName
     }

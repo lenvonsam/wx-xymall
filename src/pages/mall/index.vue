@@ -120,7 +120,7 @@ export default {
       },
       weightMark: '',
       itemType: 'product',
-      introImages: ['mall_good.png', 'mall_standard.png'],
+      introImages: ['mall_classify.png', 'mall_good.png', 'mall_standard.png'],
       mallTabVal: '',
       mallItems: [],
       queryObject: {},

@@ -13,6 +13,8 @@ div
           .flex-15.row
             .blue-vertical
           .col.text-bold.ft-16 请完善信息
+          .flex-100.text-center
+            .main-btn.reverse(hover-class="hover-gray", style="font-size:13px;width: 180rpx; height: 60rpx;", @click="backToLogin") 切换账户
         .row.padding.relative(v-for="(part,idx) in partOne", :key="idx")
           .right-bottom-line(v-if="idx < partOne.length - 1")
           .flex-15
@@ -127,7 +129,7 @@ export default {
       }, {
         lbl: '登录密码',
         type: 'pwd',
-        placeholder: '请输入登录密码',
+        placeholder: '请输入6-12位登录密码，只能是数字、字母和下划线',
         required: true,
         key: 'user_pwd'
       }, {
@@ -151,7 +153,11 @@ export default {
       canClick: true,
       alertShow: false,
       invoiceModalShow: false,
-      currentKey: ''
+      currentKey: '',
+      // 1 返回首页  2 不做惭怍
+      backType: 1,
+      // 1 非个人中心来 2 个人中心来
+      fromType: 1
     }
   },
   computed: {
@@ -163,10 +169,29 @@ export default {
   components: {
     invoiceModal
   },
+  onShow () {
+    if (this.$root.$mp.query.type) this.fromType = Number(this.$root.$mp.query.type)
+  },
+  onUnload () {
+    if (this.backType === 1) {
+      this.resetConfig()
+      this.tab('/pages/index/main')
+    } else {
+      this.resetConfig()
+    }
+  },
   methods: {
     ...mapActions([
       'exitUser'
     ]),
+    backToLogin () {
+      this.backType = 2
+      if (this.fromType === 2) {
+        this.redirect('/pages/account/login/main')
+      } else {
+        this.pageBack()
+      }
+    },
     invoiceCb () {
       const me = this
       setTimeout(function () {
@@ -212,12 +237,14 @@ export default {
       this.pic3 = ''
       this.pic4 = ''
       this.tabName = '1'
+      this.backType = 1
+      this.fromType = 1
       this.canClick = true
       this.alertShow = false
     },
     pageBack () {
       this.resetConfig()
-      this.back()
+      this.tab('/pages/index/main')
     },
     selectTabs (item) {
       this.tabName = item.status
@@ -235,6 +262,10 @@ export default {
         // 校验电话
         if (!this.gsdhReg.test(this.companyInfo.contact_phone)) {
           this.showMsg('请输入正确电话号码')
+          return
+        }
+        if (this.companyInfo.user_pwd.length > 0 && !this.pwdReg.test(this.companyInfo.user_pwd)) {
+          this.showMsg('请输入6-12位密码，只能是数字、字母和下划线')
           return
         }
         if (this.tabName === '1') {

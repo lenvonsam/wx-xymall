@@ -49,6 +49,7 @@ export default {
       tabName: 'tab1',
       type: 'loginPwd',
       canClick: true,
+      canHttp: true,
       tabs: [
         { title: '', tab: 'tab1' },
         { title: '', tab: 'tab2' }
@@ -121,6 +122,7 @@ export default {
       return result
     },
     async loginPwdHandler () {
+      this.canHttp = true
       const queryObject = {
         user_id: this.currentUser.user_id,
         action_type: 1
@@ -129,24 +131,35 @@ export default {
       if (this.tabName === 'tab1') {
         if (this.val3 !== this.val2) {
           this.showMsg('密码不一致')
+          this.canHttp = false
+          return
+        }
+        if (!this.pwdReg.test(this.val2)) {
+          this.showMsg('请输入6-12位密码，只能是数字、字母和下划线')
+          this.canHttp = false
           return
         }
         queryObject.new_pwd = this.base64Str(this.val2.trim())
         queryObject.old_pwd = this.base64Str(this.val1.trim())
       } else {
+        if (!this.pwdReg.test(this.val3)) {
+          this.showMsg('请输入6-12位密码，只能是数字、字母和下划线')
+          this.canHttp = false
+          return
+        }
         queryObject.new_pwd = this.base64Str(this.val3)
         queryObject.capatcha = this.val2
         queryObject.user_phone = this.currentUser.phone
       }
       try {
-        if (this.canClick) {
+        if (this.canClick && this.canHttp) {
           this.canClick = false
           const me = this
           await this.ironRequest(this.apiList.xy.resetPwd.url, queryObject, this.apiList.xy.resetPwd.method, this)
-          this.confirm({ title: '友情提示', content: '登录密码重置成功，请重新登录' }).then(res => {
+          this.confirm({ title: '友情提示', content: `${this.type === 'loginPwd' ? '登录密码' : '支付密码'}修改成功，请重新登录` }).then(res => {
+            me.canClick = true
             if (res === 'confirm') {
               me.exitUser()
-              me.canClick = true
               me.redirect('/pages/account/login/main?type=2')
             }
           })

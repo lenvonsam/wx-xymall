@@ -21,7 +21,7 @@
       .flex-30
         icon.adjust.cuIcon-lock.text-gray
       .col
-        input.no-border(placeholder="请输入新密码", v-model="pwd", type="password")
+        input.no-border(placeholder="请输入新密码(6-12位数字、字母下划线)", v-model="pwd", type="password")
     .mt-50.main-btn(hover-class="hover-gray", @click="remoteHandler") {{pageType === 'smsLogin' ? '登录' : '提交'}}
 </template>
 
@@ -92,8 +92,12 @@ export default {
           this.showMsg('验证码不能为空')
           return
         }
-        if (this.pageType === 'forgetPwd' && this.pwd.lenght === 0) {
+        if (this.pageType === 'forgetPwd' && this.pwd.length === 0) {
           this.showMsg('密码不能为空')
+          return
+        }
+        if (this.pageType === 'forgetPwd' && !this.pwdReg.test(this.pwd)) {
+          this.showMsg('请输入6-12位密码，只能是数字、字母和下划线')
           return
         }
         const params = {}
@@ -111,7 +115,7 @@ export default {
           // TODO 接口正在修改
           const data = await this.ironRequest(this.apiList.xy[this.pageType].url, params, this.apiList.xy[this.pageType].method, this)
           const me = this
-          me.showMsg(this.pageType === 'forgetPwd' ? '处理成功' : '登录成功')
+          if (me.pageType === 'smsLogin') me.showMsg('登录成功')
           setTimeout(function () {
             if (me.pageType === 'smsLogin') {
               me.resetVal()
@@ -122,14 +126,20 @@ export default {
                 me.confirm({ title: '您是新用户，请先完成公司信息' }).then(res => {
                   if (res === 'confirm') {
                     me.jump('/pages/account/companyUpdate/main')
+                  } else {
+                    me.tab('/pages/index/main')
                   }
                 })
               } else {
                 me.tab('/pages/index/main')
               }
             } else {
-              me.resetVal()
-              me.back()
+              me.confirm({ title: '友情提示', content: '登录密码修改成功，请重新登录' }).then(res => {
+                if (res === 'confirm') {
+                  me.resetVal()
+                  me.back()
+                }
+              })
             }
           }, 2000)
         }

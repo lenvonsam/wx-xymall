@@ -33,16 +33,16 @@ div
   .margin-top-sm.margin-bottom-sm.bg-white.padding
     .text-center.ft-16
       span.ml-15(v-for="(name,idx) in echartType", :key="name", :class="{'text-blue': idx === echartTabIndex}", @click="echartTabClick(name, idx)") {{name}}
-    div(:style="{height: echartHeight + 'rpx'}")
+    div(:style="{height: echartHeight + 'rpx'}", v-if="!shareModalShow")
       mpvue-echarts(:echarts="echarts", :onInit="initChart")
     .text-center 型云价格指数
-  share-modal(v-model="shareModalShow")
+  modal-intro(v-model="shareModalShow", :images="introImages")
 </template>
 
 <script>
 import { mapState, mapActions } from 'vuex'
 import mpvueEcharts from 'mpvue-echarts'
-import shareModal from '../../components/ShareModal.vue'
+import modalIntro from '../../components/ModalIntro.vue'
 import vertBanner from '../../components/VertBanner.vue'
 import lineOpts from '../../utils/lineOpts'
 const echarts = require('../../../static/libs/echarts.min.js')
@@ -50,6 +50,7 @@ let chart = null
 export default {
   data () {
     return {
+      introImages: ['home_intro.png'],
       shareModalShow: false,
       echartType: ['H型钢', '工角槽', '普碳开平板'],
       echartTabIndex: 0,
@@ -65,7 +66,7 @@ export default {
   components: {
     mpvueEcharts,
     vertBanner,
-    shareModal
+    modalIntro
   },
   beforeMount () {
     this.$nextTick(function () {
