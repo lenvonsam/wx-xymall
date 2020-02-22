@@ -10,7 +10,7 @@ div
       .row.padding.border-bottom-line
         .col {{phone}}
         .flex-90.text-center
-          auth-btn(:phone="currentUser.phone", :codeType="3", v-if="tabIndex === 1")
+          auth-btn(:phone="currentUser.phone", :codeType="3", v-if="tabIndex === 1 && codeBtnShow")
       .padding
         input(placeholder="请输入验证码", v-model="code1")
     .margin-top-xl.padding
@@ -46,7 +46,8 @@ export default {
       code2: '',
       newPhone: '',
       nextClick: true,
-      bindClick: true
+      bindClick: true,
+      codeBtnShow: false
     }
   },
   components: {
@@ -58,11 +59,15 @@ export default {
     })
   },
   onShow () {
+    this.codeBtnShow = true
     this.tabIndex = 1
     this.canActive = false
     this.code1 = ''
     this.nextClick = true
     this.phone = this.maskPhone(this.currentUser.phone)
+  },
+  onUnload () {
+    this.codeBtnShow = false
   },
   methods: {
     ...mapActions([

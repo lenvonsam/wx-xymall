@@ -155,14 +155,15 @@ export default {
   },
   methods: {
     classifyClick () {
-      const firstShare = mpvue.getStorageSync('firstShareMallClassify') || false
-      console.log('firstShare')
-      if (!firstShare) {
-        this.modalIntroShow = true
-        mpvue.setStorageSync('firstShareMallClassify', true)
-      } else {
-        this.openFilter()
-      }
+      this.modalIntroShow = true
+      // const firstShare = mpvue.getStorageSync('firstShareMallClassify') || false
+      // console.log('firstShare')
+      // if (!firstShare) {
+      //   this.modalIntroShow = true
+      //   mpvue.setStorageSync('firstShareMallClassify', true)
+      // } else {
+      //   this.openFilter()
+      // }
     },
     modalIntroCb () {
       this.openFilter()
@@ -247,7 +248,7 @@ export default {
         item.isActive = this.tabVal === item.id
       })
       this.scrollLeft = (index - 1) * 60
-      this.$emit('selectTab', {id: item.id, idx: index})
+      this.$emit('selectTab', { id: item.id, idx: index })
     },
     loadMore () {
       if (this.activeTab === 'standard') {

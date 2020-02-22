@@ -1,7 +1,7 @@
 <template lang="pug">
 .cu-custom(:style="{height: customBar + 'px'}")
   .cu-bar.fixed(:class="bgClass", :style="{height: customBar + 'px', paddingTop: statusBar + 'px'}")
-    .action(v-if="isBack", @click="navBack")
+    .action.padding-right(v-if="isBack", @click="navBack")
       span.cuIcon-back
       slot(name="backText")
     .action(v-if="leftMenu")

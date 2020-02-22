@@ -188,8 +188,8 @@ export default {
     }
   },
   onShow () {
-    this.carts = []
     this.alertShow = false
+    this.carts = []
     if (!this.isLogin) {
       this.alertShow = true
       return

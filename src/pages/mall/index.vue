@@ -148,7 +148,8 @@ export default {
     })
   },
   onShow () {
-    debugger
+    // 用于测试
+    this.modalIntroShow = true
     this.isLoad = false
     this.scrollHeight = this.screenHeight - 186 + 'px'
     this.queryObject = {}
@@ -316,7 +317,7 @@ export default {
         })
       }
     },
-    selectTab ({id, idx}) {
+    selectTab ({ id, idx }) {
       this.mallItems = []
       this.currentPage = 0
       this.mallTabVal = id
