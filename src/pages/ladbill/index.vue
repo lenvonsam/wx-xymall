@@ -12,22 +12,67 @@ div
       .flex.text-center
         .cu-item.flex-sub(v-for="(item,billIdx) in billTab", :class="item.status === tabName?'text-blue cur':''", :key="billIdx", @click="selectTabs(item, billIdx)")
           span {{item.title}}
-  swiper.bill-content(@change="swiperChange", :current="swiperCount", :style="{height: screenHeight - 186 + 'px'}")
+  swiper.bill-content(@change="swiperChange", :current="swiperCount", :style="{height: screenHeight - customBar - 120 + 'px'}")
     swiper-item(v-for="(tabItem, idx) in billTab.length", :key="idx")
       //- scroll-view(scroll-y, :refresher-triggered="triggered", :refresher-enabled="true", @refresherrefresh="refresher", @scrolltolower="loadMore", :style="{height: screenHeight - 186 +'px'}")
       template(v-if="isload")
         time-line(type="mallist")
       template(v-else)
         template(v-if="billTab[idx].data.length > 0")
-          scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: screenHeight - 186 +'px'}")
-            lab-bill-item(v-for="(item,itemIdx) in billTab[idx].data", :key="itemIdx", :ladObject="item", :cb="labObjectCb")
-            .text-center.text-gray.padding(v-if="finished && billTab[idx].data.length > 10") 加载完成
+          scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: screenHeight - customBar - 120 +'px'}")
+            //- lab-bill-item(v-for="(item,itemIdx) in billTab[idx].data", :key="itemIdx", :ladObject="item", :cb="labObjectCb")
+            .bg-gray.pt-half-rem(v-for="(item,itemIdx) in billTab[idx].data", :key="itemIdx")
+              .bg-white
+                .row.padding.flex-center.border-bottom-line
+                  .col.text-blue.ft-bold
+                    span(@click="jump('/pages/ladbillDetail/main?id=' + item.no + '&status='+item.status)") {{item.no}}
+                    copy-btn(:copyUrl="item.no")
+                  .col.flex-120.text-right.ft-13
+                    //- q-btn(color="red-5", small, outline, rounded, v-if="ladObject.status == '待出库'", @click="cb(ladObject, 'cancel')") 待出库可取消
+                    .text-blue(v-if="item.status == '待收货'", @click="labObjectCb(item, 'confirm')") 确认收货
+                    //- q-btn.ft-13(color="primary", small, outline, rounded, v-else-if="ladObject.status == '待付款' && ladObject.pay_price > 0", @click="cb(ladObject, 'pay')") 去支付
+                    .text-red(v-else-if="item.status == '待付款' && item.pay_price > 0", @click="labObjectCb(item, 'pay')") 待付款
+                    .text-gray(v-else-if="item.status == '待付款' && item.pay_price == 0") 审核中
+                    .text-gray(v-else) {{item.status}}
+                div(@click="jump('/pages/ladbillDetail/main?id=' + item.no + '&status='+item.status)")
+                  .text-gray.solid-bottom.padding-sm.text-content(v-for="(itm, ladIdx) in item.order_items", :key="ladIdx")
+                    .text-black.padding-bottom-xs
+                      .row.ft-15
+                        .col
+                          span.ft-14 {{itm.product_name}}
+                          span.padding-left-xs {{itm.product_standard}}
+                        .text-blue.text-bold ￥{{itm.product_price}}  
+                    .row.padding-bottom-xs
+                      .col
+                        span.ml-0 {{itm.product_material}}
+                        //- span.ml-5 {{itm.product_standard}}
+                        span.ml-5 {{itm.product_length}}米
+                        .sub-mark.ml-5.ft-12 {{itm.warehouse}}
+                        //- .lad-warehouse-mark.ml-5 {{itm.warehouse}}
+                      .col.flex-70.ft-14.text-right.c-black
+                        span ({{itm.metering}})
+                    .padding-bottom-xs(v-if="itm.tolerance_range || itm.weight_range")
+                      span.mr-5(v-if="itm.tolerance_range") 公差范围：{{itm.tolerance_range}}
+                      span(v-if="itm.weight_range") 重量范围：{{itm.weight_range}}
+                    .row.padding-bottom-xs
+                      .col
+                        span 预计/实提：
+                        span.ml-5 {{itm.weight_csg}}吨 / {{itm.weight_real}}吨
+                      span {{itm.product_count}}支
+                .row.padding-sm
+                  span 共 {{item.total_count}} 支
+                  .col.text-right
+                    span 预计/实提：
+                    span.ml-5 {{item.weight_csg}}吨 / {{item.weight_real}}吨
+            .padding.text-gray.ft-13.text-center(v-if="loading") 努力加载中...
+            .text-center.text-gray.padding(v-else-if="finished && billTab[idx].data.length > 10") 加载完成
         .text-center.text-gray.pt-100(v-else)
           empty-image(url="bill_empty.png", className="img-empty")
           .empty-content 您暂时没有相关提单
 </template>
 <script>
-import labBillItem from '@/components/LadBillItem.vue'
+// import labBillItem from '@/components/LadBillItem.vue'
+import copyBtn from '@/components/CopyBtn.vue'
 import { mapState } from 'vuex'
 export default {
   data () {
@@ -38,6 +83,7 @@ export default {
         { title: '待提货', status: '0', data: [], isActive: false },
         { title: '已完成', status: '3', data: [], isActive: false }
       ],
+      loading: false,
       tabName: '-2',
       pageSize: 10,
       currentPage: 0,
@@ -53,17 +99,19 @@ export default {
     }
   },
   components: {
-    labBillItem
+    copyBtn
   },
   computed: {
     ...mapState({
       currentUser: state => state.user.currentUser,
       tempObject: state => state.tempObject,
       screenHeight: state => state.screenHeight,
+      customBar: state => state.customBar,
       isLogin: state => state.user.isLogin
     })
   },
   beforeMount () {
+    this.loading = false
     if (this.$root.$mp.query.tabName) this.tabName = this.$root.$mp.query.tabName
     const idx = this.billTab.findIndex(item => item.status === this.tabName)
     this.swiperCount = idx
@@ -158,6 +206,7 @@ export default {
         this.isload = true
       } else {
         this.isload = false
+        this.loading = true
       }
       let body = {
         user_id: this.currentUser.user_id,
@@ -212,8 +261,10 @@ export default {
           this.finished = true
           this.isload = true
         }
+        this.loading = false
       }).catch(err => {
         me.showMsg(err || '网络异常')
+        this.loading = false
         this.isload = true
       })
     }
