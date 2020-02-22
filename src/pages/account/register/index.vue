@@ -14,7 +14,7 @@
       .col
         input.no-border(placeholder="请输入验证码", type="number", v-model="code")
       .flex-90.text-center(style="border-left: 1rpx solid #888")
-        auth-btn(:phone="phone")
+        auth-btn(:phone="phone", v-if="codeBtnShow")
     .row.margin-top.ft-12
       .flex-20
         checkbox(style="transform: scale(0.8,0.8)", :checked="acceptProtocol", color="#0081ff")
@@ -33,7 +33,8 @@ export default {
       phone: '',
       code: '',
       acceptProtocol: true,
-      canClick: true
+      canClick: true,
+      codeBtnShow: false
     }
   },
   components: {
@@ -41,6 +42,10 @@ export default {
   },
   onShow () {
     this.canClick = true
+    this.codeBtnShow = true
+  },
+  onUnload () {
+    this.codeBtnShow = false
   },
   methods: {
     resetVal () {
