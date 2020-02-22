@@ -13,7 +13,7 @@ div
           .confirm-btn.text-blue(@click="jump('/pages/ladbillConfirmDetail/main?no='+item.no)") 确认提单
         .padding-bottom-xs {{item.product_name}}
         .padding-bottom-xs 
-          span 共{{item.total_count}}支，{{item.weight_real}}吨
+          span 共{{item.total_count}}支，{{item.weight_csg}}吨
         .padding-bottom-xs 生成时间：{{item.create_time}}
     .text-center.text-gray.pt-100(v-else)
       empty-image(url="bill_empty.png", className="img-empty")
