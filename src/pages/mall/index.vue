@@ -9,7 +9,7 @@ div
           template(v-if="isload")
             time-line(type="mallist")
           template(v-else)  
-            template(v-if="goodsNameList[swiperCount].data.length > 0")
+            template(v-if="goodsNameList[tabIdx].data.length > 0")
               scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: scrollHeight}")
                 .padding.pr-10.pl-10(v-for="(item,idx) in goodsNameList[tabIdx].data", :key="idx", :class="!mallFlag ? 'card-list' : 'solid-bottom bg-white'")
                   template(v-if="mallFlag === 1")
@@ -219,10 +219,12 @@ export default {
       const obj = {}
       Object.keys(filter).forEach((key) => {
         if (filter[key].length > 0) {
-          obj[`${key}s`] = filter[key][0] === '全部' ? '' : filter[key].toString()
+          const keyName = `${key}s` === 'origins' ? 'supplys' : `${key}s`
+          obj[keyName] = filter[key][0] === '全部' ? '' : filter[key].toString()
         }
       })
       this.mallItems = []
+      this.goodsNameList[this.swiperCount].data = []
       this.currentPage = 0
       this.isRefresh = 'refresher'
       this.queryObject = {
