@@ -95,6 +95,7 @@ export default {
     if (this.tempObject.billNo) this.billNo = this.tempObject.billNo
     if (this.tempObject.billTabName) this.tabName = this.tempObject.billTabName.toString()
     this.pageHeight = this.tabName === '1' ? 150 : 100
+    this.billTab[idx].data = []
     if (!this.swiperCount) {
       this.loadData()
     }
