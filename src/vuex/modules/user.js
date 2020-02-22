@@ -110,7 +110,7 @@ export default {
         console.log('value:>>', value)
         if (value.user_mark) {
           const time = mpvue.getStorageSync('loginTime') || -1
-          if (time < 0) {
+          if (time > 0) {
             const now = new Date().getTime()
             if ((now - time) / (1000 * 3600 * 24) > 30) {
               state.isLogin = false

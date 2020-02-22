@@ -84,7 +84,7 @@ export default {
     jumpDetail (obj) {
       if (obj.type === 2) {
         const tdno = obj.content.substring(obj.content.indexOf('TD'), obj.content.indexOf('需要'))
-        this.jump({ path: '/ladbill/confirm/detail?no=' + tdno })
+        this.jump('/pages/ladbillConfirmDetail/main?no=' + tdno)
       } else {
         this.configVal({ key: 'tempObject', val: obj })
         this.jump('/pages/h5/main?title=消息详情&type=msgDetail')

@@ -24,7 +24,8 @@ const wxMixins = {
   },
   computed: {
     ...mapState({
-      screenWidth: state => state.screenWidth
+      screenWidth: state => state.screenWidth,
+      screenHeight: state => state.screenHeight
     })
   },
   methods: {
@@ -51,7 +52,7 @@ const wxMixins = {
       })
     },
     showLoading () {
-      wx.showLoading({title: '加载中…'})
+      wx.showLoading({ title: '加载中…' })
     },
     hideLoading () {
       wx.hideLoading()
@@ -366,7 +367,8 @@ const wxMixins = {
         const secs = n.getSeconds()
         return (
           [years, month, day].map(formatNumber).join('-') +
-          ' ' + [hours, mins, secs].map(formatNumber).join(':')
+          ' ' +
+          [hours, mins, secs].map(formatNumber).join(':')
         )
       } else {
         return ''

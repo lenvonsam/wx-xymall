@@ -70,15 +70,23 @@ div
             .col.text-center.text-gray.pt-100(v-else)
               empty-image(url="bill_empty.png", className="img-empty")
               .empty-content 您暂时没有相关合同
+      //- template(v-if="mallItems.length > 0")
+      //-   mall-item(:mallFlag="mallFlag", :cb="mallItemCb", v-for="(item,idx) in mallItems", :item="item", :key="idx")
+      //- .col.text-center.text-gray.pt-100(v-else)
+      //-   empty-image(url="bill_empty.png", className="img-empty")
+      //-   .empty-content 您暂时没有相关合同
+  modal-intro(v-model="modalIntroShow", :images="introImages", :cb="modalIntroCb")
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
 import mallHead from '@/components/MallHead'
 import mallItem from '@/components/MallItem'
+import modalIntro from '@/components/ModalIntro.vue'
 export default {
   components: {
     mallHead,
-    mallItem
+    mallItem,
+    modalIntro
   },
   data () {
     return {
@@ -112,6 +120,7 @@ export default {
       },
       weightMark: '',
       itemType: 'product',
+      introImages: ['mall_good.png', 'mall_standard.png'],
       mallTabVal: '',
       mallItems: [],
       queryObject: {},
@@ -124,8 +133,9 @@ export default {
       btnDisable: false,
       goodsNameList: [],
       swiperCount: 0,
-      filterObj: {},
-      scrollHeight: 0
+      scrollHeight: 0,
+      modalIntroShow: false,
+      filterObj: {}
     }
   },
   computed: {
@@ -155,6 +165,7 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
+      this.showShareMall()
       if (this.goodsNameList.length > 0) {
         this.queryObject = {
           current_page: this.currentPage,
@@ -185,6 +196,13 @@ export default {
         this.refresher()
       }
     },
+    showShareMall () {
+      const firstShare = mpvue.getStorageSync('firstShareMall') || false
+      if (!firstShare) {
+        this.modalIntroShow = true
+        mpvue.setStorageSync('firstShareMall', true)
+      }
+    },
     swiperChange (e) {
       const idx = e.mp.detail.current
       this.mallTabVal = this.goodsNameList[idx].id
@@ -199,7 +217,6 @@ export default {
     multipleFilter (filter) {
       console.log('filter', filter)
       const obj = {}
-      debugger
       Object.keys(filter).forEach((key) => {
         if (filter[key].length > 0) {
           obj[`${key}s`] = filter[key][0] === '全部' ? '' : filter[key].toString()
@@ -298,7 +315,6 @@ export default {
       }
     },
     selectTab ({id, idx}) {
-      debugger
       this.mallItems = []
       this.currentPage = 0
       this.mallTabVal = id

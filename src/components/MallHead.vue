@@ -1,7 +1,7 @@
 <template lang="pug">
 .bg-white.full-width.text-gra.shop-head(:style="{top: customBar+'px'}", @touchmove.stop="catchtouchmove")
   .flex.align-center.pl-10.pr-10
-    .h-left.ft-25(@click="openFilter")
+    .h-left.ft-25(@click="classifyClick")
       .cuIcon-sort.lg.text-gra
       .ft-14 分类
     .search.col(@click="jump('/pages/search/main')")
@@ -50,9 +50,11 @@
         .row.padding-sm.justify-around(v-if="sortIdx !== 0")
           .btn-cancel.col(@click="selectSort(sortIdx, 0)") 重选 
           .btn-sure.margin-left-sm.col(@click="searchHandler()") 确定            
+  modal-intro(v-model="modalIntroShow", :images="modalIntroImages", :cb="modalIntroCb")
 </template>
 <script>
 import { mapState } from 'vuex'
+import modalIntro from '@/components/ModalIntro.vue'
 export default {
   props: {
     mallTabVal: {
@@ -62,6 +64,8 @@ export default {
   },
   data () {
     return {
+      modalIntroImages: ['mall_classify.png', 'mall_classify_num.png'],
+      modalIntroShow: false,
       sidebarListAreaShow: false,
       sidebarListNameShow: false,
       sidebarListMaterialShow: false,
@@ -123,6 +127,9 @@ export default {
       isMore: false
     }
   },
+  components: {
+    modalIntro
+  },
   computed: {
     ...mapState({
       tempObject: state => state.tempObject
@@ -147,6 +154,19 @@ export default {
     this.searchVal = this.tempObject.search || ''
   },
   methods: {
+    classifyClick () {
+      const firstShare = mpvue.getStorageSync('firstShareMallClassify') || false
+      console.log('firstShare')
+      if (!firstShare) {
+        this.modalIntroShow = true
+        mpvue.setStorageSync('firstShareMallClassify', true)
+      } else {
+        this.openFilter()
+      }
+    },
+    modalIntroCb () {
+      this.openFilter()
+    },
     catchtouchmove () {
       return false
     },
@@ -397,7 +417,7 @@ export default {
   padding 0 10px
   line-height 30px
   width 200px
-  input::-webkit-input-placeholder  
+  input::-webkit-input-placeholder
     font-size 11px
     font-weight 500
 </style>
