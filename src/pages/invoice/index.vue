@@ -109,6 +109,7 @@ export default {
   },
   onShow () {
     this.pageHeight = this.screenHeight - 150
+    debugger
     if (this.tempObject.tabName) {
       this.tabName = this.tempObject.tabName
     }
@@ -116,7 +117,7 @@ export default {
       current_page: this.currentPage,
       page_size: this.pageSize
     }
-    this.tabName = this.$root.$mp.query.tabName || '0'
+    if (this.$root.$mp.query.tabName) this.tabName = this.$root.$mp.query.tabName
     this.loadData()
   },
   methods: {
