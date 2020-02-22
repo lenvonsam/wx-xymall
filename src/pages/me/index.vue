@@ -86,6 +86,7 @@ export default {
   onShow () {
     this.showNoticeIcon = false
     this.alertShow = false
+    this.rowCountObj = {}
     if (this.isLogin) {
       this.showNoticeIcon = this.currentUser.message_switch === '1'
       this.ironRequest('toOperCounts.shtml?user_id=' + this.currentUser.user_id, {}, 'get', this).then(resp => {
