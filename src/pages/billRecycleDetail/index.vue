@@ -99,6 +99,7 @@ export default {
       let totalPrice = 0
       let totalWeight = 0
       this.carts.map(itm => {
+        itm.newTotalWeight = Number((itm.count * itm.weight).toFixed(3))
         if (itm.choosed) {
           if (itm.price.indexOf('--') < 0) {
             price += itm.price * Number((itm.count * itm.weight).toFixed(3))
@@ -184,8 +185,8 @@ export default {
             itm.weight = wt
             itm.price = itm.price
             itm.totalWeight = itm.count * itm.weight
-            itm.newTotalWeight = Number(itm.count * itm.weight).toFixed(3)
           }
+          itm.newTotalWeight = Number(itm.count * itm.weight).toFixed(3)
           this.carts.push(itm)
           this.isload = false
         })
