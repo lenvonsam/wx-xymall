@@ -119,8 +119,8 @@ export default {
               }
             } else {
               mpvue.setStorageSync('loginTime', now)
-              state. = value
-              state.isLcurrentUserogin = true
+              state.currentUser = value
+              state.isLogin = true
             }
           } else {
             state.currentUser = value
