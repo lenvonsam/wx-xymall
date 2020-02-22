@@ -188,6 +188,8 @@ export default {
     }
   },
   onShow () {
+    this.carts = []
+    this.alertShow = false
     if (!this.isLogin) {
       this.alertShow = true
       return
@@ -200,7 +202,6 @@ export default {
         this.pwAddrDetail = this.tempObject.detail
       }
     }
-    this.carts = []
     this.loadCartData()
   },
   methods: {
