@@ -103,7 +103,7 @@ div
           div 需补款：
           .text-right
             span.text-red {{billDetail.paid_price_desc}} 元
-            .text-gray.ft-12 (如使用余额后需转：{{billDetail.paid_price_desc - billDetail.desposit_can > 0 ? Number(billDetail.paid_price_desc - billDetail.desposit_can).toFixed(2) : 0}}元)
+            .text-gray.ft-12 (如使用余额后需转：{{billDetail.needTransfer}}元)
         .padding-bottom-xs.flex.justify-between
           div 账户余额：
           .text-black {{billDetail.desposit_can}}元
@@ -157,6 +157,11 @@ export default {
   beforeMount () {
     this.ironRequest('orderDetail.shtml?tstc_no=' + this.$root.$mp.query.id, {}, 'get', this).then(resp => {
       if (resp && resp.returncode === '0') {
+        resp.lift_money = resp.lift_money.toFixed(2)
+        resp.total_money = resp.total_money.toFixed(2)
+        if (resp.status_desc === '待补款') {
+          resp.needTransfer = resp.paid_price_desc - resp.desposit_can > 0 ? Number(resp.paid_price_desc - resp.desposit_can).toFixed(2) : 0
+        }
         this.billDetail = resp
         // this.billDetail.status_desc = '待付款'
         if (this.billDetail.status_desc === '待补款') {

@@ -1,25 +1,25 @@
 <template lang="pug">
 div
   nav-bar(title="我的提单", isBack)
-  .head.bg-white(:style="{top: customBar + 'px'}")
-    .serach.flex.align-center.padding-sm
+  .head.bg-white(:style="{top: customBar + 'px', height: '170rpx'}")
+    .serach.flex.align-center.padding-sm(style="height: 80rpx")
       .col.search-input.text-gray
         .flex.align-center
           .cuIcon-search
           input.full-width.padding-left-sm(v-model="search", type="text", placeholder="品名/提单号/车牌号")
       .search-btn.text-blue.padding-left-sm(@click="searchOrder") 搜索
-    scroll-view.nav(scroll-x)
+    scroll-view.nav(scroll-x, style="height: 90rpx")
       .flex.text-center
         .cu-item.flex-sub(v-for="(item,billIdx) in billTab", :class="item.status === tabName?'text-blue cur':''", :key="billIdx", @click="selectTabs(item, billIdx)")
           span {{item.title}}
-  swiper.bill-content(@change="swiperChange", :current="swiperCount", :style="{height: screenHeight - customBar - 120 + 'px'}")
+  swiper.bill-content(@change="swiperChange", :current="swiperCount", :style="{height: swiperHeight}")
     swiper-item(v-for="(tabItem, idx) in billTab.length", :key="idx")
       //- scroll-view(scroll-y, :refresher-triggered="triggered", :refresher-enabled="true", @refresherrefresh="refresher", @scrolltolower="loadMore", :style="{height: screenHeight - 186 +'px'}")
       template(v-if="isload")
         time-line(type="mallist")
       template(v-else)
         template(v-if="billTab[idx].data.length > 0")
-          scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: screenHeight - customBar - 120 +'px'}")
+          scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: swiperHeight}")
             //- lab-bill-item(v-for="(item,itemIdx) in billTab[idx].data", :key="itemIdx", :ladObject="item", :cb="labObjectCb")
             .bg-gray.pt-half-rem(v-for="(item,itemIdx) in billTab[idx].data", :key="itemIdx")
               .bg-white
@@ -95,7 +95,8 @@ export default {
       endDate: '',
       // listData: [],
       btnDisable: false,
-      search: ''
+      search: '',
+      swiperHeight: '0rpx'
     }
   },
   components: {
@@ -109,6 +110,9 @@ export default {
       customBar: state => state.customBar,
       isLogin: state => state.user.isLogin
     })
+  },
+  onShow () {
+    this.swiperHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 170 + 'rpx'
   },
   beforeMount () {
     this.loading = false
@@ -197,15 +201,20 @@ export default {
       }
     },
     loadMore () {
-      this.currentPage++
-      this.loadData()
+      if (!this.finished) {
+        const me = this
+        this.throttle(function () {
+          me.currentPage++
+          me.loadData()
+        }, 300)
+      }
     },
     loadData () {
       const me = this
       if (this.currentPage === 0) {
         this.isload = true
       } else {
-        this.isload = false
+        // this.isload = false
         this.loading = true
       }
       let body = {
@@ -232,11 +241,13 @@ export default {
       // if (this.endDate.trim().length > 0) {
       //   body.end_date = this.endDate
       // }
+
       this.ironRequest('orderLadList.shtml', body, 'post', this).then(resp => {
         if (resp && resp.returncode === '0') {
           const idx = me.swiperCount
           let arr = resp.order_lads
-          this.isload = false
+          debugger
+          me.isload = false
           if (arr.length === 0 && this.currentPage === 0) {
             // me.listData = []
             me.billTab[idx].data = []
@@ -244,7 +255,7 @@ export default {
           } else if (arr.length > 0 && this.currentPage === 0) {
             // me.listData = arr
             me.billTab[idx].data = arr
-            if (arr.length > 10) me.finished = false
+            if (arr.length > 8) me.finished = false
           } else if (arr.length > 0 && this.currentPage > 0) {
             arr.map(itm => {
               me.billTab[idx].data.push(itm)
@@ -253,6 +264,7 @@ export default {
             me.finished = false
           } else {
             me.finished = true
+            // me.isload = true
             me.currentPage--
           }
         } else {
