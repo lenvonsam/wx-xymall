@@ -54,10 +54,22 @@ const wxMixins = {
       })
     },
     showLoading () {
-      wx.showLoading({ title: '加载中…' })
+      mpvue.showLoading({ title: '加载中…' })
     },
     hideLoading () {
-      wx.hideLoading()
+      mpvue.hideLoading()
+    },
+    tabDot (text, index = 2) {
+      if (Number(text) > 0) {
+        mpvue.setTabBarBadge({
+          index,
+          text: text.toString()
+        })
+      } else {
+        mpvue.removeTabBarBadge({
+          index
+        })
+      }
     },
     tab (url) {
       mpvue.switchTab({
@@ -172,6 +184,22 @@ const wxMixins = {
     base64Str (str) {
       const bytes = UTF8.encode(str)
       return BASE64.encode(bytes)
+    },
+    // 设置购物车数量
+    async setCartCount (userId) {
+      try {
+        const data = await this.ironRequest(
+          this.apiList.xy.cartListCount.url + '?user_id=' + userId,
+          {},
+          this.apiList.xy.cartListCount.method
+        )
+        mpvue.setTabBarBadge({
+          index: 2,
+          text: data.cart_list_count.toString()
+        })
+      } catch (e) {
+        mpvue.removeTabBarBadge()
+      }
     },
     addCart (val, type, userId) {
       return new Promise((resolve, reject) => {

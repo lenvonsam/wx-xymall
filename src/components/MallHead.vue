@@ -156,7 +156,6 @@ export default {
   methods: {
     classifyClick () {
       const firstShare = mpvue.getStorageSync('firstShareMallClassify') || false
-      console.log('firstShare')
       if (!firstShare) {
         this.modalIntroShow = true
         mpvue.setStorageSync('firstShareMallClassify', true)

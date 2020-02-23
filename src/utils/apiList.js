@@ -23,7 +23,8 @@ export default {
     captcha: { url: 'getCaptcha.shtml', method: 'get' },
     mallList: { url: 'mallList.shtml', method: 'post' },
     goodsList: { url: 'goodsList.shtml', method: 'post' },
-    standardList: { url: 'standardList.shtml', method: 'post' }
+    standardList: { url: 'standardList.shtml', method: 'post' },
+    cartListCount: { url: 'cartListCount.shtml', method: 'get' }
   },
   erp: {
     // 手机验证码登录

@@ -157,8 +157,7 @@ export default {
       screenHeight: state => state.screenHeight,
       currentUser: state => state.user.currentUser,
       tempObject: state => state.tempObject,
-      isLogin: state => state.user.isLogin,
-      cartCount: state => state.cartCount
+      isLogin: state => state.user.isLogin
     })
   },
   watch: {
@@ -200,6 +199,7 @@ export default {
     this.carts = []
     if (!this.isLogin) {
       this.alertShow = true
+      this.tabDot(0)
       return
     }
     if (this.tempObject.type) {
@@ -403,7 +403,7 @@ export default {
                 me.carts = me.carts.filter(item => {
                   return idsList.indexOf(item.cart_id) === -1
                 })
-                me.configVal({ key: 'cartCount', val: me.carts.length })
+                me.tabDot(me.carts.length)
                 me.btnDisable = false
               }
             })
@@ -478,11 +478,12 @@ export default {
             }
             this.carts.push(itm)
           })
-          this.configVal({ key: 'cartCount', val: this.carts.length + this.soldCarts.length })
+          this.tabDot(this.carts.length + this.soldCarts.length)
           // if (done) done()
         } else {
           this.showMsg(resp ? '网络异常' : resp.errormsg)
           this.carts = []
+          this.tabDot(0)
           // if (done) done()
         }
       }).catch(err => {
@@ -491,12 +492,6 @@ export default {
         // if (done) done()
       })
     }
-  },
-  beforeDestroy () {
-    this.$parent.$off('cartEmpty')
-    this.ironRequest('cartListCount.shtml?user_id=' + this.currentUser.user_id, {}, 'get', this).then(resp => {
-      if (resp.data && resp.data.returncode === '0') this.configVal({ key: 'cartCount', val: resp.data.cart_list_count })
-    })
   }
 }
 </script>

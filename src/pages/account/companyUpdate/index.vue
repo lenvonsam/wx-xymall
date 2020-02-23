@@ -40,7 +40,7 @@ div
             .flex-60 三证合一
             .col
             .flex-30.row(v-if="pic1.length > 0")
-              img(src="/static/images/invoice_icon.png", style="width: 40rpx; height: 60rpx", @click="previewImage(imgOuterUrl + '/filepool' + pic1)")
+              img(:src="imgOuterUrl + '/filepool' + pic1", style="width: 40rpx; height: 60rpx", @click="previewImage(imgOuterUrl + '/filepool' + pic1)")
             .flex-30.row(@click="handlerImage('pic1')")
               img.add-icon(src="/static/images/add_icon.png")
         .row.padding.relative.h-50
@@ -50,7 +50,7 @@ div
             .flex-60 开票资料
             .col.text-right
             .flex-30.row(v-if="pic2.length > 0")
-              img(src="/static/images/invoice_icon.png", style="width: 40rpx; height: 60rpx", @click="previewImage(imgOuterUrl + '/filepool' + pic2)")
+              img(:src="imgOuterUrl + '/filepool' + pic2", style="width: 40rpx; height: 60rpx", @click="previewImage(imgOuterUrl + '/filepool' + pic2)")
             .flex-30.row(@click="handlerImage('pic2')")
               img.add-icon(src="/static/images/add_icon.png")
       .bg-white(v-else)
@@ -61,7 +61,7 @@ div
           .col.row
             .col 营业执照
             .flex-30.row(v-if="pic1.length > 0")
-              img(src="/static/images/invoice_icon.png", style="width: 40rpx; height: 60rpx", @click="previewImage(imgOuterUrl + '/filepool' + pic1)")
+              img(:src="imgOuterUrl + '/filepool' + pic1", style="width: 40rpx; height: 60rpx", @click="previewImage(imgOuterUrl + '/filepool' + pic1)")
             .flex-30.row(@click="handlerImage('pic1')")
               img.add-icon(src="/static/images/add_icon.png")
         .row.padding.relative.h-50
@@ -71,7 +71,7 @@ div
           .col.row
             .col 开票资料
             .flex-30.row(v-if="pic2.length > 0")
-              img(src="/static/images/invoice_icon.png", style="width: 40rpx; height: 60rpx", @click="previewImage(imgOuterUrl + '/filepool' + pic2)")
+              img(:src="imgOuterUrl + '/filepool' + pic2", style="width: 40rpx; height: 60rpx", @click="previewImage(imgOuterUrl + '/filepool' + pic2)")
             .flex-30.row(@click="handlerImage('pic2')")
               img.add-icon(src="/static/images/add_icon.png")
         .row.padding.relative.h-50
@@ -81,7 +81,7 @@ div
           .col.row
             .col 税务登记证
             .flex-30.row(v-if="pic3.length > 0")
-              img(src="/static/images/invoice_icon.png", style="width: 40rpx; height: 60rpx", @click="previewImage(imgOuterUrl + '/filepool' + pic3)")
+              img(:src="imgOuterUrl + '/filepool' + pic3", style="width: 40rpx; height: 60rpx", @click="previewImage(imgOuterUrl + '/filepool' + pic3)")
             .flex-30.row(@click="handlerImage('pic3')")
               img.add-icon(src="/static/images/add_icon.png")
         .row.padding.relative.h-50
@@ -90,7 +90,7 @@ div
           .col.row
             .col 组织机构代码证
             .flex-30.row(v-if="pic4.length > 0")
-              img(src="/static/images/invoice_icon.png", style="width: 40rpx; height: 60rpx", @click="previewImage(imgOuterUrl + '/filepool' + pic4)")
+              img(:src="imgOuterUrl + '/filepool' + pic4", style="width: 40rpx; height: 60rpx", @click="previewImage(imgOuterUrl + '/filepool' + pic4)")
             .flex-30.row(@click="handlerImage('pic4')")
               img.add-icon(src="/static/images/add_icon.png")
     .margin-top.padding
@@ -189,7 +189,7 @@ export default {
       if (this.fromType === 2) {
         this.redirect('/pages/account/login/main')
       } else {
-        this.pageBack()
+        this.back()
       }
     },
     invoiceCb () {

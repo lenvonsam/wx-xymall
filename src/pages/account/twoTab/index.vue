@@ -25,7 +25,7 @@ div
       .row.padding.border-bottom-line
         .flex-100 手机号
         .col
-          input.no-border(readOnly, :value="val1")
+          input.no-border(:disabled="true", :value="val1")
       .row.padding.border-bottom-line
         .flex-100 验证码
         .col
@@ -38,6 +38,7 @@ div
           input(placeholder="请输入密码", type="password",v-model="val3")
   .margin-top-xl.padding
     .main-btn(hover-class="hover-gray", @click="tabHandler") 完成
+  alert(:title="alertText", :cb="alertCb", v-model="alertShow")
 </template>
 
 <script>
@@ -46,6 +47,8 @@ import authBtn from '@/components/AuthBtn.vue'
 export default {
   data () {
     return {
+      alertText: '',
+      alertShow: false,
       tabName: 'tab1',
       type: 'loginPwd',
       canClick: true,
@@ -95,6 +98,14 @@ export default {
     ...mapActions([
       'exitUser'
     ]),
+    alertCb () {
+      if (this.type === 'loginPwd') {
+        this.exitUser()
+        this.redirect('/pages/account/login/main?type=2')
+      } else {
+        this.back()
+      }
+    },
     selectTab (tab) {
       this.tabName = tab
       this.val1 = ''
@@ -154,15 +165,14 @@ export default {
       try {
         if (this.canClick && this.canHttp) {
           this.canClick = false
-          const me = this
           await this.ironRequest(this.apiList.xy.resetPwd.url, queryObject, this.apiList.xy.resetPwd.method, this)
-          this.confirm({ title: '友情提示', content: `${this.type === 'loginPwd' ? '登录密码' : '支付密码'}修改成功，请重新登录` }).then(res => {
-            me.canClick = true
-            if (res === 'confirm') {
-              me.exitUser()
-              me.redirect('/pages/account/login/main?type=2')
-            }
-          })
+          if (this.type === 'loginPwd') {
+            this.alertText = '登录密码修改成功，请重新登录'
+          } else {
+            this.alertText = '支付密码修改成功'
+          }
+          this.canClick = true
+          this.alertShow = true
         }
       } catch (e) {
         this.canClick = true

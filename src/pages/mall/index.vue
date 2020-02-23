@@ -148,8 +148,7 @@ export default {
       currentUser: state => state.user.currentUser,
       tempObject: state => state.tempObject,
       isLogin: state => state.user.isLogin,
-      customBar: state => state.customBar,
-      screenHeight: state => state.screenHeight
+      customBar: state => state.customBar
     })
   },
   onShow () {
@@ -174,6 +173,11 @@ export default {
     // this.mallClassName = !this.mallFlag ? 'card-list' : 'solid-bottom bg-white'
 
     console.log('mallTabVal', this.mallTabVal)
+    if (this.isLogin) {
+      this.setCartCount(this.currentUser.user_id)
+    } else {
+      this.tabDot(0)
+    }
   },
   mounted () {
     this.$nextTick(() => {
@@ -371,7 +375,6 @@ export default {
         this.apiList.xy.mallList.method,
         this
       ).then(res => {
-        debugger
         if (res.returncode === '0') {
           const idx = this.swiperCount
           res.products.map(item => {
@@ -379,7 +382,6 @@ export default {
           })
           if (me.isRefresh === 'refresh') {
             if (res.products.length > 0 && me.currentPage === 0) {
-              debugger
               me.goodsNameList[idx].data = res.products
               // me.mallItems = res.products
               console.log('goodsNameList', me.goodsNameList[idx].data)
