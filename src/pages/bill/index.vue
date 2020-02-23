@@ -87,7 +87,6 @@ export default {
     // this.finished = true
   },
   beforeMount () {
-    debugger
     this.tabName = this.$root.$mp.query.tabName || '0'
     const idx = this.billTab.findIndex(item => item.status === this.tabName)
 
@@ -151,7 +150,6 @@ export default {
     },
     swiperChange (e) {
       console.log(e.mp.detail.current)
-      debugger
       const idx = e.mp.detail.current
       this.swiperCount = idx
       this.tabName = this.billTab[idx].status
