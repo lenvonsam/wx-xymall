@@ -57,7 +57,7 @@ export default {
       })
     },
     searchClick (searchName) {
-      if (typeof (searchName) === 'string' && searchName !== '') {
+      if (typeof (searchName) === 'string') {
         this.configVal({ key: 'tempObject', val: { search: searchName } })
         this.setLocalSearch()
         this.tab('/pages/mall/main')
@@ -67,8 +67,9 @@ export default {
       //   this.showMsg('请输入内容')
       //   return
       // }
+      debugger
       const index = this.filterArray.findIndex(itm => itm === this.searchWord.trim())
-      if (index < 0) this.filterArray.unshift(this.searchWord.trim())
+      if (index < 0 && this.searchWord.trim()) this.filterArray.unshift(this.searchWord.trim())
       this.configVal({ key: 'tempObject', val: { search: this.searchWord } })
       this.setLocalSearch()
       this.tab('/pages/mall/main')
