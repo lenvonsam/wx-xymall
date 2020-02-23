@@ -86,9 +86,6 @@ export default {
     }
   },
   onShow () {
-    // 用于测试
-    this.shareModalShow = true
-
     this.echartHeight = (200 / 345) * (this.screenWidth - 30)
     this.loadBanner()
     this.getTrends()

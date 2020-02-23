@@ -246,7 +246,6 @@ export default {
         if (resp && resp.returncode === '0') {
           const idx = me.swiperCount
           let arr = resp.order_lads
-          debugger
           me.isload = false
           if (arr.length === 0 && this.currentPage === 0) {
             // me.listData = []

@@ -162,7 +162,6 @@ export default {
           return item.choosed === true
         })
         this.totalCount = filterArray.length
-        debugger
         this.allChoosed = this.totalCount === newVal.length
         this.totalPrice = 0
         this.totalWeight = 0
