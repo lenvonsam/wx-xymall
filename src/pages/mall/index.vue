@@ -143,8 +143,7 @@ export default {
       currentUser: state => state.user.currentUser,
       tempObject: state => state.tempObject,
       isLogin: state => state.user.isLogin,
-      customBar: state => state.customBar,
-      screenHeight: state => state.screenHeight
+      customBar: state => state.customBar
     })
   },
   onShow () {
@@ -161,6 +160,11 @@ export default {
     }
     this.mallTabVal = this.tempObject.name || ''
     console.log('mallTabVal', this.mallTabVal)
+    if (this.isLogin) {
+      this.setCartCount(this.currentUser.user_id)
+    } else {
+      this.tabDot(0)
+    }
   },
   mounted () {
     this.$nextTick(() => {

@@ -90,13 +90,19 @@ export default {
     this.loadBanner()
     this.getTrends()
     this.loadNotice()
+    if (this.isLogin) {
+      this.setCartCount(this.currentUser.user_id)
+    } else {
+      this.tabDot(0)
+    }
   },
   computed: {
     ...mapState({
       mainIcons: state => state.mainIcons,
       mainClassify: state => state.mainClassify,
       screenWidth: state => state.screenWidth,
-      isLogin: state => state.user.isLogin
+      isLogin: state => state.user.isLogin,
+      currentUser: state => state.user.currentUser
     })
   },
   methods: {

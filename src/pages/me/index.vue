@@ -86,9 +86,9 @@ export default {
   },
   onShow () {
     this.showNoticeIcon = false
-    this.alertShow = false
     this.rowCountObj = {}
     if (this.isLogin) {
+      this.setCartCount(this.currentUser.user_id)
       this.alertShow = false
       if (this.currentUser.isnew) {
         this.alertText = '您还需要完善公司信息才能正常工作'
@@ -113,6 +113,7 @@ export default {
         }
       })
     } else {
+      this.tabDot(0)
       this.alertText = '您还未登录，请先登录'
       this.alertShow = true
     }

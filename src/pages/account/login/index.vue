@@ -40,6 +40,9 @@ export default {
       currentUser: state => state.user.currentUser
     })
   },
+  onUnload () {
+    if (this.backType === 2) this.tab('/pages/index/main')
+  },
   onShow () {
     this.uname = ''
     this.upwd = ''
@@ -87,7 +90,6 @@ export default {
               }
             })
           } else {
-            // FIXME 原生的好项目不具备tab count
             this.showMsg('登录成功')
             const me = this
             setTimeout(function () {
@@ -106,9 +108,9 @@ export default {
         this.canClick = true
       }
     },
-    async getRemoteSearchHistory (userData) {
+    async getRemoteSearchHistory () {
       try {
-        const data = await this.ironRequest(this.apiList.xy.searchHistory.url + '?user_id=' + userData.user_id, {}, this.apiList.xy.searchHistory.method, this)
+        const data = await this.ironRequest(this.apiList.xy.searchHistory.url, {}, this.apiList.xy.searchHistory.method, this)
         const obj = this.currentUser
         obj.localSearchs = data.history === undefined ? [] : JSON.parse(data.history)
         this.setUser(obj)

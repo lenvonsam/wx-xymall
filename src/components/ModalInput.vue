@@ -54,13 +54,15 @@ export default {
   },
   methods: {
     btnClick (val) {
-      if (this.inputVal.trim().length === 0) {
-        this.showMsg('不能为空')
-        return
-      }
-      if (!this.pwdReg.test(this.inputVal)) {
-        this.showMsg('请输入6-12位密码，只能是数字、字母和下划线')
-        return
+      if (val === 'confirm') {
+        if (this.inputVal.trim().length === 0) {
+          this.showMsg('不能为空')
+          return
+        }
+        if (!this.pwdReg.test(this.inputVal)) {
+          this.showMsg('请输入6-12位密码，只能是数字、字母和下划线')
+          return
+        }
       }
       if (this.cb) {
         this.cb({
