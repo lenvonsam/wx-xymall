@@ -375,7 +375,6 @@ export default {
         this.apiList.xy.mallList.method,
         this
       ).then(res => {
-        debugger
         if (res.returncode === '0') {
           const idx = this.swiperCount
           res.products.map(item => {
@@ -383,7 +382,6 @@ export default {
           })
           if (me.isRefresh === 'refresh') {
             if (res.products.length > 0 && me.currentPage === 0) {
-              debugger
               me.goodsNameList[idx].data = res.products
               // me.mallItems = res.products
               console.log('goodsNameList', me.goodsNameList[idx].data)
