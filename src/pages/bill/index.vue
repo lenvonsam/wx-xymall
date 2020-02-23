@@ -19,7 +19,13 @@ div
         time-line(type="mallist")
       template(v-else)
         template(v-if="listData.length > 0")
-          scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: screenHeight - 186 +'px'}")
+          scroll-view(
+            scroll-y, 
+            :refresher-triggered="triggered", 
+            :refresher-enabled="true", 
+            @refresherrefresh="refresher",
+            @scrolltolower="loadMore", 
+            :style="{height: screenHeight - 186 +'px'}")
             //- div(style="height: 1000px")
             .bg-white.padding-sm.bill-list(v-for="(item, itemIdx) in billTab[idx].data", :key="itemIdx", @click="jumpDetail(item)")
               .flex.justify-between.padding-bottom-sm
@@ -149,7 +155,6 @@ export default {
       this.refresher()
     },
     swiperChange (e) {
-      console.log(e.mp.detail.current)
       const idx = e.mp.detail.current
       this.swiperCount = idx
       this.tabName = this.billTab[idx].status
