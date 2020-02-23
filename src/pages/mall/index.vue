@@ -148,8 +148,6 @@ export default {
     })
   },
   onShow () {
-    // 用于测试
-    this.modalIntroShow = true
     this.isLoad = false
     this.scrollHeight = this.screenHeight - 186 + 'px'
     this.queryObject = {}

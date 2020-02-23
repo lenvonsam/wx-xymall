@@ -155,15 +155,14 @@ export default {
   },
   methods: {
     classifyClick () {
-      this.modalIntroShow = true
-      // const firstShare = mpvue.getStorageSync('firstShareMallClassify') || false
-      // console.log('firstShare')
-      // if (!firstShare) {
-      //   this.modalIntroShow = true
-      //   mpvue.setStorageSync('firstShareMallClassify', true)
-      // } else {
-      //   this.openFilter()
-      // }
+      const firstShare = mpvue.getStorageSync('firstShareMallClassify') || false
+      console.log('firstShare')
+      if (!firstShare) {
+        this.modalIntroShow = true
+        mpvue.setStorageSync('firstShareMallClassify', true)
+      } else {
+        this.openFilter()
+      }
     },
     modalIntroCb () {
       this.openFilter()
