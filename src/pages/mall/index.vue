@@ -68,6 +68,7 @@ div
                           .blue-buy(v-if="item.max_count == 0",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
                           .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else) 购买
                 .padding.text-gray.ft-13.text-center(v-if="loading") 努力加载中...
+                .padding.text-gray.ft-13.text-center(v-if="goodsNameList[tabIdx].finished") 加载完成
                 //- span(v-for="(item,idx) in mallItems", :key="idx") {{idx}}
                 //- mall-item(:mallFlag="mallFlag", :cb="mallItemCb", v-for="(item,idx) in mallItems", :item="item", :key="idx")
             .col.text-center.text-gray.pt-100(v-else)
@@ -128,7 +129,7 @@ export default {
       mallItems: [],
       queryObject: {},
       isLoad: false,
-      isRefresh: 'refresher',
+      isRefresh: 'refresh',
       pullDownRefresh: false,
       currentPage: 0,
       pageSize: 10,
@@ -138,7 +139,8 @@ export default {
       swiperCount: 0,
       scrollHeight: 0,
       modalIntroShow: false,
-      filterObj: {}
+      filterObj: {},
+      finished: false
     }
   },
   computed: {
@@ -153,17 +155,24 @@ export default {
   onShow () {
     this.isLoad = false
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 290 + 'rpx'
-    this.queryObject = {}
-    if (this.tempObject.search || this.tempObject.name === '') {
+    if (this.tempObject.search === '' || this.tempObject.search || this.tempObject.name === '') {
+      // this.goodsNameList[this.swiperCount].data = []
+      this.isRefresh = 'refresh'
+      this.currentPage = 0
       Object.assign(this.queryObject, this.tempObject)
-    }
-    if (!this.tempObject.name) {
-      this.btnDisable = false
-      this.mallItems = []
       this.refresher()
+    } else {
+      this.queryObject = {}
+      this.mallTabVal = this.tempObject.name || ''
     }
+    // if (!this.tempObject.name) {
+    //   this.btnDisable = false
+    //   // this.mallItems = []
+    //   // this.goodsNameList[this.swiperCount].data = []
+    //   this.refresher()
+    // }
     // this.mallClassName = !this.mallFlag ? 'card-list' : 'solid-bottom bg-white'
-    this.mallTabVal = this.tempObject.name || ''
+
     console.log('mallTabVal', this.mallTabVal)
   },
   mounted () {
@@ -193,7 +202,7 @@ export default {
   methods: {
     ...mapActions(['configVal']),
     loadMore () {
-      if (!this.isLoad) {
+      if (!this.isLoad && !this.goodsNameList[this.swiperCount].finished) {
         this.currentPage++
         this.isRefresh = 'reachBottom'
         this.refresher()
@@ -216,6 +225,10 @@ export default {
         item.data = []
       })
       this.goodsNameList = list
+      if (!this.tempObject.name) {
+        this.btnDisable = false
+        this.refresher()
+      }
     },
     multipleFilter (filter) {
       console.log('filter', filter)
@@ -226,16 +239,18 @@ export default {
           obj[keyName] = filter[key][0] === '全部' ? '' : filter[key].toString()
         }
       })
-      this.mallItems = []
+      // this.mallItems = []
       this.goodsNameList[this.swiperCount].data = []
       this.currentPage = 0
-      this.isRefresh = 'refresher'
-      this.queryObject = {
-        current_page: this.currentPage,
-        page_size: this.pageSize,
-        name: this.mallTabVal,
-        only_available: 1
-      }
+      this.isRefresh = 'refresh'
+      // this.queryObject = {
+      //   current_page: this.currentPage,
+      //   page_size: this.pageSize,
+      //   name: this.mallTabVal,
+      //   only_available: 1
+      // }
+      this.queryObject.current_page = this.currentPage
+      this.queryObject.name = this.mallTabVal
       this.filterObj = obj
       Object.assign(this.queryObject, obj)
       this.refresher()
@@ -246,9 +261,10 @@ export default {
       this.$forceUpdate()
     },
     searchChange (val) {
-      this.mallItems = []
+      // this.mallItems = []
+      this.goodsNameList[this.swiperCount].data = []
       this.currentPage = 0
-      this.isRefresh = 'refresher'
+      this.isRefresh = 'refresh'
       this.queryObject = {
         current_page: this.currentPage,
         page_size: this.pageSize,
@@ -321,24 +337,31 @@ export default {
       }
     },
     selectTab ({ id, idx }) {
-      this.mallItems = []
-      this.currentPage = 0
-      this.mallTabVal = id
-      this.swiperCount = idx
-      this.queryObject = {
-        current_page: this.currentPage,
-        page_size: this.pageSize,
-        search: '',
-        name: id,
-        only_available: 1
+      // debugger
+      // this.configVal({key: 'tempObject', val: { search: '' }})
+      if (this.goodsNameList[idx]) {
+        this.goodsNameList[idx].data = []
+        this.currentPage = 0
+        this.mallTabVal = id
+        this.swiperCount = idx
+        // this.queryObject = {
+        //   current_page: this.currentPage,
+        //   page_size: this.pageSize,
+        //   // search: '',
+        //   name: id,
+        //   only_available: 1
+        // }
+        this.queryObject.current_page = this.currentPage
+        this.queryObject.name = id
+        Object.assign(this.queryObject, this.filterObj)
+        this.isRefresh = 'refresh'
+        this.refresher()
       }
-      Object.assign(this.queryObject, this.filterObj)
-      this.isRefresh = 'refresh'
-      this.refresher()
     },
     refresher () {
       // if (this.isLoad) return false
       this.showLoading()
+      this.goodsNameList[this.swiperCount].finished = false
       const me = this
       this.queryObject.current_page = this.currentPage
       this.isLoad = true
@@ -348,6 +371,7 @@ export default {
         this.apiList.xy.mallList.method,
         this
       ).then(res => {
+        debugger
         if (res.returncode === '0') {
           const idx = this.swiperCount
           res.products.map(item => {
@@ -355,26 +379,32 @@ export default {
           })
           if (me.isRefresh === 'refresh') {
             if (res.products.length > 0 && me.currentPage === 0) {
-              this.goodsNameList[idx].data = res.products
+              debugger
+              me.goodsNameList[idx].data = res.products
               // me.mallItems = res.products
-              console.log('goodsNameList', this.goodsNameList[idx].data)
+              console.log('goodsNameList', me.goodsNameList[idx].data)
             } else if (res.products.length === 0 && me.currentPage === 0) {
-              me.mallItems = []
+              // me.mallItems = []
+              me.goodsNameList[idx].data = []
             }
-            wx.stopPullDownRefresh()
+            // wx.stopPullDownRefresh()
           } else {
             if (res.products.length > 0) {
               // me.mallItems.push(...res.products)
-              this.goodsNameList[idx].data.push(...res.products)
-              console.log('mallItems-reachBottom', me.mallItems)
+              me.goodsNameList[idx].data.push(...res.products)
+              // console.log('mallItems-reachBottom', me.mallItems)
             } else {
               me.currentPage--
+              this.goodsNameList[idx].finished = true
+              // me.finished = true
             }
           }
+          me.$forceUpdate()
         } else {
           me.showMsg(res === undefined ? '网络异常' : res.errormsg)
           return false
         }
+
         this.hideLoading()
         this.isLoad = false
       })

@@ -57,16 +57,16 @@ export default {
       })
     },
     searchClick (searchName) {
-      if (typeof (searchName) === 'string') {
+      if (typeof (searchName) === 'string' && searchName !== '') {
         this.configVal({ key: 'tempObject', val: { search: searchName } })
         this.setLocalSearch()
         this.tab('/pages/mall/main')
         return false
       }
-      if (this.searchWord.toString().trim().length === 0) {
-        this.showMsg('请输入内容')
-        return
-      }
+      // if (this.searchWord.toString().trim().length === 0) {
+      //   this.showMsg('请输入内容')
+      //   return
+      // }
       const index = this.filterArray.findIndex(itm => itm === this.searchWord.trim())
       if (index < 0) this.filterArray.unshift(this.searchWord.trim())
       this.configVal({ key: 'tempObject', val: { search: this.searchWord } })
