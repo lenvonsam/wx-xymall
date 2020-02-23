@@ -1,40 +1,43 @@
 <template lang="pug">
 div
   nav-bar(title="合同回收站", isBack)
-  .head.bg-white(:style="{top: customBar + 'px'}")
+  .head.bg-white(:style="{height: '110rpx'}")
     .serach.flex.align-center.padding-sm
       .col.search-input.text-gray
         .flex.align-center
           .cuIcon-search
           input.full-width.padding-left-sm(v-model="billNo", type="text", placeholder="合同号")
       .search-btn.text-blue.padding-left-sm(@click="searchOrder") 搜索
-  template(v-if="isload")
-    time-line(type="mallist")
-  template(v-else)
-    template(v-if="listData.length > 0")
-      scroll-view.scroll-view(scroll-y, @scrolltolower="loadMore", :style="{'margin-top':'55px', height: screenHeight - 130 +'px'}")
-        //- .scroll-view.bg-white(scroll-y, :style="{top:customBar + 40 + 'px'}")
-        .bg-white.padding-sm.bill-list(v-for="(item, itemIdx) in listData", :key="itemIdx")
-          .flex.justify-between.padding-bottom-sm
-            .col
-              .flex.align-center
-                .ft-16.padding-right-sm {{item.no}}
-                img.ding-icon(src="/static/images/ding.png", v-if="item.is_dx")
-            .text-red {{item.status}}
-          .text-gray
-            .padding-bottom-xs {{item.supply_name}}
-            .flex.justify-between.padding-bottom-xs 
-              span 共{{item.total_count}}支，{{item.total_weight}}吨
-              .ft-16.text-black ￥{{item.fact_price}}
-            .flex.justify-between
-              .col 
-                .padding-bottom-xs 吊费：¥{{item.lift_charge}}
-                .padding-bottom-xs 合同生成日期：{{item.create_time}}
-              div
-                .bill-btn.round(@click="jump('/pages/billRecycleDetail/main?no=' + item.no)") 恢复
-    .text-center.c-gray.pt-100(v-else)
-      empty-image(url="bill_empty.png", className="img-empty")
-      .empty-content 您暂时没有相关合同
+  .margin-top-sm
+    template(v-if="isload")
+      time-line(type="mallist")
+    template(v-else)
+      template(v-if="listData.length > 0")
+        scroll-view.scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: scrollHeight}")
+          //- .scroll-view.bg-white(scroll-y, :style="{top:customBar + 40 + 'px'}")
+          .bg-white.padding-sm.bill-list(v-for="(item, itemIdx) in listData", :key="itemIdx")
+            .flex.justify-between.padding-bottom-sm
+              .col
+                .flex.align-center
+                  .ft-16.padding-right-sm {{item.no}}
+                  img.ding-icon(src="/static/images/ding.png", v-if="item.is_dx")
+              .text-red {{item.status}}
+            .text-gray
+              .padding-bottom-xs {{item.supply_name}}
+              .flex.justify-between.padding-bottom-xs 
+                span 共{{item.total_count}}支，{{item.total_weight}}吨
+                .ft-16.text-black ￥{{item.fact_price}}
+              .flex.justify-between
+                .col 
+                  .padding-bottom-xs 吊费：¥{{item.lift_charge}}
+                  .padding-bottom-xs 合同生成日期：{{item.create_time}}
+                div
+                  .bill-btn.round(@click="jump('/pages/billRecycleDetail/main?no=' + item.no)") 恢复
+          .padding.text-gray.ft-13.text-center(v-if="loading") 努力加载中...
+          .padding.text-gray.ft-13.text-center(v-if="finished") 加载完成
+      .text-center.c-gray.pt-100(v-else)
+        empty-image(url="bill_empty.png", className="img-empty")
+        .empty-content 您暂时没有相关合同
 </template>
 <script>
 import timeLine from '@/components/TimeLine.vue'
@@ -43,10 +46,12 @@ export default {
   data () {
     return {
       listData: [],
-      finished: true,
+      finished: false,
       currentPage: 0,
       isload: false,
-      billNo: ''
+      billNo: '',
+      scrollHeight: 0,
+      loading: false
     }
   },
   computed: {
@@ -64,6 +69,7 @@ export default {
   },
   onShow () {
     this.loadData()
+    this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 130 + 'rpx'
   },
   // beforeMount () {
   //   this.loadData()
@@ -83,7 +89,8 @@ export default {
       } else {
         this.isload = false
       }
-      let reqUrl = 'recycleList.shtml?status=-1&user_id=' + this.currentUser.user_id + '&tstc_no=' + this.billNo + '&current_page=' + this.currentPage + '&page_size=' + this.pageSize
+      this.loading = true
+      let reqUrl = 'recycleList.shtml?user_id=' + this.currentUser.user_id + '&tstc_no=' + this.billNo + '&current_page=' + this.currentPage + '&page_size=' + this.pageSize
       this.ironRequest(reqUrl, {}, 'get', this).then(resp => {
         if (resp && resp.returncode === '0') {
           let arr = resp.orders
@@ -108,8 +115,10 @@ export default {
           this.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
           this.isload = false
         }
+        this.loading = false
       }).catch(err => {
         this.showMsg(err || '网络异常')
+        this.loading = false
       })
     }
   }
@@ -117,10 +126,10 @@ export default {
 </script>
 <style lang="stylus" scoped>
 .head
-  position fixed
-  left 0
-  right 0
-  z-index 99
+  // position fixed
+  // left 0
+  // right 0
+  // z-index 99
   // height 64px
 // .bill-box
 .search-input

@@ -38,14 +38,14 @@ div
         .ft-13.text-gray.padding-sm
           .flex.padding-bottom-xs
             .col 成交时间
-            .col.text-black.text-right {{billDetail.create_time}}
+            .col.text-black.text-right {{billDetail.create_time_}}
           .flex
             .col 付款截止时间
             .col.text-black.text-right {{billDetail.end_pay_time}}
       .bg-white.solid-top.padding-sm.flex
         .col 共{{billDetail.amount}}支，{{billDetail.weight}}吨
         .col.text-right 
-          .ft-12 含吊费: {{billDetail.lift_money}}
+          .ft-12 吊费: {{billDetail.lift_money}}
           .padding-top-xs
             span 合同金额：
             span.text-red ￥{{billDetail.total_money}}
