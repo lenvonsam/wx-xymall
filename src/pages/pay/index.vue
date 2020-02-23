@@ -40,8 +40,8 @@ div
             span.ft-18 定金
             span.pl-5.c-gray (货款：{{payMountInfo}}元)
         .price            
-          span(v-if="(currentBalance < payMountInfo) && freezeMoney != '1' && pageType != 'ladPay' && payTabsActive === '全款支付'") ￥{{Number(payMountInfo - currentBalance).toFixed(2)}}
-          span(v-else-if="(currentBalance < frontPrice) && payTabsActive === '定金支付' && freezeMoney != '1' && pageType != 'ladPay'") ￥{{Number(frontPrice - currentBalance).toFixed(2)}}
+          span(v-if="(currentBalance < payMountInfo) && freezeMoney != '1' && pageType != 'ladPay' && payTabsActive === '全款支付'") ￥{{payMountBalance}}
+          span(v-else-if="(currentBalance < frontPrice) && payTabsActive === '定金支付' && freezeMoney != '1' && pageType != 'ladPay'") ￥{{frontBalance}}
           span(v-else) ￥{{payTabsActive === '全款支付' ? payMountInfo : frontPrice}} 
       .pay-pw.flex
         span 支付密码
@@ -97,7 +97,9 @@ export default {
       percent: 0,
       totalMoney: 0,
       frontPrice: 0,
-      payMountInfo: 0
+      payMountInfo: 0,
+      payMountBalance: 0,
+      frontBalance: 0
     }
   },
   computed: {
@@ -106,6 +108,14 @@ export default {
       pzPreUrl: state => state.pzPreUrl,
       currentUser: state => state.user.currentUser
     })
+  },
+  watch: {
+    payMountInfo (newVal) {
+      this.payMountBalance = this.$toFixed(Number(newVal - this.currentBalance), 2)
+    },
+    frontPrice (newVal) {
+      this.frontBalance = this.$toFixed(Number(newVal - this.currentBalance), 2)
+    }
   },
   beforeMount () {
     this.pageType = this.$root.$mp.query.pageType
@@ -124,7 +134,7 @@ export default {
       if (res.returncode === '0') {
         this.currentBalance = resData.desposit_can
         this.payMountInfo = resData.total_money
-        this.percent = (resData.percent * 100).toFixed(2) + '%'
+        this.percent = this.$toFixed(resData.percent * 100, 2) + '%'
         this.frontPrice = resData.front_price
         if (Number(this.currentBalance) < this.payMountInfo) {
           this.chooseType = 'offpay'
@@ -185,7 +195,7 @@ export default {
               if (this.pageType === 'offlinePay') {
                 // body.pay_type = 3
                 body.is_appoint_pay = 1
-                body.need_fund_in = Number(this.payMountInfo - this.currentBalance).toFixed(2)
+                body.need_fund_in = this.$toFixed(Number(this.payMountInfo - this.currentBalance), 2)
               }
               if (this.payTabsActive === '定金支付') {
                 body.pay_type = 2

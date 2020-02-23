@@ -156,7 +156,7 @@ export default {
       }
     },
     getNewBillPrice () {
-      this.newBillPrice = this.contractDetail.deal_price_new ? this.contractDetail.deal_price_new : (this.newPrice + this.newLift).toFixed(2)
+      this.newBillPrice = this.contractDetail.deal_price_new ? this.contractDetail.deal_price_new : this.$toFixed(this.newPrice + this.newLift, 2)
     },
     selectBill (bill) {
       if (this.isEdit) {
@@ -305,16 +305,15 @@ export default {
         juanban: item.juanban
       }
       const result = this.calc(options)
-      const money = Number(result.price.toFixed(2))
-      const oldLift = isLift === '1' ? Number(item.weight * lift).toFixed(2) : 0
-      const everyLift = isLift === '1' ? Number(result.weight * lift).toFixed(2) : 0
-      this.newLift = Number((this.newLift + Number(everyLift) - Number(oldLift)).toFixed(2))
+      const money = Number(this.$toFixed(result.price), 2)
+      const oldLift = isLift === '1' ? this.$toFixed(Number(item.weight * lift), 2) : 0
+      const everyLift = isLift === '1' ? this.$toFixed(Number(result.weight * lift), 2) : 0
+      this.newLift = Number(this.$toFixed(this.newLift + Number(everyLift) - Number(oldLift)))
       item.weight = result.weight
 
-      this.newPrice = Number((this.newPrice + money - item.price).toFixed(2))
+      this.newPrice = Number(this.$toFixed(this.newPrice + money - item.price, 2))
       item.price = Number(money)
       this.getNewBillPrice()
-      console.log('rowCartCount', result.price.toFixed(2))
     },
     promptClose () {
       this.confirm({content: '删除后将从合同中移除此规格，是否继续？(点击申请修改后，删除操作生效)'}).then(() => {
@@ -323,13 +322,13 @@ export default {
           if (res.choosed) {
             const lift = me.wh_lift.lift
             let isLift = me.wh_lift[res.wh_name]
-            const oldLift = isLift === '1' ? Number(res.weight * lift).toFixed(2) : 0
+            const oldLift = isLift === '1' ? this.$toFixed(Number(res.weight * lift), 2) : 0
             if (me.contractDetail.is_lift !== 1) {
               isLift = 2
             }
-            me.newPrice = Number((me.newPrice - res.price).toFixed(2))
+            me.newPrice = Number(this.$toFixed(me.newPrice - res.price, 2))
             me.newLift -= oldLift
-            me.newLift = Number(me.newLift.toFixed(2))
+            me.newLift = Number(this.$toFixed(me.newLift, 2))
             res.count = 0
             me.modifyList.splice(index, 1)
             me.delModifyList.push(res)
@@ -371,7 +370,7 @@ export default {
               m_way: itm.measure_way
             }]
             itm.order_price = itm.order_price / 100
-            itm.price = Number((itm.order_price * itm.provided_qtt).toFixed(2))
+            itm.price = Number(this.$toFixed(itm.order_price * itm.provided_qtt, 2))
             itm.weight = itm.provided_qtt_new || itm.provided_qtt_new === 0 ? itm.provided_qtt_new : itm.provided_qtt
             itm.count = itm.left_qtt_new || itm.left_qtt_new === 0 ? itm.left_qtt_new : itm.left_qtt
             goodsPriceNew += itm.price
@@ -380,13 +379,13 @@ export default {
             if (this.contractDetail.is_lift !== 1) {
               isLift = 2
             }
-            const oldLift = isLift === '1' ? Number((itm.weight * lift).toFixed(2)) : 0
+            const oldLift = isLift === '1' ? Number(this.$toFixed(itm.weight * lift, 2)) : 0
             liftPriceNew += oldLift
             list.push(itm)
           })
           this.modifyList = list
           this.newPrice = this.type === '2' ? this.contractDetail.goods_price_new : goodsPriceNew
-          this.newLift = this.type === '2' ? this.contractDetail.lift_price_new : Number(liftPriceNew.toFixed(2))
+          this.newLift = this.type === '2' ? this.contractDetail.lift_price_new : Number(this.$toFixed(liftPriceNew, 2))
           // if (done) done()
           this.getContractStatus()
           this.getNewBillPrice()

@@ -164,7 +164,7 @@ export default {
     carts: {
       handler (newVal, oldVal) {
         let filterArray = newVal.filter(item => {
-          item.countWeight = Number(item.count * item.weight).toFixed(3)
+          item.countWeight = this.$toFixed(Number(item.count * item.weight), 3)
           return item.choosed === true
         })
         this.totalCount = filterArray.length
@@ -176,19 +176,19 @@ export default {
           filterArray.map(itm => {
             if (itm.price.indexOf('--') < 0) {
               if (Number(itm.lift_charge) > 0) {
-                const countWeight = Number((itm.count * itm.weight).toFixed(3))
+                const countWeight = Number(this.$toFixed(itm.count * itm.weight, 3))
                 const countLiftWeight = countWeight * itm.lift_charge
                 this.totalPrice += itm.price * countWeight + countLiftWeight
                 this.totalLiftCharge += countLiftWeight
               } else {
-                this.totalPrice += itm.price * Number((itm.count * itm.weight).toFixed(3))
+                this.totalPrice += itm.price * Number(this.$toFixed(itm.count * itm.weight, 3))
               }
-              this.totalWeight += Number((itm.weight * itm.count).toFixed(3))
+              this.totalWeight += Number(this.$toFixed(itm.weight * itm.count, 3))
             }
           })
-          this.totalLiftCharge = Number(this.totalLiftCharge).toFixed(2)
-          this.totalPrice = Number(this.totalPrice).toFixed(2)
-          this.totalWeight = Number(this.totalWeight).toFixed(3)
+          this.totalLiftCharge = this.$toFixed(Number(this.totalLiftCharge), 2)
+          this.totalPrice = this.$toFixed(Number(this.totalPrice), 2)
+          this.totalWeight = this.$toFixed(Number(this.totalWeight), 3)
         }
       },
       deep: true

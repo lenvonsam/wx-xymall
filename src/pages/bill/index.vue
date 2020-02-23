@@ -123,8 +123,8 @@ export default {
             this.totalPrice += itm.fact_price
             this.totalWeight += itm.total_weight
           })
-          this.totalPrice = Number(this.totalPrice).toFixed(2)
-          this.totalWeight = Number(this.totalWeight).toFixed(3)
+          this.totalPrice = this.$toFixed(Number(this.totalPrice), 2)
+          this.totalWeight = this.$toFixed(Number(this.totalWeight), 3)
         }
       },
       deep: true

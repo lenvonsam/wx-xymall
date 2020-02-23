@@ -142,7 +142,8 @@ const wxMixins = {
           )
           let preNum = Number(str.substring(0, str.indexOf('.') + 4))
           if (lastNum >= 5) preNum += 0.001
-          return preNum.toFixed(3)
+          // return preNum.toFixed(3)
+          return this.$toFixed(preNum, 3)
         } else {
           return str
         }
@@ -318,12 +319,12 @@ const wxMixins = {
       let price = 0
       switch (opt.type) {
         case 1:
-          one = (
+          one = this.$toFixed((
             parseFloat(opt.att14) *
             parseFloat(opt.att8) *
             (1 - parseFloat(opt.att12)) *
             1.05
-          ).toFixed(6)
+          ), 6)
           // 当物资是【花纹板187】【普碳开平板185】【低合金开平板186】【碳钢板278】【普板253】【中板280】【低合金中板211】的时候计算公式：板材磅重计算公式=米重*长度*105%
           if (
             opt.goods_id === 187 ||
@@ -335,19 +336,17 @@ const wxMixins = {
             opt.goods_id === 211
           ) {
             // 型云板材上浮5%改为2% --0617 zm
-            one = (parseFloat(opt.att14) * parseFloat(opt.att8) * 1.02).toFixed(
-              6
-            )
+            one = this.$toFixed((parseFloat(opt.att14) * parseFloat(opt.att8) * 1.02), 6)
           }
           break
         case 2:
-          one = (parseFloat(opt.att14) * parseFloat(opt.att8)).toFixed(6)
+          one = this.$toFixed(parseFloat(opt.att14) * parseFloat(opt.att8), 6)
           break
         case 3:
-          one = (parseFloat(opt.att14) * parseFloat(opt.att9)).toFixed(6)
+          one = this.$toFixed(parseFloat(opt.att14) * parseFloat(opt.att9), 6)
           break
         case 4:
-          one = (parseFloat(opt.att14) * parseFloat(opt.att10)).toFixed(6)
+          one = this.$toFixed(parseFloat(opt.att14) * parseFloat(opt.att10), 6)
           break
         default:
           one = 0
@@ -362,10 +361,10 @@ const wxMixins = {
         one = opt.juanban
       }
       weight = one * parseFloat(opt.amount)
-      weight = weight.toFixed(3)
+      weight = this.$toFixed(weight, 3)
 
       price = weight * parseFloat(opt.price)
-      price = price.toFixed(2)
+      price = this.$toFixed(price, 2)
 
       return { one: one, weight: Number(weight), price: Number(price) }
     },
@@ -416,6 +415,32 @@ const wxMixins = {
         }
       }
       return result
+    },
+    $toFixed (s, d) {
+      s = s + ''
+      if (!d)d = 0
+      if (s.indexOf('.') === -1)s += '.'
+      s += new Array(d + 1).join('0')
+      if (new RegExp('^(-|\\+)?(\\d+(\\.\\d{0,' + (d + 1) + '})?)\\d*$').test(s)) {
+        let s = '0' + RegExp.$2
+        let pm = RegExp.$1
+        let a = RegExp.$3.length
+        let b = true
+        if (a === d + 2) {
+          a = s.match(/\d/g)
+          if (parseInt(a[a.length - 1]) > 4) {
+            for (var i = a.length - 2; i >= 0; i--) {
+              a[i] = parseInt(a[i]) + 1
+              if (a[i] === 10) {
+                a[i] = 0
+                b = i !== 1
+              } else break
+            }
+          }
+          s = a.join('').replace(new RegExp('(\\d+)(\\d{' + d + '})\\d$'), '$1.$2')
+        } if (b)s = s.substr(1)
+        return (pm + s).replace(/\.$/, '')
+      } return s + ''
     }
   }
 }

@@ -90,7 +90,7 @@ export default {
           filterArray.map(fltem => {
             this.totalPriceAll += fltem.price
           })
-          this.totalPriceAll = Number(this.totalPriceAll).toFixed(2)
+          this.totalPriceAll = this.$toFixed(Number(this.totalPriceAll), 2)
         }
       },
       deep: true
@@ -211,7 +211,8 @@ export default {
           // 发票编号
           let nos = filterArray.map(item => item.contract_no).join(',')
           // 总金额
-          let totalPrice = filterArray.map(item => item.price).reduce((a, b) => a + b).toFixed(2)
+          let totalPrice = filterArray.map(item => item.price).reduce((a, b) => a + b)
+          totalPrice = this.$toFixed(totalPrice, 2)
           // 货款金额
           // let goodsPrice = filterArray.map(item => item.goods_price).reduce((a, b) => a + b).toFixed(2)
           // 吊费金额

@@ -157,10 +157,12 @@ export default {
   beforeMount () {
     this.ironRequest('orderDetail.shtml?tstc_no=' + this.$root.$mp.query.id, {}, 'get', this).then(resp => {
       if (resp && resp.returncode === '0') {
-        resp.lift_money = resp.lift_money.toFixed(2)
-        resp.total_money = resp.total_money.toFixed(2)
+        // resp.lift_money = resp.lift_money.toFixed(2)
+        // resp.total_money = resp.total_money.toFixed(2)
+        resp.lift_money = this.$toFixed(resp.lift_money, 2)
+        resp.total_money = this.$toFixed(resp.total_money, 2)
         if (resp.status_desc === '待补款') {
-          resp.needTransfer = resp.paid_price_desc - resp.desposit_can > 0 ? Number(resp.paid_price_desc - resp.desposit_can).toFixed(2) : 0
+          resp.needTransfer = resp.paid_price_desc - resp.desposit_can > 0 ? this.$toFixed(Number(resp.paid_price_desc - resp.desposit_can), 2) : 0
         }
         this.billDetail = resp
         // this.billDetail.status_desc = '待付款'

@@ -99,24 +99,25 @@ export default {
       let totalPrice = 0
       let totalWeight = 0
       this.carts.map(itm => {
-        itm.newTotalWeight = Number((itm.count * itm.weight).toFixed(3))
+        // itm.newTotalWeight = Number((itm.count * itm.weight).toFixed(3))
+        itm.newTotalWeight = Number(this.$toFixed(itm.count * itm.weight), 3)
         if (itm.choosed) {
           if (itm.price.indexOf('--') < 0) {
-            price += itm.price * Number((itm.count * itm.weight).toFixed(3))
-            totalWeight += Number((itm.weight * itm.count).toFixed(3))
+            price += itm.price * itm.newTotalWeight
+            totalWeight += Number(this.$toFixed(itm.weight * itm.count, 3))
             let chargeLiftPrice = 0
             itm.lift_charge < 0 ? chargeLiftPrice = 0 : chargeLiftPrice = itm.lift_charge
-            liftPrice += chargeLiftPrice * Number((itm.count * itm.weight).toFixed(3))
+            liftPrice += chargeLiftPrice * itm.newTotalWeight
           }
           if (itm.sold_out === 1) itm.amount_left = 0
         }
       })
       totalPrice = price + liftPrice
       return {
-        price: Number(price).toFixed(2),
-        totalWeight: Number(totalWeight).toFixed(3),
-        liftPrice: Number(liftPrice).toFixed(2),
-        totalPrice: Number(totalPrice).toFixed(2)
+        price: this.$toFixed(Number(price), 2),
+        totalWeight: this.$toFixed(Number(totalWeight), 3),
+        liftPrice: this.$toFixed(Number(liftPrice), 2),
+        totalPrice: this.$toFixed(Number(totalPrice), 2)
       }
     }
   },
@@ -186,7 +187,7 @@ export default {
             itm.price = itm.price
             itm.totalWeight = itm.count * itm.weight
           }
-          itm.newTotalWeight = Number(itm.count * itm.weight).toFixed(3)
+          itm.newTotalWeight = this.$toFixed(Number(itm.count * itm.weight), 3)
           this.carts.push(itm)
           this.isload = false
         })
@@ -230,7 +231,7 @@ export default {
       this.$forceUpdate()
     },
     rowCartCount (item) {
-      item.newTotalWeight = Number(item.count * item.weight).toFixed(3)
+      item.newTotalWeight = this.$toFixed(Number(item.count * item.weight), 3)
     },
     generateOrder () {
       const me = this

@@ -94,6 +94,9 @@ export default {
       this.ironRequest(reqUrl, {}, 'get', this).then(resp => {
         if (resp && resp.returncode === '0') {
           let arr = resp.orders
+          arr.map(item => {
+            item.fact_price = this.$toFixed(item.fact_price, 2)
+          })
           if (arr.length === 0 && this.currentPage === 0) {
             this.listData = []
             this.finished = true
