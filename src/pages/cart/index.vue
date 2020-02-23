@@ -11,9 +11,9 @@
           .text-center.empty-content 购物车空空如也
           .text-center.margin-top-sm
             .cart-empty-btn(@click="tab('/pages/mall/main')") ^_^去商城逛逛吧
-      .s-content-wrap(v-else, :style="{top: customBar+'px'}")
+      .s-content-wrap(v-else)
         .s-content
-          .flex.padding-sm.bg-white.align-center.justify-between
+          .flex.padding-sm.bg-white.align-center.justify-between(style="height: 100rpx")
             .col(@click="openPickWay")
               .flex.align-center
                 .cuIcon-location
@@ -24,7 +24,7 @@
               .flex(v-show="!isEdit")
                 .padding-xs.mr-5(@click="openEdit") 编辑
                 .padding-xs(@click="clearCarts") 清空
-          scroll-view.scroll-view(scroll-y, :style="{top:custom.top + 40 + 'px', height: screenHeight - custom.top - custom.bottom - 140 + 'px'}")
+          scroll-view.scroll-view(scroll-y, :style="{height: scrollHeight}")
             .cart-items(v-for="(cart, cartIdx) in carts", :key="cartIdx")
               .cart-item.padding-sm
                 .flex.flex-center.align-center.ft-15.text-bold
@@ -87,18 +87,24 @@
                     .col.text-right.c-black 物资不能购买，请联系客服
 
 
-    .s-footer(v-if="carts.length > 0")
+    .s-footer(v-if="carts.length > 0", style="height: 100rpx")
       .cart-footer.justify-between
-        .row.flex-center(@click="choosedAll", style="padding-left: 10px;")
+        //- .row.flex-center(@click="choosedAll", style="padding-left: 10px;")
           .flex.flex-center
             img.choose-icon(src="/static/images/blue_check.png", v-if="allChoosed")
             img.choose-icon(src="/static/images/btn_ck_n.png", v-else)
           .padding-xs 全选
-        .col.cart-footer-col(v-show="!isEdit")
-          .text-right.flex.justify-end
-            span 合计：
-            b.c-red ￥{{totalPrice}}
-          .text-right.ft-12(style="color:#999;") 共{{totalCount}}件 ，{{totalWeight}}吨，吊费: {{totalLiftCharge}}元
+        .col.cart-footer-col
+          .row.justify-between
+            .row.flex-center(@click="choosedAll", style="padding-left: 10px;")
+              .flex.flex-center
+                img.choose-icon(src="/static/images/blue_check.png", v-if="allChoosed")
+                img.choose-icon(src="/static/images/btn_ck_n.png", v-else)
+              .padding-xs 全选
+            .text-right.flex.justify-end(v-show="!isEdit")
+              span 合计：
+              b.c-red ￥{{totalPrice}}
+          .text-right.ft-12(style="color:#999;", v-show="!isEdit") 共{{totalCount}}件 ，{{totalWeight}}吨，吊费: {{totalLiftCharge}}元
         .cart-settle-btn.ft-20(@click="goToSettle")
           span {{isEdit ? '删除' : '结算'}}
     .address-dialog(@click="openPickWay", :style="{top: customBar + 40 + 'px'}", v-show="pickWayShow")
@@ -136,7 +142,8 @@ export default {
         { title: '自提点1-常州东港库', content: '江苏省常州市武进区湖塘-常州东港A库(1，2，3，4，5，6，7号门)G库(8，9，10，11号门)' },
         { title: '自提点2-合肥徽商库', content: '合肥市庐阳区徽商钢材市场' },
         { title: '自提点3-合肥东港库', content: '合肥市大兴镇南淝河旁，合肥东港码头w' }
-      ]
+      ],
+      scrollHeight: 0
     }
   },
   components: {
@@ -203,6 +210,7 @@ export default {
         this.pwAddrDetail = this.tempObject.detail
       }
     }
+    this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 300 + 'rpx'
     this.loadCartData()
   },
   methods: {
@@ -553,17 +561,18 @@ export default {
   width 20px
   height 20px
 .s-content-wrap
-  position fixed
-  left 0
-  right 0
-.scroll-view
-  overflow auto
+  // position fixed
+  // left 0
+  // right 0
+// .scroll-view
+  // overflow auto
 .s-footer
   position fixed
   bottom 0
   left 0
   right 0
   background #fff
+  z-index 9
 radio.radio[checked]::after
   content ''
   background-color #fff

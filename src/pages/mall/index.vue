@@ -1,70 +1,73 @@
 <template lang="pug">
 div
   nav-bar(title="商城")
-  mall-head(:mallTabVal="mallTabVal", @getName="getName", @filter="multipleFilter", @selectMall="selectMall", @selectTab="selectTab", @searchChange="searchChange")
-  .mall-content
-    .mt-10(:class="{cardSty: !mallFlag}")
-      swiper.bill-content(@change="swiperChange", :current="swiperCount", :style="{height: screenHeight - 186 + 'px'}")
+  div(style="height: 270rpx;")
+    mall-head(:mallTabVal="mallTabVal", @getName="getName", @filter="multipleFilter", @selectMall="selectMall", @selectTab="selectTab", @searchChange="searchChange")
+  .mall-content(style="margin-top: 20rpx")
+    .mt-10
+      swiper.bill-content(@change="swiperChange", :current="swiperCount", :style="{height: scrollHeight}")
         swiper-item(v-for="(tabItem, tabIdx) in goodsNameList.length", :key="tabIdx")
           template(v-if="isload")
             time-line(type="mallist")
           template(v-else)  
             template(v-if="goodsNameList[tabIdx].data.length > 0")
               scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: scrollHeight}")
-                .padding.pr-10.pl-10(v-for="(item,idx) in goodsNameList[tabIdx].data", :key="idx", :class="!mallFlag ? 'card-list' : 'solid-bottom bg-white'")
-                  template(v-if="mallFlag === 1")
-                    .row
-                      .col.text-bold.ft-15
-                        span {{item[mallTypeObject[itemType].name]}}
-                        span.ml-5 {{item[mallTypeObject[itemType].standard]}}
-                        //- .sub-mark.ml-5 {{item[mallTypeObject[itemType].supply]}}
-                        //- span.ml-5.ft-12(style="color:#666") ({{weightMark}})
-                      .text-right.ft-16
-                        span.text-red.ft-13(v-if="item.price === '--'") 开售时间:{{item.show_time}}
-                        span.text-blue(v-else-if="item.show_price === true") ￥{{item[mallTypeObject[itemType].price]}}
-                        .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)") 查看价格
-                        //- span.c-red.ft-13(v-if="item.price === '--'") 开售时间:{{item.show_time}}
-                        //- span.c-red(v-else-if="item.show_price === true") ￥{{item[mallTypeObject[itemType].price]}}
-                        //- .blue-buy.ft-12(v-else, @click="cb(item, 'showPrice', $event)") 查看价格
-                    .row.pt-5.flex-center.ft-13
-                      .col.c-gray
+                div(:class="{cardSty: !mallFlag}")
+                  .padding.pr-10.pl-10(v-for="(item,idx) in goodsNameList[tabIdx].data", :key="idx", :class="!mallFlag ? 'card-list' : 'solid-bottom bg-white'")
+                    template(v-if="mallFlag === 1")
+                      .row
+                        .col.text-bold.ft-15
+                          span {{item[mallTypeObject[itemType].name]}}
+                          span.ml-5 {{item[mallTypeObject[itemType].standard]}}
+                          //- .sub-mark.ml-5 {{item[mallTypeObject[itemType].supply]}}
+                          //- span.ml-5.ft-12(style="color:#666") ({{weightMark}})
+                        .text-right.ft-16
+                          span.text-red.ft-13(v-if="item.price === '--'") 开售时间:{{item.show_time}}
+                          span.text-blue(v-else-if="item.show_price === true") ￥{{item[mallTypeObject[itemType].price]}}
+                          .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)") 查看价格
+                          //- span.c-red.ft-13(v-if="item.price === '--'") 开售时间:{{item.show_time}}
+                          //- span.c-red(v-else-if="item.show_price === true") ￥{{item[mallTypeObject[itemType].price]}}
+                          //- .blue-buy.ft-12(v-else, @click="cb(item, 'showPrice', $event)") 查看价格
+                      .row.pt-5.flex-center.ft-13
+                        .col.c-gray
+                          span {{item[mallTypeObject[itemType].material]}}
+                          //- span.ml-8 {{item[mallTypeObject[itemType].standard]}}
+                          span.ml-8 {{item[mallTypeObject[itemType].length]}}米
+                          span.ml-8 {{item[mallTypeObject[itemType].wh_name]}}
+                          .sub-mark.ml-5 {{item[mallTypeObject[itemType].supply]}}
+                        .text-right
+                          span ({{item.weightMark}})
+                          //- span {{item.price.split('/').length === 1 ? '理计' : '理计/磅计'}}
+                      //- .row.pt-5.flex-center.ft-13(v-if="item[mallTypeObject[itemType].tolerance]||item[mallTypeObject[itemType].weightRange]")
+                        .col.c-gray
+                          span(v-if="item[mallTypeObject[itemType].tolerance]") 公差范围: {{item[mallTypeObject[itemType].tolerance]}}
+                          span.ml-8(v-if="item[mallTypeObject[itemType].weightRange]") 重量范围: {{item[mallTypeObject[itemType].weightRange]}}
+                      //- .row.pt-0.flex-center.ft-13.c-gray(v-if="item.show_price === true")
+                      .row.pt-5.flex-center.ft-13.c-gray
+                        .col
+                          span(v-if="item[mallTypeObject[itemType].max_count] > 0") {{item[mallTypeObject[itemType].max_count]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
+                        .text-right.ft-14
+                          .blue-buy(v-if="item.max_count == 0",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
+                          .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="item.show_price") 购买
+                    template(v-else)
+                      .ft-15.row
+                        span.text-bold {{item[mallTypeObject[itemType].name]}}
+                        .supply.margin-left-sm {{item[mallTypeObject[itemType].supply]}}
+                      .text-bold
+                        span {{item[mallTypeObject[itemType].standard]}}
+                      .text-gray
                         span {{item[mallTypeObject[itemType].material]}}
-                        //- span.ml-8 {{item[mallTypeObject[itemType].standard]}}
                         span.ml-8 {{item[mallTypeObject[itemType].length]}}米
                         span.ml-8 {{item[mallTypeObject[itemType].wh_name]}}
-                        .sub-mark.ml-5 {{item[mallTypeObject[itemType].supply]}}
-                      .text-right
-                        span ({{item.weightMark}})
-                        //- span {{item.price.split('/').length === 1 ? '理计' : '理计/磅计'}}
-                    //- .row.pt-5.flex-center.ft-13(v-if="item[mallTypeObject[itemType].tolerance]||item[mallTypeObject[itemType].weightRange]")
-                      .col.c-gray
-                        span(v-if="item[mallTypeObject[itemType].tolerance]") 公差范围: {{item[mallTypeObject[itemType].tolerance]}}
-                        span.ml-8(v-if="item[mallTypeObject[itemType].weightRange]") 重量范围: {{item[mallTypeObject[itemType].weightRange]}}
-                    //- .row.pt-0.flex-center.ft-13.c-gray(v-if="item.show_price === true")
-                    .row.pt-5.flex-center.ft-13.c-gray
-                      .col
+                      .text-gray
                         span(v-if="item[mallTypeObject[itemType].max_count] > 0") {{item[mallTypeObject[itemType].max_count]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
-                      .text-right.ft-14
-                        .blue-buy(v-if="item.max_count == 0",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
-                        .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="item.show_price") 购买
-                  template(v-else)
-                    .ft-15.row
-                      span.text-bold {{item[mallTypeObject[itemType].name]}}
-                      .supply.margin-left-sm {{item[mallTypeObject[itemType].supply]}}
-                    .text-bold
-                      span {{item[mallTypeObject[itemType].standard]}}
-                    .text-gray
-                      span {{item[mallTypeObject[itemType].material]}}
-                      span.ml-8 {{item[mallTypeObject[itemType].length]}}米
-                      span.ml-8 {{item[mallTypeObject[itemType].wh_name]}}
-                    .text-gray
-                      span(v-if="item[mallTypeObject[itemType].max_count] > 0") {{item[mallTypeObject[itemType].max_count]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
-                    .text-blue.ft-15.text-bold ￥{{item[mallTypeObject[itemType].price]}}
-                    .text-gray.flex
-                      .ft-11.col ({{item.weightMark}})
-                      .text-right.ft-14
-                        .blue-buy(v-if="item.max_count == 0",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
-                        .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else) 购买
+                      .text-blue.ft-15.text-bold ￥{{item[mallTypeObject[itemType].price]}}
+                      .text-gray.flex
+                        .ft-11.col ({{item.weightMark}})
+                        .text-right.ft-14
+                          .blue-buy(v-if="item.max_count == 0",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
+                          .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else) 购买
+                .padding.text-gray.ft-13.text-center(v-if="loading") 努力加载中...
                 //- span(v-for="(item,idx) in mallItems", :key="idx") {{idx}}
                 //- mall-item(:mallFlag="mallFlag", :cb="mallItemCb", v-for="(item,idx) in mallItems", :item="item", :key="idx")
             .col.text-center.text-gray.pt-100(v-else)
@@ -149,7 +152,7 @@ export default {
   },
   onShow () {
     this.isLoad = false
-    this.scrollHeight = this.screenHeight - 186 + 'px'
+    this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 290 + 'rpx'
     this.queryObject = {}
     if (this.tempObject.search || this.tempObject.name === '') {
       Object.assign(this.queryObject, this.tempObject)
@@ -159,6 +162,7 @@ export default {
       this.mallItems = []
       this.refresher()
     }
+    // this.mallClassName = !this.mallFlag ? 'card-list' : 'solid-bottom bg-white'
     this.mallTabVal = this.tempObject.name || ''
     console.log('mallTabVal', this.mallTabVal)
   },
@@ -239,6 +243,7 @@ export default {
     selectMall (flag) {
       console.log(flag)
       this.mallFlag = flag
+      this.$forceUpdate()
     },
     searchChange (val) {
       this.mallItems = []
@@ -379,17 +384,72 @@ export default {
 </script>
 <style lang="stylus" scoped>
 .mall-content
-  margin-top 150px
+  // margin-top 150px
 .cardSty
   padding 0 15px
   display flex
   flex-wrap wrap
   justify-content space-between
+// .blue-buy
+//   border 1px solid #0081ff
+//   border-radius 15px
+//   width 70px
+//   padding 5px 0
+//   text-align center
+//   color #0081ff
 .blue-buy
-  border 1px solid #0081ff
-  border-radius 15px
-  width 70px
-  padding 5px 0
+  display inline-block
+  border-radius 20px
+  letter-spacing 1px
+  padding-top 6px
+  padding-left 10px
+  padding-right 10px
   text-align center
-  color #0081ff
+  // min-width 100px
+  color #fff
+  background #2485ff !important
+  box-shadow none
+  min-height 30px
+  z-index 0
+.sub-mark
+  display inline-block
+  padding 1px 3px
+  background #3da7ff
+  color #fff
+  font-size 12px
+  border-radius 4px
+  box-shadow 1px 2px 5px rgba(61, 167, 255, 0.3)
+  letter-spacing 1px
+.notice-btn
+  position absolute
+  right 0px
+  top -6px
+  padding 0px 10px
+  box-shadow 1px 3px 5px #ddd
+.cart-icon
+  width 45px
+  height 45px
+  position absolute
+  top -20px
+  right 0px
+  background-size cover
+  background-position center
+  box-shadow 1px 3px 5px #ddd
+  border-radius 50%
+.ml-8
+  margin-left 8px !important
+.card-list
+  width 48%
+  line-height 26px
+  background #fff
+  margin-bottom 15px
+  .blue-buy
+    padding-top 3px
+.supply
+  background #F6F6F6
+  padding 0 8px
+  text-align center
+  font-size 14px
+  border-radius 10px
+  color #262626  
 </style>
