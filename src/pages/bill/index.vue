@@ -87,18 +87,24 @@ export default {
     // this.finished = true
   },
   beforeMount () {
-    if (this.$root.$mp.query.tabName) this.tabName = this.$root.$mp.query.tabName
+    debugger
+    this.tabName = this.$root.$mp.query.tabName || '0'
     const idx = this.billTab.findIndex(item => item.status === this.tabName)
-    this.swiperCount = idx
+
     if (this.tempObject.startDate) this.startDate = this.tempObject.startDate
     if (this.tempObject.endDate) this.endDate = this.tempObject.endDate
     if (this.tempObject.billNo) this.billNo = this.tempObject.billNo
     if (this.tempObject.billTabName) this.tabName = this.tempObject.billTabName.toString()
     this.pageHeight = this.tabName === '1' ? 150 : 100
     this.billTab[idx].data = []
-    if (!this.swiperCount) {
+    if (this.swiperCount !== idx) {
+      this.swiperCount = idx
+    } else {
       this.loadData()
     }
+    // if (!this.swiperCount) {
+    //   this.loadData()
+    // }
   },
   watch: {
     listData: {
@@ -145,6 +151,7 @@ export default {
     },
     swiperChange (e) {
       console.log(e.mp.detail.current)
+      debugger
       const idx = e.mp.detail.current
       this.swiperCount = idx
       this.tabName = this.billTab[idx].status
