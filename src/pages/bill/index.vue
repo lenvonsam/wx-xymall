@@ -276,7 +276,8 @@ export default {
       arr.map(item => {
         if (item.status === '待付款') {
           const nowTime = this.serverTime
-          const endTime = new Date(item.end_pay_time).getTime()
+          const endTimeFormat = item.end_pay_time.replace(/-/g, '/')
+          const endTime = new Date(endTimeFormat).getTime()
           const leftTime = endTime - nowTime
           let h = 0
           let m = 0
