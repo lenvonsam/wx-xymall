@@ -49,17 +49,7 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
-      console.log('mpvue', mpvue)
-      // getCurrentPages()
-      this.queryObject = {
-        current_page: this.currentPage,
-        page_size: this.pageSize,
-        search: '',
-        name: '',
-        only_available: 1
-      }
       this.getGoods()
-      this.getStandardList()
       this.filterLeftSty = `height: ${this.screenHeight} - ${this.customBar} + 'px'`
     })
   },
@@ -107,11 +97,29 @@ export default {
     },
     getGoods () {
       this.ironRequest(this.apiList.xy.goodsList.url, {}, this.apiList.xy.goodsList.method, this).then((res) => {
-        res.goods.map(item => {
-          item.isActive = false
-        })
+        const nameId = this.$root.$mp.query.name
+        this.queryObject = {
+          current_page: this.currentPage,
+          page_size: this.pageSize,
+          search: '',
+          name: nameId,
+          only_available: 1
+        }
+        this.getStandardList()
         this.filterNameList = res.goods
-        this.filterNameList.unshift({ name: '全部', id: '', isActive: true })
+        this.filterNameList.unshift({ name: '全部', id: '', isActive: false })
+        const tempObject = {
+          name: nameId,
+          standards: ''
+        }
+        this.configVal({ key: 'tempObject', val: tempObject })
+        this.filterNameList.map(item => {
+          if (item.id === nameId) {
+            item.isActive = true
+          } else {
+            item.isActive = false
+          }
+        })
       })
     },
     getStandardList () {

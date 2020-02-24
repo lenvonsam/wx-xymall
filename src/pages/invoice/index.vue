@@ -280,7 +280,6 @@ export default {
       }
     },
     loadData () {
-      debugger
       if (this.currentPage === 0) {
         this.isLoad = true
       } else {
@@ -294,7 +293,6 @@ export default {
       this.loading = true
       this.ironRequest('invoiceList.shtml', this.queryObject, 'post', this).then(resp => {
         if (resp && resp.returncode === '0') {
-          debugger
           if (resp.invoices.length > 0 && me.currentPage === 0) {
             me.listData = []
             resp.invoices.map(itm => {
