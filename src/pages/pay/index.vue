@@ -44,7 +44,7 @@ div
           span(v-else-if="(currentBalance < frontPrice) && payTabsActive === '定金支付' && freezeMoney != '1' && pageType != 'ladPay'") ￥{{frontBalance}}
           span(v-else) ￥{{payTabsActive === '全款支付' ? payMountInfo : frontPrice}} 
       .pay-pw.flex
-        span 支付密码
+        span.ft-16.text-bold 支付密码
         .col.margin-left-sm
           input.full-width(placeholder="请输入支付密码(必填)", type="password", v-model="payPwd")
   .pay-body        
@@ -52,7 +52,7 @@ div
       q-btn.no-shadow.full-width.r-3(color="primary",big, @click="billPay") 去支付
     .offline-pay-area(v-else)
       .head.c-gray 打款信息
-      .body
+      .body.ft-13
         .row
           .col.flex-80 开户行
           .col.c-gray 农行
@@ -73,7 +73,7 @@ div
         button.main-btn(@click="billPay") 
           span(v-if="currentBalance < payMountInfo") 已线下转账补款
           span(v-else) 点击付款
-        .info.c-gray.padding-top-xs
+        .info.c-gray.padding-top-xs.text-center
           span(v-if="currentBalance < payMountInfo") 点击按钮，线下收到货款，此单自动完成
           span(v-else) 点击按钮，此单自动完成
 </template>
@@ -333,20 +333,20 @@ export default {
     text-align center
     padding-bottom 10px
     .add-pay
-      padding 15px
+      padding 10px
       background rgb(254, 252, 238)
-      width 200px
+      width 220px
       border-radius 3px
       margin 0 auto
       color #f95353
     .pay-info
-      padding 15px
-      width 200px
+      padding 10px
+      width 220px
       border-radius 3px
       margin 0 auto
       background rgba(157, 200, 255, 0.5)
 .pay-body
-  padding 10px
+  padding 10px 0px
   .input-area
     background #fff
     padding 20px 16px
@@ -358,7 +358,8 @@ export default {
     padding 20% 0rem 10px 0rem
   .offline-pay-area
     .head
-      padding 10px 0rem
+      padding 10px 10px
+      padding-top 0px
     .body
       background #fff
       padding 16px
@@ -366,6 +367,8 @@ export default {
         margin-top 16px
     .footer
       padding-top 10px
+      padding-left 10px
+      padding-right 10px
       .info
         // text-align: center;
         // padding-top: 1rem;
@@ -408,13 +411,13 @@ export default {
     background rgb(254, 252, 238)
   .pay-tabs-content
     margin-top 10px
-    padding 20px
+    padding 10px 20px
     background #fff
     .price
       font-size 25px
       margin-top 6px
   .pay-pw
-    padding 10px
+    padding 15px 10px
     align-items center
     margin-top 10px
     background #fff

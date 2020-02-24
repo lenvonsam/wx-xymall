@@ -1,12 +1,13 @@
 <template lang="pug">
 div
   nav-bar(title="首页", :serviceIcon="true")
-  .padding.bg-white
-    .padding-sm.padding-lr.margin-bottom-sm(style="background: #f6f6f6;border-radius: 38rpx;", @click="jump('/pages/search/main')")
-      .row.text-gray
-        .flex-30
-          icon.cuIcon-search(style="margin-top: -16rpx")
-        .col 请输入关键词搜索
+  .padding.bg-white(style="padding-top: 50px")
+    .fixed.top.home-top-bar(:style="{height: '40px', top: customBar + 'px'}")
+      .padding-sm.padding-lr.margin-bottom-sm(style="background: #f6f6f6;border-radius: 38rpx;", @click="jump('/pages/search/main')")
+        .row.text-gray
+          .flex-30
+            icon.cuIcon-search(style="margin-top: -16rpx")
+          .col 请输入关键词搜索
     swiper(v-if="gallery.length > 0", :indicator-dots="true", :autoplay="true", indicator-active-color="#fff", indicator-color="rgba(255, 255, 255, .3)")
       swiper-item.border-radius(v-for="(g,idx) in gallery", :key="idx")
         img.response(:src="imgOuterUrl + g.url", v-if="imgOuterUrl", style="height: 300rpx", mode="widthFix")
@@ -102,7 +103,8 @@ export default {
       mainClassify: state => state.mainClassify,
       screenWidth: state => state.screenWidth,
       isLogin: state => state.user.isLogin,
-      currentUser: state => state.user.currentUser
+      currentUser: state => state.user.currentUser,
+      customBar: state => state.customBar
     })
   },
   methods: {
@@ -185,6 +187,11 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+.home-top-bar
+  overflow hidden
+  padding-left 15px
+  padding-right 15px
+  z-index 200
 .btn-classify
   display inline-block
   padding 8px 12px
