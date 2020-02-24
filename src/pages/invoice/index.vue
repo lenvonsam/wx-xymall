@@ -1,17 +1,17 @@
 <template lang="pug">
 div
   nav-bar(title="我的发票", isBack)
-  scroll-view.nav.bg-white(scroll-x)
+  scroll-view.nav.bg-white(scroll-x, style="height: 96rpx")
     .flex.text-center
       .cu-item.flex-sub(v-for="(item,index) in tabList", :class="item.status === tabName ? 'text-blue cur':''", :key="index", @click="selectTabs(item, index)")
         span {{item.title}}
-  swiper.bill-content(@change="swiperChange", :current="swiperCount", :style="{height: pageHeight + 'px'}")
+  swiper.bill-content(@change="swiperChange", :current="swiperCount", :style="{height: pageHeight}")
     swiper-item(v-for="(tabItem, tabIdx) in tabList.length", :key="tabIdx")
       template(v-if="isload")
         time-line(type="mallist")
       template(v-else)
         template(v-if="listData.length > 0")
-          scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: pageHeight +'px'}")
+          scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: pageHeight}")
             .pt-half-rem(v-for="(item,idx) in listData", :key="idx", :class="{'pb-half-rem': (idx == listData.length - 1)}")
               .bg-white
                 .flex.padding(@click="chooseSameInvoiceNo(item)")
@@ -35,7 +35,7 @@ div
         .text-center.c-gray.pt-100(v-else)
           empty-image(url="bill_empty.png", className="img-empty")
           .empty-content 您暂时没有相关发票
-  .s-footer(v-if="tabName == '0' || tabName == '2'")
+  .s-footer(v-if="tabName == '0' || tabName == '2'", style="height: 100rpx")
     .invoice-footer.align-center.justify-between
       .flex
         .flex-25.flex.flex-center(@click="allChecked = !allChecked")
@@ -75,6 +75,8 @@ export default {
   },
   computed: {
     ...mapState({
+      custom: state => state.custom,
+      customBar: state => state.customBar,
       screenHeight: state => state.screenHeight,
       currentUser: state => state.user.currentUser,
       tempObject: state => state.tempObject,
@@ -108,16 +110,26 @@ export default {
     }
   },
   onShow () {
-    this.pageHeight = this.screenHeight - 150
-    if (this.tempObject.tabName) {
-      this.tabName = this.tempObject.tabName
-    }
+    debugger
+    this.pageHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 98 + 'rpx'
     this.queryObject = {
       current_page: this.currentPage,
       page_size: this.pageSize
     }
-    if (this.$root.$mp.query.tabName) this.tabName = this.$root.$mp.query.tabName
+    if (this.tempObject.tabName) {
+      this.tabName = this.tempObject.tabName
+      this.swiperCount = this.tabName
+    } else if (this.$root.$mp.query.tabName) {
+      this.tabName = this.$root.$mp.query.tabName
+      this.swiperCount = this.tabName
+    }
     this.loadData()
+  },
+  onUnload () {
+    console.log('onUnload')
+    this.swiperCount = 0
+    this.tabName = '0'
+    this.configVal({key: 'tempObject', val: ''})
   },
   methods: {
     ...mapActions([
@@ -192,6 +204,7 @@ export default {
       // this.jump({path: '/invoice/detail', query: {id: this.tabName}})
       this.ironRequest('invoiceDetail.shtml?id=' + obj.id, {}, 'get', this).then(resp => {
         if (resp.returncode === '0') {
+          resp.tabName = this.tabName
           this.configVal({ key: 'tempObject', val: resp })
           this.jump(`/pages/invoiceDetail/main?id=${this.tabName}&name=查看详情`)
         } else {
@@ -329,10 +342,11 @@ export default {
       this.finished = false
       this.listData = []
       this.allChecked = false
-      this.pageHeight = this.screenHeight - 148
+      this.pageHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 198 + 'rpx'
+      // this.pageHeight = this.screenHeight - 148
       this.isTabDisabled = true
       if (name === '1' || name === '3') {
-        this.pageHeight = this.screenHeight - 98
+        this.pageHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 98 + 'rpx'
       }
       console.log('pageHeight', this.pageHeight)
       this.queryObject = {
