@@ -159,6 +159,7 @@ export default {
       if (resp && resp.returncode === '0') {
         // resp.lift_money = resp.lift_money.toFixed(2)
         // resp.total_money = resp.total_money.toFixed(2)
+        resp.out_all_lift = this.$toFixed(resp.out_all_lift, 2)
         resp.lift_money = this.$toFixed(resp.lift_money, 2)
         resp.total_money = this.$toFixed(resp.total_money, 2)
         if (resp.status_desc === '待补款') {

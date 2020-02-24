@@ -1,7 +1,7 @@
 <template lang="pug">
 div
   nav-bar(title="我的合同", isBack)
-  .head.bg-white(:style="{top: customBar + 'px'}")
+  .head.bg-white(:style="{height: '196rpx'}")
     .serach.flex.align-center.padding-sm
       .col.search-input.text-gray
         .flex.align-center
@@ -12,7 +12,7 @@ div
       .flex.text-center
         .cu-item.flex-sub(v-for="(item,index) in billTab", :class="item.status === tabName?'text-blue cur':''", :key="index", @click="selectTabs(item, index)")
           span {{item.title}}
-  swiper.bill-content(@change="swiperChange", :current="swiperCount", :style="{height: screenHeight - 186 + 'px'}")
+  swiper.bill-content(@change="swiperChange", :current="swiperCount", :style="{height: scrollHeight}")
     swiper-item(v-for="(tabItem, idx) in billTab.length", :key="idx")
       //- scroll-view(scroll-y, :refresher-triggered="triggered", :refresher-enabled="true", @refresherrefresh="refresher", @scrolltolower="loadMore", :style="{height: screenHeight - 186 +'px'}")
       template(v-if="isload")
@@ -21,11 +21,8 @@ div
         template(v-if="listData.length > 0")
           scroll-view(
             scroll-y, 
-            :refresher-triggered="triggered", 
-            :refresher-enabled="true", 
-            @refresherrefresh="refresher",
             @scrolltolower="loadMore", 
-            :style="{height: screenHeight - 186 +'px'}")
+            :style="{height: scrollHeight}")
             //- div(style="height: 1000px")
             .bg-white.padding-sm.bill-list(v-for="(item, itemIdx) in billTab[idx].data", :key="itemIdx", @click="jumpDetail(item)")
               .flex.justify-between.padding-bottom-sm
@@ -33,18 +30,34 @@ div
                   .flex.align-center
                     .ft-16.padding-right-sm {{item.no}}
                     img.ding-icon(src="/static/images/ding.png", v-if="item.is_dx")
-                .text-red {{item.status}}
+                .text-red(v-if="item.status !== '待补款'") {{item.status}}
               .text-gray
                 .padding-bottom-xs {{item.supply_name}}
                 .flex.justify-between.padding-bottom-xs 
                   span 共{{item.total_count}}支，{{item.total_weight}}吨
-                  .ft-16.text-black ￥{{item.fact_price}}
+                  .ft-18.text-black ￥{{item.fact_price}}
                 .flex.justify-between.padding-bottom-xs
                   .col 吊费：¥{{item.lift_charge}}
-                  template(v-if="item.status === '待付款'")
+                  //- template(v-if="item.status === '待付款'")
                     .flex
                       .bill-btn.round(@click.stop="payBill(item)") 去付款
                       .bill-red-btn.round.margin-left-sm(@click.stop="billCancel(item)") 取消
+                  //- template(v-else-if="item.status === '待补款'")
+                    .bill-btn.round(@click.stop="payBill(item)") 待补款
+              .solid-top.text-black.ft-15.padding-top-sm.row(v-if="item.status === '待补款' || item.status === '待付款'")
+                .col
+                  template(v-if="item.status === '待付款'")
+                    span 付款倒计时：
+                    span.padding-left-xs.text-red {{item.timeDown}}
+                  template(v-if="item.status === '待补款'")
+                    span 待补款：
+                    span.padding-left-xs.text-red ￥{{item.paid_price}}
+                .flex
+                  template(v-if="item.status === '待付款'")
+                    .bill-btn.round(@click.stop="payBill(item)") 去付款
+                    .bill-red-btn.round.margin-left-sm(@click.stop="billCancel(item)") 取消
+                  template(v-if="item.status === '待补款'")
+                    .bill-btn.round 待补款
         .text-center.c-gray.pt-100(v-else)
           empty-image(url="bill_empty.png", className="img-empty")
           .empty-content 您暂时没有相关合同
@@ -77,11 +90,15 @@ export default {
       allChoosed: false,
       isTabDisabled: false,
       pageHeight: 150,
-      btnDisable: false
+      btnDisable: false,
+      scrollHeight: '0px',
+      timeInterval: '',
+      serverTime: ''
     }
   },
   computed: {
     ...mapState({
+      custom: state => state.custom,
       screenHeight: state => state.screenHeight,
       currentUser: state => state.user.currentUser,
       tempObject: state => state.tempObject,
@@ -90,6 +107,7 @@ export default {
     })
   },
   onShow () {
+    this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.custom.top) - 166 + 'rpx'
     // this.finished = true
   },
   beforeMount () {
@@ -140,6 +158,18 @@ export default {
         })
       }
     }
+  },
+  mounted () {
+    this.$nextTick(() => {
+      const me = this
+      this.timeInterval = setInterval(() => {
+        me.countTime()
+        me.serverTime += 1000
+      }, 1000)
+    })
+  },
+  onUnload () {
+    clearInterval(this.timeInterval)
   },
   methods: {
     searchOrder () {
@@ -244,6 +274,31 @@ export default {
         this.jump({ path: '/mall/pay', query: { pageType: 'offlinePay', orderNo: orderNos, price: this.totalPrice } })
       }
     },
+    countTime () {
+      const idx = this.swiperCount
+      const arr = this.billTab[idx].data
+      arr.map(item => {
+        if (item.status === '待付款') {
+          const nowTime = this.serverTime
+          const endTime = new Date(item.end_pay_time).getTime()
+          const leftTime = endTime - nowTime
+          let h = 0
+          let m = 0
+          let s = 0
+          if (leftTime >= 0) {
+            h = Math.floor(leftTime / 1000 / 60 / 60 % 24)
+            m = Math.floor(leftTime / 1000 / 60 % 60)
+            s = Math.floor(leftTime / 1000 % 60)
+          }
+          if (h + m + s === 0) {
+            item.status = '违约'
+          } else {
+            item.timeDown = `${h}:${m}:${s}`
+          }
+        }
+      })
+      this.$forceUpdate()
+    },
     loadData () {
       if (this.currentPage === 0) {
         this.isload = true
@@ -254,6 +309,7 @@ export default {
       const me = this
       this.ironRequest(reqUrl, {}, 'get', this).then(resp => {
         const idx = me.swiperCount
+        this.serverTime = resp.server_time
         if (resp && resp.returncode === '0') {
           let arr = resp.orders
           if (arr.length === 0 && me.currentPage === 0) {
@@ -341,11 +397,11 @@ export default {
 </script>
 <style lang="stylus" scoped>
 .head
-  position fixed
-  left 0
-  right 0
-  z-index 99
-  height 98px
+  // position fixed
+  // left 0
+  // right 0
+  // z-index 99
+  // height 98px
 // .bill-box
 .search-input
   background #F6F6F6
@@ -364,6 +420,6 @@ export default {
   color #e54d42
 .bill-content
   height 100%
-  margin-top 108px
+  // margin-top 108px
   // padding-bottom 108px
 </style>
