@@ -200,9 +200,9 @@ export default {
         }
       })
       this.$emit('filter', filters)
-      this.standardStr = filters['standard'].toString()
-      this.materialStr = filters['material'].toString()
-      this.originStr = filters['origin'].toString()
+      this.standardStr = filters['standard'].toString() === '全部' ? '' : filters['standard'].toString()
+      this.materialStr = filters['material'].toString() === '全部' ? '' : filters['material'].toString()
+      this.originStr = filters['origin'].toString() === '全部' ? '' : filters['origin'].toString()
       this.temporary = []
       this.sortClose()
     },
@@ -280,9 +280,7 @@ export default {
       }
     },
     sortCb (key) {
-      if (this.tabVal) {
-        this.queryObject.name = this.tabVal
-      }
+      this.queryObject.name = this.tabVal
       this.queryObject.current_page = this.currentPage
       let queryObj = Object.assign({}, this.queryObject)
       if (key === 'area') queryObj.region = ''
