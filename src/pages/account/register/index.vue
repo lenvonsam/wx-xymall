@@ -2,22 +2,22 @@
 .bg-white.h-100
   nav-bar(title="注册", isBack, :cb="pageBack")
   .login-bg
-    .ft-18.text-center 快速注册
+    .ft-20.text-center 快速注册
     .row.padding-tb-sm.border-bottom-line.margin-top-xl
       .flex-30.row
         .register-icon.phone(:style="{backgroundImage: 'url(' + imgProxy + 'phone_icon.png)'}", v-if="imgProxy")
       .col
-        input.no-border(placeholder="请输入手机号", v-model="phone", type="number", :maxlength="11")
+        input.no-border.ft-16(placeholder="请输入手机号", v-model="phone", type="number", :maxlength="11")
     .row.padding-tb-sm.border-bottom-line.margin-top-xl
       .flex-30.row
         .register-icon.code(:style="{backgroundImage:'url(' + imgProxy + 'code_icon.png)'}", v-if="imgProxy")
       .col
-        input.no-border(placeholder="请输入验证码", type="number", v-model="code")
+        input.ft-16.no-border(placeholder="请输入验证码", type="number", v-model="code")
       .flex-90.text-center(style="border-left: 1rpx solid #888")
         auth-btn(:phone="phone", v-if="codeBtnShow")
     .row.margin-top.ft-12
       .flex-20
-        checkbox(style="transform: scale(0.8,0.8)", :checked="acceptProtocol", color="#0081ff")
+        checkbox(:checked="acceptProtocol", color="#0081ff")
       .col
         span(@click="acceptProtocol = !acceptProtocol") 我已经阅读并同意
         span.text-blue(@click="jump('/pages/h5/main?title=用户协议&type=registProtocol')") 《型云软件许可及服务协议》
@@ -32,7 +32,7 @@ export default {
       // pageType: 1,
       phone: '',
       code: '',
-      acceptProtocol: true,
+      acceptProtocol: false,
       canClick: true,
       codeBtnShow: false
     }
@@ -53,7 +53,7 @@ export default {
     resetVal () {
       this.phone = ''
       this.code = ''
-      this.acceptProtocol = true
+      this.acceptProtocol = false
       this.canClick = true
     },
     pageBack () {
@@ -107,8 +107,8 @@ export default {
 <style lang="stylus" scoped>
 .register-icon
   &.phone
-    width 14px
-    height 19px
+    width 13px
+    height 17px
   &.code
     width 15px
     height 17px

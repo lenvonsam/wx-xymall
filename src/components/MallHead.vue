@@ -15,8 +15,8 @@
         scroll-view.nav(scroll-x, scroll-with-animation, :scroll-left="scrollLeft")
           .cu-item(v-for="(item,index) in sortList[0].data", :class="item.id === tabVal?'text-blue cur':''", :key="index", @click="selectTab(item, index)")
             span {{item.name}}
-      .tab-more      
-        .cuIcon-unfold.text-xl(@click="activeTab = 'name'")
+      .tab-more(@click="activeTab = 'name'")      
+        .cuIcon-unfold.text-xl
     .padding-sm.flex.align-center.solid-top
       .col.filter-list.bg-gray.flex(@click.prevent="sortCb('standard')")
         .col.text-center.text-cut {{standardStr || '规格'}}

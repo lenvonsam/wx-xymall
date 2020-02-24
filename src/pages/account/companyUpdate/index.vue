@@ -129,7 +129,7 @@ export default {
       }, {
         lbl: '登录密码',
         type: 'pwd',
-        placeholder: '请输入6-12位登录密码，只能是数字、字母和下划线',
+        placeholder: '请输入6-12位登录密码',
         required: true,
         key: 'user_pwd'
       }, {

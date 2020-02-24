@@ -198,8 +198,14 @@ export default {
     this.alertShow = false
     this.carts = []
     if (!this.isLogin) {
-      this.alertShow = true
-      this.tabDot(0)
+      const me = this
+      this.confirm({ title: '友情提示', content: '您未登录,请先登录' }).then(res => {
+        if (res === 'confirm') {
+          me.jump('/pages/account/login/main')
+        } else {
+          me.tab('/pages/index/main')
+        }
+      })
       return
     }
     if (this.tempObject.type) {
@@ -559,7 +565,7 @@ export default {
   // position fixed
   // left 0
   // right 0
-// .scroll-view
+  // .scroll-view
   // overflow auto
 .s-footer
   position fixed

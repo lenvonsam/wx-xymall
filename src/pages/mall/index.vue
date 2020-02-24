@@ -13,7 +13,7 @@ div
             template(v-if="goodsNameList[tabIdx].data.length > 0")
               scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: scrollHeight}")
                 div(:class="{cardSty: !mallFlag}")
-                  .padding.pr-10.pl-10(v-for="(item,idx) in goodsNameList[tabIdx].data", :key="idx", :class="!mallFlag ? 'card-list' : 'solid-bottom bg-white'")
+                  .padding.pr-10.pl-10(v-for="(item,idx) in goodsNameList[tabIdx].data", :key="idx", :class="!mallFlag ? 'card-list' : 'bg-white margin-bottom-xs'")
                     template(v-if="mallFlag === 1")
                       .row
                         .col.text-bold.ft-15
@@ -308,6 +308,7 @@ export default {
           this.addCart(obj, type, this.currentUser.user_id).then(
             rt => {
               me.showMsg('加入购物车成功', '', 1000)
+              me.setCartCount(me.currentUser.user_id)
               // if (rt.type === 'cart') {
               //   if (this.browserName() === 'wxpub') {
               //     me.zgRequest(
@@ -423,12 +424,12 @@ export default {
   flex-wrap wrap
   justify-content space-between
 // .blue-buy
-//   border 1px solid #0081ff
-//   border-radius 15px
-//   width 70px
-//   padding 5px 0
-//   text-align center
-//   color #0081ff
+// border 1px solid #0081ff
+// border-radius 15px
+// width 70px
+// padding 5px 0
+// text-align center
+// color #0081ff
 .blue-buy
   display inline-block
   border-radius 20px
@@ -483,5 +484,5 @@ export default {
   text-align center
   font-size 14px
   border-radius 10px
-  color #262626  
+  color #262626
 </style>
