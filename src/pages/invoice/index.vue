@@ -110,7 +110,6 @@ export default {
     }
   },
   onShow () {
-    debugger
     this.pageHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 98 + 'rpx'
     this.queryObject = {
       current_page: this.currentPage,
