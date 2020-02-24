@@ -147,6 +147,9 @@ export default {
       this.showMsg(err || '网络异常')
     })
   },
+  onUnload () {
+    this.payPwd = ''
+  },
   methods: {
     sendSmsChoosed () {
       this.smsNotify = !this.smsNotify
@@ -229,6 +232,7 @@ export default {
                 price: this.pBalance,
                 credent_pics: ''
               }
+              this.showLoading()
               this.ironRequest('recharge.shtml', body, 'post', this).then(resp => {
                 if (resp.returncode === '0') {
                   this.confirm({ content: '银行转账信息提交成功，请耐心等待审批' }).then((res) => {
@@ -241,8 +245,10 @@ export default {
                   me.btnDisable = false
                   me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
                 }
+                this.hideLoading()
               }).catch(err => {
                 this.btnDisable = false
+                this.hideLoading()
                 me.showMsg(err || '网络异常')
               })
             }
@@ -265,12 +271,18 @@ export default {
               body.pay_type = 2
             }
             if (this.smsNotify) body.sms_notify = 1
+            this.showLoading()
             me.ironRequest(reqUrl, body, 'post', me).then(res => {
               if (res && res.returncode === '0') {
+                me.hideLoading()
                 if (me.pageType === 'offlinePay') {
                   me.confirm({ content: '支付成功！请联系司机去平台仓库提货!' }).then((res) => {
+                    me.showLoading()
                     if (res === 'confirm') {
-                      me.redirect('/pages/bill/main?tabName=6')
+                      setTimeout(() => {
+                        me.hideLoading()
+                        me.redirect('/pages/bill/main?tabName=6')
+                      }, 3000)
                     }
                     me.btnDisable = false
                   })
