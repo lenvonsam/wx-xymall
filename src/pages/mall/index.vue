@@ -12,7 +12,7 @@ div
           template(v-else)  
             template(v-if="goodsNameList[tabIdx].data.length > 0")
               scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: scrollHeight}")
-                div(:class="{cardSty: !mallFlag}")
+                div(:class="{cardSty: !mallFlag}", style="padding-top: 6rpx")
                   .padding.pr-10.pl-10(v-for="(item,idx) in goodsNameList[tabIdx].data", :key="idx", :class="!mallFlag ? 'card-list' : 'bg-white margin-bottom-xs'")
                     template(v-if="mallFlag === 1")
                       .row
@@ -428,7 +428,7 @@ export default {
 .mall-content
   // margin-top 150px
 .cardSty
-  padding 0 15px
+  padding 0 8px
   display flex
   flex-wrap wrap
   justify-content space-between
@@ -482,13 +482,10 @@ export default {
 .ml-8
   margin-left 8px !important
 .card-list
-  width 48%
-  line-height 26px
+  width 49%
+  line-height 20px
   background #fff
-  margin-bottom 15px
-  .blue-buy
-    padding-top 0px
-    height auto
+  margin-bottom 8px
 .supply
   background #F6F6F6
   padding 0 8px

@@ -109,7 +109,7 @@
               span 合计：
               b.c-red ￥{{totalPrice}}
           .text-right.ft-12(style="color:#999;", v-show="!isEdit") 共{{totalCount}}件 ，{{totalWeight}}吨，吊费: {{totalLiftCharge}}元
-        .cart-settle-btn.ft-20(@click="goToSettle")
+        .cart-settle-btn.ft-18(@click="goToSettle")
           span {{isEdit ? '删除' : '结算'}}
     .address-dialog(@click="openPickWay", :style="{top: customBar + 40 + 'px'}", v-show="pickWayShow")
       .bg-white
@@ -559,6 +559,7 @@ export default {
     display flex
     width 200rpx
     background #F95353
+    letter-spacing 2px
     align-items center
     color #fff
     justify-content center
