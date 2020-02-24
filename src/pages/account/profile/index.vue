@@ -1,14 +1,14 @@
 <template lang="pug">
 div
   nav-bar(title="个人资料", isBack)
-  div
+  .ft-16
     .bg-white.row.padding
       .col 型云头像
       .col.text-right
         .profile-avatar(:style="{backgroundImage: 'url('+imgOuterUrl+currentUser.avatar+')'}", v-if="imgOuterUrl", @click="avatarUpload")
       .col.flex-25.text-gray.text-right
         icon.adjust.cuIcon-right
-    .bg-white.row.padding.ft-16.margin-top-sm.border-bottom-line(@click="jump('/pages/account/companyInfo/main')")
+    .bg-white.row.padding.margin-top-sm.border-bottom-line(@click="jump('/pages/account/companyInfo/main')")
       .col 公司信息
       .col.text-right.text-gray.text-autohide {{currentUser.cust_name}}
       .col.flex-25.text-gray.text-right

@@ -19,45 +19,41 @@ div
         time-line(type="mallist")
       template(v-else)
         template(v-if="listData.length > 0")
-          scroll-view(
+          scroll-view.padding-top-sm(
             scroll-y, 
             @scrolltolower="loadMore", 
             :style="{height: scrollHeight}")
-            //- div(style="height: 1000px")
-            .bg-white.padding-sm.bill-list(v-for="(item, itemIdx) in billTab[idx].data", :key="itemIdx", @click="jumpDetail(item)")
-              .flex.justify-between.padding-bottom-sm
-                .col
-                  .flex.align-center
-                    .ft-16.padding-right-sm {{item.no}}
-                    img.ding-icon(src="/static/images/ding.png", v-if="item.is_dx")
-                .text-red(v-if="item.status !== '待补款'") {{item.status}}
-              .text-gray
-                .padding-bottom-xs {{item.supply_name}}
-                .flex.justify-between.padding-bottom-xs 
-                  span 共{{item.total_count}}支，{{item.total_weight}}吨
-                  .ft-18.text-black ￥{{item.fact_price}}
-                .flex.justify-between.padding-bottom-xs
-                  .col 吊费：¥{{item.lift_charge}}
-                  //- template(v-if="item.status === '待付款'")
-                    .flex
+            .bill-list(v-for="(item, itemIdx) in billTab[idx].data", :key="itemIdx", @click="jumpDetail(item)")
+              .bg-white.box
+                .padding-sm
+                  .flex.justify-between.padding-bottom-sm
+                    .col
+                      .flex.align-center
+                        .ft-16.padding-right-sm {{item.no}}
+                        img.ding-icon(src="/static/images/ding.png", v-if="item.is_dx")
+                    .text-gray(v-if="item.status === '已完成' || item.status === '违约' || item.status === '已取消'") {{item.status}}
+                    .text-red(v-else-if="item.status !== '待补款'") {{item.status}}
+                  .text-gray
+                    .padding-bottom-xs {{item.supply_name}}
+                    .flex.justify-between.padding-bottom-xs 
+                      span 共{{item.total_count}}支，{{item.total_weight}}吨
+                      .ft-18.text-black ￥{{item.fact_price}}
+                    .flex.justify-between.padding-bottom-xs
+                      .col 吊费：¥{{item.lift_charge}}
+                .solid-top.text-black.ft-15.padding-sm.row(v-if="item.status === '待补款' || item.status === '待付款'")
+                  .col
+                    template(v-if="item.status === '待付款'")
+                      span 倒计时：
+                      span.padding-left-xs.text-red {{item.timeDown}}
+                    template(v-if="item.status === '待补款'")
+                      span 待补款：
+                      span.padding-left-xs.text-red ￥{{item.paid_price}}
+                  .flex
+                    template(v-if="item.status === '待付款'")
                       .bill-btn.round(@click.stop="payBill(item)") 去付款
                       .bill-red-btn.round.margin-left-sm(@click.stop="billCancel(item)") 取消
-                  //- template(v-else-if="item.status === '待补款'")
-                    .bill-btn.round(@click.stop="payBill(item)") 待补款
-              .solid-top.text-black.ft-15.padding-top-sm.row(v-if="item.status === '待补款' || item.status === '待付款'")
-                .col
-                  template(v-if="item.status === '待付款'")
-                    span 付款倒计时：
-                    span.padding-left-xs.text-red {{item.timeDown}}
-                  template(v-if="item.status === '待补款'")
-                    span 待补款：
-                    span.padding-left-xs.text-red ￥{{item.paid_price}}
-                .flex
-                  template(v-if="item.status === '待付款'")
-                    .bill-btn.round(@click.stop="payBill(item)") 去付款
-                    .bill-red-btn.round.margin-left-sm(@click.stop="billCancel(item)") 取消
-                  template(v-if="item.status === '待补款'")
-                    .bill-btn.round 待补款
+                    template(v-if="item.status === '待补款'")
+                      .bill-btn.round 待补款
         .text-center.c-gray.pt-100(v-else)
           empty-image(url="bill_empty.png", className="img-empty")
           .empty-content 您暂时没有相关合同
@@ -408,15 +404,24 @@ export default {
   padding 5px 10px
   border-radius 35px
 .bill-list
-  border-bottom 1px #DCDCDC solid
+  margin-bottom 10px
+  padding-left 10px
+  padding-right 10px
+  .box
+    border-radius 5px
+    overflow hidden
+    .solid-top
+      border-top 0.5px solid #eee
 .bill-btn, .bill-red-btn
-  padding 5px 10px
+  padding 2px 8px
   text-align center
+  font-size 13px
   color #0081ff
 .bill-btn
   border 1px #0081ff solid
 .bill-red-btn
   border 1px #e54d42 solid
+  font-size 13px
   color #e54d42
 .bill-content
   height 100%

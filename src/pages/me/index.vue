@@ -24,27 +24,34 @@ div
         .ft-16.text-bold 我的合同
         .text-gray.ft-14(@click="jumpBillMore") 查看全部
           span.cuIcon-right
-      .flex.text-center.text-gray.justify-between.padding-top-lg
+      .flex.text-center.justify-between.padding-top-lg
         .col(v-for="(bicon, biconIdx) in billIcons", :key="biconIdx", @click="jumpBicon(bicon.url)")
           .relative.contract-img
-            img(:src="bicon.icon")
+            img(:src="bicon.icon", mode="widthFix")
             .dot(v-if="rowCountObj[bicon.dotKey] > 0", :class="{'max': rowCountObj[bicon.dotKey] > 9}") 
               label {{rowCountObj[bicon.dotKey] > 99 ? '99+' : rowCountObj[bicon.dotKey]}}
-          .padding-top-xs {{bicon.name}}
-    .margin-top-sm.me-icon.bg-white(v-for="(cardItem, index) in cardList", :key="index")
+          .padding-top-xs.ft-15 {{bicon.name}}
+    .margin-top-sm.me-icon.bg-white.ft-15(v-for="(cardItem, index) in cardList", :key="index", style="overflow:hidden;border-radius: 10rpx")
       .item.padding-sm.flex.align-center(v-for="(item, idx) in cardItem", :key="idx", @click="jumpToPage(item.url)")
         .col
           .row
             img(:src="item.imgPath")
-            .margin-left-sm.col.solid-bottom {{item.title}}
+            .margin-left-sm.col(:class="{'solid-bottom': idx < (cardItem.length - 1)}") {{item.title}}
         .cuIcon-right.text-gray
-    .bg-white.me-icon.padding-sm.flex.solid-bottom.align-center.relative
-      button(open-type="contact", style="position: absolute; left:0;right: 0; top:0; bottom: 0; z-index: 10; background: transparent")
-      .col
-        .flex.align-center
-          img(src="/static/images/customer_icon.png")
-          .padding-left-sm 在线客服
-      .cuIcon-right.text-gray
+    .margin-top-sm.me-icon.bg-white.ft-15(style="overflow:hidden;border-radius: 10rpx")
+      .item.padding-sm.flex.align-center(@click="jump('/pages/account/setting/main')")
+        .col
+          .row
+            img(src="/static/images/wdwld.png")
+            .margin-left-sm.col.solid-bottom 用户设置
+        .cuIcon-right.text-gray
+      .item.padding-sm.flex.solid-bottom.align-center.relative.ft-15
+        button(open-type="contact", style="position: absolute; left:0;right: 0; top:0; bottom: 0; z-index: 10; background: transparent")
+        .col
+          .flex.align-center
+            img(src="/static/images/customer_icon.png")
+            .padding-left-sm 在线客服
+        .cuIcon-right.text-gray
     alert(:title="alertText", v-model="alertShow", :cb="alertCb")
 </template>
 <script>
@@ -61,8 +68,6 @@ export default {
         ], [
           { title: '我的加工', imgPath: '/static/images/operating_icon.png', url: '/pages/process/main' },
           { title: '我的求购', imgPath: '/static/images/shop_icon.png', url: '/pages/askBuy/main' }
-        ], [
-          { title: '用户设置', imgPath: '/static/images/wdwld.png', url: '/pages/account/setting/main' }
         ]
       ],
       avatarDirection: 'none',
@@ -198,12 +203,9 @@ export default {
   margin-top 20px
   border-radius 5px
   .contract-img
-    width 30px
-    height 28px
+    width 22px
+    // height 20px
     margin 0 auto
-  img
-    width 30px
-    height 28px
 .me-icon
   img
     width 15px
@@ -213,22 +215,21 @@ export default {
 .dot
   position absolute
   background #fff
-  top -8px
-  right -10px
+  top -6px
+  right -8px
   color #e54d42
   text-align center
-  font-size 12px
+  font-size 11px
   display inline-block
-  height 22px
-  width 22px
-  border 2px solid #e54d42
+  height 16px
+  width 16px
+  border 0.5px solid #e54d42
   box-sizing content-box
   border-radius 50%
-  font-weight 700
-  line-height 22px
+  line-height 16px
 /deep/ button::after
   border 0px !important
 .item
-  height 45px
-  line-height 45px
+  height 50px
+  line-height 50px
 </style>
