@@ -122,11 +122,13 @@ export default {
     if (this.$root.$mp.query.orderNo && (this.pageType === 'offlinePay' || this.pageType === 'ladPay')) {
       this.orderNos = this.$root.$mp.query.orderNo.split(',')
     }
+    this.showLoading()
     this.ironRequest('balanceList.shtml?type=0&only_all=1&user_id=' + this.currentUser.user_id, {}, 'get', this).then(res => {
       if (res.returncode === '0') {
         this.freezeMoney = res.freeze_money
         console.log(this.chooseType)
       }
+      this.hideLoading()
     })
     console.log('this.$route.query.orderNo', this.$root.$mp.query.orderNo)
     this.ironRequest('orderPayDetail.shtml?tstc_nos=' + this.$root.$mp.query.orderNo, {}, 'get', this).then(res => {

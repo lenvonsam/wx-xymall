@@ -167,10 +167,20 @@ export default {
       // this.goodsNameList[this.swiperCount].data = []
       this.isRefresh = 'refresh'
       this.currentPage = 0
+      this.swiperCount = 0
+      Object.assign(this.queryObject, this.tempObject)
+      this.refresher()
+    } else if (this.tempObject.name === this.mallTabVal) {
       Object.assign(this.queryObject, this.tempObject)
       this.refresher()
     } else {
-      this.queryObject = {}
+      this.queryObject = {
+        current_page: this.currentPage,
+        page_size: this.pageSize,
+        search: '',
+        only_available: 1
+      }
+      Object.assign(this.queryObject, this.tempObject)
       this.mallTabVal = this.tempObject.name || ''
     }
     // if (!this.tempObject.name) {
@@ -186,6 +196,14 @@ export default {
       this.setCartCount(this.currentUser.user_id)
     } else {
       this.tabDot(0)
+    }
+  },
+  onUnload () {
+    this.queryObject = {
+      current_page: this.currentPage,
+      page_size: this.pageSize,
+      search: '',
+      only_available: 1
     }
   },
   mounted () {
@@ -351,7 +369,6 @@ export default {
       }
     },
     selectTab ({ id, idx }) {
-      // debugger
       // this.configVal({key: 'tempObject', val: { search: '' }})
       if (this.goodsNameList[idx]) {
         this.goodsNameList[idx].data = []

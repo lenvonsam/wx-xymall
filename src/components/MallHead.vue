@@ -1,5 +1,5 @@
 <template lang="pug">
-.bg-white.full-width.text-gra.shop-head(:style="{top: customBar+'px'}", @touchmove.stop="catchtouchmove")
+.bg-white.full-width.text-gra.shop-head(:style="{top: customBar+'px'}")
   .flex.align-center.pl-10.pr-10
     .h-left.ft-25(@click="classifyClick")
       .cuIcon-sort.lg.text-gra
@@ -13,7 +13,8 @@
     .mt-15.text-center.flex.align-center
       .col.tab-content
         scroll-view.nav(scroll-x, scroll-with-animation, :scroll-left="scrollLeft")
-          .cu-item(v-for="(item,index) in sortList[0].data", :class="item.id === tabVal?'text-blue cur':''", :key="index", @click="selectTab(item, index)")
+          //- scroll-view.nav(scroll-x, scroll-with-animation, :scroll-into-view="searchCurId")
+          .cu-item(:id="'idx_'+index", v-for="(item,index) in sortList[0].data", :class="item.id === tabVal?'text-blue cur':''", :key="index", @click="selectTab(item, index)")
             span {{item.name}}
       .tab-more(@click="activeTab = 'name'")      
         .cuIcon-unfold.text-xl
@@ -31,7 +32,7 @@
         .cuIcon-list(@click="selectMall(1)", :class="mallFlag ? 'text-blue' : 'text-gra'")
         .cuIcon-cascades.ml-5(@click="selectMall(0)", :class="!mallFlag ? 'text-blue' : 'text-gra'")
     //- 筛选 品名、材质、规格、产地
-    .filter-box(@click.prevent="sortClose(sortIdx)", v-show="activeTab === sort.key", v-for="(sort, sortIdx) in sortList", :key="sortIdx")
+    .filter-box(@click.prevent="sortClose(sortIdx)", @touchmove.stop="catchtouchmove", v-show="activeTab === sort.key", v-for="(sort, sortIdx) in sortList", :key="sortIdx")
       .bg-white.padding-sm.ft-11(@click.stop="")
         .flex.align-center.justify-between
           .flex.align-center
@@ -42,7 +43,7 @@
               input.full-width.pl-10(@input="standardChange" type="text", placeholder="请输入规格快速查询")
           .cuIcon-fold.ft-16(@click="sortClose(sortIdx)")
         //- div(@catchtouchmove="catchtouchmove")  
-        scroll-view(scroll-y, style="max-height: 300px", @scrolltolower="loadMore")
+        scroll-view(scroll-y, style="max-height: 700rpx", @scrolltolower="loadMore")
           .grid.col-3.padding-top-sm.sort-content
             .sort-list(v-if="sort.data.length > 0", v-for="(item, index) in sort.data", :key="index")
               .sort-name(:class="{active: item.isActive}", @click.stop="selectSort(sortIdx, index)") {{item.name}}
@@ -206,7 +207,12 @@ export default {
       this.sortClose()
     },
     openFilter () {
-      this.jump('/pages/mallFilter/main')
+      const idx = this.sortList.findIndex((item) => {
+        return item.key === this.activeTab
+      })
+      console.log('idx', idx)
+      this.sortClose(idx)
+      this.jump('/pages/mallFilter/main?name=' + this.tabVal)
     },
     standardChange (e) {
       this.throttle(() => {
@@ -242,11 +248,29 @@ export default {
     },
     selectTab (item, index) {
       this.tabVal = item.id
-      this.sortList[0].data.map((item, index) => {
+      let scrollLeft = 0
+      const query = wx.createSelectorQuery()
+      this.sortList[0].data.map((item, idx) => {
         item.isActive = this.tabVal === item.id
+        if (idx < index) {
+          const id = '#idx_' + idx
+          query.select(id).boundingClientRect()
+        }
       })
-      this.scrollLeft = (index - 1) * 60
-      this.$emit('selectTab', { id: item.id, idx: index })
+      const me = this
+      if (index === 0) {
+        me.scrollLeft = '0px'
+      } else {
+        query.exec(function (res) {
+        // res就是 该元素的信息 数组
+          console.log('res', res)
+          res.map(item => {
+            scrollLeft += item.width
+          })
+          me.scrollLeft = scrollLeft + 'px'
+        })
+      }
+      me.$emit('selectTab', { id: item.id, idx: index })
     },
     loadMore () {
       if (this.activeTab === 'standard') {
@@ -268,9 +292,7 @@ export default {
       this.ironRequest(this.sortQueryList[key].reqUrl, queryObj, 'post', this).then(resp => {
         if (resp.returncode === '0') {
           let arr = resp[this.sortQueryList[key].respKey]
-
           const tabList = []
-
           if (arr.length > 0) {
             const idx = this.sortList.findIndex((item) => {
               return item.key === key
