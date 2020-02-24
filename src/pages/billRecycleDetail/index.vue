@@ -61,7 +61,7 @@
               b.text-red ￥{{totalObject.totalPrice}}
             .text-right.ft-12(style="color:#999;") 
               span 共{{carts.length}}件 ，{{totalObject.totalWeight}}吨，吊费：{{totalObject.liftPrice}}元
-          .cart-settle-btn.bg-red.ft-20(@click="generateOrder", v-if="!isEdit") 生成合同
+          .cart-settle-btn.bg-red.ft-18(@click="generateOrder", v-if="!isEdit") 生成合同
           .main-btn.margin-right-sm.bg-red.ft-20(@click="delCartRow()", v-else) 删除      
 </template>
 <script>
@@ -224,7 +224,7 @@ export default {
       }
       this.$forceUpdate()
     },
-    promptClose () {},
+    promptClose () { },
     selectBill (bill) {
       bill.choosed = !bill.choosed
       this.allChoosed = bill.choosed
@@ -243,9 +243,9 @@ export default {
       let arr = choosedList.filter(itm => itm.sold_out === 1)
       let arrSec = choosedList.filter(itm => itm.price.indexOf('--') >= 0)
       if (arr.length > 0) {
-        this.showMsg({content: '商品货源不足,请去商城继续选购'})
+        this.showMsg({ content: '商品货源不足,请去商城继续选购' })
       } else if (arrSec.length > 0) {
-        this.showMsg({content: '商品9点之后开售'})
+        this.showMsg({ content: '商品9点之后开售' })
       } else {
         if (!this.btnDisable) {
           let heFeiArray = choosedList.filter(itm => itm.wh_name.indexOf('合肥') >= 0)
@@ -258,7 +258,7 @@ export default {
           } else if (dongGangArray.length > 0) {
             msgs = '常州东港库物资最快次日可提'
           }
-          this.confirm({content: msgs + '一经结算将无法更改商品数量'}).then((res) => {
+          this.confirm({ content: msgs + '一经结算将无法更改商品数量' }).then((res) => {
             if (res === 'confirm') {
               me.btnDisable = true
               let amounts = me.carts.map(itm => itm.count).join(',')
@@ -283,21 +283,21 @@ export default {
                 if (resp && resp.returncode === '0') {
                   me.btnDisable = false
                   if (resp.order_size > 1) {
-                    me.confirm({content: `您批量生成${resp.order_size}个合同，请到待付款依次支付`}).then((res) => {
+                    me.confirm({ content: `您批量生成${resp.order_size}个合同，请到待付款依次支付` }).then((res) => {
                       if (res === 'confirm') {
                         me.redirect('/pages/bill/main?tabName=1')
                       }
                     })
                   } else {
-                  // 跳转到支付确认页面
-                  // me.jump({path: 'billConfirm', query: {order_id: resp.order_id, csg_way: isDelivery}})
+                    // 跳转到支付确认页面
+                    // me.jump({path: 'billConfirm', query: {order_id: resp.order_id, csg_way: isDelivery}})
                     me.redirect(`/pages/pay/main?orderNo=${resp.order_no}&price=${me.totalObject.totalPrice}&pageType=offlinePay`)
                   }
                 } else {
                   me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
                   me.btnDisable = false
                 }
-              // me.$ironLoad.hide()
+                // me.$ironLoad.hide()
               }).catch(err => {
                 // me.$ironLoad.hide()
                 me.btnDisable = false
@@ -330,21 +330,21 @@ export default {
         this.showMsg('请选择需要删除的物资')
         return false
       }
-      this.confirm({content: '您确定要删除吗？'}).then((res) => {
+      this.confirm({ content: '您确定要删除吗？' }).then((res) => {
         if (res === 'confirm') {
           me.carts = list
         }
       })
     },
     jumpToPickway () {
-      this.configVal({key: 'tempObject', val: {type: this.pickWay, phone: this.pwPhone, addr: this.pwAddr, detail: this.pwAddrDetail}})
-      this.jump({path: '/pickway?type=' + this.pickWay})
+      this.configVal({ key: 'tempObject', val: { type: this.pickWay, phone: this.pwPhone, addr: this.pwAddr, detail: this.pwAddrDetail } })
+      this.jump({ path: '/pickway?type=' + this.pickWay })
     }
   }
 }
 </script>
 <style lang="stylus" scoped>
-.bill-btn,.bill-red-btn
+.bill-btn, .bill-red-btn
   padding 5px 10px
   text-align center
   color #0081ff
@@ -366,8 +366,6 @@ export default {
       border-radius 4px
       box-shadow 1px 2px 5px rgba(61, 167, 255, 0.3)
       letter-spacing 1px
-    // .content
-      // color $mainGray
     .count-step
       height 30px
       width 120px
@@ -380,60 +378,52 @@ export default {
       left -2px
       border-bottom 0.5px solid $mainGray
       top 8px
-.cart-empty-btn {
-  background: $mainColor;
-  padding: 0.5rem 2rem;
-  color: #fff;
-  display: inline-block;
-  font-weight: bold;
-  font-size: 16px;
-  border-radius: 25px;
-  letter-spacing: 1px;
-}
+.cart-empty-btn
+  background $mainColor
+  padding 0.5rem 2rem
+  color #fff
+  display inline-block
+  font-weight bold
+  font-size 16px
+  border-radius 25px
+  letter-spacing 1px
 .count-step .num input
   color #333 !important
 .choose-icon
   width 20px
   height 20px
 // .s-content {
-//   // height: 30rem;
-//   height: calc(100vh - 11rem);
-//   overflow: auto;
+// // height: 30rem;
+// height: calc(100vh - 11rem);
+// overflow: auto;
 // }
-.cart-items {
-  .cart-item {
-    background: #fff;
-    margin-top: 0.5rem;
-    .sub-mark {
-      display: inline-block;
-      padding: 1px 5px;
-      background: #3da7ff;
-      color: #fff;
-      font-size: 12px;
-      border-radius: 4px;
-      box-shadow: 1px 2px 5px rgba(61, 167, 255, 0.3);
-      letter-spacing: 1px;
-    }
-    .content {
-      color: $mainGray;
-    }
-    .count-step {
-      height: 30px;
-      width: 120px;
-      .min {
-        color: #888;
-      }
-    }
-    .discount-line {
-      position: absolute;
-      height: 1px;
-      right: -2px;
-      left: -2px;
-      border-bottom: 0.5px solid $mainGray;
-      top: 8px;
-    }
-  }
-}
+.cart-items
+  .cart-item
+    background #fff
+    margin-top 0.5rem
+    .sub-mark
+      display inline-block
+      padding 1px 5px
+      background #3da7ff
+      color #fff
+      font-size 12px
+      border-radius 4px
+      box-shadow 1px 2px 5px rgba(61, 167, 255, 0.3)
+      letter-spacing 1px
+    .content
+      color $mainGray
+    .count-step
+      height 30px
+      width 120px
+      .min
+        color #888
+    .discount-line
+      position absolute
+      height 1px
+      right -2px
+      left -2px
+      border-bottom 0.5px solid $mainGray
+      top 8px
 .s-footer
   position fixed
   bottom 0
@@ -458,7 +448,7 @@ export default {
     width 100px
     height 50px
     line-height 50px
-    text-align center 
+    text-align center
     color #fff
     // justify-content center
 .bill-foot
@@ -466,29 +456,26 @@ export default {
   left 0
   right 0
   bottom 0
-.count-step .num input {
-  color: #333 !important;
-}
-.bottom-option{
-  position: fixed;
-  padding: 10px;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  line-height: 25px;
-  height: 50px
-}
-.bottom-panel {
-  position: fixed;
-  background: #fff;
-  padding: 10px;
-  width: 100%;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  line-height: 25px;
-  height: 120px;
-}
+.count-step .num input
+  color #333 !important
+.bottom-option
+  position fixed
+  padding 10px
+  bottom 0
+  left 0
+  right 0
+  line-height 25px
+  height 50px
+.bottom-panel
+  position fixed
+  background #fff
+  padding 10px
+  width 100%
+  bottom 0
+  left 0
+  right 0
+  line-height 25px
+  height 120px
 radio.radio[checked]::after
   content ''
   background-color #fff
@@ -512,7 +499,7 @@ button
   background #e54d42
   font-size 16px
   height 30px
-  width 100px  
+  width 100px
 .scroll-view
-  margin-bottom 80px  
+  margin-bottom 80px
 </style>

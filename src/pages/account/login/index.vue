@@ -7,7 +7,7 @@
       .flex-30.text-gray
         icon.ft-18.adjust.cuIcon-people
       .col
-        input.no-border.ft-16(placeholder="请输入用户名", v-model="uname")
+        input.no-border.ft-16(placeholder="账户名、昵称、手机号", v-model="uname")
     .row.padding-tb-sm.border-bottom-line.margin-top-xl
       .flex-30.text-gray
         icon.ft-18.adjust.cuIcon-unlock

@@ -12,8 +12,8 @@ div
   template(v-else) 
     template(v-if="listData.length > 0")
       scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: screenHeight - 140 +'px'}")  
-        .margin-top-sm.bg-white
-          .padding-sm.solid-bottom(v-for="(item, itemIdx) in listData", :key="itemIdx")
+        .padding-top-sm
+          .padding-sm.bg-white.margin-bottom-sm(v-for="(item, itemIdx) in listData", :key="itemIdx")
             .flex.align-center
               .ft-16.padding-right-sm {{item.tstc_no}}
               img.ding-icon(src="/static/images/ding.png", v-if="item.contract_type == 12")

@@ -15,7 +15,7 @@ div
       template(v-if="listData.length > 0")
         scroll-view.scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: scrollHeight}")
           //- .scroll-view.bg-white(scroll-y, :style="{top:customBar + 40 + 'px'}")
-          .bg-white.padding-sm.bill-list(v-for="(item, itemIdx) in listData", :key="itemIdx")
+          .bg-white.padding-sm.margin-bottom-sm(v-for="(item, itemIdx) in listData", :key="itemIdx")
             .flex.justify-between.padding-bottom-sm
               .col
                 .flex.align-center
@@ -139,8 +139,6 @@ export default {
   background #F6F6F6
   padding 5px 10px
   border-radius 35px
-.bill-list
-  border-bottom 1px #DCDCDC solid
 .bill-btn, .bill-red-btn
   padding 5px 15px
   text-align center
