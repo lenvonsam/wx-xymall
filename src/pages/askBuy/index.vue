@@ -5,7 +5,7 @@ div
     time-line(type="mainres")
   template(v-else)
     template(v-if="listData.length > 0")  
-      div(style="padding-bottom 70px")
+      div(style="padding-bottom: 140rpx")
         .text-content.bg-white.padding-sm.text-blue.margin-top-sm(v-for="(item, itemIdx) in listData", :key="itemIdx")
           .row
             .col.text-blue.ft-15 {{item.no}}
@@ -23,7 +23,7 @@ div
     .text-center.pt-100(v-else)
       empty-image(url="bill_empty.png", className="img-empty")
       .empty-content 您暂时没有加工数据
-    .bottom-footer.bg-white.padding-sm
+    .bottom-footer.bg-white.padding-sm(style="height: 130rpx")
       .main-btn(@click="jump('/pages/askBuyCreate/main')") 发布求购
 </template>
 <script>

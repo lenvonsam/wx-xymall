@@ -52,6 +52,14 @@ div
         demand: ''
       }
     },
+    onUnload () {
+      this.name = ''
+      this.material = ''
+      this.supply = ''
+      this.standard = ''
+      this.phone = ''
+      this.demand = ''
+    },
     computed: {
       ...mapState({
         currentUser: state => state.user.currentUser

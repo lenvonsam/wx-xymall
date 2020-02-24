@@ -41,6 +41,9 @@ export default {
       required: true
     }
   },
+  onUnload () {
+    this.copyRow = { height: '', width: '', length: '', sheet_count: '' }
+  },
   data () {
     return {
       itemData: {

@@ -34,7 +34,7 @@ div
       .title    
         span.padding-left-xs 备注
       .col.text-right.padding-left-xs
-        span(v-if="pno")
+        span(v-if="pno") {{pObj.remark}}
         input(v-else, type="text", placeholder="请输入备注", v-model="remark")
   .process(v-if="rowCount.length > 0")
     process-item(v-if="i", :pno="pno", :ref="`processItem_${idx}`", v-for="(i,idx) in rowCount", :row="i", :key="idx", :process-type="processType", :cb="pickerItemCb", :rowidx="idx")  
@@ -109,7 +109,15 @@ export default {
       this.rowCount = [{ height: '', width: '', length: '', sheet_count: '' }]
     }
   },
+  onUnload () {
+    console.log('----onUnload------')
+    this.pObj = {}
+  },
   methods: {
+    dateCb (e) {
+      console.log('dateCb', e)
+      this.dateVal = e.mp.detail.value
+    },
     delProcess () {
       const me = this
       if (!this.btnDisable) {
