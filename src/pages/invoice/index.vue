@@ -32,6 +32,8 @@ div
                     .text-blue.ft-18 ￥{{item.price}}
                     .invoice-detail-btn.margin-top-sm(v-if="tabName != '0' && item.price > 0", @click="jumpDetail(item)") 查看详情
                     .text-gray(v-if="tabName == '2'") 吊费：{{item.lift_price}}
+            .padding.text-gray.ft-13.text-center(v-if="loading") 努力加载中... 
+            .padding.text-gray.ft-13.text-center(v-if="finished") 加载完成 
         .text-center.c-gray.pt-100(v-else)
           empty-image(url="bill_empty.png", className="img-empty")
           .empty-content 您暂时没有相关发票
@@ -110,7 +112,6 @@ export default {
     }
   },
   onShow () {
-    this.pageHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 98 + 'rpx'
     this.queryObject = {
       current_page: this.currentPage,
       page_size: this.pageSize
@@ -121,6 +122,12 @@ export default {
     } else if (this.$root.$mp.query.tabName) {
       this.tabName = this.$root.$mp.query.tabName
       this.swiperCount = this.tabName
+    }
+
+    if (this.tabName === '1' || this.tabName === '3') {
+      this.pageHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 98 + 'rpx'
+    } else {
+      this.pageHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 198 + 'rpx'
     }
     this.loadData()
   },
@@ -273,6 +280,7 @@ export default {
       }
     },
     loadData () {
+      debugger
       if (this.currentPage === 0) {
         this.isLoad = true
       } else {
@@ -283,13 +291,15 @@ export default {
       // if (me.currentPage === 0) {
       //   me.$ironLoad.show()
       // }
+      this.loading = true
       this.ironRequest('invoiceList.shtml', this.queryObject, 'post', this).then(resp => {
         if (resp && resp.returncode === '0') {
+          debugger
           if (resp.invoices.length > 0 && me.currentPage === 0) {
             me.listData = []
             resp.invoices.map(itm => {
               let temp = itm
-              temp.checked = false
+              temp.checked = me.allChecked
               temp.price = Number(itm.price)
               me.listData.push(temp)
             })
@@ -306,7 +316,8 @@ export default {
           } else {
             resp.invoices.map(itm => {
               let temp = itm
-              temp.checked = false
+              temp.checked = me.allChecked
+              temp.price = Number(itm.price)
               me.listData.push(temp)
             })
             this.finished = false
@@ -315,9 +326,8 @@ export default {
           // if (me.currentPage === 0) {
           //   me.$ironLoad.hide()
           // }
-        } else {
-          this.msgShow(resp === undefined ? '网络异常' : resp.errormsg)
         }
+        this.loading = false
         this.isTabDisabled = false
       }).catch(err => {
         this.isTabDisabled = false
