@@ -92,9 +92,12 @@ export default {
   .plus
     border-left 1px solid #ddd
   .min, .plus
-    padding-left 10px
-    padding-right 10px
-    flex 0 0 30px
+    // padding-left 10px
+    // padding-right 10px
+    flex 0 0 25px
+    display flex
+    align-items center
+    justify-content center
     font-size 14px
     color #888
   .num
