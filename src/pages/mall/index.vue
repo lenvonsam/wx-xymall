@@ -13,7 +13,7 @@ div
             template(v-if="goodsNameList[tabIdx].data.length > 0")
               scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: scrollHeight}")
                 div(:class="{cardSty: !mallFlag}")
-                  .padding.pr-10.pl-10(v-for="(item,idx) in goodsNameList[tabIdx].data", :key="idx", :class="!mallFlag ? 'card-list' : 'solid-bottom bg-white'")
+                  .padding.pr-10.pl-10(v-for="(item,idx) in goodsNameList[tabIdx].data", :key="idx", :class="!mallFlag ? 'card-list' : 'bg-white margin-bottom-xs'")
                     template(v-if="mallFlag === 1")
                       .row
                         .col.text-bold.ft-15
@@ -28,7 +28,7 @@ div
                           //- span.c-red.ft-13(v-if="item.price === '--'") 开售时间:{{item.show_time}}
                           //- span.c-red(v-else-if="item.show_price === true") ￥{{item[mallTypeObject[itemType].price]}}
                           //- .blue-buy.ft-12(v-else, @click="cb(item, 'showPrice', $event)") 查看价格
-                      .row.pt-5.flex-center.ft-13
+                      .row.pt-5.flex-center.ft-12
                         .col.c-gray
                           span {{item[mallTypeObject[itemType].material]}}
                           //- span.ml-8 {{item[mallTypeObject[itemType].standard]}}
@@ -43,28 +43,35 @@ div
                           span(v-if="item[mallTypeObject[itemType].tolerance]") 公差范围: {{item[mallTypeObject[itemType].tolerance]}}
                           span.ml-8(v-if="item[mallTypeObject[itemType].weightRange]") 重量范围: {{item[mallTypeObject[itemType].weightRange]}}
                       //- .row.pt-0.flex-center.ft-13.c-gray(v-if="item.show_price === true")
+                      .pt-5.c-gray.ft-12(v-if="item[mallTypeObject[itemType].tolerance] || item[mallTypeObject[itemType].weightRange]")
+                        span(v-if="item[mallTypeObject[itemType].tolerance]") 公差范围: {{item[mallTypeObject[itemType].tolerance]}}
+                        span.ml-8(v-if="item[mallTypeObject[itemType].weightRange]") 重量范围: {{item[mallTypeObject[itemType].weightRange]}}
                       .row.pt-5.flex-center.ft-13.c-gray
                         .col
                           span(v-if="item[mallTypeObject[itemType].max_count] > 0") {{item[mallTypeObject[itemType].max_count]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
-                        .text-right.ft-14
-                          .blue-buy(v-if="item.max_count == 0",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
-                          .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="item.show_price") 购买
+                        .flex-120.relative.text-right.ft-14
+                          div(style="position: absolute; right: 0rpx; top: -16rpx")
+                            .blue-buy(v-if="item.max_count == 0",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
+                            .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="item.show_price") 购买
                     template(v-else)
                       .ft-15.row
                         span.text-bold {{item[mallTypeObject[itemType].name]}}
                         .supply.margin-left-sm {{item[mallTypeObject[itemType].supply]}}
                       .text-bold
                         span {{item[mallTypeObject[itemType].standard]}}
-                      .text-gray
+                      .text-gray.ft-12
                         span {{item[mallTypeObject[itemType].material]}}
                         span.ml-8 {{item[mallTypeObject[itemType].length]}}米
                         span.ml-8 {{item[mallTypeObject[itemType].wh_name]}}
-                      .text-gray
+                      .text-gray.ft-12
+                        span.ft-10 公差/重量范围
+                        span.ml-8 {{item[mallTypeObject[itemType].tolerance] ? item[mallTypeObject[itemType].tolerance] : '--'}}/{{item[mallTypeObject[itemType].weightRange]?item[mallTypeObject[itemType].weightRange]: '--'}}
+                      .text-gray.ft-12
                         span(v-if="item[mallTypeObject[itemType].max_count] > 0") {{item[mallTypeObject[itemType].max_count]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
                       .text-blue.ft-15.text-bold ￥{{item[mallTypeObject[itemType].price]}}
                       .text-gray.flex
                         .ft-11.col ({{item.weightMark}})
-                        .text-right.ft-14
+                        .text-right
                           .blue-buy(v-if="item.max_count == 0",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
                           .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else) 购买
                 .padding.text-gray.ft-13.text-center(v-if="loading") 努力加载中...
@@ -73,7 +80,9 @@ div
                 //- mall-item(:mallFlag="mallFlag", :cb="mallItemCb", v-for="(item,idx) in mallItems", :item="item", :key="idx")
             .col.text-center.text-gray.pt-100(v-else)
               empty-image(url="bill_empty.png", className="img-empty")
-              .empty-content 您暂时没有相关合同
+              .empty-content 
+                span 暂时没有相关商品
+                div 详情请联系400-8788-361
       //- template(v-if="mallItems.length > 0")
       //-   mall-item(:mallFlag="mallFlag", :cb="mallItemCb", v-for="(item,idx) in mallItems", :item="item", :key="idx")
       //- .col.text-center.text-gray.pt-100(v-else)
@@ -308,6 +317,7 @@ export default {
           this.addCart(obj, type, this.currentUser.user_id).then(
             rt => {
               me.showMsg('加入购物车成功', '', 1000)
+              me.setCartCount(me.currentUser.user_id)
               // if (rt.type === 'cart') {
               //   if (this.browserName() === 'wxpub') {
               //     me.zgRequest(
@@ -423,25 +433,26 @@ export default {
   flex-wrap wrap
   justify-content space-between
 // .blue-buy
-//   border 1px solid #0081ff
-//   border-radius 15px
-//   width 70px
-//   padding 5px 0
-//   text-align center
-//   color #0081ff
+// border 1px solid #0081ff
+// border-radius 15px
+// width 70px
+// padding 5px 0
+// text-align center
+// color #0081ff
 .blue-buy
   display inline-block
   border-radius 20px
   letter-spacing 1px
-  padding-top 6px
   padding-left 10px
+  padding-top 2px
   padding-right 10px
   text-align center
   // min-width 100px
+  font-size 12px
   color #fff
   background #2485ff !important
   box-shadow none
-  min-height 30px
+  height 22px
   z-index 0
 .sub-mark
   display inline-block
@@ -476,12 +487,13 @@ export default {
   background #fff
   margin-bottom 15px
   .blue-buy
-    padding-top 3px
+    padding-top 0px
+    height auto
 .supply
   background #F6F6F6
   padding 0 8px
   text-align center
   font-size 14px
   border-radius 10px
-  color #262626  
+  color #262626
 </style>

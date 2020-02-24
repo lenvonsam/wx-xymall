@@ -2,22 +2,22 @@
 .bg-white.h-100
   nav-bar(title="登录", :isBack="true")
   .login-bg
-    .ft-18.text-blod.text-center 账号密码登录
+    .ft-20.text-blod.text-center 账号密码登录
     .row.padding-tb-sm.border-bottom-line.margin-top-xl
       .flex-30.text-gray
-        icon.adjust.cuIcon-people
+        icon.ft-18.adjust.cuIcon-people
       .col
-        input.no-border(placeholder="请输入用户名", v-model="uname")
+        input.no-border.ft-16(placeholder="请输入用户名", v-model="uname")
     .row.padding-tb-sm.border-bottom-line.margin-top-xl
       .flex-30.text-gray
-        icon.adjust.cuIcon-unlock
+        icon.ft-18.adjust.cuIcon-unlock
       .col
-        input.no-border(placeholder="请输入密码", type="password", v-model="upwd")
+        input.no-border.ft-16(placeholder="请输入密码(6-12位)", type="password", v-model="upwd", :maxlength="12")
     .row.margin-top
       .col.text-blue(@click="jump('/pages/account/register/main')") 立即注册
       .col.text-right(@click="jump('/pages/account/phoneLogin/main?type=forgetPwd')") 忘记密码？
     .mt-50.main-btn(hover-class="hover-gray", @click="remoteLogin") 登录
-    .margin-top-sm.text-center.text-blue(@click="jump('/pages/account/phoneLogin/main')") 手机验证登录
+    .margin-top-sm.text-center.text-blue(@click="jump('/pages/account/phoneLogin/main')") 手机验证码登录
 
 
         
@@ -127,8 +127,8 @@ export default {
 .login-bg
   background #fff
   overflow hidden
-  padding-left 50px
-  padding-right 50px
+  padding-left 40px
+  padding-right 40px
   padding-top 50px
 </style>
 

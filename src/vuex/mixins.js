@@ -194,10 +194,14 @@ const wxMixins = {
           {},
           this.apiList.xy.cartListCount.method
         )
-        mpvue.setTabBarBadge({
-          index: 2,
-          text: data.cart_list_count.toString()
-        })
+        if (data.cart_list_count > 0) {
+          mpvue.setTabBarBadge({
+            index: 2,
+            text: data.cart_list_count.toString()
+          })
+        } else {
+          mpvue.removeTabBarBadge()
+        }
       } catch (e) {
         mpvue.removeTabBarBadge()
       }
@@ -319,12 +323,13 @@ const wxMixins = {
       let price = 0
       switch (opt.type) {
         case 1:
-          one = this.$toFixed((
+          one = this.$toFixed(
             parseFloat(opt.att14) *
-            parseFloat(opt.att8) *
-            (1 - parseFloat(opt.att12)) *
-            1.05
-          ), 6)
+              parseFloat(opt.att8) *
+              (1 - parseFloat(opt.att12)) *
+              1.05,
+            6
+          )
           // 当物资是【花纹板187】【普碳开平板185】【低合金开平板186】【碳钢板278】【普板253】【中板280】【低合金中板211】的时候计算公式：板材磅重计算公式=米重*长度*105%
           if (
             opt.goods_id === 187 ||
@@ -336,7 +341,10 @@ const wxMixins = {
             opt.goods_id === 211
           ) {
             // 型云板材上浮5%改为2% --0617 zm
-            one = this.$toFixed((parseFloat(opt.att14) * parseFloat(opt.att8) * 1.02), 6)
+            one = this.$toFixed(
+              parseFloat(opt.att14) * parseFloat(opt.att8) * 1.02,
+              6
+            )
           }
           break
         case 2:
@@ -418,10 +426,12 @@ const wxMixins = {
     },
     $toFixed (s, d) {
       s = s + ''
-      if (!d)d = 0
-      if (s.indexOf('.') === -1)s += '.'
+      if (!d) d = 0
+      if (s.indexOf('.') === -1) s += '.'
       s += new Array(d + 1).join('0')
-      if (new RegExp('^(-|\\+)?(\\d+(\\.\\d{0,' + (d + 1) + '})?)\\d*$').test(s)) {
+      if (
+        new RegExp('^(-|\\+)?(\\d+(\\.\\d{0,' + (d + 1) + '})?)\\d*$').test(s)
+      ) {
         let s = '0' + RegExp.$2
         let pm = RegExp.$1
         let a = RegExp.$3.length
@@ -437,10 +447,14 @@ const wxMixins = {
               } else break
             }
           }
-          s = a.join('').replace(new RegExp('(\\d+)(\\d{' + d + '})\\d$'), '$1.$2')
-        } if (b)s = s.substr(1)
+          s = a
+            .join('')
+            .replace(new RegExp('(\\d+)(\\d{' + d + '})\\d$'), '$1.$2')
+        }
+        if (b) s = s.substr(1)
         return (pm + s).replace(/\.$/, '')
-      } return s + ''
+      }
+      return s + ''
     }
   }
 }

@@ -9,9 +9,13 @@ div
       .filter-right-search.flex.align-center
         .cuIcon-search
         input.pl-10(type="text", placeholder="搜索规格", v-model="searchVal")
-      scroll-view.padding-top-sm.filter-right-content(scroll-y, :scroll-into-view="searchCurId", :style="{height: screenHeight - customBar - 60 + 'px'}")
+      scroll-view.padding-top-sm.filter-right-content(scroll-y, :scroll-into-view="searchCurId", :style="{height: screenHeight - customBar - 60 + 'px'}", v-if="standardList.length > 0")
         .filter-right-list(:id="'idx-' + item.first", v-for="(item, index) in standardList", :key="index", @click="selectStandard(item.name)") {{item.name}}
-    .filter-cur
+        .ft-12.padding.text-gray.text-center(v-if="standardList.length > 15") 加载完成
+      .padding.text-center.text-gray.ft-12.margin-top-xl(v-if="isLoad && standardList.length === 0")
+        span 暂无更多
+        div 详情请联系400-8788-361
+    .filter-cur(v-if="standardList.length > 0")
       .tag.text-gray(:class="{'active': searchIdx === item+1}", v-for="item in 9", :key="item", @click="selectTag(item)") {{item+1}}  
 </template>
 <script>
@@ -25,7 +29,8 @@ export default {
       filterLeftSty: '',
       standardList: [],
       searchVal: '',
-      searchIdx: 1
+      searchIdx: 1,
+      isLoad: false
     }
   },
   computed: {
@@ -110,6 +115,7 @@ export default {
       })
     },
     getStandardList () {
+      this.isLoad = false
       this.ironRequest(this.apiList.xy.standardList.url, this.queryObject, this.apiList.xy.standardList.method, this).then((res) => {
         console.log('getStandardList', res)
         this.searchIdx = 1
@@ -117,6 +123,7 @@ export default {
           item.first = item.name.substr(0, 1)
         })
         this.standardList = res.standards
+        this.isLoad = true
       })
     },
     selectTag (idx) {
@@ -138,8 +145,8 @@ export default {
   background #F2F2F2
 .filter-left-list
   text-align center
-  height 60px
-  line-height 60px
+  height 40px
+  line-height 40px
   color #262626
   &.active
     background #fff

@@ -2,27 +2,28 @@
 .bg-white.h-100
   nav-bar(:title="pageTitle", isBack, :cb="pageBack")
   .login-bg
-    .ft-18.text-center {{pageType == 'smsLogin' ? '手机验证码登录' : '找回密码'}}
+    .ft-20.text-center {{pageType == 'smsLogin' ? '手机验证码登录' : '找回密码'}}
     .row.padding-tb-sm.border-bottom-line.margin-top-xl
       .flex-30.row
         .register-icon.phone(:style="{backgroundImage: 'url(' + imgProxy + 'phone_icon.png)'}", v-if="imgProxy")
       .col
-        input.no-border(placeholder="请输入手机号", v-model="phone", type="number", :maxlength="11")
+        input.no-border.ft-16(placeholder="请输入手机号", v-model="phone", type="number", :maxlength="11")
     .row.padding-tb-sm.border-bottom-line.margin-top-xl
       .flex-30.row
         .register-icon.code(:style="{backgroundImage: 'url(' + imgProxy + 'code_icon.png)'}", v-if="imgProxy")
       .col
-        input.no-border(placeholder="请输入验证码", type="number", v-model="code")
+        input.no-border.ft-16(placeholder="请输入验证码", type="number", v-model="code")
       .flex-90.text-center(style="border-left: 1rpx solid #888", v-show="pageType == 'smsLogin'")
         auth-btn(:phone="phone", :codeType="7", v-if="pageType == 'smsLogin' && codeBtnShow")
       .flex-90.text-center(style="border-left: 1rpx solid #888", v-show="pageType == 'forgetPwd'")
         auth-btn(:phone="phone", :codeType="2", v-if="pageType == 'forgetPwd' && codeBtnShow")
     .row.padding-tb-sm.margin-top-xl.border-bottom-line(v-if="pageType === 'forgetPwd'")
       .flex-30
-        icon.adjust.cuIcon-lock.text-gray
+        icon.ft-18.adjust.cuIcon-lock.text-gray
       .col
-        input.no-border(placeholder="请输入新密码(6-12位数字、字母下划线)", v-model="pwd", type="password")
+        input.no-border.ft-16(placeholder="请输入新密码(6-12位)", v-model="pwd", type="password", :maxlength="12")
     .mt-50.main-btn(hover-class="hover-gray", @click="remoteHandler") {{pageType === 'smsLogin' ? '登录' : '提交'}}
+    .margin-top-sm.text-center.text-blue(@click="back", v-if="pageType === 'smsLogin'") 账号密码登录
 </template>
 
 <script>

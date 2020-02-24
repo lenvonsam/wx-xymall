@@ -59,11 +59,15 @@
                           .margin-bottom-xs(v-for="(r, rIdx) in cart.radios", :key="rIdx")
                             radio.blue.radio(:checked="cart.measure_way_id === r.m_way", @click="weightChoose(r.m_way, cart)")
                             span.padding-left-xs {{r.label}}
-                        .flex.padding-xs.justify-end.align-end
+                        //- .flex.padding-xs.justify-end.align-end
                           .col(style="flex: 0 0 60px;")
                             count-step(v-model="cart.count", @click.native="rowCartCount(cart)", @blur="rowCartCount(cart)", :max="cart.amount_left")
                           .padding-left-xs {{cart.countWeight}}吨 
-                  
+                  .row.padding-xs.justify-end.align-end
+                    .col
+                    .col(style="flex: 0 0 60px;")
+                      count-step(v-model="cart.count", @click.native="rowCartCount(cart)", @blur="rowCartCount(cart)", :max="cart.amount_left")
+                    .padding-left-xs {{cart.countWeight}}吨
             .pb-10(v-if="soldCarts.length > 0", :class="{'pt-10': carts.length === 0}")
               .bg-white
                 .row.padding.flex-center.border-bottom-line
@@ -198,8 +202,14 @@ export default {
     this.alertShow = false
     this.carts = []
     if (!this.isLogin) {
-      this.alertShow = true
-      this.tabDot(0)
+      const me = this
+      this.confirm({ title: '友情提示', content: '您未登录,请先登录' }).then(res => {
+        if (res === 'confirm') {
+          me.jump('/pages/account/login/main')
+        } else {
+          me.tab('/pages/index/main')
+        }
+      })
       return
     }
     if (this.tempObject.type) {
@@ -236,23 +246,25 @@ export default {
     },
     clearCarts () {
       const me = this
-      this.confirm({ content: '确定清空购物车？' }).then(() => {
-        me.btnDisable = true
-        this.showLoading()
-        me.ironRequest('cartEmpty.shtml', { user_id: me.currentUser.user_id }, 'post', this).then(resp => {
-          if (resp && resp.returncode === '0') {
-            me.showMsg('清空成功')
+      this.confirm({ content: '确定清空购物车？' }).then((res) => {
+        if (res === 'confirm') {
+          me.btnDisable = true
+          this.showLoading()
+          me.ironRequest('cartEmpty.shtml', { user_id: me.currentUser.user_id }, 'post', this).then(resp => {
+            if (resp && resp.returncode === '0') {
+              me.showMsg('清空成功')
+              me.btnDisable = false
+              me.carts = []
+            } else {
+              me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
+              me.btnDisable = false
+            }
+          }).catch(err => {
+            me.showMsg(err || '网络异常')
             me.btnDisable = false
-            me.carts = []
-          } else {
-            me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
-            me.btnDisable = false
-          }
-        }).catch(err => {
-          me.showMsg(err || '网络异常')
-          me.btnDisable = false
-        })
-        this.hideLoading()
+          })
+          this.hideLoading()
+        }
       })
     },
     emptySoldItems () {
@@ -559,7 +571,7 @@ export default {
   // position fixed
   // left 0
   // right 0
-// .scroll-view
+  // .scroll-view
   // overflow auto
 .s-footer
   position fixed

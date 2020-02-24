@@ -105,6 +105,10 @@ page,
   font-size: 36rpx;
 }
 
+.ft-20 {
+  font-size: 40rpx;
+}
+
 .ft-25 {
   font-size: 50rpx;
 }
@@ -244,8 +248,8 @@ page,
 
 .login-bg {
   overflow: hidden;
-  padding-left: 100rpx;
-  padding-right: 100rpx;
+  padding-left: 80rpx;
+  padding-right: 80rpx;
   padding-top: 100rpx;
 }
 
