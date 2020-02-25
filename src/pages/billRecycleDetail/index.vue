@@ -188,7 +188,6 @@ export default {
             itm.price = itm.price
             itm.totalWeight = itm.count * Number(itm.weight)
           }
-          debugger
           itm.newTotalWeight = this.$toFixed(itm.count * Number(itm.weight), 3)
           this.carts.push(itm)
           this.isload = false

@@ -35,21 +35,21 @@ div
       .item.padding-sm.flex.align-center(v-for="(item, idx) in cardItem", :key="idx", @click="jumpToPage(item.url)")
         .col
           .row
-            img(:src="item.imgPath")
-            .margin-left-sm.col(:class="{'solid-bottom': idx < (cardItem.length - 1)}") {{item.title}}
+            img(:src="item.imgPath", mode="widthFix")
+            .margin-left-sm.col(:class="{'solid-bottom': idx < (cardItem.length - 1)}", style="color:#000") {{item.title}}
         .cuIcon-right.text-gray
     .margin-top-sm.me-icon.bg-white.ft-15(style="overflow:hidden;border-radius: 10rpx")
       .item.padding-sm.flex.align-center(@click="jump('/pages/account/setting/main')")
         .col
           .row
-            img(src="/static/images/wdwld.png")
+            img(src="/static/images/wdwld.png", mode="widthFix")
             .margin-left-sm.col.solid-bottom 用户设置
         .cuIcon-right.text-gray
       .item.padding-sm.flex.solid-bottom.align-center.relative.ft-15
         button(open-type="contact", style="position: absolute; left:0;right: 0; top:0; bottom: 0; z-index: 10; background: transparent")
         .col
           .flex.align-center
-            img(src="/static/images/customer_icon.png")
+            img(src="/static/images/customer_icon.png", mode="widthFix")
             .padding-left-sm 在线客服
         .cuIcon-right.text-gray
     alert(:title="alertText", v-model="alertShow", :cb="alertCb")
@@ -208,8 +208,8 @@ export default {
     margin 0 auto
 .me-icon
   img
-    width 15px
-    height 15px
+    width 20px
+    // height 20px
 .border-radius
   border-radius 10px
 .dot

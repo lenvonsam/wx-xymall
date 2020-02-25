@@ -61,7 +61,8 @@ export default {
       gallery: [],
       notices: {},
       lineOptions: lineOpts,
-      alertShow: false
+      alertShow: false,
+      top: 0
     }
   },
   components: {
