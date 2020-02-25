@@ -60,7 +60,7 @@ div
             .col.text-right.text-black {{billDetail.out_all_goodsprice}}元
           .flex.padding-bottom-xs
             .col 实发吊费
-            .col.text-right.text-black {{billDetail.out_all_lift}}元
+            .col.text-right.text-black {{billDetail.out_all_lift === '0.00' ? '0' : billDetail.out_all_lift}}元
           .flex
             .col 实发总金额
             .col.text-right.text-black {{billDetail.out_all_price}}元    

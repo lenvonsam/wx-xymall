@@ -25,24 +25,14 @@ div
                           span.text-red.ft-13(v-if="item.price === '--'") 开售时间:{{item.show_time}}
                           span.text-blue(v-else-if="item.show_price === true") ￥{{item[mallTypeObject[itemType].price]}}
                           .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)") 查看价格
-                          //- span.c-red.ft-13(v-if="item.price === '--'") 开售时间:{{item.show_time}}
-                          //- span.c-red(v-else-if="item.show_price === true") ￥{{item[mallTypeObject[itemType].price]}}
-                          //- .blue-buy.ft-12(v-else, @click="cb(item, 'showPrice', $event)") 查看价格
                       .row.pt-5.flex-center.ft-12
                         .col.c-gray
                           span {{item[mallTypeObject[itemType].material]}}
-                          //- span.ml-8 {{item[mallTypeObject[itemType].standard]}}
                           span.ml-8 {{item[mallTypeObject[itemType].length]}}米
                           span.ml-8 {{item[mallTypeObject[itemType].wh_name]}}
                           .sub-mark.ml-5 {{item[mallTypeObject[itemType].supply]}}
                         .text-right
                           span ({{item.weightMark}})
-                          //- span {{item.price.split('/').length === 1 ? '理计' : '理计/磅计'}}
-                      //- .row.pt-5.flex-center.ft-13(v-if="item[mallTypeObject[itemType].tolerance]||item[mallTypeObject[itemType].weightRange]")
-                        .col.c-gray
-                          span(v-if="item[mallTypeObject[itemType].tolerance]") 公差范围: {{item[mallTypeObject[itemType].tolerance]}}
-                          span.ml-8(v-if="item[mallTypeObject[itemType].weightRange]") 重量范围: {{item[mallTypeObject[itemType].weightRange]}}
-                      //- .row.pt-0.flex-center.ft-13.c-gray(v-if="item.show_price === true")
                       .pt-5.c-gray.ft-12(v-if="item[mallTypeObject[itemType].tolerance] || item[mallTypeObject[itemType].weightRange]")
                         span(v-if="item[mallTypeObject[itemType].tolerance]") 公差范围: {{item[mallTypeObject[itemType].tolerance]}}
                         span.ml-8(v-if="item[mallTypeObject[itemType].weightRange]") 重量范围: {{item[mallTypeObject[itemType].weightRange]}}
