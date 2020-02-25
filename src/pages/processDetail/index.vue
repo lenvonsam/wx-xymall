@@ -111,6 +111,19 @@ export default {
   },
   onUnload () {
     console.log('----onUnload------')
+    this.typeIndex = 0
+    this.processType = '开平'
+    this.pTypeArray = ['开平', '镀锌']
+    this.processTypeOpen = false
+    this.dateOpen = false
+    this.dateVal = ''
+    this.material = ''
+    this.rowCount = []
+    this.originVal = []
+    this.remark = ''
+    this.btnDisable = false
+    this.rowObj = {}
+    this.pno = ''
     this.pObj = {}
   },
   methods: {
