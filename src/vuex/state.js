@@ -93,7 +93,7 @@ export default {
       name: '待开票',
       dotKey: 'toinvoice',
       url: {
-        path: '/pages/invoice/main?tabName=1'
+        path: '/pages/invoice/main?tabName=0'
       }
     }
   ]
