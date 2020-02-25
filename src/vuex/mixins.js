@@ -425,6 +425,9 @@ const wxMixins = {
       return result
     },
     $toFixed (s, d) {
+      // const m = Math.pow(10, d)
+      // s = Math.round(s * m, 10) / m
+      s = this.formatFloat(s, d)
       s = s + ''
       if (!d) d = 0
       if (s.indexOf('.') === -1) s += '.'
@@ -455,6 +458,11 @@ const wxMixins = {
         return (pm + s).replace(/\.$/, '')
       }
       return s + ''
+    },
+    formatFloat (f, digit) {
+      // 转换和处理函数
+      const m = Math.pow(10, digit)
+      return Math.round(f * m, 10) / m
     }
   }
 }

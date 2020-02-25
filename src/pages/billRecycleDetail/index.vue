@@ -36,10 +36,7 @@
                     span.padding-left-xs {{bill.weight_range}}
                 .flex.justify-between.flex-direction.align-end
                   .col
-                    radio-group.block(v-model="bill.measure_way_id")
-                      .margin-bottom-xs(v-for="(r, rIdx) in bill.radios", :key="rIdx")
-                        radio.blue.radio(:checked="bill.measure_way_id === r.m_way", @click="weightChoose(r.m_way, bill)")
-                        span.padding-left-xs {{r.label}}
+                    z-radio(@checkHander="weightChoose(r.m_way, bill)", v-for="(r, rIdx) in bill.radios", :key="rIdx", :label="r.label", :checked="bill.measure_way_id === r.m_way")
                   .flex.padding-xs.justify-end.align-end
                     .col(style="flex: 0 0 50px;")
                       count-step(v-model="bill.count", @input="rowCartCount(bill)", @blur="rowCartCount(bill)", :max="bill.amount_left")
@@ -313,8 +310,9 @@ export default {
       }
     },
     weightChoose (val, rowItem) {
+      debugger
       rowItem.measure_way_id = val
-      if (val === 2) {
+      if (val === 2 || val === 3) {
         rowItem.weight = rowItem.radios[0].weight
         rowItem.price = rowItem.radios[0].price
       } else {

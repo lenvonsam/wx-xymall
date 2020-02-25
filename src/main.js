@@ -10,6 +10,7 @@ import emptyImage from './components/EmptyImage.vue'
 import timeText from './components/TimeText.vue'
 import alert from './components/Alert.vue'
 import ironScroll from './components/IronScroll.vue'
+import zradio from './components/ZRadio'
 
 Vue.config.productionTip = false
 App.mpType = 'app'
@@ -23,6 +24,7 @@ Vue.component('timeText', timeText)
 Vue.component('emptyImage', emptyImage)
 Vue.component('alert', alert)
 Vue.component('ironScroll', ironScroll)
+Vue.component('z-radio', zradio)
 
 Vue.prototype.$store = store
 

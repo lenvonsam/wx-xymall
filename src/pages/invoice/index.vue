@@ -49,12 +49,15 @@ div
           span.text-red ￥ {{totalPriceAll}}
       //- .col.apply.flex-100.flex.flex-center(@click="invoiceAction") {{tabName == '0' ? '批量申请' : '批量确认'}}  
       .main-btn.margin-right-sm(@click="invoiceAction") {{tabName == '0' ? '批量申请' : '批量确认'}}      
+  //- alert(:title="alertTitle", :cb="alertCb", v-model="alertShow" )  
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
 export default {
   data () {
     return {
+      // alertTitle: '',
+      // alertShow: false,
       swiperCount: 0,
       tabName: '0',
       tabList: [
@@ -252,6 +255,7 @@ export default {
                 obj.lift_price = resp.lift_price
                 // me.showMsg('申请成功')
                 me.configVal({ key: 'tempObject', val: obj })
+                // me.back(-1)
                 me.jump('/pages/invoiceDetail/main?id=' + me.tabName)
               } else {
                 me.showMsg(resp ? resp.errormsg : '网络错误')
@@ -268,13 +272,9 @@ export default {
           // 发票确认
           this.ironRequest('confirmInvoice.shtml', { user_id: this.currentUser.user_id, id: ids }, 'post', this).then(resp => {
             if (resp && resp.returncode === '0') {
-              this.confirm({ content: '发票确认成功' }).then((res) => {
-                if (res !== 'confirm') return false
-                me.listData = []
-                me.loadData()
-              })
-            } else {
-              this.showMsg(resp === undefined ? '网路异常' : resp.errormsg)
+              me.showMsg('发票确认成功')
+              me.listData = []
+              me.loadData()
             }
           })
         }
@@ -290,9 +290,6 @@ export default {
       }
       this.queryObject.status = this.tabName
       const me = this
-      // if (me.currentPage === 0) {
-      //   me.$ironLoad.show()
-      // }
       this.loading = true
       this.ironRequest('invoiceList.shtml', this.queryObject, 'post', this).then(resp => {
         if (resp && resp.returncode === '0') {
@@ -323,10 +320,6 @@ export default {
             })
             this.finished = false
           }
-          // if (done) done()
-          // if (me.currentPage === 0) {
-          //   me.$ironLoad.hide()
-          // }
         }
         this.loading = false
         this.isTabDisabled = false
