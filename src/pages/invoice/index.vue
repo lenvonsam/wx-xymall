@@ -266,7 +266,8 @@ export default {
           // 发票确认
           this.ironRequest('confirmInvoice.shtml', { user_id: this.currentUser.user_id, id: ids }, 'post', this).then(resp => {
             if (resp && resp.returncode === '0') {
-              this.confirm({ content: '发票确认成功' }).then(() => {
+              this.confirm({ content: '发票确认成功' }).then((res) => {
+                if (res !== 'confirm') return false
                 me.listData = []
                 me.loadData()
               })

@@ -100,7 +100,7 @@ export default {
       let totalWeight = 0
       this.carts.map(itm => {
         // itm.newTotalWeight = Number((itm.count * itm.weight).toFixed(3))
-        itm.newTotalWeight = Number(this.$toFixed(itm.count * itm.weight), 3)
+        itm.newTotalWeight = Number(this.$toFixed(Number(itm.count) * Number(itm.weight), 3))
         if (itm.choosed) {
           if (itm.price.indexOf('--') < 0) {
             price += itm.price * itm.newTotalWeight
@@ -120,6 +120,10 @@ export default {
         totalPrice: this.$toFixed(Number(totalPrice), 2)
       }
     }
+  },
+  onUnload () {
+    this.carts = []
+    this.allChoosed = false
   },
   beforeMount () {
     if (this.tempObject.type) {
@@ -185,9 +189,10 @@ export default {
             }]
             itm.weight = wt
             itm.price = itm.price
-            itm.totalWeight = itm.count * itm.weight
+            itm.totalWeight = itm.count * Number(itm.weight)
           }
-          itm.newTotalWeight = this.$toFixed(Number(itm.count * itm.weight), 3)
+          debugger
+          itm.newTotalWeight = this.$toFixed(itm.count * Number(itm.weight), 3)
           this.carts.push(itm)
           this.isload = false
         })
@@ -231,7 +236,7 @@ export default {
       this.$forceUpdate()
     },
     rowCartCount (item) {
-      item.newTotalWeight = this.$toFixed(Number(item.count * item.weight), 3)
+      item.newTotalWeight = this.$toFixed(Number(item.count) * Number(item.weight), 3)
     },
     generateOrder () {
       const me = this
