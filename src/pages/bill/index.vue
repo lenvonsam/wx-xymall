@@ -19,7 +19,7 @@ div
         time-line(type="mallist")
       template(v-else)
         template(v-if="listData.length > 0")
-          scroll-view.padding-top-sm(
+          scroll-view.padding-top-sm.padding-bottom(
             scroll-y, 
             @scrolltolower="loadMore", 
             :style="{height: scrollHeight}")
