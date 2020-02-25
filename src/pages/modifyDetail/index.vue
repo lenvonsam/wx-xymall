@@ -307,14 +307,12 @@ export default {
         goods_id: item.goods_id,
         juanban: item.juanban
       }
-      debugger
       const result = this.calc(options)
       const money = Number(this.$toFixed(result.price), 2)
       const oldLift = isLift === '1' ? this.$toFixed(Number(item.weight) * lift, 2) : 0
       const everyLift = isLift === '1' ? this.$toFixed(Number(result.weight * lift), 2) : 0
-      this.newLift = Number(this.$toFixed(this.newLift + Number(everyLift) - Number(oldLift)))
+      this.newLift = Number(this.$toFixed(this.newLift + Number(everyLift) - Number(oldLift), 2))
       item.weight = this.$toFixed(result.weight, 3)
-      debugger
       console.log('weight', item.weight)
       this.newPrice = Number(this.$toFixed(this.newPrice + money - item.price, 2))
       item.price = Number(money)

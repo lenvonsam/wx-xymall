@@ -268,13 +268,10 @@ export default {
           if (res !== 'confirm') return false
           me.btnDisable = true
           me.ironRequest('cartEmpty.shtml', { user_id: me.currentUser.user_id, type: 1 }, 'post', this).then(resp => {
-            if (resp.data && resp.data.returncode === '0') {
+            if (resp && resp.returncode === '0') {
               me.showMsg('清空成功')
               me.btnDisable = false
               me.soldCarts = []
-            } else {
-              me.showMsg(resp.data === undefined ? '网络异常' : resp.data.errormsg)
-              me.btnDisable = false
             }
           }).catch(err => {
             me.showMsg(err || '网络异常')
