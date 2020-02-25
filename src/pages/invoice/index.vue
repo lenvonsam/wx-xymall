@@ -233,13 +233,15 @@ export default {
           let totalPrice = filterArray.map(item => item.price).reduce((a, b) => a + b)
           totalPrice = this.$toFixed(totalPrice, 2)
           // 货款金额
-          // let goodsPrice = filterArray.map(item => item.goods_price).reduce((a, b) => a + b).toFixed(2)
+          let goodsPrice = filterArray.map(item => item.goods_price).reduce((a, b) => a + b).toFixed(2)
           // 吊费金额
-          // let liftPrice = filterArray.map(item => item.lift_price).reduce((a, b) => a + b).toFixed(2)
+          let liftPrice = filterArray.map(item => item.lift_price).reduce((a, b) => a + b).toFixed(2)
           let obj = {
             contract_no: nos,
             id: ids,
             price: totalPrice,
+            goods_price: goodsPrice,
+            lift_price: liftPrice,
             title,
             type
           }
