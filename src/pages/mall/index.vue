@@ -11,7 +11,7 @@ div
             time-line(type="mallist")
           template(v-else)  
             template(v-if="goodsNameList[tabIdx].data.length > 0")
-              scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: scrollHeight}")
+              scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: scrollHeight}", :refresher-enabled="false", :refresher-threshold="50", @refresherrefresh="testRefresh", @refresherrestore="testRestore", @refresherabort="testAbort", ref="testScroll")
                 div(:class="{cardSty: !mallFlag}", style="padding-top: 6rpx")
                   .padding.pr-10.pl-10(v-for="(item,idx) in goodsNameList[tabIdx].data", :key="idx", :class="!mallFlag ? 'card-list' : 'bg-white margin-bottom-xs'")
                     template(v-if="mallFlag === 1")
@@ -237,6 +237,16 @@ export default {
   // },
   methods: {
     ...mapActions(['configVal']),
+    testRefresh (e) {
+      console.log('test refresh', e)
+      console.log('scroll', this.$refs.testScroll[0])
+    },
+    testRestore (e) {
+      console.log('test restore', e)
+    },
+    testAbort (e) {
+      console.log('test abort', e)
+    },
     loadMore () {
       if (!this.isLoad && !this.goodsNameList[this.swiperCount].finished) {
         this.currentPage++
