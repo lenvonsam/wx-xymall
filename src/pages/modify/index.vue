@@ -5,7 +5,7 @@ div
     .tab-line
     .cu-item.flex-sub(v-for="(item,index) in billTab", :class="item.status === tabName?'text-blue cur':''", :key="index", @click="selectTabs(item, index)")
       span {{item.title}}
-  .padding-sm.ft-12(style="background: #FEF7E7;")
+  .padding-sm.ft-12(style="background: #FEF7E7;", v-if="tabName == '1'")
     span.text-orange 友情提示：仅展示允许修改的合同，修改后出库进行结算
   template(v-if="isload")
     time-line(type="mallist")  

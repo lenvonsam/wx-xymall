@@ -6,7 +6,7 @@ div
       span {{contractDetail.deal_no}}
       span.padding-left-sm(v-if="contractDetail.status != 18 && contractDetail.status != 19") {{billStatus}}
     .text-red(v-if="contractDetail.status == 18 || contractDetail.status == 19") {{billStatus}}
-    .text-right(@click="openEdit()", v-else) {{isEdit ? '完成' : '编辑'}} 
+    .text-right(@click="openEdit()", v-else-if="contractDetail.status === 14") {{isEdit ? '完成' : '编辑'}} 
   
   template(v-if="isload")
     time-line(type="mallist")  
