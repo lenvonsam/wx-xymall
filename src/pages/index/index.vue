@@ -192,6 +192,7 @@ export default {
   padding-left 15px
   padding-right 15px
   z-index 200
+  background #fff
 .btn-classify
   display inline-block
   padding 8px 12px
