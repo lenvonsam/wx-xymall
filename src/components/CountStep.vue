@@ -40,12 +40,12 @@ export default {
       if ((this.num > this.max && this.max > 0) || this.max === 0) {
         this.num = this.max
       } else {
-        this.num = newVal
+        this.num = Number(newVal)
       }
-      this.$emit('input', newVal)
+      this.$emit('input', Number(newVal))
     },
     value (newVal, oldVal) {
-      this.num = newVal
+      this.num = Number(newVal)
       this.$emit('input', this.num)
     }
   },
