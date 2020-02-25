@@ -21,7 +21,8 @@ div
   div(style="padding-top: 15px")
     template(v-if="isLoad")
       template(v-if="listData.length > 0")
-        scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: screenHeight - customBar - 185 +'px'}")
+        //- scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: screenHeight - customBar - 185 +'px'}")
+        iron-scroll(@scrolltolower="loadMore", :height="screenHeight - customBar - 185", :refresh="true", @onRefresh="onRefresh", :loadFinish="loadFinish")
           .bg-white.padding.border-bottom-line.row(v-for="(item,idx) in listData", :key="idx")
             .col
               div {{item.content}}
@@ -32,7 +33,7 @@ div
                 span(v-else) -
                 span {{item.price}}
               .text-gray.margin-top(v-if="item.nowAvlbFund") {{item.nowAvlbFund}}
-          .padding.text-gray.ft-13.text-center(v-if="loading") 努力加载中...
+          //- .padding.text-gray.ft-13.text-center(v-if="loading") 努力加载中...
       .text-center.padding-top-xl(v-else)
         empty-image(url="bill_empty.png", className="img-empty")
     time-line(type="mallist", v-else)
@@ -62,7 +63,8 @@ export default {
       typeStatus: '',
       loading: false,
       month: 0,
-      floatBarShow: false
+      floatBarShow: false,
+      loadFinish: false
     }
   },
   computed: {
@@ -149,9 +151,14 @@ export default {
         this.floatBarShow = true
       }
     },
-    async loadData () {
+    onRefresh (done) {
+      this.currentPage = 0
+      this.loadData(done)
+    },
+    async loadData (done) {
       try {
         // this.isTabDisabled = true
+        this.loadFinish = false
         if (this.currentPage === 0) {
           this.isload = false
         }
@@ -188,11 +195,14 @@ export default {
           me.listData.push(...list)
         } else {
           me.currentPage--
+          me.loadFinish = true
         }
         this.loading = false
+        if (done) done()
         // this.isTabDisabled = false
       } catch (e) {
         this.loading = false
+        if (done) done()
         this.showMsg(e)
       }
     }
