@@ -31,7 +31,7 @@ div
                   .text-right.flex.flex-direction.align-end(:class="tabName !== '3' ? 'justify-between' : 'justify-center'")
                     .text-blue.ft-18 ￥{{item.price}}
                     .invoice-detail-btn.margin-top-sm(v-if="tabName != '0' && item.price > 0", @click="jumpDetail(item)") 查看详情
-                    .text-gray(v-if="tabName !== '3'") 吊费：{{item.lift_price}}
+                    .text-gray(v-if="tabName !== '3'") 吊费：￥{{item.lift_price}}
             .padding.text-gray.ft-13.text-center(v-if="loading") 努力加载中... 
             .padding.text-gray.ft-13.text-center(v-if="finished") 加载完成 
         .text-center.c-gray.pt-100(v-else)
