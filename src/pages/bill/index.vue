@@ -19,7 +19,7 @@ div
         time-line(type="mallist")
       template(v-else)
         template(v-if="listData.length > 0")
-          scroll-view.padding-top-sm.padding-bottom(
+          scroll-view.padding-top-sm(
             scroll-y, 
             @scrolltolower="loadMore", 
             :style="{height: scrollHeight}")
@@ -94,7 +94,7 @@ export default {
   },
   computed: {
     ...mapState({
-      custom: state => state.custom,
+      customBar: state => state.customBar,
       screenHeight: state => state.screenHeight,
       currentUser: state => state.user.currentUser,
       tempObject: state => state.tempObject,
@@ -103,7 +103,7 @@ export default {
     })
   },
   onShow () {
-    this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.custom.top) - 166 + 'rpx'
+    this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 196 + 'rpx'
     // this.finished = true
   },
   beforeMount () {
