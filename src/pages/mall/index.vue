@@ -78,7 +78,7 @@ div
                         .text-right
                           .blue-buy(v-if="item.max_count == 0",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
                           .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="item.show_price") 购买
-                          .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)") 查看价格
+                          .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)", style="padding-top: 2rpx") 查看价格
                 .padding.text-gray.ft-13.text-center(v-if="loading") 努力加载中...
                 .padding.text-gray.ft-13.text-center(v-if="goodsNameList[tabIdx].finished") 加载完成
                 //- span(v-for="(item,idx) in mallItems", :key="idx") {{idx}}
