@@ -50,7 +50,9 @@ div
                   span 新单数量:{{bill.count}}支， {{bill.weight}}吨
               .flex.justify-between.flex-direction.align-end
                 .col
-                  radio-group.block(v-model="bill.measure_way_id")
+                  z-radio(v-for="(r, rIdx) in bill.radios", :key="rIdx", :label="r.label", :checked="bill.measure_way === r.m_way")
+                    
+                  //- radio-group.block(v-model="bill.measure_way_id")
                     div(v-for="(r, rIdx) in bill.radios", :key="rIdx")
                       radio.blue.radio(:checked="bill.measure_way === r.m_way", @click="weightChoose(r.m_way, bill)")
                       span.padding-left-xs {{r.label}}
@@ -305,13 +307,15 @@ export default {
         goods_id: item.goods_id,
         juanban: item.juanban
       }
+      debugger
       const result = this.calc(options)
       const money = Number(this.$toFixed(result.price), 2)
-      const oldLift = isLift === '1' ? this.$toFixed(Number(item.weight * lift), 2) : 0
+      const oldLift = isLift === '1' ? this.$toFixed(Number(item.weight) * lift, 2) : 0
       const everyLift = isLift === '1' ? this.$toFixed(Number(result.weight * lift), 2) : 0
       this.newLift = Number(this.$toFixed(this.newLift + Number(everyLift) - Number(oldLift)))
-      item.weight = result.weight
-
+      item.weight = this.$toFixed(result.weight, 3)
+      debugger
+      console.log('weight', item.weight)
       this.newPrice = Number(this.$toFixed(this.newPrice + money - item.price, 2))
       item.price = Number(money)
       this.getNewBillPrice()
@@ -324,7 +328,7 @@ export default {
           if (res.choosed) {
             const lift = me.wh_lift.lift
             let isLift = me.wh_lift[res.wh_name]
-            const oldLift = isLift === '1' ? this.$toFixed(Number(res.weight * lift), 2) : 0
+            const oldLift = isLift === '1' ? this.$toFixed(Number(res.weight) * lift, 2) : 0
             if (me.contractDetail.is_lift !== 1) {
               isLift = 2
             }
@@ -374,6 +378,7 @@ export default {
             itm.order_price = itm.order_price / 100
             itm.price = Number(this.$toFixed(itm.order_price * itm.provided_qtt, 2))
             itm.weight = itm.provided_qtt_new || itm.provided_qtt_new === 0 ? itm.provided_qtt_new : itm.provided_qtt
+            itm.weight = this.$toFixed(itm.weight, 3)
             itm.count = itm.left_qtt_new || itm.left_qtt_new === 0 ? itm.left_qtt_new : itm.left_qtt
             goodsPriceNew += itm.price
             const lift = this.wh_lift.lift
@@ -381,11 +386,12 @@ export default {
             if (this.contractDetail.is_lift !== 1) {
               isLift = 2
             }
-            const oldLift = isLift === '1' ? Number(this.$toFixed(itm.weight * lift, 2)) : 0
+            const oldLift = isLift === '1' ? Number(this.$toFixed(Number(itm.weight) * lift, 2)) : 0
             liftPriceNew += oldLift
             list.push(itm)
           })
           this.modifyList = list
+
           this.newPrice = this.type === '2' ? this.contractDetail.goods_price_new : goodsPriceNew
           this.newLift = this.type === '2' ? this.contractDetail.lift_price_new : Number(this.$toFixed(liftPriceNew, 2))
           // if (done) done()

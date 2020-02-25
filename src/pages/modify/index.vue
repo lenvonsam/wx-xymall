@@ -13,7 +13,7 @@ div
     template(v-if="listData.length > 0")
       scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: screenHeight - 140 +'px'}")  
         .padding-top-sm
-          .padding-sm.bg-white.margin-bottom-sm(v-for="(item, itemIdx) in listData", :key="itemIdx")
+          .padding-sm.bg-white.margin-bottom-sm(@click="jump(`/pages/modifyDetail/main?id=${item.discussid}&type=${tabName}`)", v-for="(item, itemIdx) in listData", :key="itemIdx")
             .flex.align-center
               .ft-16.padding-right-sm {{item.tstc_no}}
               img.ding-icon(src="/static/images/ding.png", v-if="item.contract_type == 12")
@@ -24,8 +24,8 @@ div
                 p 吊费：¥{{item.lift_price}}
               .card-right
                 .ft-16.padding-bottom-xs.text-bold.text-black ￥{{item.price}}
-                .text-red(v-if="item.status === 18") 修改中
-                .bill-btn.round(v-else, @click="jump(`/pages/modifyDetail/main?id=${item.discussid}&type=${tabName}`)") {{tabName == '1' ? '申请修改' : '去确认'}}
+                .text-red.text-right(v-if="item.status === 18") 修改中
+                .bill-btn.round(v-else) {{tabName == '1' ? '申请修改' : '去确认'}}
     .text-center.c-gray.pt-100(v-else)
       empty-image(url="bill_empty.png", className="img-empty")
       div 您暂时没有相关合同           

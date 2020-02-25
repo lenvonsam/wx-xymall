@@ -36,7 +36,7 @@
                     span.padding-left-xs {{cart.product_standard}}
                   .text-blue ￥{{cart.price}}/吨
                 .content.ft-13
-                  .flex.flex-center
+                  .flex.flex-center.justify-between
                     div
                       div
                         span {{cart.product_material}}
@@ -53,16 +53,10 @@
                       .pt-5
                         span(v-if="cart.weight_range") 重量范围:
                         span.ml-10(v-if="cart.weight_range") {{cart.weight_range}} 
-                    .col.text-right
+                    .text-right
                       .flex.flex-direction.justify-between
-                        radio-group.block(v-model="cart.measure_way_id")
-                          .margin-bottom-xs(v-for="(r, rIdx) in cart.radios", :key="rIdx")
-                            radio.blue.radio(:checked="cart.measure_way_id === r.m_way", @click="weightChoose(r.m_way, cart)")
-                            span.padding-left-xs {{r.label}}
-                        //- .flex.padding-xs.justify-end.align-end
-                          .col(style="flex: 0 0 60px;")
-                            count-step(v-model="cart.count", @click.native="rowCartCount(cart)", @blur="rowCartCount(cart)", :max="cart.amount_left")
-                          .padding-left-xs {{cart.countWeight}}吨 
+                        z-radio(@checkHander="weightChoose(r.m_way, cart)", v-for="(r, rIdx) in cart.radios", :key="rIdx", :label="r.label", :checked="cart.measure_way_id === r.m_way")
+                        
                   .row.padding-xs.justify-end.align-end
                     .col
                     .col(style="flex: 0 0 60px;")
@@ -382,6 +376,7 @@ export default {
       }
     },
     weightChoose (val, rowItem) {
+      debugger
       rowItem.measure_way_id = val
       if (val === 2) {
         rowItem.weight = rowItem.radios[0].weight
@@ -394,6 +389,7 @@ export default {
       }
       this.ironRequest('cartUpdate.shtml', { cart_id: rowItem.cart_id, user_id: this.currentUser.user_id, measure_way: val, count: rowItem.count }, 'post', this).then(res => {
       })
+      this.$forceUpdate()
     },
     rowCartCount (obj) {
       console.log(obj.count)
