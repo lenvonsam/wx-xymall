@@ -76,12 +76,16 @@ div
         .info.c-gray.padding-top-xs.text-center
           span(v-if="currentBalance < payMountInfo") 点击按钮，线下收到货款，此单自动完成
           span(v-else) 点击按钮，此单自动完成
+    alert(:title="alertTitle", :cb="alertCb", v-model="alertShow")     
 </template>
 <script>
 import { mapState } from 'vuex'
 export default {
   data () {
     return {
+      alertFlag: 0,
+      alertShow: false,
+      alertTitle: '',
       chooseType: 'balance',
       currentBalance: 0,
       btnDisable: false,
@@ -153,6 +157,21 @@ export default {
     this.payPwd = ''
   },
   methods: {
+    alertCb () {
+      const me = this
+      if (this.alertFlag === 1) {
+        me.showLoading()
+        setTimeout(() => {
+          me.hideLoading()
+          me.redirect('/pages/bill/main?tabName=6')
+        }, 3000)
+        me.btnDisable = false
+      } else if (this.alertFlag === 2) {
+        me.redirect('/pages/bill/main?tabName=0')
+        me.btnDisable = false
+      }
+      this.alertShow = false
+    },
     sendSmsChoosed () {
       this.smsNotify = !this.smsNotify
       this.$forceUpdate()
@@ -281,23 +300,30 @@ export default {
               if (res && res.returncode === '0') {
                 me.hideLoading()
                 if (me.pageType === 'offlinePay') {
-                  me.confirm({ content: '支付成功！请联系司机去平台仓库提货!' }).then((res) => {
-                    me.showLoading()
-                    if (res === 'confirm') {
-                      setTimeout(() => {
-                        me.hideLoading()
-                        me.redirect('/pages/bill/main?tabName=6')
-                      }, 3000)
-                    }
-                    me.btnDisable = false
-                  })
+                  this.alertTitle = '支付成功！请联系司机去平台仓库提货!'
+                  this.alertFlag = 1
+                  this.alertShow = true
+
+                  // me.confirm({ content: '支付成功！请联系司机去平台仓库提货!' }).then((res) => {
+                  //   me.showLoading()
+                  //   if (res === 'confirm') {
+                  //     setTimeout(() => {
+                  //       me.hideLoading()
+                  //       me.redirect('/pages/bill/main?tabName=6')
+                  //     }, 3000)
+                  //   }
+                  //   me.btnDisable = false
+                  // })
                 } else {
-                  me.confirm('支付成功!').then((res) => {
-                    if (res === 'confirm') {
-                      me.redirect('/pages/bill/main?tabName=0')
-                    }
-                    me.btnDisable = false
-                  })
+                  me.alertTitle = '支付成功'
+                  me.alertFlag = 2
+                  me.alertShow = true
+                  // me.confirm('支付成功!').then((res) => {
+                  //   if (res === 'confirm') {
+                  //     me.redirect('/pages/bill/main?tabName=0')
+                  //   }
+                  //   me.btnDisable = false
+                  // })
                 }
               } else {
                 me.btnDisable = false
