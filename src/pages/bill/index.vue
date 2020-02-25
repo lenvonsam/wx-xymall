@@ -181,6 +181,7 @@ export default {
       this.refresher()
     },
     swiperChange (e) {
+      this.showLoading()
       const idx = e.mp.detail.current
       this.swiperCount = idx
       this.tabName = this.billTab[idx].status
@@ -194,6 +195,10 @@ export default {
       this.isTabDisabled = true
       this.pageHeight = this.tabName.status === '1' ? 150 : 100
       this.loadData()
+      // const me = this
+      // this.throttle(function () {
+      //   me.loadData()
+      // }, 300)
     },
     refresher () {
       console.log('billNo', this.billNo)
@@ -343,6 +348,7 @@ export default {
           me.isload = false
         }
         me.isTabDisabled = false
+        me.hideLoading()
       })
     },
     loadMore () {
