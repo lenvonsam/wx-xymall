@@ -159,7 +159,8 @@ export default {
     },
     backInfo () {
       const me = this
-      this.confirm({ content: '您的合同在120min内未支付将做违约处理，请尽快完成支付，确认要离开收银台？' }).then(() => {
+      this.confirm({ content: '您的合同在120min内未支付将做违约处理，请尽快完成支付，确认要离开收银台？' }).then((res) => {
+        if (res !== 'confirm') return false
         me.back()
       })
     },
@@ -181,7 +182,8 @@ export default {
         let encyptPwd = me.base64Str(this.payPwd)
         const msgs = '磅计物资提货时，如需实提补款，平台将从余额扣取相应金额'
         console.log('1')
-        this.confirm({ content: msgs }).then(() => {
+        this.confirm({ content: msgs }).then((res) => {
+          if (res !== 'confirm') return false
           console.log(this.chooseType)
           if (this.chooseType === 'offpay') {
             // 线下转账/或预约支付
@@ -213,7 +215,8 @@ export default {
               this.ironRequest(reqUrl, body, 'post', this).then(resp => {
                 console.log('res', resp)
                 if (resp.returncode === '0') {
-                  this.confirm({ content: '银行转账信息提交成功，请耐心等待审批' }).then(() => {
+                  this.confirm({ content: '银行转账信息提交成功，请耐心等待审批' }).then((res) => {
+                    if (res !== 'confirm') return false
                     me.btnDisable = false
                     me.back()
                   })

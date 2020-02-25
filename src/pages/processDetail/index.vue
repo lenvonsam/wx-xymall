@@ -121,7 +121,8 @@ export default {
     delProcess () {
       const me = this
       if (!this.btnDisable) {
-        this.confirm({ content: '您确定要删除吗?' }).then(() => {
+        this.confirm({ content: '您确定要删除吗?' }).then((res) => {
+          if (res !== 'confirm') return false
           me.btnDisable = true
           me.ironRequest('processDel.shtml', { process_no: this.pno }, 'post', me).then(resp => {
             if (resp && resp.returncode === '0') {

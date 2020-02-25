@@ -177,7 +177,8 @@ export default {
       })
     },
     applyEdit () {
-      this.confirm({content: '请确认修改合同'}).then(() => {
+      this.confirm({content: '请确认修改合同'}).then((res) => {
+        if (res !== 'confirm') return false
         const seqList = []
         const orderList = []
         const countList = []
@@ -316,7 +317,8 @@ export default {
       this.getNewBillPrice()
     },
     promptClose () {
-      this.confirm({content: '删除后将从合同中移除此规格，是否继续？(点击申请修改后，删除操作生效)'}).then(() => {
+      this.confirm({content: '删除后将从合同中移除此规格，是否继续？(点击申请修改后，删除操作生效)'}).then((conRes) => {
+        if (conRes !== 'confirm') return false
         const me = this
         me.modifyList.find((res, index) => {
           if (res.choosed) {

@@ -270,7 +270,8 @@ export default {
     emptySoldItems () {
       const me = this
       if (!this.btnDisable) {
-        this.confirm({ content: '您确定要清空失效物资吗？' }).then(() => {
+        this.confirm({ content: '您确定要清空失效物资吗？' }).then((res) => {
+          if (res !== 'confirm') return false
           me.btnDisable = true
           me.ironRequest('cartEmpty.shtml', { user_id: me.currentUser.user_id, type: 1 }, 'post', this).then(resp => {
             if (resp.data && resp.data.returncode === '0') {

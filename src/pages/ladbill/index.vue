@@ -155,7 +155,8 @@ export default {
       const me = this
       if (type === 'cancel') {
         // 提单待出库取消
-        this.confirm({ content: '您确定要取消提单吗？' }).then(() => {
+        this.confirm({ content: '您确定要取消提单吗？' }).then((res) => {
+          if (res !== 'confirm') return false
           me.ironRequest('cancelTdOrder.shtml', { user_id: me.currentUser.user_id, td_no: obj.no }, 'post', me).then(resp => {
             if (resp && resp.returncode === '0') {
               me.showMsg('取消成功')
