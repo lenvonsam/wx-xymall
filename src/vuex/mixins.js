@@ -54,7 +54,10 @@ const wxMixins = {
       })
     },
     showLoading () {
-      mpvue.showLoading({ title: '加载中…' })
+      mpvue.showLoading({
+        title: '加载中…',
+        mask: true
+      })
     },
     hideLoading () {
       mpvue.hideLoading()
