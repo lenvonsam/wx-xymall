@@ -32,7 +32,6 @@ div
 </template>
 
 <script>
-import { mapState } from 'vuex'
 export default {
   data () {
     return {
@@ -77,11 +76,6 @@ export default {
       }]]
     }
   },
-  computed: {
-    ...mapState({
-      currentUser: state => state.user.currentUser
-    })
-  },
   onShow () {
     this.remoteCompanyInfo()
   },
@@ -89,7 +83,7 @@ export default {
     async remoteCompanyInfo () {
       try {
         this.isload = false
-        this.compObj = await this.ironRequest(this.apiList.xy.companyInfo.url + '?user_id=' + this.currentUser.user_id, {}, this.apiList.xy.companyInfo.method, this)
+        this.compObj = await this.ironRequest(this.apiList.xy.companyInfo.url + '?user_id=' + this.currentUser.user_id, {}, this.apiList.xy.companyInfo.method)
         this.isload = true
       } catch (e) {
         this.showMsg(e)

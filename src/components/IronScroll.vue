@@ -6,7 +6,7 @@ scroll-view.full-width(scroll-y, :style="{height: height + heightUnit}", :class=
       span(v-if="refreshState == 2") {{refreshText}}
       span(v-if="refreshState == 3") {{refreshPulledText}}
     slot
-    .footer.text-gray {{loadFinish ? loadFinishText : loadPushingText}}
+    .footer.text-gray(v-if="loadFinish") {{loadFinish == 2 ? loadFinishText : loadPushingText}}
 </template>
 
 <script>
@@ -56,9 +56,10 @@ export default {
       type: String,
       default: '加载中'
     },
+    // 0 不限 1 加载中 2 加载完成
     loadFinish: {
-      type: Boolean,
-      default: false
+      type: Number,
+      default: 0
     },
     loadFinishText: {
       type: String,

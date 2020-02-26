@@ -152,11 +152,7 @@ export default {
   },
   computed: {
     ...mapState({
-      currentUser: state => state.user.currentUser,
-      tempObject: state => state.tempObject,
-      isLogin: state => state.user.isLogin,
-      screenHeight: state => state.screenHeight,
-      customBar: state => state.customBar
+      tempObject: state => state.tempObject
     })
   },
   onShow () {
@@ -346,7 +342,7 @@ export default {
         }
         return
       }
-      if (type === 'cart') { this.statisticRequest({ event: 'click_app_mall_add_cart' }, this) }
+      if (type === 'cart') { this.statisticRequest({ event: 'click_app_mall_add_cart' }) }
 
       if (obj.name === 'H型钢' && obj.price === '--') {
         this.showMsg(`此商品会在${obj.show_time}后开售`)

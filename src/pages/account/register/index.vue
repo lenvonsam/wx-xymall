@@ -27,6 +27,7 @@
 
 <script>
 import authBtn from '@/components/AuthBtn'
+import { mapActions } from 'vuex'
 export default {
   data () {
     return {
@@ -51,6 +52,9 @@ export default {
     this.resetVal()
   },
   methods: {
+    ...mapActions([
+      'setUser'
+    ]),
     resetVal () {
       this.phone = ''
       this.code = ''
@@ -81,19 +85,35 @@ export default {
         }
         if (this.canClick) {
           this.canClick = false
-          // 18015816879
-          // TODO 接口正在修改
-          await this.ironRequest(this.apiList.xy.userRegister.url, {
+          const data = await this.ironRequest(this.apiList.xy.userRegister.url, {
             user_phone: this.phone,
             msg_code: this.code
-          }, this.apiList.xy.userRegister.method, this)
+          }, this.apiList.xy.userRegister.method)
+          console.log('data', data)
           const me = this
-          me.showMsg('注册成功')
-          setTimeout(function () {
+          const newUser = {
+            account_balance: 0,
+            avatar: '/webpage/gzql/for-etrade/images/default_logo.png',
+            contact_phone: this.phone,
+            credit_balance: 0,
+            isnew: 1,
+            message_switch: '1',
+            nickname: this.phone,
+            phone: this.phone,
+            user_id: data.user_id,
+            user_mark: data.emp_acct,
+            server_time: data.server_time
+          }
+          this.setUser(newUser)
+          this.confirm({ content: '注册成功，但您是新用户，请先完成公司信息' }).then(res => {
             me.canClick = true
             me.resetVal()
-            me.back()
-          }, 2000)
+            if (res === 'confirm') {
+              me.jump('/pages/account/companyUpdate/main')
+            } else {
+              me.tab('/pages/index/main')
+            }
+          })
         }
       } catch (e) {
         this.showMsg(e)

@@ -27,7 +27,6 @@ div
       .main-btn(@click="jump('/pages/askBuyCreate/main')") 发布求购
 </template>
 <script>
-import { mapState } from 'vuex'
 export default {
   data () {
     return {
@@ -36,7 +35,7 @@ export default {
     }
   },
   onShow () {
-    this.ironRequest('demandList.shtml?user_id=' + this.currentUser.user_id, {}, 'get', this).then(resp => {
+    this.ironRequest('demandList.shtml?user_id=' + this.currentUser.user_id, {}, 'get').then(resp => {
       this.isload = true
       if (resp && resp.returncode === '0') {
         this.listData = resp.demands
@@ -47,11 +46,6 @@ export default {
     }).catch(err => {
       this.showMsg(err || '网络异常')
       this.isload = false
-    })
-  },
-  computed: {
-    ...mapState({
-      currentUser: state => state.user.currentUser
     })
   }
 }

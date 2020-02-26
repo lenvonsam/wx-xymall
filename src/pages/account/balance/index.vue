@@ -25,15 +25,12 @@ div
 </template>
 
 <script>
-import { mapState } from 'vuex'
 export default {
   data () {
     return {}
   },
-  computed: {
-    ...mapState({
-      currentUser: state => state.user.currentUser
-    })
+  onShow () {
+    this.whiteStatusBar()
   }
 }
 </script>

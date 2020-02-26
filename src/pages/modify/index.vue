@@ -45,7 +45,6 @@ export default {
       tabName: '1',
       currentPage: 0,
       listData: [],
-      finished: true,
       isload: false,
       startDate: '',
       endDate: '',
@@ -55,17 +54,12 @@ export default {
       totalCount: 0,
       allChoosed: false,
       scrollHeight: 0,
-      loadFinish: false
+      loadFinish: 0
     }
   },
   computed: {
     ...mapState({
-      screenHeight: state => state.screenHeight,
-      customBar: state => state.customBar,
-      currentUser: state => state.user.currentUser,
-      tempObject: state => state.tempObject,
-      isLogin: state => state.user.isLogin,
-      pageSize: state => state.pageSize
+      tempObject: state => state.tempObject
     })
   },
   onUnload () {
@@ -101,7 +95,6 @@ export default {
       this.currentPage = 0
       this.listData = []
       this.isTabDisabled = true
-      debugger
       if (this.tabName === '1') {
         this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 160
       } else {
@@ -114,7 +107,7 @@ export default {
     batchPay () {
     },
     loadData (done) {
-      this.loadFinish = false
+      this.loadFinish = 1
       if (this.currentPage === 0) {
         this.isload = true
       } else {
@@ -128,28 +121,25 @@ export default {
       }
       console.log(body)
       const me = this
-      this.ironRequest('contract_edit_app.shtml', body, 'post', this).then(resp => {
+      this.ironRequest('contract_edit_app.shtml', body, 'post').then(resp => {
         if (resp && resp.returncode === '0') {
           let arr = resp.notices
           if (arr.length === 0 && me.currentPage === 0) {
             me.listData = []
-            me.finished = true
             me.isload = false
           } else if (arr.length > 0 && me.currentPage === 0) {
             arr.map(itm => {
               itm.choosed = false
             })
             me.listData = arr
-            me.finished = false
             me.isload = false
           } else if (arr.length > 0 && me.currentPage > 0) {
             arr.map(item => {
               item.choosed = false
               me.listData.push(item)
             })
-            me.finished = false
           } else {
-            me.finished = true
+            if (me.listData.length >= 10) me.loadFinish = 2
             me.currentPage--
           }
         } else {
@@ -157,7 +147,7 @@ export default {
           me.isload = false
         }
         this.isTabDisabled = false
-        this.loadFinish = true
+        if (this.listData.length < 10) this.loadFinish = 0
       })
       if (done) done()
     },

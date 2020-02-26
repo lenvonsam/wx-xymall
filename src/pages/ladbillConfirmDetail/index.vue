@@ -59,113 +59,109 @@ div
     .bg-blue.col.margin-left-sm.padding-sm.round(@click="ladConfirm") 确认提单  
 </template>
 <script>
-  import copyBtn from '@/components/CopyBtn.vue'
-  import { mapState } from 'vuex'
-  export default {
-    data () {
-      return {
-        totalCount: '',
-        totalWeight: '',
-        ladObject: {},
-        btnDisable: false
+import copyBtn from '@/components/CopyBtn.vue'
+export default {
+  data () {
+    return {
+      totalCount: '',
+      totalWeight: '',
+      ladObject: {},
+      btnDisable: false
+    }
+  },
+  beforeMount () {
+    const me = this
+    this.ironRequest('orderLadDetail.shtml?td_no=' + this.$root.$mp.query.no, {}, 'get').then(resp => {
+      if (resp && resp.returncode === '0') {
+        me.totalCount = 0
+        me.totalWeight = 0
+        resp.order_items.map(item => {
+          me.totalCount += item.product_count
+          me.totalWeight += item.weight
+        })
+        this.ladObject = resp
+      } else {
+        this.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
       }
-    },
-    onUnload () {
-      this.totalCount = ''
-      this.totalWeight = ''
-      this.ladObject = {}
-      this.btnDisable = false
-    },
-    beforeMount () {
-      const me = this
-      this.ironRequest('orderLadDetail.shtml?td_no=' + this.$root.$mp.query.no, {}, 'get', this).then(resp => {
-        if (resp && resp.returncode === '0') {
-          me.totalCount = 0
-          me.totalWeight = 0
-          resp.order_items.map(item => {
-            me.totalCount += item.product_count
-            me.totalWeight += item.weight
-          })
-          this.ladObject = resp
-        } else {
-          this.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
-        }
-      }).catch(err => {
-        console.log(err)
-        this.showMsg(err || '网络异常')
-        setTimeout(() => {
-          me.back()
-        }, 2000)
-      })
-    },
-    computed: {
-      ...mapState({
-        currentUser: state => state.user.currentUser
-      }),
-      tdContact () {
-        return this.ladObject.make_phone === undefined ? '0519-86921892' : this.ladObject.make_phone
-      }
-    },
-    components: {
-      copyBtn
-    },
-    methods: {
-      ladConfirm () {
-        if (!this.btnDisable) {
-          this.btnDisable = true
-          const me = this
-          this.ironRequest('confirmTdOrder.shtml', {td_id: this.ladObject.td_id}, 'post', this).then(resp => {
-            if (resp && resp.returncode === '0') {
-              this.showMsg('提单确认成功')
-              setTimeout(() => {
-                me.btnDisable = false
-                me.back()
-              }, 1000)
-            } else {
-              this.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
-              this.btnDisable = false
-            }
-          }).catch(err => {
-            console.log(err)
-            this.show(err || '网络错误')
+    }).catch(err => {
+      console.log(err)
+      this.showMsg(err || '网络异常')
+      setTimeout(() => {
+        me.back()
+      }, 2000)
+    })
+  },
+  computed: {
+    tdContact () {
+      return this.ladObject.make_phone === undefined ? '0519-86921892' : this.ladObject.make_phone
+    }
+  },
+  onUnload () {
+    this.totalCount = ''
+    this.totalWeight = ''
+    this.ladObject = {}
+    this.btnDisable = false
+  },
+  components: {
+    copyBtn
+  },
+  methods: {
+    ladConfirm () {
+      if (!this.btnDisable) {
+        this.btnDisable = true
+        const me = this
+        this.ironRequest('confirmTdOrder.shtml', { td_id: this.ladObject.td_id }, 'post').then(resp => {
+          if (resp && resp.returncode === '0') {
+            this.showMsg('提单确认成功')
+            setTimeout(() => {
+              me.btnDisable = false
+              me.back()
+            }, 1000)
+          } else {
+            this.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
             this.btnDisable = false
-          })
-        }
-      },
-      ladCancel () {
-        if (!this.btnDisable) {
-          this.btnDisable = true
-          const me = this
-          // me.$ironLoad.show()
-          this.showLoading()
-          this.ironRequest('cancelTdOrder.shtml', {user_id: this.currentUser.user_id, td_no: this.$root.$mp.query.no}, 'post', this).then(resp => {
-            // me.$ironLoad.hide()
-            if (resp && resp.returncode === '0') {
-              this.showMsg('提单驳回成功')
-              setTimeout(() => {
-                me.btnDisable = false
-                me.back()
-              }, 1000)
-            } else {
-              this.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
-              this.btnDisable = false
-            }
-            this.hideLoading()
-          }).catch(err => {
-            console.log(err)
-            this.hideLoading()
-            // me.$ironLoad.hide()
-            this.showMsg(err || '网络错误')
-            this.btnDisable = false
-          })
-        }
-      },
-      telContact () {
-        this.statisticRequest({event: 'click_app_mylad_confirm_tel'}, this)
-        window.location.href = 'tel://' + this.tdContact
+          }
+        }).catch(err => {
+          console.log(err)
+          this.show(err || '网络错误')
+          this.btnDisable = false
+        })
       }
+    },
+    ladCancel () {
+      if (!this.btnDisable) {
+        this.btnDisable = true
+        const me = this
+        // me.$ironLoad.show()
+        this.showLoading()
+        this.ironRequest('cancelTdOrder.shtml', { user_id: this.currentUser.user_id, td_no: this.$root.$mp.query.no }, 'post').then(resp => {
+          // me.$ironLoad.hide()
+          if (resp && resp.returncode === '0') {
+            this.showMsg('提单驳回成功')
+            setTimeout(() => {
+              me.btnDisable = false
+              me.back()
+            }, 1000)
+          } else {
+            this.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
+            this.btnDisable = false
+          }
+          this.hideLoading()
+        }).catch(err => {
+          console.log(err)
+          this.hideLoading()
+          // me.$ironLoad.hide()
+          this.showMsg(err || '网络错误')
+          this.btnDisable = false
+        })
+      }
+    },
+    telContact () {
+      this.statisticRequest({ event: 'click_app_mylad_confirm_tel' })
+      window.location.href = 'tel://' + this.tdContact
     }
   }
+}
 </script>
 
 <style lang="stylus" scoped>
@@ -176,7 +172,7 @@ div
 .tip
   background #FEF7E7
 .tel-btn
-  width 150px  
+  width 150px
   border-radius 50px
   font-size 15px
   height 35px
@@ -185,5 +181,5 @@ div
   position fixed
   bottom 0
   left 0
-  right 0  
+  right 0
 </style>

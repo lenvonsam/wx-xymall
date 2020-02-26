@@ -100,7 +100,6 @@ div
 </template>
 <script>
 import CountStep from '@/components/CountStep.vue'
-import { mapState } from 'vuex'
 export default {
   data () {
     return {
@@ -125,11 +124,6 @@ export default {
   },
   components: {
     CountStep
-  },
-  computed: {
-    ...mapState({
-      currentUser: state => state.user.currentUser
-    })
   },
   onUnload () {
     this.isEdit = false
@@ -186,9 +180,9 @@ export default {
         this.$forceUpdate()
       }
     },
-    weightChoose (val, rowItem) {},
+    weightChoose (val, rowItem) { },
     getLift () {
-      this.ironRequest('isLift.shtml', {}, 'get', this).then(res => {
+      this.ironRequest('isLift.shtml', {}, 'get').then(res => {
         this.wh_lift = res
         this.loadData()
       }).catch(err => {
@@ -197,7 +191,7 @@ export default {
       })
     },
     applyEdit () {
-      this.confirm({content: '请确认修改合同'}).then((res) => {
+      this.confirm({ content: '请确认修改合同' }).then((res) => {
         if (res !== 'confirm') return false
         const seqList = []
         const orderList = []
@@ -219,8 +213,8 @@ export default {
           amount: countList.toString()
         }
         // this.$ironLoad.show()
-        this.ironRequest('buy_edit_contract_app.shtml', params, 'post', this).then(res => {
-        // this.$ironLoad.hide()
+        this.ironRequest('buy_edit_contract_app.shtml', params, 'post').then(res => {
+          // this.$ironLoad.hide()
           if (res.returncode === '0') {
             this.showMsg(res.msg ? res.msg : '提交成功')
             const me = this
@@ -243,7 +237,7 @@ export default {
       }
       const me = this
       // this.$ironLoad.show()
-      this.ironRequest('confirm_contract_app.shtml', params, 'post', this).then(res => {
+      this.ironRequest('confirm_contract_app.shtml', params, 'post').then(res => {
         // this.$ironLoad.hide()
         if (res.returncode === '0') {
           me.showMsg(res.msg ? res.msg : '修改成功', 'positive')
@@ -263,7 +257,7 @@ export default {
         contract_id: this.contractDetail.contract_id
       }
       const me = this
-      this.ironRequest('reject_contract_app.shtml', params, 'post', this).then(res => {
+      this.ironRequest('reject_contract_app.shtml', params, 'post').then(res => {
         if (res.returncode === '0') {
           me.showMsg('驳回成功', 'positive')
           setTimeout(() => {
@@ -335,7 +329,7 @@ export default {
       this.getNewBillPrice()
     },
     promptClose () {
-      this.confirm({content: '删除后将从合同中移除此规格，是否继续？(点击申请修改后，删除操作生效)'}).then((conRes) => {
+      this.confirm({ content: '删除后将从合同中移除此规格，是否继续？(点击申请修改后，删除操作生效)' }).then((conRes) => {
         if (conRes !== 'confirm') return false
         const me = this
         const modifyList = JSON.parse(JSON.stringify(me.modifyList))
@@ -373,7 +367,7 @@ export default {
       if (this.type === '2') {
         apiUrl = 'contract_edit_detail_confirm_app.shtml'
       }
-      this.ironRequest(apiUrl, { id: this.$root.$mp.query.id }, 'post', this).then(resp => {
+      this.ironRequest(apiUrl, { id: this.$root.$mp.query.id }, 'post').then(resp => {
         this.isLoad = true
         let goodsPriceNew = 0
         let liftPriceNew = 0
@@ -430,7 +424,7 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
-.bill-btn,.bill-red-btn
+.bill-btn, .bill-red-btn
   padding 5px 10px
   text-align center
   color #0081ff
@@ -452,8 +446,6 @@ export default {
       border-radius 4px
       box-shadow 1px 2px 5px rgba(61, 167, 255, 0.3)
       letter-spacing 1px
-    // .content
-      // color $mainGray
     .count-step
       height 30px
       width 120px
@@ -466,111 +458,100 @@ export default {
       left -2px
       border-bottom 0.5px solid $mainGray
       top 8px
-.cart-empty-btn {
-  background: $mainColor;
-  padding: 0.5rem 2rem;
-  color: #fff;
-  display: inline-block;
-  font-weight: bold;
-  font-size: 16px;
-  border-radius: 25px;
-  letter-spacing: 1px;
-}
+.cart-empty-btn
+  background $mainColor
+  padding 0.5rem 2rem
+  color #fff
+  display inline-block
+  font-weight bold
+  font-size 16px
+  border-radius 25px
+  letter-spacing 1px
 .count-step .num input
   color #333 !important
 .choose-icon
   width 20px
   height 20px
 // .s-content {
-//   // height: 30rem;
-//   height: calc(100vh - 11rem);
-//   overflow: auto;
+// // height: 30rem;
+// height: calc(100vh - 11rem);
+// overflow: auto;
 // }
-.cart-items {
-  .cart-item {
-    background: #fff;
-    margin-top: 0.5rem;
-    .sub-mark {
-      display: inline-block;
-      padding: 1px 5px;
-      background: #3da7ff;
-      color: #fff;
-      font-size: 12px;
-      border-radius: 4px;
-      box-shadow: 1px 2px 5px rgba(61, 167, 255, 0.3);
-      letter-spacing: 1px;
-    }
-    .content {
-      color: $mainGray;
-    }
-    .count-step {
-      height: 30px;
-      width: 120px;
-      .min {
-        color: #888;
-      }
-    }
-    .discount-line {
-      position: absolute;
-      height: 1px;
-      right: -2px;
-      left: -2px;
-      border-bottom: 0.5px solid $mainGray;
-      top: 8px;
-    }
-  }
-}
+.cart-items
+  .cart-item
+    background #fff
+    margin-top 0.5rem
+    .sub-mark
+      display inline-block
+      padding 1px 5px
+      background #3da7ff
+      color #fff
+      font-size 12px
+      border-radius 4px
+      box-shadow 1px 2px 5px rgba(61, 167, 255, 0.3)
+      letter-spacing 1px
+    .content
+      color $mainGray
+    .count-step
+      height 30px
+      width 120px
+      .min
+        color #888
+    .discount-line
+      position absolute
+      height 1px
+      right -2px
+      left -2px
+      border-bottom 0.5px solid $mainGray
+      top 8px
 // .cart-footer {
-//   flex: 5;
-//   min-height: 50px;
-//   background: #fff;
-//   display: flex;
-//   color: $mainBlack;
-//   .cart-footer-col {
-//     flex-direction: column;
-//     align-items: center;
-//     align-self: center;
-//     padding-right: 8px;
-//     flex-basis: 28%;
-//   }
-//   .cart-settle-btn {
-//     display: flex;
-//     background: $mainRed;
-//     align-items: center;
-//     color: #fff;
-//     justify-content: center;
-//   }
+// flex: 5;
+// min-height: 50px;
+// background: #fff;
+// display: flex;
+// color: $mainBlack;
+// .cart-footer-col {
+// flex-direction: column;
+// align-items: center;
+// align-self: center;
+// padding-right: 8px;
+// flex-basis: 28%;
+// }
+// .cart-settle-btn {
+// display: flex;
+// background: $mainRed;
+// align-items: center;
+// color: #fff;
+// justify-content: center;
+// }
 // }
 .bill-foot
   position fixed
   left 0
   right 0
   bottom 0
-.count-step .num input {
-  color: #333 !important;
-}
-.bottom-option{
-  position: fixed;
-  padding: 10px;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  line-height: 25px;
-  height: 50px
+.count-step .num input
+  color #333 !important
+.bottom-option
+  position fixed
+  padding 10px
+  bottom 0
+  left 0
+  right 0
+  line-height 25px
+  height 50px
   z-index 99
-}
-.bottom-panel {
-  position: fixed;
-  background: #fff;
-  padding: 10px;
-  width: 100%;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  line-height: 25px;
-  height: 120px;
+.bottom-panel
+  position fixed
+  background #fff
+  padding 10px
+  width 100%
+  bottom 0
+  left 0
+  right 0
+  line-height 25px
+  height 120px
   z-index 99
-}
 radio.radio[checked]::after
   content ''
   background-color #fff
@@ -594,7 +575,7 @@ button
   background #e54d42
   font-size 16px
   height 30px
-  width 100px  
+  width 100px
 .scroll-view
   padding-bottom 120px
 </style>

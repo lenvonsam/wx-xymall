@@ -151,11 +151,7 @@ export default {
   computed: {
     ...mapState({
       custom: state => state.custom,
-      customBar: state => state.customBar,
-      screenHeight: state => state.screenHeight,
-      currentUser: state => state.user.currentUser,
-      tempObject: state => state.tempObject,
-      isLogin: state => state.user.isLogin
+      tempObject: state => state.tempObject
     })
   },
   watch: {
@@ -245,7 +241,7 @@ export default {
         if (res === 'confirm') {
           me.btnDisable = true
           this.showLoading()
-          me.ironRequest('cartEmpty.shtml', { user_id: me.currentUser.user_id }, 'post', this).then(resp => {
+          me.ironRequest('cartEmpty.shtml', { user_id: me.currentUser.user_id }, 'post').then(resp => {
             if (resp && resp.returncode === '0') {
               me.showMsg('清空成功')
               me.btnDisable = false
@@ -269,7 +265,7 @@ export default {
         this.confirm({ content: '您确定要清空失效物资吗？' }).then((res) => {
           if (res !== 'confirm') return false
           me.btnDisable = true
-          me.ironRequest('cartEmpty.shtml', { user_id: me.currentUser.user_id, type: 1 }, 'post', this).then(resp => {
+          me.ironRequest('cartEmpty.shtml', { user_id: me.currentUser.user_id, type: 1 }, 'post').then(resp => {
             if (resp && resp.returncode === '0') {
               me.showMsg('清空成功')
               me.btnDisable = false
@@ -349,7 +345,7 @@ export default {
               body.end_addr = me.pwAddr + ' ' + me.pwAddrDetail
             }
             this.showLoading()
-            me.ironRequest('generateOrder.shtml', body, 'post', this).then(resp => {
+            me.ironRequest('generateOrder.shtml', body, 'post').then(resp => {
               this.hideLoading()
               if (resp && resp.returncode === '0') {
                 me.btnDisable = false
@@ -389,13 +385,13 @@ export default {
         rowItem.price = rowItem.radios[1].price
         rowItem.originPrice = rowItem.radios[1].price
       }
-      this.ironRequest('cartUpdate.shtml', { cart_id: rowItem.cart_id, user_id: this.currentUser.user_id, measure_way: val, count: rowItem.count }, 'post', this).then(res => {
+      this.ironRequest('cartUpdate.shtml', { cart_id: rowItem.cart_id, user_id: this.currentUser.user_id, measure_way: val, count: rowItem.count }, 'post').then(res => {
       })
       this.$forceUpdate()
     },
     rowCartCount (obj) {
       console.log(obj.count)
-      this.ironRequest('cartUpdate.shtml', { cart_id: obj.cart_id, user_id: this.currentUser.user_id, measure_way: obj.measure_way_id, count: obj.count }, 'post', this).then(res => {
+      this.ironRequest('cartUpdate.shtml', { cart_id: obj.cart_id, user_id: this.currentUser.user_id, measure_way: obj.measure_way_id, count: obj.count }, 'post').then(res => {
       })
     },
     delCartRow (row) {
@@ -425,7 +421,7 @@ export default {
     loadCartData () {
       this.isLoad = false
       const me = this
-      this.ironRequest('cartList.shtml?user_id=' + me.currentUser.user_id, {}, 'get', this).then(resp => {
+      this.ironRequest('cartList.shtml?user_id=' + me.currentUser.user_id, {}, 'get').then(resp => {
         this.isLoad = true
         if (resp.returncode === '0') {
           let arr = resp.carts

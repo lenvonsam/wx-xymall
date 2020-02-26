@@ -16,9 +16,7 @@ export default {
     }
   },
   state: {
-    currentUser: {
-      user_id: 'MTAyMQ=='
-    },
+    currentUser: {},
     isLogin: false,
     protocol: [
       {

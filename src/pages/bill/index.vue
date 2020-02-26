@@ -89,17 +89,12 @@ export default {
       scrollHeight: '0px',
       timeInterval: '',
       serverTime: '',
-      loadFinish: false
+      loadFinish: 0
     }
   },
   computed: {
     ...mapState({
-      customBar: state => state.customBar,
-      screenHeight: state => state.screenHeight,
-      currentUser: state => state.user.currentUser,
-      tempObject: state => state.tempObject,
-      isLogin: state => state.user.isLogin,
-      pageSize: state => state.pageSize
+      tempObject: state => state.tempObject
     })
   },
   onShow () {
@@ -212,7 +207,7 @@ export default {
       this.isLoad = true
       this.currentPage = 0
       const reqUrl = `orderList.shtml?user_id=${me.currentUser.user_id}&status=${this.tabName}&current_page=${this.currentPage}&page_size=${this.pageSize}&order_no=${this.billNo}&start_date=${this.startDate}&end_date=${this.endDate}`
-      this.ironRequest(reqUrl, {}, 'get', this).then(resp => {
+      this.ironRequest(reqUrl, {}, 'get').then(resp => {
         const idx = me.swiperCount
         if (resp.returncode === '0') {
           let arr = resp.orders
@@ -311,7 +306,7 @@ export default {
       this.$forceUpdate()
     },
     loadData (done) {
-      this.loadFinish = false
+      this.loadFinish = 1
       if (this.currentPage === 0) {
         this.isload = true
       } else {
@@ -319,7 +314,7 @@ export default {
       }
       let reqUrl = `orderList.shtml?user_id=${this.currentUser.user_id}&status=${this.tabName}&current_page=${this.currentPage}&page_size=${this.pageSize}&order_no=${this.billNo}&start_date=${this.startDate}&end_date=${this.endDate}`
       const me = this
-      this.ironRequest(reqUrl, {}, 'get', this).then(resp => {
+      this.ironRequest(reqUrl, {}, 'get').then(resp => {
         const idx = me.swiperCount
         this.serverTime = resp.server_time
         if (resp && resp.returncode === '0') {
@@ -349,7 +344,7 @@ export default {
             me.finished = true
             me.isload = false
             me.currentPage--
-            me.loadFinish = true
+            if (me.listDate.length >= 10) me.loadFinish = 2
           }
         } else {
           me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
@@ -357,7 +352,7 @@ export default {
         }
         me.isTabDisabled = false
         me.hideLoading()
-        me.loadFinish = true
+        if (me.listData.length < 10) me.loadFinish = 0
         if (done) done()
       })
     },
@@ -371,21 +366,21 @@ export default {
       }
     },
     // jumpSearch () {
-    //   this.statisticRequest({ event: 'click_app_myorder_search' }, this)
+    //   this.statisticRequest({ event: 'click_app_myorder_search' })
     //   this.jump({ path: '/bill/search' })
     // },
     jumpDetail (item) {
       this.jump(`/pages/billDetail/main?id=${item.no}`)
     },
     billCancel (item) {
-      if (this.tabName === '0') this.statisticRequest({ event: 'click_app_myorder_all_cancel' }, this)
-      if (this.tabName === '1') this.statisticRequest({ event: 'click_app_myorder_needpay_cancel' }, this)
+      if (this.tabName === '0') this.statisticRequest({ event: 'click_app_myorder_all_cancel' })
+      if (this.tabName === '1') this.statisticRequest({ event: 'click_app_myorder_needpay_cancel' })
       const me = this
       this.confirm({ content: '您确定要取消合同吗？' }).then((res) => {
         if (!me.btnDisable && res === 'confirm') {
           me.btnDisable = true
           // me.$ironLoad.show()
-          me.ironRequest('cancelOrder.shtml', { user_id: me.currentUser.user_id, discussid: item.id }, 'post', this).then(res => {
+          me.ironRequest('cancelOrder.shtml', { user_id: me.currentUser.user_id, discussid: item.id }, 'post').then(res => {
             // me.$ironLoad.hide()
             me.btnDisable = false
             if (res && res.returncode === '0') {
@@ -406,8 +401,8 @@ export default {
       })
     },
     payBill (item) {
-      if (this.tabName === '0') this.statisticRequest({ event: 'click_app_myorder_all_pay' }, this)
-      if (this.tabName === '1') this.statisticRequest({ event: 'click_app_myorder_needpay_pay' }, this)
+      if (this.tabName === '0') this.statisticRequest({ event: 'click_app_myorder_all_pay' })
+      if (this.tabName === '1') this.statisticRequest({ event: 'click_app_myorder_needpay_pay' })
       this.jump(`/pages/pay/main?pageType=offlinePay&orderNo=${item.no}&price=${item.fact_price}`)
     }
   }

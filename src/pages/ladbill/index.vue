@@ -104,11 +104,7 @@ export default {
   },
   computed: {
     ...mapState({
-      currentUser: state => state.user.currentUser,
-      tempObject: state => state.tempObject,
-      screenHeight: state => state.screenHeight,
-      customBar: state => state.customBar,
-      isLogin: state => state.user.isLogin
+      tempObject: state => state.tempObject
     })
   },
   onShow () {
@@ -176,7 +172,7 @@ export default {
         // 确认货物
         if (!this.btnDisable) {
           this.btnDisable = true
-          this.ironRequest('confirmReceipt.shtml', { user_id: this.currentUser.user_id, order_id: obj.id }, 'post', this).then(resp => {
+          this.ironRequest('confirmReceipt.shtml', { user_id: this.currentUser.user_id, order_id: obj.id }, 'post').then(resp => {
             if (resp && resp.returncode === '0') {
               me.showMsg('确认成功')
               me.btnDisable = false
@@ -195,8 +191,8 @@ export default {
         }
       }
       if (type === 'pay') {
-        if (this.tabName === '-2') this.statisticRequest({ event: 'click_app_mylad_all_pay' }, this)
-        if (this.tabName === '4') this.statisticRequest({ event: 'click_app_mylad_needpay_pay' }, this)
+        if (this.tabName === '-2') this.statisticRequest({ event: 'click_app_mylad_all_pay' })
+        if (this.tabName === '4') this.statisticRequest({ event: 'click_app_mylad_needpay_pay' })
         // 提单支付
         this.jump(`/pages/pay/main?pageType=ladPay&orderNo=${obj.no}&price=${obj.pay_price}&contractNo=${obj.contract_no}`)
       }
@@ -243,7 +239,7 @@ export default {
       //   body.end_date = this.endDate
       // }
 
-      this.ironRequest('orderLadList.shtml', body, 'post', this).then(resp => {
+      this.ironRequest('orderLadList.shtml', body, 'post').then(resp => {
         if (resp && resp.returncode === '0') {
           const idx = me.swiperCount
           let arr = resp.order_lads

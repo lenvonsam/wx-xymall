@@ -82,14 +82,12 @@ export default {
     ...mapState({
       billIcons: state => state.billIcons,
       meIconList: state => state.meIconList,
-      isLogin: state => state.user.isLogin,
-      currentUser: state => state.user.currentUser,
       tempObject: state => state.tempObject,
-      serviceCall: state => state.serviceCall,
-      chatUrl: state => state.chatUrl
+      serviceCall: state => state.serviceCall
     })
   },
   onShow () {
+    this.whiteStatusBar()
     this.showNoticeIcon = false
     this.rowCountObj = {}
     if (this.isLogin) {
@@ -101,14 +99,14 @@ export default {
         return
       }
       this.showNoticeIcon = this.currentUser.message_switch === '1'
-      this.ironRequest('toOperCounts.shtml?user_id=' + this.currentUser.user_id, {}, 'get', this).then(resp => {
+      this.ironRequest('toOperCounts.shtml?user_id=' + this.currentUser.user_id, {}, 'get').then(resp => {
         // console.log(resp.data)
         if (resp && resp.returncode === '0') {
           this.rowCountObj = resp
           this.$forceUpdate()
         }
       })
-      this.ironRequest('balanceList.shtml?type=0&only_all=1&user_id=' + this.currentUser.user_id, {}, 'get', this).then(resp => {
+      this.ironRequest('balanceList.shtml?type=0&only_all=1&user_id=' + this.currentUser.user_id, {}, 'get').then(resp => {
         if (resp && resp.returncode === '0') {
           let obj = this.currentUser
           obj.account_balance = resp.balance
@@ -143,37 +141,37 @@ export default {
     },
     jumpToPage (url) {
       console.log('jumpToPage', url)
-      if (url === '/pages/modify/main') this.statisticRequest({ event: 'click_app_me_modify' }, this)
-      if (url === '/pages/recycle/main') this.statisticRequest({ event: 'click_app_me_recycle' }, this)
-      if (url === '/pages/ladbill/main') this.statisticRequest({ event: 'click_app_me_lad' }, this)
-      if (url === '/pages/invoice/main') this.statisticRequest({ event: 'click_app_me_invoice' }, this)
-      if (url === '/pages/contract/main') this.statisticRequest({ event: 'click_app_me_contract' }, this)
-      if (url === '/pages/process/main') this.statisticRequest({ event: 'click_app_me_process' }, this)
-      if (url === '/pages/askBuy/main') this.statisticRequest({ event: 'click_app_me_demand' }, this)
-      if (url === '/pages/address/main') this.statisticRequest({ event: 'click_app_me_address' }, this)
+      if (url === '/pages/modify/main') this.statisticRequest({ event: 'click_app_me_modify' })
+      if (url === '/pages/recycle/main') this.statisticRequest({ event: 'click_app_me_recycle' })
+      if (url === '/pages/ladbill/main') this.statisticRequest({ event: 'click_app_me_lad' })
+      if (url === '/pages/invoice/main') this.statisticRequest({ event: 'click_app_me_invoice' })
+      if (url === '/pages/contract/main') this.statisticRequest({ event: 'click_app_me_contract' })
+      if (url === '/pages/process/main') this.statisticRequest({ event: 'click_app_me_process' })
+      if (url === '/pages/askBuy/main') this.statisticRequest({ event: 'click_app_me_demand' })
+      if (url === '/pages/address/main') this.statisticRequest({ event: 'click_app_me_address' })
       this.jump(url)
     },
     jumpProfile () {
-      this.statisticRequest({ event: 'click_app_me_information' }, this)
+      this.statisticRequest({ event: 'click_app_me_information' })
       this.jump('/pages/account/profile/main')
     },
     jumpBalance () {
-      this.statisticRequest({ event: 'click_app_me_balance' }, this)
+      this.statisticRequest({ event: 'click_app_me_balance' })
       this.jump('/pages/account/balance/main')
     },
     jumpBillMore () {
-      this.statisticRequest({ event: 'click_app_me_myorder_more' }, this)
+      this.statisticRequest({ event: 'click_app_me_myorder_more' })
       this.jump('/pages/bill/main')
     },
     jumpBicon (url) {
-      // if (url.path === '/bill?tabName=1') this.statisticRequest({ event: 'click_app_me_to_pay_order' }, this)
-      // if (url.path === '/ladbill/confirm/list') this.statisticRequest({ event: 'click_app_me_to_confirm' }, this)
-      // if (url.path === '/ladbill?tabName=4') this.statisticRequest({ event: 'click_app_me_to_pay_contract' }, this)
-      // if (url.path === '/invoice') this.statisticRequest({ event: 'click_app_me_to_invoice' }, this)
+      // if (url.path === '/bill?tabName=1') this.statisticRequest({ event: 'click_app_me_to_pay_order' })
+      // if (url.path === '/ladbill/confirm/list') this.statisticRequest({ event: 'click_app_me_to_confirm' })
+      // if (url.path === '/ladbill?tabName=4') this.statisticRequest({ event: 'click_app_me_to_pay_contract' })
+      // if (url.path === '/invoice') this.statisticRequest({ event: 'click_app_me_to_invoice' })
       this.jump(url.path)
     },
     serviceCallUrl () {
-      this.statisticRequest({ event: 'click_app_me_tel' }, this)
+      this.statisticRequest({ event: 'click_app_me_tel' })
       window.location.href = 'tel://' + this.serviceCall
     }
   }
@@ -216,7 +214,7 @@ export default {
   position absolute
   background #fff
   top -5px
-  right -10px
+  right -9px
   color #e54d42
   text-align center
   font-size 10px
@@ -232,7 +230,7 @@ export default {
     padding 0px 6px
     border-radius 20px
     font-size 9px
-    right -14px
+    right -12px
     height 14px
 /deep/ button::after
   border 0px !important

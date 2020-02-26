@@ -57,12 +57,7 @@ export default {
   },
   computed: {
     ...mapState({
-      customBar: state => state.customBar,
-      screenHeight: state => state.screenHeight,
-      currentUser: state => state.user.currentUser,
-      tempObject: state => state.tempObject,
-      isLogin: state => state.user.isLogin,
-      pageSize: state => state.pageSize
+      tempObject: state => state.tempObject
     })
   },
   components: {
@@ -108,7 +103,7 @@ export default {
       }
       this.loading = true
       let reqUrl = 'recycleList.shtml?user_id=' + this.currentUser.user_id + '&tstc_no=' + this.billNo + '&current_page=' + this.currentPage + '&page_size=' + this.pageSize
-      this.ironRequest(reqUrl, {}, 'get', this).then(resp => {
+      this.ironRequest(reqUrl, {}, 'get').then(resp => {
         if (resp && resp.returncode === '0') {
           let arr = resp.orders
           arr.map(item => {

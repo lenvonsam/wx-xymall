@@ -135,7 +135,6 @@ div
 
 </template>
 <script>
-import { mapState } from 'vuex'
 import copyBtn from '@/components/CopyBtn.vue'
 
 export default {
@@ -149,13 +148,8 @@ export default {
   components: {
     copyBtn
   },
-  computed: {
-    ...mapState({
-      currentUser: state => state.user.currentUser
-    })
-  },
   beforeMount () {
-    this.ironRequest('orderDetail.shtml?tstc_no=' + this.$root.$mp.query.id, {}, 'get', this).then(resp => {
+    this.ironRequest('orderDetail.shtml?tstc_no=' + this.$root.$mp.query.id, {}, 'get').then(resp => {
       if (resp && resp.returncode === '0') {
         // resp.lift_money = resp.lift_money.toFixed(2)
         // resp.total_money = resp.total_money.toFixed(2)
@@ -177,11 +171,11 @@ export default {
   },
   methods: {
     payBill () {
-      this.statisticRequest({ event: 'click_app_myorder_detail_pay' }, this)
+      this.statisticRequest({ event: 'click_app_myorder_detail_pay' })
       this.jump('/mall/pay?orderNo=' + this.billDetail.tstc_no + '&pageType=offlinePay&price=' + this.billDetail.total_money + '&frontPrice=' + this.billDetail.front_price + '&percent=' + this.billDetail.percent)
     },
     cancelBill () {
-      this.statisticRequest({ event: 'click_app_myorder_detail_cancel' }, this)
+      this.statisticRequest({ event: 'click_app_myorder_detail_cancel' })
       const me = this
       if (!this.btnDisable) {
         this.confirm({ content: '您确定要取消合同吗？' }).then((res) => {

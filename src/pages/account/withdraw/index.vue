@@ -36,7 +36,6 @@ div
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import modalInput from '@/components/ModalInput.vue'
 export default {
   data () {
@@ -50,11 +49,6 @@ export default {
   },
   components: {
     modalInput
-  },
-  computed: {
-    ...mapState({
-      currentUser: state => state.user.currentUser
-    })
   },
   onShow () {
     this.bankCardEnd = this.currentUser.bank_account.substring(this.currentUser.bank_account.length - 4)
@@ -70,7 +64,7 @@ export default {
         if (type === 'confirm' && this.canClick) {
           this.canClick = false
           let encryptPwd = this.base64Str(val)
-          await this.ironRequest(this.apiList.xy.withdraw.url, { user_id: this.currentUser.user_id, price: this.chargeVal, password: encryptPwd }, 'post', this)
+          await this.ironRequest(this.apiList.xy.withdraw.url, { user_id: this.currentUser.user_id, price: this.chargeVal, password: encryptPwd }, 'post')
           this.canClick = true
           this.chargeVal = ''
           this.alertShow = true
@@ -89,7 +83,7 @@ export default {
         return
       }
       if (Number(this.chargeVal) <= 0) {
-        this.showMsg('提现金额不能小于等于0')
+        this.showMsg('提现金额大于0元')
         return
       }
       if (Number(this.chargeVal) > Number(this.currentUser.account_balance)) {
@@ -135,7 +129,7 @@ export default {
       // })
     },
     jumpWithdraw () {
-      this.statisticRequest({ event: 'click_app_balance_withdraw' }, this)
+      this.statisticRequest({ event: 'click_app_balance_withdraw' })
       this.jump('/pages/cardList/main?type=queryWithdrawList&title=提现进度')
     }
   }

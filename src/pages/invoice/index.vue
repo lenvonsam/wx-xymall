@@ -82,11 +82,7 @@ export default {
   computed: {
     ...mapState({
       custom: state => state.custom,
-      customBar: state => state.customBar,
-      screenHeight: state => state.screenHeight,
-      currentUser: state => state.user.currentUser,
-      tempObject: state => state.tempObject,
-      pageSize: state => state.pageSize
+      tempObject: state => state.tempObject
     })
   },
   watch: {
@@ -159,7 +155,7 @@ export default {
       }
       this.finished = true
       this.isLoad = true
-      this.ironRequest('invoiceList.shtml', this.queryObject, 'post', this).then(resp => {
+      this.ironRequest('invoiceList.shtml', this.queryObject, 'post').then(resp => {
         if (resp && resp.returncode === '0') {
           if (resp.invoices.length > 0 && me.currentPage === 0) {
             this.listData = []
@@ -216,7 +212,7 @@ export default {
     jumpDetail (obj) {
       // this.configVal({key: 'tempObject', val: obj})
       // this.jump({path: '/invoice/detail', query: {id: this.tabName}})
-      this.ironRequest('invoiceDetail.shtml?id=' + obj.id, {}, 'get', this).then(resp => {
+      this.ironRequest('invoiceDetail.shtml?id=' + obj.id, {}, 'get').then(resp => {
         if (resp.returncode === '0') {
           resp.tabName = this.tabName
           this.configVal({ key: 'tempObject', val: resp })
@@ -256,7 +252,7 @@ export default {
             type
           }
           if (nos.split(',').length === 1) {
-            this.ironRequest('invoiceDetail.shtml?id=' + filterArray[0].id, {}, 'get', this).then(resp => {
+            this.ironRequest('invoiceDetail.shtml?id=' + filterArray[0].id, {}, 'get').then(resp => {
               if (resp.returncode === '0') {
                 obj.goods_price = resp.goods_price
                 obj.lift_price = resp.lift_price
@@ -278,7 +274,7 @@ export default {
         }
         if (this.tabName === '2') {
           // 发票确认
-          this.ironRequest('confirmInvoice.shtml', { user_id: this.currentUser.user_id, id: ids }, 'post', this).then(resp => {
+          this.ironRequest('confirmInvoice.shtml', { user_id: this.currentUser.user_id, id: ids }, 'post').then(resp => {
             if (resp && resp.returncode === '0') {
               me.showMsg('发票确认成功')
               me.listData = []
@@ -301,7 +297,7 @@ export default {
       this.queryObject.status = this.tabName
       const me = this
       this.loading = true
-      this.ironRequest('invoiceList.shtml', this.queryObject, 'post', this).then(resp => {
+      this.ironRequest('invoiceList.shtml', this.queryObject, 'post').then(resp => {
         if (resp && resp.returncode === '0') {
           if (resp.invoices.length > 0 && me.currentPage === 0) {
             me.listData = []

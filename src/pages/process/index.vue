@@ -27,7 +27,6 @@ div
       .main-btn(@click="jump('/pages/processDetail/main')") 发布加工  
 </template>
 <script>
-import { mapState } from 'vuex'
 export default {
   data () {
     return {
@@ -37,7 +36,7 @@ export default {
   },
   onShow () {
     this.isload = true
-    this.ironRequest('processList.shtml?user_id=' + this.currentUser.user_id, {}, 'get', this).then(resp => {
+    this.ironRequest('processList.shtml?user_id=' + this.currentUser.user_id, {}, 'get').then(resp => {
       this.isload = false
       if (resp && resp.returncode === '0') {
         this.listData = resp.process
@@ -47,11 +46,6 @@ export default {
     }).catch(err => {
       this.showMsg(err || '网络异常')
       this.isload = true
-    })
-  },
-  computed: {
-    ...mapState({
-      currentUser: state => state.user.currentUser
     })
   }
 }

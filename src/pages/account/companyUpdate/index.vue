@@ -162,8 +162,7 @@ export default {
   },
   computed: {
     ...mapState({
-      customBar: state => state.customBar,
-      currentUser: state => state.user.currentUser
+      customBar: state => state.customBar
     })
   },
   components: {
@@ -301,7 +300,7 @@ export default {
           this.companyInfo.orga_pic = this.pic4
         }
         this.companyInfo.user_pwd = this.base64Str(this.companyInfo.user_pwd)
-        await this.ironRequest(this.apiList.xy.companyUpdate.url, this.companyInfo, this.apiList.xy.companyUpdate.method, this)
+        await this.ironRequest(this.apiList.xy.companyUpdate.url, this.companyInfo, this.apiList.xy.companyUpdate.method)
         this.exitUser()
         this.alertShow = true
       } catch (e) {
