@@ -13,15 +13,15 @@ div
         .cu-item.flex-sub(v-for="(item,index) in billTab", :class="item.status === tabName?'text-blue cur':''", :key="index", @click="selectTabs(item, index)")
           span {{item.title}}
   swiper.bill-content(@change="swiperChange", :current="swiperCount", :style="{height: scrollHeight+'rpx'}")
-    swiper-item(v-for="(tabItem, idx) in billTab.length", :key="idx")
+    swiper-item(v-for="(tabItem, swiperIdx) in billTab.length", :key="swiperIdx")
       //- scroll-view(scroll-y, :refresher-triggered="triggered", :refresher-enabled="true", @refresherrefresh="refresher", @scrolltolower="loadMore", :style="{height: screenHeight - 186 +'px'}")
       template(v-if="isload")
         time-line(type="mallist")
       template(v-else)
-        template(v-if="billTab[idx].data.length > 0")
+        template(v-if="billTab[swiperIdx].data.length > 0")
           div(:style="{height: scrollHeight+'rpx'}")
-            iron-scroll(:idx="idx", @scrolltolower="loadMore", heightUnit="rpx", :height="scrollHeight", :refresh="true", @onRefresh="onRefresh", :loadFinish="loadFinish")          
-              .bill-list(v-for="(item, itemIdx) in billTab[idx].data", :key="itemIdx", @click="jumpDetail(item)")
+            iron-scroll(:swiperIdx="swiperIdx", @scrolltolower="loadMore", heightUnit="rpx", :height="scrollHeight", :refresh="true", @onRefresh="onRefresh", :loadFinish="loadFinish")          
+              .bill-list(v-for="(item, itemIdx) in billTab[swiperIdx].data", :key="itemIdx", @click="jumpDetail(item)")
                 .bg-white.box
                   .padding-sm
                     .flex.justify-between.padding-bottom-sm

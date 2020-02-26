@@ -12,8 +12,8 @@ scroll-view.full-width(scroll-y, :style="{height: height + heightUnit}", :class=
 <script>
 export default {
   props: {
-    idx: {
-      type: Number,
+    swiperIdx: {
+      type: 'Number',
       default: 0
     },
     heightUnit: {
