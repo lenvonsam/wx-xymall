@@ -301,7 +301,6 @@ export default {
       let canSellArray = filterArray.filter(itm => itm.price.indexOf('--') >= 0)
       const me = this
       if (this.isEdit) {
-        debugger
         if (filterArray.length === 0) {
           this.showMsg('请选择所需删除的商品', 'warn')
           return false
@@ -378,7 +377,6 @@ export default {
       }
     },
     weightChoose (val, rowItem) {
-      debugger
       rowItem.measure_way_id = val
       if (val === 2) {
         rowItem.weight = rowItem.radios[0].weight
