@@ -102,8 +102,7 @@ export default {
           this.rowCount = list
         }
       }).catch(err => {
-        console.log(err)
-        this.showMsg()
+        this.showMsg(err || '网络错误')
       })
     } else {
       this.rowCount = [{ height: '', width: '', length: '', sheet_count: '' }]

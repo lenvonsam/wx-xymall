@@ -136,7 +136,7 @@ function ironRequest (reqUrl, param, type, context = null) {
             if (Number(res.data.returncode) === 0) {
               resolve(res.data)
             } else {
-              reject(res.data.errormsg)
+              reject(res.data.errormsg || res.data.msg)
             }
           }
         } else {

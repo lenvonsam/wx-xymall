@@ -173,9 +173,8 @@ export default {
         this.wh_lift = res
         this.loadData()
       }).catch(err => {
-        console.log('err', err.message)
         this.isLoad = true
-        this.showMsg()
+        this.showMsg(err)
       })
     },
     applyEdit () {
@@ -213,8 +212,8 @@ export default {
             this.showMsg(res.msg ? res.msg : '操作失败')
           }
         }).catch(err => {
-          console.log('err', err.message)
-          this.showMsg()
+          // console.log('err', err.message)
+          this.showMsg(err)
         })
       })
     },
@@ -236,8 +235,7 @@ export default {
           me.showMsg(res.msg ? res.msg : '操作失败')
         }
       }).catch(err => {
-        console.log('err', err.message)
-        this.showMsg()
+        this.showMsg(err || '网络错误')
       })
     },
     overrule () {
@@ -256,8 +254,7 @@ export default {
           me.showMsg(res.data.msg)
         }
       }).catch(err => {
-        console.log('err', err.message)
-        this.showMsg()
+        this.showMsg(err || '网络错误')
         // if (done) done()
       })
     },
@@ -401,9 +398,8 @@ export default {
           // if (done) done()
         }
       }).catch(err => {
-        console.log('err', err.message)
         this.isLoad = true
-        this.showMsg()
+        this.showMsg(err || '网络错误')
         // if (done) done()
       })
     }
