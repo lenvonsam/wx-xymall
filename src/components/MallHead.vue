@@ -68,11 +68,6 @@ export default {
     return {
       modalIntroImages: ['mall_classify_num.png'],
       modalIntroShow: false,
-      sidebarListAreaShow: false,
-      sidebarListNameShow: false,
-      sidebarListMaterialShow: false,
-      sidebarListOriginShow: false,
-      sidebarListMoreShow: false,
       tabList: [],
       scrollLeft: 0,
       tabVal: '',
@@ -138,6 +133,31 @@ export default {
       tempObject: state => state.tempObject
     })
   },
+  // onUnload () {
+  //   this.isActive = true
+  //   this.searchVal = ''
+  //   this.mallFlag = 1
+  //   this.standards = []
+  //   this.materials = []
+  //   this.supplys = []
+  //   this.standardStr = ''
+  //   this.materialStr = ''
+  //   this.originStr = ''
+  //   this.filterStr = ''
+  //   this.isMore = false
+  //   this.standardSearch = ''
+  //   this.tabList = []
+  //   this.scrollLeft = 0
+  //   this.tabVal = ''
+  //   this.activeTab = ''
+  //   this.pageSize = 29
+  //   this.currentPage = 0
+  //   this.queryObject = {
+  //     current_page: 0,
+  //     page_size: 29
+  //   }
+  //   this.temporary = []
+  // },
   watch: {
     mallTabVal () {
       this.mallTabValChange()
