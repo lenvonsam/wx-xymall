@@ -46,7 +46,8 @@
         scroll-view(scroll-y, style="max-height: 700rpx", @scrolltolower="loadMore")
           .grid.col-3.padding-top-sm.sort-content
             .sort-list(v-if="sort.data.length > 0", v-for="(item, index) in sort.data", :key="index")
-              .sort-name(:class="{active: item.isActive}", @click.stop="selectSort(sortIdx, index)") {{item.name}}
+              .sort-item(:class="{active: item.isActive}", @click.stop="selectSort(sortIdx, index)") 
+                .sort-name {{item.name}}
                 .check.cuIcon-check.bg-blue(v-show="item.isActive")
         .row.padding-sm.justify-around(v-if="sortIdx !== 0")
           .btn-cancel.col(@click="selectSort(sortIdx, 0)") 重选 
@@ -125,7 +126,8 @@ export default {
       materialStr: '',
       originStr: '',
       filterStr: '',
-      isMore: false
+      isMore: false,
+      standardSearch: ''
     }
   },
   components: {
@@ -218,6 +220,7 @@ export default {
       this.throttle(() => {
         this.sortList[1].data = []
         this.queryObject.search = e.mp.detail.value
+        // this.standardSearch = e.mp.detail.value
         this.currentPage = 0
         this.sortCb('standard')
       }, 300)
@@ -244,6 +247,8 @@ export default {
       if (sortIdx) {
         this.filterCancel(sortIdx)
       }
+      this.standardSearch = ''
+      this.queryObject.search = ''
       this.activeTab = ''
     },
     selectTab (item, index) {
@@ -283,6 +288,7 @@ export default {
       this.queryObject.name = this.tabVal
       this.queryObject.current_page = this.currentPage
       let queryObj = Object.assign({}, this.queryObject)
+
       if (key === 'area') queryObj.region = ''
       if (key === 'material') queryObj.material = ''
       if (key === 'origin') queryObj.supply = ''
@@ -388,15 +394,18 @@ export default {
 .sort-list
   padding 5px
   text-align center
-  .sort-name
+  .sort-item
     border 1px #eeeeee solid
     border-radius 35px
     line-height 30px
-    // overflow hidden
     position relative
     &.active
       border-color #0081ff
       color #0081ff
+    .sort-name  
+      overflow hidden
+      white-space nowrap
+      text-overflow ellipsis
     .check
       position absolute
       right 0px
