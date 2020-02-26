@@ -68,6 +68,23 @@ export default {
       pageSize: state => state.pageSize
     })
   },
+  onUnload () {
+    this.swiperCount = 0
+    this.tabName = '1'
+    this.currentPage = 0
+    this.listData = []
+    this.finished = true
+    this.isload = false
+    this.startDate = ''
+    this.endDate = ''
+    this.billNo = ''
+    this.totalPrice = 0
+    this.totalWeight = 0
+    this.totalCount = 0
+    this.allChoosed = false
+    this.scrollHeight = 0
+    this.loadFinish = false
+  },
   onShow () {
     this.listData = []
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 160

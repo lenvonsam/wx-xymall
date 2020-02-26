@@ -131,6 +131,25 @@ export default {
       currentUser: state => state.user.currentUser
     })
   },
+  onUnload () {
+    this.isEdit = false
+    this.choosedList = []
+    this.agreeEditShow = false
+    this.overruleShow = false
+    // applyEditShow: false,
+    this.promptShow = false
+    this.modifyList = []
+    this.contractDetail = {}
+    this.newPrice = 0
+    this.newLift = 0
+    this.wh_lift = ''
+    this.delModifyList = []
+    this.type = 1
+    this.delIdx = null
+    this.billStatus = ''
+    this.newBillPrice = 0
+    this.allChoosed = true
+  },
   beforeMount () {
     this.getLift()
   },

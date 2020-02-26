@@ -117,12 +117,14 @@ export default {
   },
   onUnload () {
     console.log('onUnload')
+    this.listData = []
     this.swiperCount = 0
     this.tabName = '0'
     this.disabledBtn = false
     this.configVal({key: 'tempObject', val: ''})
   },
   onShow () {
+    this.listData = []
     this.disabledBtn = false
     this.queryObject = {
       current_page: this.currentPage,

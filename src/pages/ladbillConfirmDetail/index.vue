@@ -70,6 +70,12 @@ div
         btnDisable: false
       }
     },
+    onUnload () {
+      this.totalCount = ''
+      this.totalWeight = ''
+      this.ladObject = {}
+      this.btnDisable = false
+    },
     beforeMount () {
       const me = this
       this.ironRequest('orderLadDetail.shtml?td_no=' + this.$root.$mp.query.no, {}, 'get', this).then(resp => {
