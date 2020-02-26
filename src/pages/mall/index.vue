@@ -5,74 +5,76 @@ div
     mall-head(:mallTabVal="mallTabVal", @getName="getName", @filter="multipleFilter", @selectMall="selectMall", @selectTab="selectTab", @searchChange="searchChange")
   .mall-content(style="margin-top: 20rpx")
     .mt-10
-      swiper.bill-content(@change="swiperChange", :current="swiperCount", :style="{height: scrollHeight}")
-        swiper-item(v-for="(tabItem, tabIdx) in goodsNameList.length", :key="tabIdx")
+      swiper.bill-content(@change="swiperChange", :current="swiperCount", :style="{height: scrollHeight+'rpx'}")
+        swiper-item(v-for="(tabItem, swiperIdx) in goodsNameList.length", :key="swiperIdx")
           template(v-if="isload")
             time-line(type="mallist")
           template(v-else)  
-            template(v-if="goodsNameList[tabIdx].data.length > 0")
-              scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: scrollHeight}", :refresher-enabled="false", :refresher-threshold="50", @refresherrefresh="testRefresh", @refresherrestore="testRestore", @refresherabort="testAbort", ref="testScroll")
-                div(:class="{cardSty: !mallFlag}", style="padding-top: 6rpx")
-                  .padding.pr-10.pl-10(v-for="(item,idx) in goodsNameList[tabIdx].data", :key="idx", :class="!mallFlag ? 'card-list' : 'bg-white margin-bottom-xs'")
-                    template(v-if="mallFlag === 1")
-                      .row
-                        .col.text-bold.ft-15
-                          span {{item[mallTypeObject[itemType].name]}}
-                          span.ml-5 {{item[mallTypeObject[itemType].standard]}}
-                          //- .sub-mark.ml-5 {{item[mallTypeObject[itemType].supply]}}
-                          //- span.ml-5.ft-12(style="color:#666") ({{weightMark}})
-                        .text-right.ft-16
-                          span.text-red.ft-13(v-if="item.price === '--'") 开售时间:{{item.show_time}}
-                          span.text-blue(v-else-if="item.show_price === true") ￥{{item[mallTypeObject[itemType].price]}}
-                          .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)") 查看价格
-                      .row.pt-5.flex-center.ft-12
-                        .col.c-gray
+            template(v-if="goodsNameList[swiperIdx].data.length > 0")
+              div(:style="{height: scrollHeight + 'rpx'}")
+                iron-scroll(:swiperIdx="swiperIdx", @scrolltolower="loadMore", heightUnit="rpx", :height="scrollHeight", :refresh="true", @onRefresh="onRefresh", :loadFinish="loadFinish")
+                  //- scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: scrollHeight}", :refresher-enabled="false", :refresher-threshold="50", @refresherrefresh="testRefresh", @refresherrestore="testRestore", @refresherabort="testAbort", ref="testScroll")
+                  div(:class="{cardSty: !mallFlag}", style="padding-top: 6rpx")
+                    .padding.pr-10.pl-10(v-for="(item,idx) in goodsNameList[swiperIdx].data", :key="idx", :class="!mallFlag ? 'card-list' : 'bg-white margin-bottom-xs'")
+                      template(v-if="mallFlag === 1")
+                        .row
+                          .col.text-bold.ft-15
+                            span {{item[mallTypeObject[itemType].name]}}
+                            span.ml-5 {{item[mallTypeObject[itemType].standard]}}
+                            //- .sub-mark.ml-5 {{item[mallTypeObject[itemType].supply]}}
+                            //- span.ml-5.ft-12(style="color:#666") ({{weightMark}})
+                          .text-right.ft-16
+                            span.text-red.ft-13(v-if="item.price === '--'") 开售时间:{{item.show_time}}
+                            span.text-blue(v-else-if="item.show_price === true") ￥{{item[mallTypeObject[itemType].price]}}
+                            .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)") 查看价格
+                        .row.pt-5.flex-center.ft-12
+                          .col.c-gray
+                            span {{item[mallTypeObject[itemType].material]}}
+                            span.ml-8 {{item[mallTypeObject[itemType].length]}}米
+                            span.ml-8 {{item[mallTypeObject[itemType].wh_name]}}
+                            .sub-mark.ml-5 {{item[mallTypeObject[itemType].supply]}}
+                          .text-right
+                            span ({{item.weightMark}})
+                        .pt-5.c-gray.ft-12(v-if="item[mallTypeObject[itemType].tolerance] || item[mallTypeObject[itemType].weightRange]")
+                          span(v-if="item[mallTypeObject[itemType].tolerance]") 公差范围: {{item[mallTypeObject[itemType].tolerance]}}
+                          span.ml-8(v-if="item[mallTypeObject[itemType].weightRange]") 重量范围: {{item[mallTypeObject[itemType].weightRange]}}
+                        .row.pt-5.flex-center.ft-13.c-gray
+                          .col
+                            span(v-if="item[mallTypeObject[itemType].max_count] > 0") {{item[mallTypeObject[itemType].max_count]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
+                          .flex-120.relative.text-right.ft-14
+                            div(style="position: absolute; right: 0rpx; top: -16rpx")
+                              .blue-buy(v-if="item.max_count == 0",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
+                              .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="item.show_price") 购买
+                      template(v-else)
+                        .ft-15.row
+                          span.text-bold {{item[mallTypeObject[itemType].name]}}
+                          .supply.margin-left-sm {{item[mallTypeObject[itemType].supply]}}
+                        .text-bold
+                          span {{item[mallTypeObject[itemType].standard]}}
+                        .text-gray.ft-12
                           span {{item[mallTypeObject[itemType].material]}}
                           span.ml-8 {{item[mallTypeObject[itemType].length]}}米
                           span.ml-8 {{item[mallTypeObject[itemType].wh_name]}}
-                          .sub-mark.ml-5 {{item[mallTypeObject[itemType].supply]}}
-                        .text-right
-                          span ({{item.weightMark}})
-                      .pt-5.c-gray.ft-12(v-if="item[mallTypeObject[itemType].tolerance] || item[mallTypeObject[itemType].weightRange]")
-                        span(v-if="item[mallTypeObject[itemType].tolerance]") 公差范围: {{item[mallTypeObject[itemType].tolerance]}}
-                        span.ml-8(v-if="item[mallTypeObject[itemType].weightRange]") 重量范围: {{item[mallTypeObject[itemType].weightRange]}}
-                      .row.pt-5.flex-center.ft-13.c-gray
-                        .col
+                        .text-gray.ft-12
+                          span.ft-10 公差/重量范围
+                          span.ml-8 {{item[mallTypeObject[itemType].tolerance] ? item[mallTypeObject[itemType].tolerance] : '--'}}/{{item[mallTypeObject[itemType].weightRange]?item[mallTypeObject[itemType].weightRange]: '--'}}
+                        .text-gray.ft-12
                           span(v-if="item[mallTypeObject[itemType].max_count] > 0") {{item[mallTypeObject[itemType].max_count]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
-                        .flex-120.relative.text-right.ft-14
-                          div(style="position: absolute; right: 0rpx; top: -16rpx")
+                        .text-blue.ft-15.text-bold 
+                          //- ￥{{item[mallTypeObject[itemType].price]}}
+                          span.text-red.ft-13(v-if="item.price === '--'") 开售时间:{{item.show_time}}
+                          span(v-else-if="item.show_price === true") ￥{{item[mallTypeObject[itemType].price]}}
+                          //- .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)") 查看价格
+                        .text-gray.flex
+                          .ft-11.col ({{item.weightMark}})
+                          .text-right
                             .blue-buy(v-if="item.max_count == 0",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
                             .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="item.show_price") 购买
-                    template(v-else)
-                      .ft-15.row
-                        span.text-bold {{item[mallTypeObject[itemType].name]}}
-                        .supply.margin-left-sm {{item[mallTypeObject[itemType].supply]}}
-                      .text-bold
-                        span {{item[mallTypeObject[itemType].standard]}}
-                      .text-gray.ft-12
-                        span {{item[mallTypeObject[itemType].material]}}
-                        span.ml-8 {{item[mallTypeObject[itemType].length]}}米
-                        span.ml-8 {{item[mallTypeObject[itemType].wh_name]}}
-                      .text-gray.ft-12
-                        span.ft-10 公差/重量范围
-                        span.ml-8 {{item[mallTypeObject[itemType].tolerance] ? item[mallTypeObject[itemType].tolerance] : '--'}}/{{item[mallTypeObject[itemType].weightRange]?item[mallTypeObject[itemType].weightRange]: '--'}}
-                      .text-gray.ft-12
-                        span(v-if="item[mallTypeObject[itemType].max_count] > 0") {{item[mallTypeObject[itemType].max_count]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
-                      .text-blue.ft-15.text-bold 
-                        //- ￥{{item[mallTypeObject[itemType].price]}}
-                        span.text-red.ft-13(v-if="item.price === '--'") 开售时间:{{item.show_time}}
-                        span(v-else-if="item.show_price === true") ￥{{item[mallTypeObject[itemType].price]}}
-                        //- .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)") 查看价格
-                      .text-gray.flex
-                        .ft-11.col ({{item.weightMark}})
-                        .text-right
-                          .blue-buy(v-if="item.max_count == 0",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
-                          .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="item.show_price") 购买
-                          .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)", style="padding-top: 2rpx") 查看价格
-                .padding.text-gray.ft-13.text-center(v-if="loading") 努力加载中...
-                .padding.text-gray.ft-13.text-center(v-if="goodsNameList[tabIdx].finished") 加载完成
-                //- span(v-for="(item,idx) in mallItems", :key="idx") {{idx}}
-                //- mall-item(:mallFlag="mallFlag", :cb="mallItemCb", v-for="(item,idx) in mallItems", :item="item", :key="idx")
+                            .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)", style="padding-top: 2rpx") 查看价格
+                  //- .padding.text-gray.ft-13.text-center(v-if="loading") 努力加载中...
+                  //- .padding.text-gray.ft-13.text-center(v-if="goodsNameList[tabIdx].finished") 加载完成
+                  //- span(v-for="(item,idx) in mallItems", :key="idx") {{idx}}
+                  //- mall-item(:mallFlag="mallFlag", :cb="mallItemCb", v-for="(item,idx) in mallItems", :item="item", :key="idx")
             .col.text-center.text-gray.pt-100(v-else)
               empty-image(url="bill_empty.png", className="img-empty")
               .empty-content 
@@ -144,7 +146,8 @@ export default {
       scrollHeight: 0,
       modalIntroShow: false,
       filterObj: {},
-      finished: false
+      finished: false,
+      loadFinish: false
     }
   },
   computed: {
@@ -152,12 +155,13 @@ export default {
       currentUser: state => state.user.currentUser,
       tempObject: state => state.tempObject,
       isLogin: state => state.user.isLogin,
+      screenHeight: state => state.screenHeight,
       customBar: state => state.customBar
     })
   },
   onShow () {
     this.isLoad = false
-    this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 290 + 'rpx'
+    this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 290
     if (this.tempObject.search === '' || this.tempObject.search || this.tempObject.name === '') {
       // this.goodsNameList[this.swiperCount].data = []
       this.isRefresh = 'refresh'
@@ -237,11 +241,25 @@ export default {
     testAbort (e) {
       console.log('test abort', e)
     },
-    loadMore () {
-      if (!this.isLoad && !this.goodsNameList[this.swiperCount].finished) {
-        this.currentPage++
-        this.isRefresh = 'reachBottom'
-        this.refresher()
+    // loadMore () {
+    //   if (!this.isLoad && !this.goodsNameList[this.swiperCount].finished) {
+    //     this.currentPage++
+    //     this.isRefresh = 'reachBottom'
+    //     this.refresher()
+    //   }
+    // },
+    onRefresh (done) {
+      this.currentPage = 0
+      this.refresher(done)
+    },
+    loadMore (done) {
+      if (!this.isLoad) {
+        const me = this
+        this.throttle(function () {
+          me.currentPage++
+          me.isRefresh = 'reachBottom'
+          me.refresher(done)
+        }, 300)
       }
     },
     showShareMall () {
@@ -394,9 +412,10 @@ export default {
         this.refresher()
       }
     },
-    refresher () {
+    refresher (done) {
       // if (this.isLoad) return false
-      this.showLoading()
+      // this.showLoading()
+      this.loadFinish = false
       this.goodsNameList[this.swiperCount].finished = false
       const me = this
       this.queryObject.current_page = this.currentPage
@@ -415,18 +434,12 @@ export default {
           if (me.isRefresh === 'refresh') {
             if (res.products.length > 0 && me.currentPage === 0) {
               me.goodsNameList[idx].data = res.products
-              // me.mallItems = res.products
-              console.log('goodsNameList', me.goodsNameList[idx].data)
             } else if (res.products.length === 0 && me.currentPage === 0) {
-              // me.mallItems = []
               me.goodsNameList[idx].data = []
             }
-            // wx.stopPullDownRefresh()
           } else {
             if (res.products.length > 0) {
-              // me.mallItems.push(...res.products)
               me.goodsNameList[idx].data.push(...res.products)
-              // console.log('mallItems-reachBottom', me.mallItems)
             } else {
               me.currentPage--
               this.goodsNameList[idx].finished = true
@@ -439,8 +452,10 @@ export default {
           return false
         }
 
-        this.hideLoading()
+        // this.hideLoading()
         this.isLoad = false
+        this.loadFinish = true
+        if (done) done()
       })
     }
   }

@@ -10,13 +10,13 @@
         input.full-width.pl-10(id="mallSearchInput", :disabled="true", type="text", placeholder="品名、材质、规格、产地(空格号隔开)", v-model="searchVal")
         //- input.full-width.pl-10(id="mallSearchInput", type="text", placeholder="品名、材质、规格、产地", v-model="searchVal")
   .relative
-    .mt-15.text-center.flex.align-center
+    .mt-15.text-center.flex.align-stretch
       .col.tab-content
         scroll-view.nav(scroll-x, scroll-with-animation, :scroll-left="scrollLeft")
           //- scroll-view.nav(scroll-x, scroll-with-animation, :scroll-into-view="searchCurId")
           .cu-item(:id="'idx_'+index", v-for="(item,index) in sortList[0].data", :class="item.id === tabVal?'text-blue cur':''", :key="index", @click="selectTab(item, index)")
             span {{item.name}}
-      .tab-more(@click="activeTab = 'name'")      
+      .tab-more.row.justify-center(@click="activeTab = 'name'")
         .cuIcon-unfold.text-xl
     .padding-sm.flex.align-center.solid-top
       .col.filter-list.bg-gray.flex(@click.prevent="sortCb('standard')")
@@ -34,15 +34,15 @@
     //- 筛选 品名、材质、规格、产地
     .filter-box(@click.prevent="sortClose(sortIdx)", @touchmove.stop="catchtouchmove", v-show="activeTab === sort.key", v-for="(sort, sortIdx) in sortList", :key="sortIdx")
       .bg-white.padding-sm.ft-11(@click.stop="")
-        .flex.align-center.justify-between
+        .flex.align-stretch.justify-between
           .flex.align-center
             .dotted.bg-blue
             span.pl-10.text-bold.ft-16 {{sort.title}}
             .search-input.row.bg-gray.margin-left-sm.text-gray(v-if="activeTab === 'standard'")
               .cuIcon-search.ft-16
               input.full-width.pl-10(@input="standardChange" type="text", placeholder="请输入规格快速查询")
-          .cuIcon-fold.ft-16(@click="sortClose(sortIdx)")
-        //- div(@catchtouchmove="catchtouchmove")  
+          .row.padding-sm(@click="sortClose(sortIdx)")
+            .cuIcon-fold.ft-16
         scroll-view(scroll-y, style="max-height: 700rpx", @scrolltolower="loadMore")
           .grid.col-3.padding-top-sm.sort-content
             .sort-list(v-if="sort.data.length > 0", v-for="(item, index) in sort.data", :key="index")
