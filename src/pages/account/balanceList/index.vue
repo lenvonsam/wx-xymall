@@ -158,6 +158,7 @@ export default {
     async loadData (done) {
       try {
         // this.isTabDisabled = true
+        this.showLoading()
         this.loadFinish = false
         if (this.currentPage === 0) {
           this.isload = false
@@ -199,10 +200,12 @@ export default {
         }
         this.loading = false
         if (done) done()
+        this.hideLoading()
         // this.isTabDisabled = false
       } catch (e) {
         this.loading = false
         if (done) done()
+        this.hideLoading()
         this.showMsg(e)
       }
     }

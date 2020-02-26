@@ -16,8 +16,9 @@
       .flex-90.text-center(style="border-left: 1rpx solid #888")
         auth-btn(:phone="phone", v-if="codeBtnShow")
     .row.margin-top.ft-12
-      .flex-20
-        checkbox(:checked="acceptProtocol", color="#0081ff")
+      .flex-20(@click="acceptProtocol = !acceptProtocol")
+        icon.cuIcon-squarecheck.text-blue.ft-18(v-if="acceptProtocol", style="margin-top: -8rpx")
+        icon.cuIcon-square.text-gray.ft-18(v-else, style="margin-top: -8rpx")
       .col
         span(@click="acceptProtocol = !acceptProtocol") 我已经阅读并同意
         span.text-blue(@click="jump('/pages/h5/main?title=用户协议&type=registProtocol')") 《型云软件许可及服务协议》

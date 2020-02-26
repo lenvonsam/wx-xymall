@@ -75,7 +75,8 @@ page {
   background-color: var(--ghostWhite);
   font-size: 28rpx;
   color: var(--black);
-  font-family: PingFangSC-Medium Helvetica Neue, Helvetica, sans-serif;
+  font-family: PingFangSC-Regular, Microsoft Yahei, Helvetica Neue, Helvetica,
+    sans-serif;
 }
 
 view,

@@ -203,7 +203,7 @@ export default {
   margin-top 20px
   border-radius 5px
   .contract-img
-    width 22px
+    width 25px
     // height 20px
     margin 0 auto
 .me-icon
@@ -215,18 +215,25 @@ export default {
 .dot
   position absolute
   background #fff
-  top -6px
-  right -8px
+  top -5px
+  right -10px
   color #e54d42
   text-align center
-  font-size 11px
+  font-size 10px
   display inline-block
-  height 16px
-  width 16px
+  height 15px
+  width 15px
   border 0.5px solid #e54d42
   box-sizing content-box
   border-radius 50%
-  line-height 16px
+  line-height 15px
+  &.max
+    width auto
+    padding 0px 6px
+    border-radius 20px
+    font-size 9px
+    right -14px
+    height 14px
 /deep/ button::after
   border 0px !important
 .item

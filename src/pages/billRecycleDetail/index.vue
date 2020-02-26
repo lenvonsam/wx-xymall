@@ -310,7 +310,6 @@ export default {
       }
     },
     weightChoose (val, rowItem) {
-      debugger
       rowItem.measure_way_id = val
       if (val === 2 || val === 3) {
         rowItem.weight = rowItem.radios[0].weight

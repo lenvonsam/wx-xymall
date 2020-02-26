@@ -249,6 +249,7 @@ export default {
               me.showMsg('清空成功')
               me.btnDisable = false
               me.carts = []
+              me.tabDot(0)
             } else {
               me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
               me.btnDisable = false
@@ -373,7 +374,6 @@ export default {
       }
     },
     weightChoose (val, rowItem) {
-      debugger
       rowItem.measure_way_id = val
       if (val === 2) {
         rowItem.weight = rowItem.radios[0].weight
