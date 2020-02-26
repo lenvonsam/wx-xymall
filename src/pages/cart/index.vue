@@ -300,7 +300,7 @@ export default {
       const me = this
       if (this.isEdit) {
         if (filterArray.length === 0) {
-          this.showMsg('请选择所需删除的商品', 'warn')
+          this.showMsg('请选择所需删除的商品')
           return false
         }
         // 删除

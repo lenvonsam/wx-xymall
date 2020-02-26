@@ -102,6 +102,19 @@ export default {
       queryId: ''
     }
   },
+  onUnload () {
+    this.pickIdx = 0
+    this.nosArray = []
+    this.nosArrayTotal = ''
+    this.pickOpen = false
+    this.expressName = ''
+    this.expressNo = ''
+    this.receiver = ''
+    this.receiverMobile = ''
+    this.receiverAddr = ''
+    this.clickDisabled = false
+    this.queryId = ''
+  },
   beforeMount () {
     this.queryId = this.$root.$mp.query.id
     if (this.queryId === '0') {
@@ -184,7 +197,6 @@ export default {
           if (resp && resp.returncode === '0') {
             const msg = me.pageTitle === '申请发票' ? '申请发票成功' : '发票确认成功'
             me.showMsg(msg, '', 1000)
-            me.clickDisabled = false
             me.configVal({ key: 'tempObject', val: { tabName: me.queryId } })
             setTimeout(() => {
               me.back()

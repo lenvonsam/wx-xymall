@@ -96,6 +96,12 @@ export default {
       return this.ladObject.make_phone === undefined ? '0519-86921892' : this.ladObject.make_phone
     }
   },
+  onUnload () {
+    this.totalCount = ''
+    this.totalWeight = ''
+    this.ladObject = {}
+    this.btnDisable = false
+  },
   components: {
     copyBtn
   },
