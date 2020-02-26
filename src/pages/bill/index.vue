@@ -1,7 +1,7 @@
 <template lang="pug">
 div
   nav-bar(title="我的合同", isBack)
-  .head.bg-white(:style="{height: '196rpx'}")
+  .head.bg-white(:style="{height: '200rpx'}")
     .serach.flex.align-center.padding-sm
       .col.search-input.text-gray
         .flex.align-center
@@ -12,51 +12,50 @@ div
       .flex.text-center
         .cu-item.flex-sub(v-for="(item,index) in billTab", :class="item.status === tabName?'text-blue cur':''", :key="index", @click="selectTabs(item, index)")
           span {{item.title}}
-  swiper.bill-content(@change="swiperChange", :current="swiperCount", :style="{height: scrollHeight}")
+  swiper.bill-content(@change="swiperChange", :current="swiperCount", :style="{height: scrollHeight+'rpx'}")
     swiper-item(v-for="(tabItem, idx) in billTab.length", :key="idx")
       //- scroll-view(scroll-y, :refresher-triggered="triggered", :refresher-enabled="true", @refresherrefresh="refresher", @scrolltolower="loadMore", :style="{height: screenHeight - 186 +'px'}")
       template(v-if="isload")
         time-line(type="mallist")
       template(v-else)
-        template(v-if="listData.length > 0")
-          scroll-view.padding-top-sm(
-            scroll-y, 
-            @scrolltolower="loadMore", 
-            :style="{height: scrollHeight}")
-            .bill-list(v-for="(item, itemIdx) in billTab[idx].data", :key="itemIdx", @click="jumpDetail(item)")
-              .bg-white.box
-                .padding-sm
-                  .flex.justify-between.padding-bottom-sm
+        template(v-if="billTab[idx].data.length > 0")
+          div(:style="{height: scrollHeight+'rpx'}")
+            iron-scroll(:idx="idx", @scrolltolower="loadMore", heightUnit="rpx", :height="scrollHeight", :refresh="true", @onRefresh="onRefresh", :loadFinish="loadFinish")          
+              .bill-list(v-for="(item, itemIdx) in billTab[idx].data", :key="itemIdx", @click="jumpDetail(item)")
+                .bg-white.box
+                  .padding-sm
+                    .flex.justify-between.padding-bottom-sm
+                      .col
+                        .flex.align-center
+                          .ft-16.padding-right-sm {{item.no}}
+                          img.ding-icon(src="/static/images/ding.png", v-if="item.is_dx")
+                      .text-gray(v-if="item.status === '已完成' || item.status === '违约' || item.status === '已取消'") {{item.status}}
+                      .text-red(v-else-if="item.status !== '待补款'") {{item.status}}
+                      
+                    .text-gray
+                      .padding-bottom-xs {{item.supply_name}}
+                      .flex.justify-between.padding-bottom-xs 
+                        span 共{{item.total_count}}支，{{item.total_weight}}吨
+                        .ft-18.text-black ￥{{item.fact_price}}
+                      .flex.justify-between.padding-bottom-xs
+                        .col 吊费：¥{{item.lift_charge}}
+                  .solid-top.text-black.ft-15.padding-sm.row(v-if="item.status === '待补款' || item.status === '待付款'")
                     .col
-                      .flex.align-center
-                        .ft-16.padding-right-sm {{item.no}}
-                        img.ding-icon(src="/static/images/ding.png", v-if="item.is_dx")
-                    .text-gray(v-if="item.status === '已完成' || item.status === '违约' || item.status === '已取消'") {{item.status}}
-                    .text-red(v-else-if="item.status !== '待补款'") {{item.status}}
-                  .text-gray
-                    .padding-bottom-xs {{item.supply_name}}
-                    .flex.justify-between.padding-bottom-xs 
-                      span 共{{item.total_count}}支，{{item.total_weight}}吨
-                      .ft-18.text-black ￥{{item.fact_price}}
-                    .flex.justify-between.padding-bottom-xs
-                      .col 吊费：¥{{item.lift_charge}}
-                .solid-top.text-black.ft-15.padding-sm.row(v-if="item.status === '待补款' || item.status === '待付款'")
-                  .col
-                    template(v-if="item.status === '待付款'")
-                      span 倒计时：
-                      span.padding-left-xs.text-red {{item.timeDown}}
-                    template(v-if="item.status === '待补款'")
-                      span 待补款：
-                      span.padding-left-xs.text-red ￥{{item.paid_price}}
-                  .flex
-                    template(v-if="item.status === '待付款'")
-                      .bill-btn.round(@click.stop="payBill(item)") 去付款
-                      .bill-red-btn.round.margin-left-sm(@click.stop="billCancel(item)") 取消
-                    template(v-if="item.status === '待补款'")
-                      .bill-btn.round 待补款
+                      template(v-if="item.status === '待付款'")
+                        span 倒计时：
+                        span.padding-left-xs.text-red {{item.timeDown}}
+                      template(v-if="item.status === '待补款'")
+                        span 待补款：
+                        span.padding-left-xs.text-red ￥{{item.paid_price}}
+                    .flex
+                      template(v-if="item.status === '待付款'")
+                        .bill-btn.round(@click.stop="payBill(item)") 去付款
+                        .bill-red-btn.round.margin-left-sm(@click.stop="billCancel(item)") 取消
+                      template(v-if="item.status === '待补款'")
+                        .bill-btn.round 待补款
         .text-center.c-gray.pt-100(v-else)
           empty-image(url="bill_empty.png", className="img-empty")
-          .empty-content 您暂时没有相关合同
+          .empty-content 您暂时没有相关合同        
 </template>
 <script>
 import { mapState } from 'vuex'
@@ -89,7 +88,8 @@ export default {
       btnDisable: false,
       scrollHeight: '0px',
       timeInterval: '',
-      serverTime: ''
+      serverTime: '',
+      loadFinish: false
     }
   },
   computed: {
@@ -103,8 +103,9 @@ export default {
     })
   },
   onShow () {
-    this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 196 + 'rpx'
+    this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 200
     // this.finished = true
+    // this.scrollHeight = this.screenHeight - this.customBar - 98
   },
   beforeMount () {
     this.tabName = this.$root.$mp.query.tabName || '0'
@@ -168,6 +169,10 @@ export default {
     clearInterval(this.timeInterval)
   },
   methods: {
+    onRefresh (done) {
+      this.currentPage = 0
+      this.refresher(done)
+    },
     searchOrder () {
       this.startDate = ''
       this.endDate = ''
@@ -200,9 +205,8 @@ export default {
       //   me.loadData()
       // }, 300)
     },
-    refresher () {
-      console.log('billNo', this.billNo)
-      console.log('triggered', this.triggered)
+    refresher (done) {
+      this.loadFinish = false
       const me = this
       this.finished = true
       this.isLoad = true
@@ -217,8 +221,8 @@ export default {
             arr.map(itm => {
               itm.choosed = false
               list.push(itm)
-              this.billTab[idx].data.push(itm)
             })
+            me.billTab[idx].data = list
             me.listData = list
             me.finished = false
             me.isLoad = false
@@ -228,6 +232,7 @@ export default {
             me.finished = true
             me.isload = false
           }
+          this.loadFinish = true
         } else {
           me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
           me.isload = false
@@ -235,7 +240,8 @@ export default {
         me.isTabDisabled = false
         me.triggered = false
         console.log('triggered', this.triggered)
-        wx.stopPullDownRefresh()
+        // wx.stopPullDownRefresh()
+        if (done) done()
       })
     },
     selectTabs (item, idx) {
@@ -305,6 +311,7 @@ export default {
       this.$forceUpdate()
     },
     loadData () {
+      this.loadFinish = false
       if (this.currentPage === 0) {
         this.isload = true
       } else {
@@ -342,6 +349,7 @@ export default {
             me.finished = true
             me.isload = false
             me.currentPage--
+            me.loadFinish = true
           }
         } else {
           me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
@@ -353,9 +361,11 @@ export default {
     },
     loadMore () {
       if (!this.isLoad) {
-        this.currentPage++
-        this.isTabDisabled = true
-        this.loadData()
+        const me = this
+        this.throttle(function () {
+          me.currentPage++
+          me.loadData()
+        }, 300)
       }
     },
     // jumpSearch () {
@@ -415,6 +425,7 @@ export default {
   border-radius 35px
 .bill-list
   margin-bottom 10px
+  margin-top 10px
   padding-left 10px
   padding-right 10px
   .box
