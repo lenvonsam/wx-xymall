@@ -14,11 +14,11 @@
       .s-content-wrap(v-else)
         .s-content
           .flex.padding-sm.bg-white.align-center.justify-between(style="height: 100rpx")
-            .col(@click="openPickWay")
-              .flex.align-center
-                .cuIcon-location
-                .padding-left-xs 提货方式
-                .padding-left-xs.cuIcon-unfold
+            //- .col(@click="openPickWay")
+            .flex.align-center(@click="openPickWay")
+              .cuIcon-location
+              .padding-left-xs 提货方式
+              .padding-left-xs.cuIcon-unfold
             .text-center
               .padding-xs(v-show="isEdit", @click="openEdit") 完成
               .flex(v-show="!isEdit")
@@ -225,6 +225,7 @@ export default {
       this.jump('/pages/account/login/main')
     },
     openEdit () {
+      this.pickWayShow = false
       this.isEdit = !this.isEdit
     },
     openPickWay () {
