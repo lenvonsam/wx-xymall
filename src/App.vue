@@ -52,9 +52,7 @@ export default {
         console.log('capsule:>>', capsule)
       }
     })
-  },
-  log () {
-    // console.log(`log at:${Date.now()}`)
+    console.log('this.currentUser', this.currentUser)
   }
 }
 </script>

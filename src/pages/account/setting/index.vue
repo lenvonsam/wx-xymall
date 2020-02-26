@@ -27,8 +27,7 @@ export default {
   },
   computed: {
     ...mapState({
-      currentVersion: state => state.currentVersion,
-      currentUser: state => state.user.currentUser
+      currentVersion: state => state.currentVersion
     })
   },
   methods: {
@@ -40,7 +39,7 @@ export default {
     noticeChange (e) {
       console.log('change ', e)
       const val = e.mp.detail.value ? '1' : '0'
-      this.ironRequest(this.apiList.xy.updateProfile.url, { user_id: this.currentUser.user_id, message_switch: val }, this.apiList.xy.updateProfile.method, this)
+      this.ironRequest(this.apiList.xy.updateProfile.url, { user_id: this.currentUser.user_id, message_switch: val }, this.apiList.xy.updateProfile.method)
       const obj = this.currentUser
       obj.message_switch = val
       this.setUser(obj)
@@ -50,7 +49,7 @@ export default {
       this.confirm({ content: '您确定要退出吗?', title: '友情提示' }).then(res => {
         if (res === 'confirm') {
           const localSearch = me.currentUser.localSearch
-          me.ironRequest(me.apiList.xy.searchHistory.url, { user_id: me.currentUser.user_id, history: localSearch }, me.apiList.xy.searchHistory.method, me)
+          me.ironRequest(me.apiList.xy.searchHistory.url, { user_id: me.currentUser.user_id, history: localSearch }, me.apiList.xy.searchHistory.method)
           me.exitUser()
           me.jump('/pages/account/login/main?type=2')
         }

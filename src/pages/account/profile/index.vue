@@ -32,7 +32,7 @@ div
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 export default {
   data () {
     return {
@@ -48,15 +48,9 @@ export default {
       }]
     }
   },
-  computed: {
-    ...mapState({
-      imgOuterUrl: state => state.imgOuterUrl,
-      currentUser: state => state.user.currentUser
-    })
-  },
   onShow () {
     var me = this
-    this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method, this).then(resp => {
+    this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(resp => {
       let obj = me.currentUser
       obj.cust_name = resp.cust_name
       me.setUser(obj)
@@ -82,7 +76,7 @@ export default {
       try {
         const data = await this.ironFileUpload('cominfo')
         console.log(data)
-        await this.ironRequest(this.apiList.xy.updateProfile.url, { user_id: this.currentUser.user_id, avatar_url: data }, 'post', this)
+        await this.ironRequest(this.apiList.xy.updateProfile.url, { user_id: this.currentUser.user_id, avatar_url: data }, 'post')
         const obj = this.currentUser
         obj.avatar = '/filepool' + data
         this.setUser(obj)

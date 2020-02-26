@@ -36,8 +36,7 @@ export default {
   },
   computed: {
     ...mapState({
-      currentVersion: state => state.currentVersion,
-      currentUser: state => state.user.currentUser
+      currentVersion: state => state.currentVersion
     })
   },
   onUnload () {
@@ -73,7 +72,7 @@ export default {
         if (this.canClick) {
           this.canClick = false
           const encrptPwd = this.base64Str(this.upwd.trim())
-          const data = await this.ironRequest(this.apiList.xy.login.url, { user_mark: this.uname.trim(), user_pwd: encrptPwd }, this.apiList.xy.login.method, this)
+          const data = await this.ironRequest(this.apiList.xy.login.url, { user_mark: this.uname.trim(), user_pwd: encrptPwd }, this.apiList.xy.login.method)
           console.log('user login', data)
           data.pwd = encrptPwd
           this.setUser(data)
@@ -82,7 +81,7 @@ export default {
           if (data.isnew) {
             this.canClick = true
             const me = this
-            this.confirm({ title: '您是新用户，请先完成公司信息' }).then(res => {
+            this.confirm({ content: '您是新用户，请先完成公司信息' }).then(res => {
               if (res === 'confirm') {
                 me.jump('/pages/account/companyUpdate/main')
               } else {
@@ -110,7 +109,7 @@ export default {
     },
     async getRemoteSearchHistory () {
       try {
-        const data = await this.ironRequest(this.apiList.xy.searchHistory.url, {}, this.apiList.xy.searchHistory.method, this)
+        const data = await this.ironRequest(this.apiList.xy.searchHistory.url, {}, this.apiList.xy.searchHistory.method)
         const obj = this.currentUser
         obj.localSearchs = data.history === undefined ? [] : JSON.parse(data.history)
         this.setUser(obj)

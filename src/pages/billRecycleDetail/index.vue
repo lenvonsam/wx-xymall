@@ -83,12 +83,7 @@ export default {
   },
   computed: {
     ...mapState({
-      tempObject: state => state.tempObject,
-      currentUser: state => state.user.currentUser,
-      customBar: state => state.customBar,
-      screenHeight: state => state.screenHeight,
-      isLogin: state => state.user.isLogin,
-      cartCount: state => state.cartCount
+      tempObject: state => state.tempObject
     }),
     totalObject () {
       let price = 0
@@ -132,7 +127,7 @@ export default {
       }
     }
     this.carts = []
-    this.ironRequest('recycleDetail.shtml?order_no=' + this.$root.$mp.query.no, {}, 'get', this).then(resp => {
+    this.ironRequest('recycleDetail.shtml?order_no=' + this.$root.$mp.query.no, {}, 'get').then(resp => {
       if (resp && resp.returncode === '0') {
         // tempObject
         let arr = resp.order_items

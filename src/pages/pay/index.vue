@@ -108,9 +108,7 @@ export default {
   },
   computed: {
     ...mapState({
-      imgOuterUrl: state => state.imgOuterUrl,
-      pzPreUrl: state => state.pzPreUrl,
-      currentUser: state => state.user.currentUser
+      pzPreUrl: state => state.pzPreUrl
     })
   },
   watch: {
@@ -121,13 +119,16 @@ export default {
       this.frontBalance = this.$toFixed(Number(newVal - this.currentBalance), 2)
     }
   },
+  onShow () {
+    this.whiteStatusBar()
+  },
   beforeMount () {
     this.pageType = this.$root.$mp.query.pageType
     if (this.$root.$mp.query.orderNo && (this.pageType === 'offlinePay' || this.pageType === 'ladPay')) {
       this.orderNos = this.$root.$mp.query.orderNo.split(',')
     }
     this.showLoading()
-    this.ironRequest('balanceList.shtml?type=0&only_all=1&user_id=' + this.currentUser.user_id, {}, 'get', this).then(res => {
+    this.ironRequest('balanceList.shtml?type=0&only_all=1&user_id=' + this.currentUser.user_id, {}, 'get').then(res => {
       if (res.returncode === '0') {
         this.freezeMoney = res.freeze_money
         console.log(this.chooseType)
@@ -135,7 +136,7 @@ export default {
       this.hideLoading()
     })
     console.log('this.$route.query.orderNo', this.$root.$mp.query.orderNo)
-    this.ironRequest('orderPayDetail.shtml?tstc_nos=' + this.$root.$mp.query.orderNo, {}, 'get', this).then(res => {
+    this.ironRequest('orderPayDetail.shtml?tstc_nos=' + this.$root.$mp.query.orderNo, {}, 'get').then(res => {
       const resData = res
       if (res.returncode === '0') {
         this.currentBalance = resData.desposit_can
@@ -231,7 +232,7 @@ export default {
                 reqUrl = 'contractPay.shtml'
                 body.contract_no = this.$route.query.contractNo
               }
-              this.ironRequest(reqUrl, body, 'post', this).then(resp => {
+              this.ironRequest(reqUrl, body, 'post').then(resp => {
                 console.log('res', resp)
                 if (resp.returncode === '0') {
                   this.confirm({ content: '银行转账信息提交成功，请耐心等待审批' }).then((res) => {
@@ -257,7 +258,7 @@ export default {
                 credent_pics: ''
               }
               this.showLoading()
-              this.ironRequest('recharge.shtml', body, 'post', this).then(resp => {
+              this.ironRequest('recharge.shtml', body, 'post').then(resp => {
                 if (resp.returncode === '0') {
                   this.confirm({ content: '银行转账信息提交成功，请耐心等待审批' }).then((res) => {
                     if (res === 'confirm') {

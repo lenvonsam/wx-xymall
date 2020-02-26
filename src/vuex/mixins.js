@@ -27,7 +27,10 @@ const wxMixins = {
   computed: {
     ...mapState({
       screenWidth: state => state.screenWidth,
-      screenHeight: state => state.screenHeight
+      screenHeight: state => state.screenHeight,
+      currentUser: state => state.user.currentUser,
+      isLogin: state => state.user.isLogin,
+      customBar: state => state.customBar
     })
   },
   methods: {
@@ -61,6 +64,12 @@ const wxMixins = {
     },
     hideLoading () {
       mpvue.hideLoading()
+    },
+    whiteStatusBar () {
+      mpvue.setNavigationBarColor({
+        frontColor: '#ffffff',
+        backgroundColor: '#ffffff'
+      })
     },
     tabDot (text, index = 2) {
       if (Number(text) > 0) {

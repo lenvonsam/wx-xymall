@@ -42,7 +42,7 @@ div
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 import authBtn from '@/components/AuthBtn.vue'
 export default {
   data () {
@@ -74,11 +74,6 @@ export default {
       val3: ''
     }
   },
-  computed: {
-    ...mapState({
-      currentUser: state => state.user.currentUser
-    })
-  },
   components: {
     authBtn
   },
@@ -90,7 +85,6 @@ export default {
     this.val3 = ''
     const query = this.$root.$mp.query
     if (query.type) this.type = query.type
-    console.log('title:>>', this.title)
     this.tabs[0].title = this.titleMap[this.type].tab1
     this.tabs[1].title = this.titleMap[this.type].tab2
   },
@@ -165,7 +159,7 @@ export default {
       try {
         if (this.canClick && this.canHttp) {
           this.canClick = false
-          await this.ironRequest(this.apiList.xy.resetPwd.url, queryObject, this.apiList.xy.resetPwd.method, this)
+          await this.ironRequest(this.apiList.xy.resetPwd.url, queryObject, this.apiList.xy.resetPwd.method)
           if (this.type === 'loginPwd') {
             this.alertText = '登录密码修改成功，请重新登录'
           } else {

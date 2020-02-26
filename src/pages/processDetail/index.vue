@@ -44,7 +44,6 @@ div
     
 </template>
 <script>
-import { mapState } from 'vuex'
 import processItem from '@/components/ProcessItem.vue'
 export default {
   data () {
@@ -68,11 +67,6 @@ export default {
   components: {
     processItem
   },
-  computed: {
-    ...mapState({
-      currentUser: state => state.user.currentUser
-    })
-  },
   watch: {
     processType (newVal, oldVal) {
       if (!this.pno) {
@@ -85,7 +79,7 @@ export default {
     this.dateVal = this.date2Str(new Date())
     if (this.pno) {
       this.rowCount = []
-      this.ironRequest('processDetail.shtml?process_no=' + this.pno, {}, 'get', this).then(resp => {
+      this.ironRequest('processDetail.shtml?process_no=' + this.pno, {}, 'get').then(resp => {
         if (resp.returncode === '0') {
           this.pObj = resp.process
           const list = []
@@ -191,7 +185,7 @@ export default {
         if (!this.btnDisable) {
           this.btnDisable = true
           const me = this
-          this.ironRequest('process.shtml', body, 'post', this).then(resp => {
+          this.ironRequest('process.shtml', body, 'post').then(resp => {
             if (resp && resp.returncode === '0') {
               me.showMsg('加工发布成功')
               setTimeout(() => {

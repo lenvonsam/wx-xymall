@@ -100,7 +100,6 @@ div
 </template>
 <script>
 import CountStep from '@/components/CountStep.vue'
-import { mapState } from 'vuex'
 export default {
   data () {
     return {
@@ -125,11 +124,6 @@ export default {
   },
   components: {
     CountStep
-  },
-  computed: {
-    ...mapState({
-      currentUser: state => state.user.currentUser
-    })
   },
   beforeMount () {
     this.getLift()
@@ -169,7 +163,7 @@ export default {
     },
     weightChoose (val, rowItem) {},
     getLift () {
-      this.ironRequest('isLift.shtml', {}, 'get', this).then(res => {
+      this.ironRequest('isLift.shtml', {}, 'get').then(res => {
         this.wh_lift = res
         this.loadData()
       }).catch(err => {
@@ -200,7 +194,7 @@ export default {
           amount: countList.toString()
         }
         // this.$ironLoad.show()
-        this.ironRequest('buy_edit_contract_app.shtml', params, 'post', this).then(res => {
+        this.ironRequest('buy_edit_contract_app.shtml', params, 'post').then(res => {
         // this.$ironLoad.hide()
           if (res.returncode === '0') {
             this.showMsg(res.msg ? res.msg : '提交成功')
@@ -224,7 +218,7 @@ export default {
       }
       const me = this
       // this.$ironLoad.show()
-      this.ironRequest('confirm_contract_app.shtml', params, 'post', this).then(res => {
+      this.ironRequest('confirm_contract_app.shtml', params, 'post').then(res => {
         // this.$ironLoad.hide()
         if (res.returncode === '0') {
           me.showMsg(res.msg ? res.msg : '修改成功', 'positive')
@@ -244,7 +238,7 @@ export default {
         contract_id: this.contractDetail.contract_id
       }
       const me = this
-      this.ironRequest('reject_contract_app.shtml', params, 'post', this).then(res => {
+      this.ironRequest('reject_contract_app.shtml', params, 'post').then(res => {
         if (res.returncode === '0') {
           me.showMsg('驳回成功', 'positive')
           setTimeout(() => {
@@ -354,7 +348,7 @@ export default {
       if (this.type === '2') {
         apiUrl = 'contract_edit_detail_confirm_app.shtml'
       }
-      this.ironRequest(apiUrl, { id: this.$root.$mp.query.id }, 'post', this).then(resp => {
+      this.ironRequest(apiUrl, { id: this.$root.$mp.query.id }, 'post').then(resp => {
         this.isLoad = true
         let goodsPriceNew = 0
         let liftPriceNew = 0

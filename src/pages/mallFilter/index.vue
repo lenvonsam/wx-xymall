@@ -96,7 +96,7 @@ export default {
       this.getStandardList()
     },
     getGoods () {
-      this.ironRequest(this.apiList.xy.goodsList.url, {}, this.apiList.xy.goodsList.method, this).then((res) => {
+      this.ironRequest(this.apiList.xy.goodsList.url, {}, this.apiList.xy.goodsList.method).then((res) => {
         const nameId = this.$root.$mp.query.name
         this.queryObject = {
           current_page: this.currentPage,
@@ -124,7 +124,7 @@ export default {
     },
     getStandardList () {
       this.isLoad = false
-      this.ironRequest(this.apiList.xy.standardList.url, this.queryObject, this.apiList.xy.standardList.method, this).then((res) => {
+      this.ironRequest(this.apiList.xy.standardList.url, this.queryObject, this.apiList.xy.standardList.method).then((res) => {
         console.log('getStandardList', res)
         this.searchIdx = 1
         res.standards.map(item => {

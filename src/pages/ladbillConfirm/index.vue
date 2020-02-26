@@ -29,7 +29,7 @@ export default {
       listData: [],
       currentPage: 0,
       isload: true,
-      loadFinish: false
+      loadFinish: 0
     }
   },
   components: {
@@ -37,12 +37,7 @@ export default {
   },
   computed: {
     ...mapState({
-      currentUser: state => state.user.currentUser,
-      pageSize: state => state.pageSize,
-      tempObject: state => state.tempObject,
-      screenHeight: state => state.screenHeight,
-      customBar: state => state.customBar,
-      isLogin: state => state.user.isLogin
+      tempObject: state => state.tempObject
     })
   },
   onShow () {
@@ -73,9 +68,9 @@ export default {
         current_page: this.currentPage,
         page_size: this.pageSize
       }
-      this.loadFinish = false
+      this.loadFinish = 1
       // if (this.currentPage > 0) this.loading = false
-      this.ironRequest(reqUrl, p, type, this).then(resp => {
+      this.ironRequest(reqUrl, p, type).then(resp => {
         if (resp.returncode === '0') {
           console.log('resp', resp)
           const me = this
@@ -89,11 +84,11 @@ export default {
             me.listData.push(...arr)
           } else {
             me.currentPage--
-            me.loadFinish = true
+            if (me.listData.length >= 10) me.loadFinish = 2
           }
         }
         this.hideLoading()
-        this.loadFinish = true
+        if (this.listData.length < 10) this.loadFinish = 0
         this.isload = false
         if (done) done()
       }).catch(err => {

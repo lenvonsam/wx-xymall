@@ -36,7 +36,7 @@ div
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 export default {
   data () {
     return {
@@ -72,11 +72,6 @@ export default {
     this.listData = []
     this.getListData()
   },
-  computed: {
-    ...mapState({
-      currentUser: state => state.user.currentUser
-    })
-  },
   methods: {
     ...mapActions([
       'configVal'
@@ -101,7 +96,7 @@ export default {
         if (this.pageType === 'noticeList') {
           url += '?have_read=-1&user_id=' + this.currentUser.user_id + '&current_page=' + this.currentPage + '&page_size=' + this.pageSize
         }
-        const data = await this.ironRequest(url, params, this.apiList.xy[this.pageType].method, this)
+        const data = await this.ironRequest(url, params, this.apiList.xy[this.pageType].method)
         console.log('get data', data)
         this.isLoad = true
         const arr = data[this.listMapKey[this.pageType]]

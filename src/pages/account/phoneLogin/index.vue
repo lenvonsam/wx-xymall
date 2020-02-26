@@ -44,8 +44,7 @@ export default {
   },
   computed: {
     ...mapState({
-      currentVersion: state => state.currentVersion,
-      currentUser: state => state.user.currentUser
+      currentVersion: state => state.currentVersion
     })
   },
   components: {
@@ -114,7 +113,7 @@ export default {
           this.canClick = false
           // 18015816879
           // TODO 接口正在修改
-          const data = await this.ironRequest(this.apiList.xy[this.pageType].url, params, this.apiList.xy[this.pageType].method, this)
+          const data = await this.ironRequest(this.apiList.xy[this.pageType].url, params, this.apiList.xy[this.pageType].method)
           const me = this
           if (me.pageType === 'smsLogin') me.showMsg('登录成功')
           setTimeout(function () {
@@ -124,7 +123,7 @@ export default {
               me.configVal({ key: 'oldVersion', val: me.currentVersion })
               me.getRemoteSearchHistory(data)
               if (data.isnew) {
-                me.confirm({ title: '您是新用户，请先完成公司信息' }).then(res => {
+                me.confirm({ content: '您是新用户，请先完成公司信息' }).then(res => {
                   if (res === 'confirm') {
                     me.jump('/pages/account/companyUpdate/main')
                   } else {
@@ -151,7 +150,7 @@ export default {
     },
     async getRemoteSearchHistory (userData) {
       try {
-        const data = await this.ironRequest(this.apiList.xy.searchHistory.url + '?user_id=' + userData.user_id, {}, this.apiList.xy.searchHistory.method, this)
+        const data = await this.ironRequest(this.apiList.xy.searchHistory.url + '?user_id=' + userData.user_id, {}, this.apiList.xy.searchHistory.method)
         const obj = this.currentUser
         obj.localSearchs = data.history === '' ? [] : JSON.parse(data.history)
         this.setUser(obj)

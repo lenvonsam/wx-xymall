@@ -57,7 +57,7 @@ export default {
         if (this.pageType === 'noticeDetail') {
           url += '?id=' + query.id
         }
-        const data = await this.ironRequest(url, params, this.apiList.xy[this.pageType].method, this)
+        const data = await this.ironRequest(url, params, this.apiList.xy[this.pageType].method)
         console.log('data', data)
         this.obj = data
         this[this.pageType + 'Handler']()

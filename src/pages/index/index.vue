@@ -101,11 +101,7 @@ export default {
   computed: {
     ...mapState({
       mainIcons: state => state.mainIcons,
-      mainClassify: state => state.mainClassify,
-      screenWidth: state => state.screenWidth,
-      isLogin: state => state.user.isLogin,
-      currentUser: state => state.user.currentUser,
-      customBar: state => state.customBar
+      mainClassify: state => state.mainClassify
     })
   },
   methods: {

@@ -35,7 +35,7 @@ div
 
 <script>
 import authBtn from '@/components/AuthBtn.vue'
-import { mapState, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 export default {
   data () {
     return {
@@ -52,11 +52,6 @@ export default {
   },
   components: {
     authBtn
-  },
-  computed: {
-    ...mapState({
-      currentUser: state => state.user.currentUser
-    })
   },
   onShow () {
     this.codeBtnShow = true
@@ -87,7 +82,7 @@ export default {
         }
         if (this.nextClick) {
           this.nextClick = false
-          await this.ironRequest(this.apiList.xy.validCaptcha.url + '?user_phone=' + this.currentUser.phone + '&valid_code=' + this.code1, {}, this.apiList.xy.validCaptcha.method, this)
+          await this.ironRequest(this.apiList.xy.validCaptcha.url + '?user_phone=' + this.currentUser.phone + '&valid_code=' + this.code1, {}, this.apiList.xy.validCaptcha.method)
           this.tabIndex = 2
           this.nextClick = true
           this.canActive = true
@@ -107,7 +102,7 @@ export default {
         const me = this
         if (this.bindClick) {
           this.bindClick = false
-          await this.ironRequest(this.apiList.xy.bindNewPhone.url, { user_id: this.currentUser.user_id, user_phone: this.newPhone, msg_code: this.code2 }, this.apiList.xy.bindNewPhone.method, this)
+          await this.ironRequest(this.apiList.xy.bindNewPhone.url, { user_id: this.currentUser.user_id, user_phone: this.newPhone, msg_code: this.code2 }, this.apiList.xy.bindNewPhone.method)
           me.confirm({ title: '友情提示', content: '手机号更改成功，请重新登录' }).then(() => {
             me.exitUser()
             me.bindClick = true

@@ -64,13 +64,11 @@ export default {
       loading: false,
       month: 0,
       floatBarShow: false,
-      loadFinish: false
+      loadFinish: 0
     }
   },
   computed: {
     ...mapState({
-      currentUser: state => state.user.currentUser,
-      screenHeight: state => state.screenHeight,
       customBar: state => state.customBar
     })
   },
@@ -159,7 +157,7 @@ export default {
       try {
         // this.isTabDisabled = true
         this.showLoading()
-        this.loadFinish = false
+        this.loadFinish = 1
         if (this.currentPage === 0) {
           this.isload = false
         }
@@ -171,7 +169,7 @@ export default {
           page_size: this.pageSize,
           type_status: this.typeStatus,
           number: this.month
-        }, this.apiList.xy.creditRecordList.method, this)
+        }, this.apiList.xy.creditRecordList.method)
         const arr = data.resultlist
         this.isLoad = true
         const list = []
@@ -196,10 +194,11 @@ export default {
           me.listData.push(...list)
         } else {
           me.currentPage--
-          me.loadFinish = true
+          if (me.listData.length >= 10) me.loadFinish = 2
         }
         this.loading = false
         if (done) done()
+        if (me.listData.length < 10) me.loadFinish = 0
         this.hideLoading()
         // this.isTabDisabled = false
       } catch (e) {

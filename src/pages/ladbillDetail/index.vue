@@ -26,7 +26,7 @@ export default {
     }
   },
   beforeMount () {
-    this.ironRequest('orderLadDetail.shtml?td_no=' + this.$root.$mp.query.id, {}, 'get', this).then(resp => {
+    this.ironRequest('orderLadDetail.shtml?td_no=' + this.$root.$mp.query.id, {}, 'get').then(resp => {
       if (resp && resp.returncode === '0') {
         this.detailObject = resp
       } else {

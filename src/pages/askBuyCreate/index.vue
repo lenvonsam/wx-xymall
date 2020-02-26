@@ -39,63 +39,57 @@ div
 </template>
 
 <script>
-  import { mapState } from 'vuex'
-  export default {
-    data () {
-      return {
-        btnDisable: false,
-        name: '',
-        material: '',
-        supply: '',
-        standard: '',
-        phone: '',
-        demand: ''
-      }
-    },
-    onUnload () {
-      this.name = ''
-      this.material = ''
-      this.supply = ''
-      this.standard = ''
-      this.phone = ''
-      this.demand = ''
-    },
-    computed: {
-      ...mapState({
-        currentUser: state => state.user.currentUser
-      })
-    },
-    methods: {
-      createAskPay () {
-        const keys = ['name', 'phone']
-        if (this.validateNull(keys, this)) {
-          let nameReg = /^[A-Za-z0-9\u4e00-\u9fa5]+$/
-          if (!nameReg.test(this.name.toString().trim())) {
-            this.showMsg('品名不能包含特殊字符')
-            return
-          }
-          if (!this.mobileReg(this.phone.toString().trim())) {
-            this.showMsg('请输入正确的手机号')
-            return
-          }
-          if (!this.btnDisable) {
-            this.btnDisable = true
-            const me = this
-            this.ironRequest('needBuy.shtml', {user_id: this.currentUser.user_id, name: this.name, material: this.material, supply: this.supply, standard: this.standard, contact_no: this.phone, remark: this.demand}, 'post', this).then(resp => {
-              if (resp && resp.returncode === '0') {
-                this.showMsg('求购发布成功')
-                setTimeout(() => {
-                  me.btnDisable = false
-                  me.back()
-                }, 3000)
-              } else {
-                this.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
-                this.btnDisable = false
-              }
-            })
-          }
+export default {
+  data () {
+    return {
+      btnDisable: false,
+      name: '',
+      material: '',
+      supply: '',
+      standard: '',
+      phone: '',
+      demand: ''
+    }
+  },
+  onUnload () {
+    this.name = ''
+    this.material = ''
+    this.supply = ''
+    this.standard = ''
+    this.phone = ''
+    this.demand = ''
+  },
+  methods: {
+    createAskPay () {
+      const keys = ['name', 'phone']
+      if (this.validateNull(keys)) {
+        let nameReg = /^[A-Za-z0-9\u4e00-\u9fa5]+$/
+        if (!nameReg.test(this.name.toString().trim())) {
+          this.showMsg('品名不能包含特殊字符')
+          return
+        }
+        if (!this.mobileReg(this.phone.toString().trim())) {
+          this.showMsg('请输入正确的手机号')
+          return
+        }
+        if (!this.btnDisable) {
+          this.btnDisable = true
+          const me = this
+          this.ironRequest('needBuy.shtml', { user_id: this.currentUser.user_id, name: this.name, material: this.material, supply: this.supply, standard: this.standard, contact_no: this.phone, remark: this.demand }, 'post').then(resp => {
+            if (resp && resp.returncode === '0') {
+              this.showMsg('求购发布成功')
+              setTimeout(() => {
+                me.btnDisable = false
+                me.back()
+              }, 3000)
+            } else {
+              this.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
+              this.btnDisable = false
+            }
+          })
         }
       }
     }
   }
+}
 </script>

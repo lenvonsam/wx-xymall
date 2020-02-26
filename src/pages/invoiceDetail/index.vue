@@ -135,8 +135,7 @@ export default {
   },
   computed: {
     ...mapState({
-      tempObject: state => state.tempObject,
-      currentUser: state => state.user.currentUser
+      tempObject: state => state.tempObject
     })
   },
   methods: {
@@ -181,7 +180,7 @@ export default {
       if (!this.clickDisabled) {
         this.clickDisabled = true
         const me = this
-        this.ironRequest('applyInvoice.shtml', body, 'post', this).then(resp => {
+        this.ironRequest('applyInvoice.shtml', body, 'post').then(resp => {
           if (resp && resp.returncode === '0') {
             const msg = me.pageTitle === '申请发票' ? '申请发票成功' : '发票确认成功'
             me.showMsg(msg, '', 1000)

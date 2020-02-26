@@ -97,21 +97,17 @@ function basicRequest (type, url, params, urlMethod, inputCharset = 'utf8') {
   })
 }
 
-function ironRequest (reqUrl, param, type, context = null) {
-  let basicParams = Object.assign({}, param)
+function ironRequest (reqUrl, param, type) {
+  const basicParams = Object.assign({}, param)
+  console.log('iron isLogin', this.isLogin)
   let ul = reqUrl
-  if (context && context.$store.state.user.isLogin && type === 'post') {
-    basicParams.user_id = context.$store.state.user.currentUser.user_id
+  if (this.isLogin && type === 'post') {
+    basicParams.user_id = this.currentUser.user_id
   }
-  if (
-    context &&
-    context.$store.state.user.isLogin &&
-    type === 'get' &&
-    reqUrl.indexOf('user_id') < 0
-  ) {
+  if (this.isLogin && type === 'get' && reqUrl.indexOf('user_id') < 0) {
     ul.indexOf('?') >= 0
-      ? (ul += '&user_id=' + context.$store.state.user.currentUser.user_id)
-      : (ul += '?user_id=' + context.$store.state.user.currentUser.user_id)
+      ? (ul += '&user_id=' + this.currentUser.user_id)
+      : (ul += '?user_id=' + this.currentUser.user_id)
   }
   const baiscUrl = BASICURL + '/ironmart/httpProxy'
   const reqBody = {
@@ -184,11 +180,10 @@ export default {
   requestDecode (type, url, params, urlMethod, iptCharset = 'gbk') {
     return basicRequest(type, url, params, urlMethod, iptCharset)
   },
-  statisticRequest (param, contxt = null) {
+  statisticRequest (param) {
     let basicParams = Object.assign({}, param)
-    console.log(contxt.$store.state)
-    if (contxt && contxt.$store.state.user.isLogin) {
-      basicParams.user_id = contxt.$store.state.user.currentUser.user_id
+    if (this.isLogin) {
+      basicParams.user_id = this.currentUser.user_id
     }
     // fly.post(BASICURL + 'ironmart/statisticsProxy', { params: serializeformQuery(basicParams, true) })
     const baiscUrl = BASICURL + '/ironmart/statisticsProxy'
