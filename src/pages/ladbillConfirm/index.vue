@@ -1,10 +1,11 @@
 <template lang="pug">
 div
   nav-bar(title="待确认提单", isBack)
-  template(v-if="isload")
+  //- template(v-if="isload")
     time-line(type="mallist")
-  template(v-else)
-    template(v-if="listData.length > 0")
+  //- template(v-if="!isload")
+  template(v-if="listData.length > 0")
+    iron-scroll(@scrolltolower="loadMore", :height="screenHeight - customBar", :refresh="true", @onRefresh="onRefresh", :loadFinish="loadFinish")
       .bg-white.text-gray.padding-sm.margin-top-sm(v-for="(item, idx) in listData", :key="idx")
         .row.margin-bottom-sm
           .col
@@ -15,9 +16,9 @@ div
         .padding-bottom-xs 
           span 共{{item.total_count}}支，{{item.weight_csg}}吨
         .padding-bottom-xs 生成时间：{{item.create_time}}
-    .text-center.text-gray.pt-100(v-else)
-      empty-image(url="bill_empty.png", className="img-empty")
-      .empty-content 您暂时没有相关提单  
+  .text-center.text-gray.pt-100(v-else)
+    empty-image(url="bill_empty.png", className="img-empty")
+    .empty-content 您暂时没有相关提单  
 </template>
 <script>
 import copyBtn from '@/components/CopyBtn.vue'
@@ -27,8 +28,8 @@ export default {
     return {
       listData: [],
       currentPage: 0,
-      finished: true,
-      isLoad: false
+      isload: true,
+      loadFinish: false
     }
   },
   components: {
@@ -40,15 +41,30 @@ export default {
       pageSize: state => state.pageSize,
       tempObject: state => state.tempObject,
       screenHeight: state => state.screenHeight,
+      customBar: state => state.customBar,
       isLogin: state => state.user.isLogin
     })
   },
   onShow () {
-    this.loadData()
+    this.showLoading()
+    this.listData = []
+    // this.isLoad = true
+    this.currentPage = 0
+    this.onRefresh()
   },
   methods: {
-    loadData () {
-      this.showLoading()
+    loadMore (done) {
+      const me = this
+      this.throttle(function () {
+        me.currentPage++
+        me.loadData(done)
+      }, 300)
+    },
+    onRefresh (done) {
+      this.currentPage = 0
+      this.loadData(done)
+    },
+    loadData (done) {
       const reqUrl = 'orderLadList.shtml'
       const type = 'post'
       const p = {
@@ -57,25 +73,36 @@ export default {
         current_page: this.currentPage,
         page_size: this.pageSize
       }
-      if (this.currentPage === 0) {
-        this.isLoad = true
-      } else {
-        this.isLoad = false
-      }
+      this.loadFinish = false
+      // if (this.currentPage > 0) this.loading = false
       this.ironRequest(reqUrl, p, type, this).then(resp => {
         if (resp.returncode === '0') {
           console.log('resp', resp)
-          this.listData = resp.order_lads
+          const me = this
+          // this.listData = resp.order_lads
+          const arr = resp.order_lads
+          if (arr.length === 0 && me.currentPage === 0) {
+            me.listData = []
+          } else if (arr.length > 0 && me.currentPage === 0) {
+            me.listData = arr
+          } else if (arr.length > 0 && me.currentPage > 0) {
+            me.listData.push(...arr)
+          } else {
+            me.currentPage--
+            me.loadFinish = true
+          }
         }
         this.hideLoading()
+        this.loadFinish = true
+        this.isload = false
+        if (done) done()
       }).catch(err => {
         this.hideLoading()
+        this.isload = false
+        this.loadFinish = true
+        if (done) done()
         this.showMsg(err || '网络错误')
       })
-    },
-    loadMore () {
-      this.currentPage++
-      this.loadData()
     }
   }
 }

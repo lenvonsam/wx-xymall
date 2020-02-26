@@ -302,6 +302,10 @@ export default {
       let canSellArray = filterArray.filter(itm => itm.price.indexOf('--') >= 0)
       const me = this
       if (this.isEdit) {
+        if (filterArray.length === 0) {
+          this.showMsg('请选择所需删除的商品', 'warn')
+          return false
+        }
         // 删除
         this.delCartRow(filterArray)
         return false
@@ -370,7 +374,7 @@ export default {
           }
         })
       } else {
-        this.showMsg('请选择结算商品', 'warning')
+        this.showMsg('请选择结算商品', 'warn')
       }
     },
     weightChoose (val, rowItem) {
