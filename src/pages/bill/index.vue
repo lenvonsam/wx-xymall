@@ -120,7 +120,7 @@ export default {
     if (this.swiperCount !== idx) {
       this.swiperCount = idx
     } else {
-      this.loadData()
+      this.onRefresh()
     }
     // if (!this.swiperCount) {
     //   this.loadData()
@@ -232,11 +232,11 @@ export default {
             me.finished = true
             me.isload = false
           }
-          this.loadFinish = true
         } else {
           me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
           me.isload = false
         }
+        me.loadFinish = true
         me.isTabDisabled = false
         me.triggered = false
         console.log('triggered', this.triggered)
@@ -310,7 +310,7 @@ export default {
       })
       this.$forceUpdate()
     },
-    loadData () {
+    loadData (done) {
       this.loadFinish = false
       if (this.currentPage === 0) {
         this.isload = true
@@ -357,14 +357,16 @@ export default {
         }
         me.isTabDisabled = false
         me.hideLoading()
+        me.loadFinish = true
+        if (done) done()
       })
     },
-    loadMore () {
+    loadMore (done) {
       if (!this.isLoad) {
         const me = this
         this.throttle(function () {
           me.currentPage++
-          me.loadData()
+          me.loadData(done)
         }, 300)
       }
     },

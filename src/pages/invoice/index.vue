@@ -75,7 +75,8 @@ export default {
       currentPage: 0,
       queryObject: {},
       pageHeight: 0,
-      isTabDisabled: false
+      isTabDisabled: false,
+      disabledBtn: false
     }
   },
   computed: {
@@ -114,7 +115,15 @@ export default {
       }
     }
   },
+  onUnload () {
+    console.log('onUnload')
+    this.swiperCount = 0
+    this.tabName = '0'
+    this.disabledBtn = false
+    this.configVal({key: 'tempObject', val: ''})
+  },
   onShow () {
+    this.disabledBtn = false
     this.queryObject = {
       current_page: this.currentPage,
       page_size: this.pageSize
@@ -133,12 +142,6 @@ export default {
       this.pageHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 198 + 'rpx'
     }
     this.loadData()
-  },
-  onUnload () {
-    console.log('onUnload')
-    this.swiperCount = 0
-    this.tabName = '0'
-    this.configVal({key: 'tempObject', val: ''})
   },
   methods: {
     ...mapActions([
@@ -222,8 +225,10 @@ export default {
       })
     },
     invoiceAction () {
+      if (this.disabledBtn) return false
       let filterArray = this.listData.filter(item => item.checked === true)
       const me = this
+      this.disabledBtn = true
       if (filterArray.length > 0) {
         let ids = filterArray.map(item => item.id).join(',')
         if (this.tabName === '0') {
@@ -259,6 +264,7 @@ export default {
                 me.jump('/pages/invoiceDetail/main?id=' + me.tabName)
               } else {
                 me.showMsg(resp ? resp.errormsg : '网络错误')
+                me.disabledBtn = false
               }
               me.allChecked = false
             })
@@ -275,11 +281,13 @@ export default {
               me.showMsg('发票确认成功')
               me.listData = []
               me.loadData()
+              me.disabledBtn = false
             }
           })
         }
       } else {
         this.showMsg('请选择需开发票')
+        me.disabledBtn = false
       }
     },
     loadData () {
