@@ -305,7 +305,7 @@ export default {
         juanban: item.juanban
       }
       const result = this.calc(options)
-      const money = Number(this.$toFixed(result.price), 2)
+      const money = Number(this.$toFixed(result.price, 2))
       const oldLift = isLift === '1' ? this.$toFixed(Number(item.weight) * lift, 2) : 0
       const everyLift = isLift === '1' ? this.$toFixed(Number(result.weight * lift), 2) : 0
       this.newLift = Number(this.$toFixed(this.newLift + Number(everyLift) - Number(oldLift), 2))
@@ -319,7 +319,9 @@ export default {
       this.confirm({content: '删除后将从合同中移除此规格，是否继续？(点击申请修改后，删除操作生效)'}).then((conRes) => {
         if (conRes !== 'confirm') return false
         const me = this
-        me.modifyList.find((res, index) => {
+        const modifyList = JSON.parse(JSON.stringify(me.modifyList))
+        const list = []
+        modifyList.find((res, index) => {
           if (res.choosed) {
             const lift = me.wh_lift.lift
             let isLift = me.wh_lift[res.wh_name]
@@ -328,14 +330,16 @@ export default {
               isLift = 2
             }
             me.newPrice = Number(this.$toFixed(me.newPrice - res.price, 2))
-            me.newLift -= oldLift
+            me.newLift -= Number(oldLift)
             me.newLift = Number(this.$toFixed(me.newLift, 2))
             res.count = 0
-            me.modifyList.splice(index, 1)
             me.delModifyList.push(res)
+          } else {
+            list.push(res)
           }
-          // return res.seq_d === id
+          me.modifyList = list
         })
+        this.getNewBillPrice()
       })
     },
     delOrderRow (id) {
