@@ -46,7 +46,7 @@
         empty-image(url="bill_empty.png", className="img-empty")
         .empty-content 您暂时没有相关合同
       .s-footer(v-if="carts.length > 0")
-        .cart-footer.align-center
+        .cart-footer.align-center.justify-between
           .row.flex-center(@click="choosedAll()", style="padding-left: 10px;")
             .flex.flex-center
               img.choose-icon(src="/static/images/blue_check.png", v-if="allChoosed")
@@ -121,6 +121,14 @@ export default {
   onUnload () {
     this.carts = []
     this.allChoosed = false
+    this.pickWay = 0
+    this.btnDisable = false
+    this.pwPhone = ''
+    this.pwAddrDetail = ''
+    this.pwAddr = ''
+    this.allChoosed = false
+    this.isEdit = false
+    this.isload = true
   },
   beforeMount () {
     if (this.tempObject.type) {

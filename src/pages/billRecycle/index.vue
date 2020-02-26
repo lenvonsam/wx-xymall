@@ -32,7 +32,7 @@ div
                   .padding-bottom-xs 吊费：¥{{item.lift_charge}}
                   .padding-bottom-xs 合同生成日期：{{item.create_time}}
                 div
-                  .bill-btn.round(@click="jump('/pages/billRecycleDetail/main?no=' + item.no)") 恢复
+                  .bill-btn.round(@click="jumpDetail(item.no)") 恢复
           .padding.text-gray.ft-13.text-center(v-if="loading") 努力加载中...
           .padding.text-gray.ft-13.text-center(v-if="finished") 加载完成
       .text-center.c-gray.pt-100(v-else)
@@ -51,7 +51,8 @@ export default {
       isload: false,
       billNo: '',
       scrollHeight: 0,
-      loading: false
+      loading: false,
+      disabled: false
     }
   },
   computed: {
@@ -67,7 +68,18 @@ export default {
   components: {
     timeLine
   },
+  onUnload () {
+    this.listData = []
+    this.finished = false
+    this.currentPage = 0
+    this.isload = false
+    this.billNo = ''
+    this.scrollHeight = 0
+    this.loading = false
+    this.disabled = false
+  },
   onShow () {
+    this.disabled = false
     this.loadData()
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 130 + 'rpx'
   },
@@ -75,6 +87,11 @@ export default {
   //   this.loadData()
   // },
   methods: {
+    jumpDetail (no) {
+      if (this.disabled) return false
+      this.disabled = true
+      this.jump('/pages/billRecycleDetail/main?no=' + no)
+    },
     searchOrder () {
       this.currentPage = 0
       this.loadData()
