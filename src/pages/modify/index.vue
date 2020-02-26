@@ -1,17 +1,18 @@
 <template lang="pug">
 div
   nav-bar(title="合同修改", isBack)
-  .flex.text-center.nav.bg-white.relative
+  .flex.text-center.nav.bg-white.relative(style="height: 90rpx")
     .tab-line
     .cu-item.flex-sub(v-for="(item,index) in billTab", :class="item.status === tabName?'text-blue cur':''", :key="index", @click="selectTabs(item, index)")
       span {{item.title}}
-  .padding-sm.ft-12(style="background: #FEF7E7;", v-if="tabName == '1'")
+  .padding-left-sm.padding-right-sm.ft-12(style="background: #FEF7E7; line-height: 70rpx; height: 70rpx", v-if="tabName == '1'")
     span.text-orange 友情提示：仅展示允许修改的合同，修改后出库进行结算
   template(v-if="isload")
     time-line(type="mallist")  
   template(v-else) 
     template(v-if="listData.length > 0")
-      scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: screenHeight - 140 +'px'}")  
+      iron-scroll(@scrolltolower="loadMore", :height="scrollHeight", heightUnit="rpx", :refresh="true", @onRefresh="onRefresh", :loadFinish="loadFinish")
+        //- scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: screenHeight - 140 +'px'}")  
         .padding-top-sm
           .padding-sm.bg-white.margin-bottom-sm(@click="jump(`/pages/modifyDetail/main?id=${item.discussid}&type=${tabName}`)", v-for="(item, itemIdx) in listData", :key="itemIdx")
             .flex.align-center
@@ -52,12 +53,15 @@ export default {
       totalPrice: 0,
       totalWeight: 0,
       totalCount: 0,
-      allChoosed: false
+      allChoosed: false,
+      scrollHeight: 0,
+      loadFinish: false
     }
   },
   computed: {
     ...mapState({
       screenHeight: state => state.screenHeight,
+      customBar: state => state.customBar,
       currentUser: state => state.user.currentUser,
       tempObject: state => state.tempObject,
       isLogin: state => state.user.isLogin,
@@ -66,22 +70,34 @@ export default {
   },
   onShow () {
     this.listData = []
+    this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 160
     if (this.$root.$mp.query.tabName) this.tabName = this.$root.$mpd.query.tabName
     this.loadData()
   },
   methods: {
+    onRefresh (done) {
+      this.currentPage = 0
+      this.loadData(done)
+    },
     selectTabs (item) {
       this.tabName = item.status
       this.currentPage = 0
       this.listData = []
       this.isTabDisabled = true
+      debugger
+      if (this.tabName === '1') {
+        this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 160
+      } else {
+        this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 90
+      }
       this.loadData()
     },
     rowBillItem (obj, type) {
     },
     batchPay () {
     },
-    loadData () {
+    loadData (done) {
+      this.loadFinish = false
       if (this.currentPage === 0) {
         this.isload = true
       } else {
@@ -105,8 +121,8 @@ export default {
           } else if (arr.length > 0 && me.currentPage === 0) {
             arr.map(itm => {
               itm.choosed = false
-              me.listData.push(itm)
             })
+            me.listData = arr
             me.finished = false
             me.isload = false
           } else if (arr.length > 0 && me.currentPage > 0) {
@@ -124,15 +140,25 @@ export default {
           me.isload = false
         }
         this.isTabDisabled = false
+        this.loadFinish = true
       })
+      if (done) done()
     },
     loadMore () {
-      if (!this.isLoad) {
-        this.currentPage++
+      const me = this
+      this.throttle(function () {
+        me.currentPage++
         this.isTabDisabled = true
-        this.loadData()
-      }
+        me.loadData()
+      }, 300)
     }
+    // loadMore () {
+    //   if (!this.isLoad) {
+    //     this.currentPage++
+    //     this.isTabDisabled = true
+    //     this.loadData()
+    //   }
+    // }
   }
 }
 </script>
