@@ -232,7 +232,7 @@ const wxMixins = {
             resp => {
               if (resp.returncode === '0') {
                 resolve({
-                  msg: '到货通知设置成功',
+                  msg: '处理成功',
                   type: type
                 })
               } else {
@@ -267,6 +267,7 @@ const wxMixins = {
               if (resp.returncode === '0') {
                 resolve({
                   type,
+                  msg: '加入购物车成功',
                   mway: mwId
                 })
               } else {

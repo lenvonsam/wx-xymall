@@ -14,20 +14,20 @@ div
               .col.padding-sm
                 span 三证合一
               .col.full-width.margin-top-sm
-                img.comp-img(:src="imgOuterUrl + compObj.license_pic", v-if="compObj.license_pic", @click="previewImage(imgOuterUrl + compObj.license_pic)")
+                img.comp-img(:src="imgOuterUrl + compObj.license_pic", v-if="compObj.license_pic", @click="previewImage(imgOuterUrl + compObj.license_pic)", mode="widthFix")
           .bg-white.margin-top-sm
             .text-left.padding-sm.padding-lr(style="flex-direction:column;align-items:flex-start;")
               .col.padding-sm
                 span 开票资料
               .col.full-width.margin-top-sm
-                img.comp-img(:src="imgOuterUrl + compObj.invoice_pic", v-if="compObj.invoice_pic", @click="previewImage(imgOuterUrl + compObj.invoice_pic)")
+                img.comp-img(:src="imgOuterUrl + compObj.invoice_pic", v-if="compObj.invoice_pic", @click="previewImage(imgOuterUrl + compObj.invoice_pic)", mode="widthFix")
         template(v-else)
           .bg-white.margin-top-sm(v-for="(subItem,tidx) in item", :key="tidx")
             .text-left.padding-sm.padding-lr(style="flex-direction:column;align-items:flex-start;")
               .col.padding-sm.padding-lr
                 span {{subItem.label}}
               .col.margin-top-sm.full-width
-                img.comp-img(:src="imgOuterUrl + compObj[subItem.content]", v-if="imgOuterUrl", @click="previewImage(imgOuterUrl + compObj[subItem.content])")
+                img.comp-img(:src="imgOuterUrl + compObj[subItem.content]", v-if="imgOuterUrl", @click="previewImage(imgOuterUrl + compObj[subItem.content])", mode="widthFix")
   time-line(v-else, type="mainres")
 </template>
 

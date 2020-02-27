@@ -41,7 +41,7 @@ div
                         .col
                           span(v-if="item[mallTypeObject[itemType].max_count] > 0") {{item[mallTypeObject[itemType].max_count]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
                         .flex-120.relative.text-right.ft-14
-                          div(style="position: absolute; right: 0rpx; top: -16rpx")
+                          .mall-row(:class="{'notice': item.max_count === 0}")
                             .blue-buy(v-if="item.max_count == 0",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
                             .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="item.show_price") 购买
                     template(v-else)
@@ -146,7 +146,7 @@ export default {
       modalIntroShow: false,
       filterObj: {},
       finished: false,
-      loadFinish: false
+      loadFinish: 0
     }
   },
   computed: {
@@ -342,66 +342,44 @@ export default {
       this.refresher()
     },
     mallItemCb (obj, type, evt) {
-      console.log('type', type)
       const me = this
-      if (type === 'showPrice') {
-        if (this.isLogin) {
-          this.showMsg('请完善信息，耐心等待审核通过')
-        } else {
-          this.confirm({ content: '请登录后查看价格，去登录' }).then((res) => {
-            if (res === 'confirm') {
-              me.configVal({
-                key: 'tempObject',
-                val: { preRoute: me.$root.$mp.appOptions.path }
-              })
-              me.jump('/pages/account/login/main')
-            }
-          })
-        }
-        return
-      }
-      if (type === 'cart') { this.statisticRequest({ event: 'click_app_mall_add_cart' }) }
-
       if (obj.name === 'H型钢' && obj.price === '--') {
         this.showMsg(`此商品会在${obj.show_time}后开售`)
         return
       }
       if (this.isLogin) {
-        if (!this.btnDisable) {
-          this.btnDisable = true
-          this.addCart(obj, type, this.currentUser.user_id).then(
-            rt => {
-              me.showMsg('加入购物车成功', '', 1000)
-              me.setCartCount(me.currentUser.user_id)
-              // if (rt.type === 'cart') {
-              //   if (this.browserName() === 'wxpub') {
-              //     me.zgRequest(
-              //       me.zgEventStatic(me.currentUser, '加入购物车', {
-              //         productid: obj.id,
-              //         count: 1,
-              //         measure_way: rt.mway
-              //       })
-              //     )
-              //   }
-              //   this.cartEvt = evt
-              // } else {
-              //   me.msgShow(rt.msg, 'positive')
-              // }
-              me.btnDisable = false
-            },
-            err => {
-              me.showMsg(err)
-              me.btnDisable = false
+        switch (type) {
+          case 'showPrice':
+            this.showMsg('请完善信息，耐心等待审批通过')
+            break
+          case 'notice':
+          case 'cart':
+            if (type === 'cart') this.statisticRequest({ event: 'click_app_mall_add_cart' })
+            if (!this.btnDisable) {
+              this.btnDisable = true
+              this.addCart(obj, type, this.currentUser.user_id).then(
+                rt => {
+                  me.showMsg(rt.msg, '', 1000)
+                  if (type === 'cart') me.setCartCount(me.currentUser.user_id)
+                  me.btnDisable = false
+                },
+                err => {
+                  me.showMsg(err)
+                  me.btnDisable = false
+                }
+              )
             }
-          )
+            break
+          default:
+            break
         }
       } else {
-        this.confirm({ content: '请您登录后购买，去登录' }).then(() => {
-          me.configVal({
-            key: 'tempObject',
-            val: { preRoute: me.$root.$mp.appOptions.path }
-          })
-          me.jump('/pages/account/login/main')
+        let msg = '请您登录后购买，去登录'
+        if (type === 'showPrice') msg = '请登录后查看价格，去登录'
+        this.confirm({ content: msg }).then((res) => {
+          if (res === 'confirm') {
+            me.jump('/pages/account/login/main')
+          }
         })
       }
     },
@@ -429,7 +407,7 @@ export default {
     refresher (done) {
       // if (this.isLoad) return false
       // this.showLoading()
-      this.loadFinish = false
+      this.loadFinish = 1
       this.goodsNameList[this.swiperCount].finished = false
       const me = this
       this.queryObject.current_page = this.currentPage
@@ -440,7 +418,6 @@ export default {
         this.apiList.xy.mallList.method,
         this
       ).then(res => {
-        debugger
         if (res.returncode === '0') {
           const idx = this.swiperCount
           res.products.map(item => {
@@ -458,17 +435,22 @@ export default {
             } else {
               me.currentPage--
               this.goodsNameList[idx].finished = true
+              if (me.currentPage > 0) me.loadFinish = 2
             }
           }
-          me.loadFinish = true
+          if (me.goodsNameList[idx].length < 10) me.loadFinish = 0
           me.$forceUpdate()
         } else {
           me.showMsg(res === undefined ? '网络异常' : res.errormsg)
           return false
         }
         me.isLoad = false
-        me.loadFinish = true
+        me.loadFinish = 0
         if (done) done()
+      }, err => {
+        me.loadFinish = 0
+        me.isLoad = false
+        me.showMsg(err)
       })
     }
   }
@@ -489,6 +471,12 @@ export default {
 // padding 5px 0
 // text-align center
 // color #0081ff
+.mall-row
+  position absolute
+  right 0px
+  top -8px
+  &.notice
+    top -14px
 .blue-buy
   display inline-block
   border-radius 20px
@@ -513,22 +501,6 @@ export default {
   border-radius 4px
   box-shadow 1px 2px 5px rgba(61, 167, 255, 0.3)
   letter-spacing 1px
-.notice-btn
-  position absolute
-  right 0px
-  top -6px
-  padding 0px 10px
-  box-shadow 1px 3px 5px #ddd
-.cart-icon
-  width 45px
-  height 45px
-  position absolute
-  top -20px
-  right 0px
-  background-size cover
-  background-position center
-  box-shadow 1px 3px 5px #ddd
-  border-radius 50%
 .ml-8
   margin-left 8px !important
 .card-list
