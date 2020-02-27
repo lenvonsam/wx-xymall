@@ -109,9 +109,8 @@ export default {
   },
   onShow () {
     this.swiperHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 170 + 'rpx'
-  },
-  beforeMount () {
     this.loading = false
+    this.swiperCount = 0
     if (this.$root.$mp.query.tabName) this.tabName = this.$root.$mp.query.tabName
     const idx = this.billTab.findIndex(item => item.status === this.tabName)
     this.swiperCount = idx
@@ -122,6 +121,16 @@ export default {
     if (!this.swiperCount) {
       this.loadData()
     }
+  },
+  onUnload () {
+    this.swiperCount = 0
+    this.loading = false
+    this.search = ''
+    this.billTab = [
+      { title: '全部', status: '-2', data: [], isActive: true },
+      { title: '待提货', status: '0', data: [], isActive: false },
+      { title: '已完成', status: '3', data: [], isActive: false }
+    ]
   },
   methods: {
     selectTabs (item, idx) {
@@ -214,6 +223,7 @@ export default {
         // this.isload = false
         this.loading = true
       }
+      this.showLoading()
       let body = {
         user_id: this.currentUser.user_id,
         current_page: this.currentPage,
@@ -269,11 +279,13 @@ export default {
           this.finished = true
           this.isload = true
         }
+        this.hideLoading()
         this.loading = false
       }).catch(err => {
         me.showMsg(err || '网络异常')
         this.loading = false
         this.isload = true
+        this.hideLoading()
       })
     }
   }
