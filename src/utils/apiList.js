@@ -4,6 +4,7 @@ export default {
     notice: { url: 'getNotice.shtml', method: 'get' },
     noticeDetail: { url: 'noticeDetail.shtml', method: 'get' },
     noticeList: { url: 'noticeList.shtml', method: 'get' },
+    readNotice: { url: 'readNotice.shtml', method: 'post' },
     searchHistory: { url: 'searchHistory.shtml', method: 'post' },
     updateProfile: { url: 'updateProfile.shtml', method: 'post' },
     queryProfile: { url: 'queryProfile.shtml', method: 'get' },

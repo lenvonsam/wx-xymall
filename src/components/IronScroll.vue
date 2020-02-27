@@ -148,11 +148,11 @@ export default {
     align-items center
     justify-content center
     font-size 13px
-    background #f6f6f6
+    background #f1f1f1
     overflow hidden
   .footer
     text-align center
     padding 10px
-    background #f6f6f6
+    background #f1f1f1
     font-size 13px
 </style>
