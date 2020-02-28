@@ -225,6 +225,8 @@ export default {
     jumpDetail (obj) {
       // this.configVal({key: 'tempObject', val: obj})
       // this.jump({path: '/invoice/detail', query: {id: this.tabName}})
+      if (this.disabledBtn) return false
+      this.disabledBtn = true
       this.ironRequest('invoiceDetail.shtml?id=' + obj.id, {}, 'get').then(resp => {
         if (resp.returncode === '0') {
           resp.tabName = this.tabName
@@ -232,7 +234,11 @@ export default {
           this.jump(`/pages/invoiceDetail/main?id=${this.tabName}&name=查看详情`)
         } else {
           this.showMsg('查看失败')
+          this.disabledBtn = false
         }
+      }).catch(e => {
+        this.disabledBtn = false
+        this.showMsg('查看失败')
       })
     },
     invoiceAction () {
