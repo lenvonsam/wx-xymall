@@ -40,10 +40,10 @@ div
   .s-footer(v-if="tabName == '0' || tabName == '2'", style="height: 100rpx")
     .invoice-footer.align-center.justify-between
       .flex
-        .flex-25.flex.flex-center(@click="allChecked = !allChecked")
+        .flex-25.flex.flex-center(@click="allCheckHandler")
           img.choose-icon(src="/static/images/blue_check.png", v-if="allChecked")
           img.choose-icon(src="/static/images/btn_ck_n.png", v-else)
-        .flex-40.ml-5(@click="allChecked = !allChecked") 全选
+        .flex-40.ml-5(@click="allCheckHandler") 全选
       div(style="box-sizing: border-box; padding-right: .3rem;")
           span 合计：
           span.text-red ￥ {{totalPriceAll}}
@@ -94,22 +94,23 @@ export default {
           filterArray.map(fltem => {
             this.totalPriceAll += fltem.price
           })
+          this.allChecked = filterArray.length === newVal.length
           this.totalPriceAll = this.$toFixed(Number(this.totalPriceAll), 2)
         }
       },
       deep: true
-    },
-    allChecked (newVal, oldVal) {
-      if (newVal) {
-        this.listData.map(itm => {
-          itm.checked = true
-        })
-      } else {
-        this.listData.map(itm => {
-          itm.checked = false
-        })
-      }
     }
+    // allChecked (newVal, oldVal) {
+    //   if (newVal) {
+    //     this.listData.map(itm => {
+    //       itm.checked = true
+    //     })
+    //   }else {
+    //     this.listData.map(itm => {
+    //       itm.checked = false
+    //     })
+    //   }
+    // }
   },
   onUnload () {
     console.log('onUnload')
@@ -145,6 +146,18 @@ export default {
     ...mapActions([
       'configVal'
     ]),
+    allCheckHandler () {
+      this.allChecked = !this.allChecked
+      if (this.allChecked) {
+        this.listData.map(itm => {
+          itm.checked = true
+        })
+      } else {
+        this.listData.map(itm => {
+          itm.checked = false
+        })
+      }
+    },
     refresher () {
       const me = this
       this.currentPage = 0
