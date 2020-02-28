@@ -4,12 +4,17 @@ div
   div(style="height: 275rpx;")
     mall-head(:mallTabVal="mallTabVal", @getName="getName", @filter="multipleFilter", @selectMall="selectMall", @selectTab="selectTab", @searchChange="searchChange")
   //- .mall-content
-  swiper(@change="swiperChange", :current="swiperCount", :style="{height: scrollHeight+'rpx'}")
+  swiper(v-if="goodsNameList.length > 0", @change="swiperChange", @transition="swiperTransition", :current="swiperCount", :style="{height: scrollHeight+'rpx'}")
     swiper-item(v-for="(tabItem, swiperIdx) in goodsNameList.length", :key="swiperIdx")
-      template(v-if="isload")
+      template(v-if="isload && goodsNameList[swiperIdx].data.length === 0")
         time-line(type="mallist")
-      template(v-else)  
-        template(v-if="goodsNameList[swiperIdx].data.length > 0")
+      template(v-else)
+        .col.text-center.text-gray.pt-100(v-if="!isload && goodsNameList[swiperIdx].data.length === 0")
+          empty-image(url="bill_empty.png", className="img-empty")
+          .empty-content 
+            span 暂时没有相关商品
+            div 详情请联系400-8788-361
+        template(v-else)
           div(:class="{cardSty: !mallFlag}", :style="{height: scrollHeight + 'rpx'}")
             iron-scroll(:swiperIdx="swiperIdx", @scrolltolower="loadMore", heightUnit="rpx", :height="scrollHeight", :refresh="true", @onRefresh="onRefresh", :loadFinish="loadFinish")
               //- scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: scrollHeight}", :refresher-enabled="false", :refresher-threshold="50", @refresherrefresh="testRefresh", @refresherrestore="testRestore", @refresherabort="testAbort", ref="testScroll")
@@ -75,11 +80,7 @@ div
               //- .padding.text-gray.ft-13.text-center(v-if="goodsNameList[tabIdx].finished") 加载完成
               //- span(v-for="(item,idx) in mallItems", :key="idx") {{idx}}
               //- mall-item(:mallFlag="mallFlag", :cb="mallItemCb", v-for="(item,idx) in mallItems", :item="item", :key="idx")
-        .col.text-center.text-gray.pt-100(v-else)
-          empty-image(url="bill_empty.png", className="img-empty")
-          .empty-content 
-            span 暂时没有相关商品
-            div 详情请联系400-8788-361
+        
     //- template(v-if="mallItems.length > 0")
     //-   mall-item(:mallFlag="mallFlag", :cb="mallItemCb", v-for="(item,idx) in mallItems", :item="item", :key="idx")
     //- .col.text-center.text-gray.pt-100(v-else)
@@ -134,7 +135,7 @@ export default {
       mallTabVal: '',
       mallItems: [],
       queryObject: {},
-      isLoad: false,
+      isload: true,
       isRefresh: 'refresh',
       pullDownRefresh: false,
       currentPage: 0,
@@ -168,7 +169,7 @@ export default {
     // this.mallTabVal = ''
     // this.mallItems = []
     // // this.queryObject = {}
-    // this.isLoad = false
+    // this.isload = false
     // this.isRefresh = 'refresh'
     // this.pullDownRefresh = false
     // this.currentPage = 0
@@ -184,7 +185,7 @@ export default {
     // this.loadFinish = false
   },
   onShow () {
-    this.isLoad = false
+    this.isload = true
     console.log('this.customBar', this.customBar)
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 385
     if (this.tempObject.search === '' || this.tempObject.search || this.tempObject.name === '') {
@@ -260,7 +261,7 @@ export default {
       console.log('test abort', e)
     },
     // loadMore () {
-    //   if (!this.isLoad && !this.goodsNameList[this.swiperCount].finished) {
+    //   if (!this.isload && !this.goodsNameList[this.swiperCount].finished) {
     //     this.currentPage++
     //     this.isRefresh = 'reachBottom'
     //     this.refresher()
@@ -271,14 +272,12 @@ export default {
       this.refresher(done)
     },
     loadMore (done) {
-      if (!this.isLoad) {
-        const me = this
-        this.throttle(function () {
-          me.currentPage++
-          me.isRefresh = 'reachBottom'
-          me.refresher(done)
-        }, 300)
-      }
+      const me = this
+      this.throttle(function () {
+        me.currentPage++
+        me.isRefresh = 'reachBottom'
+        me.refresher(done)
+      }, 300)
     },
     showShareMall () {
       const firstShare = mpvue.getStorageSync('firstShareMall') || false
@@ -286,6 +285,10 @@ export default {
         this.modalIntroShow = true
         mpvue.setStorageSync('firstShareMall', true)
       }
+    },
+    swiperTransition (e) {
+      console.log(e)
+      this.isload = true
     },
     swiperChange (e) {
       const idx = e.mp.detail.current
@@ -392,7 +395,9 @@ export default {
     selectTab ({ id, idx }) {
       // this.configVal({key: 'tempObject', val: { search: '' }})
       if (this.goodsNameList[idx]) {
-        this.goodsNameList[idx].data = []
+        // this.goodsNameList[idx].data = []
+        this.showLoading()
+        this.isRefresh = 'refresh'
         this.currentPage = 0
         this.mallTabVal = id
         this.swiperCount = idx
@@ -406,16 +411,17 @@ export default {
         this.queryObject.current_page = this.currentPage
         this.queryObject.name = id
         Object.assign(this.queryObject, this.filterObj)
-        this.isRefresh = 'refresh'
         this.refresher()
+        // if (this.goodsNameList[idx].data.length === 0) {
+        //   this.showLoading()
+        //   this.refresher()
+        // }
       }
     },
     refresher (done) {
       this.loadFinish = 1
-      // this.goodsNameList[this.swiperCount].finished = false
       const me = this
       this.queryObject.current_page = this.currentPage
-      this.isLoad = true
       this.ironRequest(
         this.apiList.xy.mallList.url,
         this.queryObject,
@@ -433,6 +439,7 @@ export default {
               if (me.goodsNameList[idx].length < 10) me.loadFinish = 2
             } else if (res.products.length === 0 && me.currentPage === 0) {
               me.goodsNameList[idx].data = []
+              // me.isload = false
             }
           } else {
             me.loadFinish = 0
@@ -448,12 +455,14 @@ export default {
           }
           me.$forceUpdate()
         }
-        me.isLoad = false
+        // me.isload = false
         // me.loadFinish = 0
+        me.hideLoading()
         if (done) done()
       }, err => {
         me.loadFinish = 0
-        me.isLoad = false
+        me.isload = false
+        me.hideLoading()
         me.showMsg(err)
       })
     }
