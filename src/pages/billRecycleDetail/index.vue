@@ -57,7 +57,7 @@
               span 合计：
               b.text-red ￥{{totalObject.totalPrice}}
             .text-right.ft-12(style="color:#999;") 
-              span 共{{carts.length}}件 ，{{totalObject.totalWeight}}吨，吊费：{{totalObject.liftPrice}}元
+              span 共{{totalObject.num}}件 ，{{totalObject.totalWeight}}吨，吊费：{{totalObject.liftPrice}}元
           .cart-settle-btn.bg-red.ft-18(@click="generateOrder", v-if="!isEdit") 生成合同
           .main-btn.margin-right-sm.bg-red.ft-20(@click="delCartRow()", v-else) 删除      
 </template>
@@ -90,10 +90,13 @@ export default {
       let liftPrice = 0
       let totalPrice = 0
       let totalWeight = 0
+      // let chooseList = []
+      let num = 0
       this.carts.map(itm => {
         // itm.newTotalWeight = Number((itm.count * itm.weight).toFixed(3))
         itm.newTotalWeight = Number(this.$toFixed(Number(itm.count) * Number(itm.weight), 3))
         if (itm.choosed) {
+          num++
           if (itm.price.indexOf('--') < 0) {
             price += itm.price * itm.newTotalWeight
             totalWeight += Number(this.$toFixed(itm.weight * itm.count, 3))
@@ -106,6 +109,7 @@ export default {
       })
       totalPrice = price + liftPrice
       return {
+        num: num,
         price: this.$toFixed(Number(price), 2),
         totalWeight: this.$toFixed(Number(totalWeight), 3),
         liftPrice: this.$toFixed(Number(liftPrice), 2),
@@ -189,7 +193,7 @@ export default {
             }]
             itm.weight = wt
             itm.price = itm.price
-            itm.totalWeight = itm.count * Number(itm.weight)
+            itm.totalWeight = this.$toFixed(itm.count * Number(itm.weight), 3)
           }
           itm.newTotalWeight = this.$toFixed(itm.count * Number(itm.weight), 3)
           this.carts.push(itm)
