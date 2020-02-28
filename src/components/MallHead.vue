@@ -55,7 +55,7 @@
   modal-intro(v-model="modalIntroShow", :images="modalIntroImages", :cb="modalIntroCb")
 </template>
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import modalIntro from '@/components/ModalIntro.vue'
 export default {
   props: {
@@ -114,9 +114,9 @@ export default {
       isActive: true,
       searchVal: '',
       mallFlag: 1,
-      standards: [],
-      materials: [],
-      supplys: [],
+      // standards: [],
+      // materials: [],
+      // supplys: [],
       standardStr: '',
       materialStr: '',
       originStr: '',
@@ -172,11 +172,29 @@ export default {
     this.sortCb('name')
   },
   onShow () {
+    if (!this.tempObject.search && !this.tempObject.name) this.sortCb('name')
+    if (this.tempObject.standards) {
+      this.queryObject.search = this.tempObject.standards
+      this.sortCb('standard', this.tempObject.standards)
+      const filters = {
+        standard: [this.tempObject.standards]
+      }
+      this.$emit('filter', filters)
+      // const idx = this.sortList[1].data.findIndex(item => {
+      //   return item.name === this.tempObject.standards
+      // })
+      // this.sortList[1].data[idx].isActive = true
+      // this.selectSort(1, idx)
+      this.standardStr = this.tempObject.standards
+    }
     console.log('tempObject', this.tempObject.search)
     this.currentPage = 0
     this.searchVal = this.tempObject.search || ''
   },
   methods: {
+    ...mapActions([
+      'configVal'
+    ]),
     classifyClick () {
       const firstShare = mpvue.getStorageSync('firstShareMallClassify') || false
       if (!firstShare) {
@@ -295,6 +313,7 @@ export default {
           me.scrollLeft = scrollLeft + 'px'
         })
       }
+      this.configVal({ key: 'tempObject', val: {name: item.id} })
       me.$emit('selectTab', { id: item.id, idx: index })
     },
     loadMore () {
@@ -304,7 +323,7 @@ export default {
         this.sortCb(this.activeTab)
       }
     },
-    sortCb (key) {
+    sortCb (key, standard) {
       this.queryObject.name = this.tabVal
       this.queryObject.current_page = this.currentPage
       let queryObj = Object.assign({}, this.queryObject)
@@ -318,31 +337,38 @@ export default {
           let arr = resp[this.sortQueryList[key].respKey]
           const tabList = []
           if (arr.length > 0) {
-            const idx = this.sortList.findIndex((item) => {
-              return item.key === key
-            })
-            arr.map(item => {
-              item.isActive = false
-              const resActive = this.sortList[idx].data.filter((itemFilter) => {
-                if (itemFilter.name === item.name && itemFilter.isActive) {
-                  item.isActive = true
-                }
-                return itemFilter.name === item.name && itemFilter.isActive
-              })
-              console.log('resActive', resActive)
-              if (key === 'name') {
-                const obj = {
-                  name: item.name,
-                  id: item.id
-                }
-                tabList.push(obj)
-              }
-            })
-            if ((this.currentPage === 0 || key !== 'standard') && !this.isMore) {
+            if (standard) {
+              // const standardIdx = arr.findIndex(item => item.name === standard)
               arr.unshift({ name: '全部', id: '', isActive: false })
-              this.sortList[idx].data = arr
+              arr[1].isActive = true
+              this.sortList[1].data = arr
             } else {
-              this.sortList[idx].data.push(...arr)
+              const idx = this.sortList.findIndex((item) => {
+                return item.key === key
+              })
+              arr.map(item => {
+                item.isActive = false
+                const resActive = this.sortList[idx].data.filter((itemFilter) => {
+                  if (itemFilter.name === item.name && itemFilter.isActive) {
+                    item.isActive = true
+                  }
+                  return itemFilter.name === item.name && itemFilter.isActive
+                })
+                console.log('resActive', resActive)
+                if (key === 'name') {
+                  const obj = {
+                    name: item.name,
+                    id: item.id
+                  }
+                  tabList.push(obj)
+                }
+              })
+              if ((this.currentPage === 0 || key !== 'standard') && !this.isMore) {
+                arr.unshift({ name: '全部', id: '', isActive: false })
+                this.sortList[idx].data = arr
+              } else {
+                this.sortList[idx].data.push(...arr)
+              }
             }
           } else if (this.currentPage !== 0) {
             this.currentPage--
@@ -352,6 +378,9 @@ export default {
             this.sortList[0].data = tabList
             this.mallTabValChange()
             this.$emit('getName', tabList)
+          } else if (standard) {
+            this.activeTab = ''
+            this.queryObject.search = ''
           } else {
             this.activeTab = key
           }

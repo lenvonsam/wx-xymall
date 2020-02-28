@@ -154,7 +154,7 @@ export default {
       tempObject: state => state.tempObject
     })
   },
-  onUnload () {
+  onHide () {
     this.queryObject.search = ''
     // this.queryObject = {
     //   current_page: this.currentPage,
@@ -321,7 +321,9 @@ export default {
       this.queryObject.name = this.mallTabVal
       this.filterObj = obj
       Object.assign(this.queryObject, obj)
-      this.refresher()
+      if (!this.tempObject.standards) {
+        this.refresher()
+      }
     },
     selectMall (flag) {
       console.log(flag)
@@ -373,20 +375,6 @@ export default {
             rt => {
               me.showMsg('加入购物车成功', '', 1000)
               me.setCartCount(me.currentUser.user_id)
-              // if (rt.type === 'cart') {
-              //   if (this.browserName() === 'wxpub') {
-              //     me.zgRequest(
-              //       me.zgEventStatic(me.currentUser, '加入购物车', {
-              //         productid: obj.id,
-              //         count: 1,
-              //         measure_way: rt.mway
-              //       })
-              //     )
-              //   }
-              //   this.cartEvt = evt
-              // } else {
-              //   me.msgShow(rt.msg, 'positive')
-              // }
               me.btnDisable = false
             },
             err => {
