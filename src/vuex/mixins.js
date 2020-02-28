@@ -474,8 +474,14 @@ const wxMixins = {
     },
     formatFloat (f, digit) {
       // 转换和处理函数
+      let num = 0
       const m = Math.pow(10, digit)
-      return Math.round(f * m, 10) / m
+      if (f * m > 0) {
+        num = f * m + 0.00000001 // 为了处理类似1.99999999994之类的为题
+      } else if (f * m < 0) {
+        num = f * m - 0.00000001 // 为了处理类似-1.99999999994之类的为题
+      }
+      return Math.round(num, 10) / m
     }
   }
 }
