@@ -2,12 +2,12 @@
 div
   nav-bar(title="首页", :serviceIcon="true")
   .padding.bg-white(style="padding-top: 50px")
-    .fixed.top.home-top-bar(:style="{height: '40px', top: customBar + 'px'}")
+    .fixed.top.home-top-bar(:style="{height: '40px', 'padding-bottom': '50px', top: customBar + 'px'}")
       .padding-sm.padding-lr.margin-bottom-sm(style="background: #f6f6f6;border-radius: 38rpx;", @click="jump('/pages/search/main')")
         .row.text-gray
-          .flex-30
-            icon.cuIcon-search(style="margin-top: -16rpx")
-          .col 请输入关键词搜索
+          //- .flex-30
+          .cuIcon-search
+          .col.padding-left-sm 请输入关键词搜索
     swiper(v-if="gallery.length > 0", :indicator-dots="true", :autoplay="true", indicator-active-color="#fff", indicator-color="rgba(255, 255, 255, .3)")
       swiper-item.border-radius(v-for="(g,idx) in gallery", :key="idx")
         img.response(:src="imgOuterUrl + g.url", v-if="imgOuterUrl", style="height: 300rpx", mode="widthFix")
