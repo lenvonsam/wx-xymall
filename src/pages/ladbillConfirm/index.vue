@@ -94,7 +94,7 @@ export default {
       }).catch(err => {
         this.hideLoading()
         this.isload = false
-        this.loadFinish = true
+        this.loadFinish = 0
         if (done) done()
         this.showMsg(err || '网络错误')
       })

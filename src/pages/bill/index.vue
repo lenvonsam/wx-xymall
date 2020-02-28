@@ -14,7 +14,6 @@ div
           span {{item.title}}
   swiper.bill-content(@change="swiperChange", :current="swiperCount", :style="{height: scrollHeight+'rpx'}")
     swiper-item(v-for="(tabItem, swiperIdx) in billTab.length", :key="swiperIdx")
-      //- scroll-view(scroll-y, :refresher-triggered="triggered", :refresher-enabled="true", @refresherrefresh="refresher", @scrolltolower="loadMore", :style="{height: screenHeight - 186 +'px'}")
       template(v-if="isload")
         time-line(type="mallist")
       template(v-else)
@@ -73,7 +72,6 @@ export default {
       tabName: '0',
       currentPage: 0,
       listData: [],
-      finished: false,
       triggered: false,
       isload: false,
       startDate: '',
@@ -99,7 +97,6 @@ export default {
   },
   onShow () {
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 200
-    // this.finished = true
     // this.scrollHeight = this.screenHeight - this.customBar - 98
   },
   beforeMount () {
@@ -201,9 +198,8 @@ export default {
       // }, 300)
     },
     refresher (done) {
-      this.loadFinish = false
+      this.loadFinish = 1
       const me = this
-      this.finished = true
       this.isLoad = true
       this.currentPage = 0
       const reqUrl = `orderList.shtml?user_id=${me.currentUser.user_id}&status=${this.tabName}&current_page=${this.currentPage}&page_size=${this.pageSize}&order_no=${this.billNo}&start_date=${this.startDate}&end_date=${this.endDate}`
@@ -219,23 +215,15 @@ export default {
             })
             me.billTab[idx].data = list
             me.listData = list
-            me.finished = false
             me.isLoad = false
           } else if (arr.length === 0 && me.currentPage === 0) {
             me.listData = []
             this.billTab[idx].data = []
-            me.finished = true
             me.isload = false
           }
-        } else {
-          me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
-          me.isload = false
         }
-        me.loadFinish = true
         me.isTabDisabled = false
-        me.triggered = false
-        console.log('triggered', this.triggered)
-        // wx.stopPullDownRefresh()
+        if (me.billTab[idx].data.length < 10) me.loadFinish = 2
         if (done) done()
       })
     },
@@ -322,7 +310,6 @@ export default {
           if (arr.length === 0 && me.currentPage === 0) {
             me.listData = []
             this.billTab[idx].data = []
-            me.finished = true
             me.isload = false
           } else if (arr.length > 0 && me.currentPage === 0) {
             arr.map(itm => {
@@ -330,7 +317,6 @@ export default {
               me.listData.push(itm)
               this.billTab[idx].data.push(itm)
             })
-            me.finished = false
             me.isload = false
           } else if (arr.length > 0 && me.currentPage > 0) {
             arr.map(item => {
@@ -338,21 +324,16 @@ export default {
               me.listData.push(item)
               this.billTab[idx].data.push(item)
             })
-            me.finished = false
             me.isload = false
           } else {
-            me.finished = true
             me.isload = false
             me.currentPage--
-            if (me.listDate.length >= 10) me.loadFinish = 2
+            if (me.billTab[idx].data.length >= 10) me.loadFinish = 2
           }
-        } else {
-          me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
-          me.isload = false
         }
         me.isTabDisabled = false
         me.hideLoading()
-        if (me.listData.length < 10) me.loadFinish = 0
+        if (me.billTab[idx].data.length < 10) me.loadFinish = 0
         if (done) done()
       })
     },
