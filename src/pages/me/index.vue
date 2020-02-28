@@ -2,7 +2,9 @@
 div 
   nav-bar(title="我的", :bgClass="'bg-blue text-white'", leftMenu)
     div(slot="leftMenu")
-      img(src="/static/images/notice_w_icon.png", style="width:30rpx; height: 36rpx", @click="jump('/pages/cardList/main?title=消息中心&type=noticeList')", v-if="showNoticeIcon")
+      .relative(@click="jump('/pages/cardList/main?title=消息中心&type=noticeList')", v-if="showNoticeIcon")
+        img(src="/static/images/notice_w_icon.png", style="width:30rpx; height: 36rpx")
+        .red-dot(v-show="rowCountObj.to_notice > 0", style="width: 12rpx; height: 12rpx; top: 0rpx; right: -10rpx;")
   .relative
     .bg-blue.flex.padding-sm.text-white.align-center.me-header
       .col(@click="jumpProfile")

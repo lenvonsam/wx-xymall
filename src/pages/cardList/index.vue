@@ -14,8 +14,9 @@ div
             icon.adjust.cuIcon-right
     .bg-white(v-else-if="pageType === 'noticeList'")
       .row.padding-lr(v-for="(data, idx) in listData", :key="idx", @click="jumpDetail(data)")
-        .flex-60
+        .flex-60.relative
           img(:src="imgProxy + (data.type == 2 ? 'wl_icon.png' : 'xx_icon.png')", style="height: 100rpx; width: 100rpx", v-if="imgProxy")
+          .red-dot(style="top: 0px; right: 20rpx", v-if="data.have_read === '0'")
         .col.row.border-bottom-line(style="height: 140rpx")
           .full-width
             .row
@@ -32,6 +33,7 @@ div
             .ft-12.margin-top-sm.text-gray {{data.time}}
           .flex-100.ft-16.text-gray.text-right
             span ￥{{data.price}}
+    .padding.bg-gray.text-center(v-if="listData.length > 10") 加载中...
   time-line(v-else, type="mainres")
 </template>
 
@@ -77,6 +79,9 @@ export default {
       'configVal'
     ]),
     jumpDetail (obj) {
+      if (Number(obj.have_read) === 0) {
+        this.ironRequest(this.apiList.xy.readNotice.url, { id: obj.id }, this.apiList.xy.readNotice.method)
+      }
       if (obj.type === 2) {
         const tdno = obj.content.substring(obj.content.indexOf('TD'), obj.content.indexOf('需要'))
         this.jump('/pages/ladbillConfirmDetail/main?no=' + tdno)

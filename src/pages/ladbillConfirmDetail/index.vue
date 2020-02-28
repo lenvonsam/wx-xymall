@@ -6,7 +6,8 @@ div
       .col
         span.ft-15.text-blue.text-bold {{ladObject.td_no}}
         copy-btn(:copyUrl="ladObject.id_no")
-      .text-blue 提单待确认
+      .text-blue(v-if="ladObject.status === '提单待确认'") {{ladObject.status}}
+      .text-gray(v-else) {{ladObject.status}}
     .tip.text-orange.padding-sm
       span *请务必仔细确认物资提货人信息进行确认，如有疑问，请及时联系型云客服
     .bg-white.padding-sm
@@ -54,7 +55,7 @@ div
       .tel-btn.bg-red.text-center.text-white.row.justify-center(@click="makeCall(tdContact)")
         span 点击拨打
         .padding-left-xs.cuIcon-phone
-  .footer.row.bg-white.text-center.text-white.padding-sm
+  .footer.row.bg-white.text-center.text-white.padding-sm(v-if="ladObject.status === '提单待确认'")
     .bg-red.col.padding-sm.round(@click="ladCancel") 驳回
     .bg-blue.col.margin-left-sm.padding-sm.round(@click="ladConfirm") 确认提单  
 </template>

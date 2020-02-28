@@ -56,7 +56,7 @@ export default {
       type: String,
       default: '加载中'
     },
-    // 0 不限 1 加载中 2 加载完成
+    // 0 不显示文字 1 加载中 2 加载完成
     loadFinish: {
       type: Number,
       default: 0
@@ -148,11 +148,11 @@ export default {
     align-items center
     justify-content center
     font-size 13px
-    background #f6f6f6
+    background #f1f1f1
     overflow hidden
   .footer
     text-align center
     padding 10px
-    background #f6f6f6
+    background #f1f1f1
     font-size 13px
 </style>

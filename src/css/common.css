@@ -304,3 +304,11 @@ page,
   width: 40rpx;
   height: 40rpx;
 }
+
+.red-dot {
+  width: 14rpx;
+  height: 14rpx;
+  border-radius: 50%;
+  position: absolute;
+  background: #e54d42;
+}

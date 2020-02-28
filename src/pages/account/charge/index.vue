@@ -26,6 +26,9 @@ div
 
 <script>
 export default {
+  onShow () {
+    this.whiteStatusBar()
+  }
 }
 </script>
 
