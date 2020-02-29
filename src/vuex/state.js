@@ -13,6 +13,8 @@ export default {
   custom: {},
   // 自定义导航栏内容的高度
   customBar: 0,
+  // 底部tab高度
+  bottomBarHeight: 0,
   // 首页图片
   mainIcons: [
     {
