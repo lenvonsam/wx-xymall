@@ -151,7 +151,8 @@ export default {
   computed: {
     ...mapState({
       custom: state => state.custom,
-      tempObject: state => state.tempObject
+      tempObject: state => state.tempObject,
+      bottomBarHeight: state => state.bottomBarHeight
     })
   },
   watch: {
@@ -210,7 +211,7 @@ export default {
         this.pwAddrDetail = this.tempObject.detail
       }
     }
-    this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 300 + 'rpx'
+    this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 200 + 'rpx'
     this.loadCartData()
   },
   methods: {
