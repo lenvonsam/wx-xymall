@@ -301,7 +301,6 @@ const wxMixins = {
       }
     },
     getRpx (px) {
-      console.log('getRpx', this.screenWidth)
       return px * 750 / this.screenWidth
     },
     calc (options) {

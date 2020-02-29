@@ -421,12 +421,12 @@ export default {
   padding 0 5px
   border-radius 5px
 .shop-head
-  position fixed
-  width 100%
+  // position fixed
+  // width 100%
   // top 64px
-  left 0
-  right 0
-  z-index 2
+  // left 0
+  // right 0
+  // z-index 2
 .dotted
   width 10px
   height 10px
