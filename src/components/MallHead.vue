@@ -19,13 +19,13 @@
       .tab-more.row.justify-center(@click="activeTab = 'name'")
         .cuIcon-unfold.text-xl
     .padding-sm.flex.align-center.solid-top
-      .col.filter-list.bg-gray.flex(@click.prevent="sortCb('standard')")
+      .col.filter-list.bg-gray.flex(:class="{active: standardStr}", @click.prevent="sortCb('standard')")
         .col.text-center.text-cut {{standardStr || '规格'}}
         .cuIcon-unfold
-      .col.filter-list.bg-gray.flex(@click.prevent="sortCb('material')")
+      .col.filter-list.bg-gray.flex(:class="{active: materialStr}", @click.prevent="sortCb('material')")
         .col.text-center.text-cut {{materialStr || '材质'}}
         .cuIcon-unfold
-      .col.filter-list.bg-gray.flex(@click.prevent="sortCb('origin')")
+      .col.filter-list.bg-gray.flex(:class="{active: originStr}", @click.prevent="sortCb('origin')")
         .col.text-center.text-cut {{originStr || '产地'}}
         .cuIcon-unfold
       .setting-list.flex.ft-25
@@ -420,6 +420,9 @@ export default {
   line-height 30px
   padding 0 5px
   border-radius 5px
+  &.active
+    border 2px solid #2485ff
+    background rgba(36,133,255,0.05)
 .shop-head
   // position fixed
   // width 100%
