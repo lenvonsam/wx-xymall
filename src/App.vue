@@ -42,7 +42,7 @@ export default {
         me.configVal({ key: 'screenWidth', val: e.screenWidth })
         me.configVal({ key: 'screenHeight', val: e.screenHeight })
         me.configVal({ key: 'statusBar', val: statusBar })
-        me.configVal({ key: 'bottomBarHeight', val: e.screenHeight - e.windowHeight })
+        me.configVal({ key: 'bottomBarHeight', val: (e.screenHeight - e.windowHeight) })
         const capsule = wx.getMenuButtonBoundingClientRect()
         if (capsule) {
           me.configVal({ key: 'custom', val: capsule })

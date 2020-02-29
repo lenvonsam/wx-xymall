@@ -462,7 +462,6 @@ export default {
               me.isload = false
             }
           } else {
-            me.loadFinish = 0
             if (res.products.length > 0) {
               me.goodsNameList[idx].data.push(...res.products)
               if (res.products.length < 10) me.loadFinish = 2
@@ -485,6 +484,7 @@ export default {
           // })
           // this.isload = true
         }
+        console.log('loadfinish:>>', this.loadFinish)
         if (done) done()
       } catch (err) {
         this.loadFinish = 0

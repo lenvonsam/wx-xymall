@@ -6,7 +6,9 @@ scroll-view.full-width(scroll-y, :style="{height: height + heightUnit}", :class=
       span(v-if="refreshState == 2") {{refreshText}}
       span(v-if="refreshState == 3") {{refreshPulledText}}
     slot
-    .footer.text-gray(v-if="loadFinish") {{loadFinish == 2 ? loadFinishText : loadPushingText}}
+    .footer.text-gray(v-if="loadFinish > 0") 
+      span(v-if="loadFinish === 2") {{loadFinishText}}
+      span(v-else-if="loadFinish === 1") {{loadPushingText}}
 </template>
 
 <script>
