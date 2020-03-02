@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import state from './state'
 import user from './modules/user'
+import vendor from './modules/vendor'
 
 Vue.use(Vuex)
 
@@ -21,7 +22,8 @@ const store = new Vuex.Store({
     }
   },
   modules: {
-    user
+    user,
+    vendor
   }
 })
 

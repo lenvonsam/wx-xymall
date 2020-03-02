@@ -50,6 +50,10 @@
         "phoneLogin/main",
         "companyUpdate/main"
       ]
+    },
+    {
+      "root": "pages/vendor",
+      "pages": []
     }
   ],
   "tabBar": {
