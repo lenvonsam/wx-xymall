@@ -53,7 +53,7 @@
     },
     {
       "root": "pages/vendor",
-      "pages": []
+      "pages": ["cart/main"]
     }
   ],
   "tabBar": {
