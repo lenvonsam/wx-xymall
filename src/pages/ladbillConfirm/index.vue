@@ -48,11 +48,11 @@ export default {
     this.onRefresh()
   },
   methods: {
-    loadMore (done) {
+    loadMore () {
       const me = this
       this.throttle(function () {
         me.currentPage++
-        me.loadData(done)
+        me.loadData()
       }, 300)
     },
     onRefresh (done) {

@@ -337,12 +337,12 @@ export default {
         if (done) done()
       })
     },
-    loadMore (done) {
+    loadMore () {
       if (!this.isLoad) {
         const me = this
         this.throttle(function () {
           me.currentPage++
-          me.loadData(done)
+          me.loadData()
         }, 300)
       }
     },
