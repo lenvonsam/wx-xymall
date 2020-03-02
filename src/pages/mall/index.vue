@@ -276,14 +276,14 @@ export default {
       this.currentPage = 0
       this.refresher(done)
     },
-    loadMore (done) {
+    loadMore () {
       const me = this
       this.throttle(function () {
         me.isload = true
         me.loadFinish = 1
         me.currentPage++
         me.isRefresh = 'reachBottom'
-        me.refresher(done)
+        me.refresher()
       }, 300)
     },
     showShareMall () {
