@@ -212,10 +212,14 @@ const wxMixins = {
             text: data.cart_list_count.toString()
           })
         } else {
-          mpvue.removeTabBarBadge()
+          mpvue.removeTabBarBadge({
+            index: 2
+          })
         }
       } catch (e) {
-        mpvue.removeTabBarBadge()
+        mpvue.removeTabBarBadge({
+          index: 2
+        })
       }
     },
     addCart (val, type, userId) {

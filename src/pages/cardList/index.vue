@@ -99,7 +99,7 @@ export default {
           url += '?type=1&current_page=' + this.currentPage + '&page_size=' + this.pageSize
         }
         if (this.pageType === 'noticeList') {
-          url += '?have_read=-1&user_id=' + this.currentUser.user_id + '&current_page=' + this.currentPage + '&page_size=' + this.pageSize
+          url += '?have_read=-1&user_id=' + this.currentUser.user_id + '&current_page=' + this.currentPage + '&page_size=15'
         }
         const data = await this.ironRequest(url, params, this.apiList.xy[this.pageType].method)
         console.log('get data', data)

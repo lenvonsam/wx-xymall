@@ -276,14 +276,14 @@ export default {
       this.currentPage = 0
       this.refresher(done)
     },
-    loadMore (done) {
+    loadMore () {
       const me = this
       this.throttle(function () {
         me.isload = true
         me.loadFinish = 1
         me.currentPage++
         me.isRefresh = 'reachBottom'
-        me.refresher(done)
+        me.refresher()
       }, 300)
     },
     showShareMall () {
@@ -469,7 +469,7 @@ export default {
               me.currentPage--
               if (me.currentPage > 0) me.loadFinish = 2
             }
-          // if (me.goodsNameList[idx].length < 10) me.loadFinish = 0
+            if (me.goodsNameList[idx].data.length < 10) me.loadFinish = 0
           }
           me.$forceUpdate()
           me.hideLoading()
@@ -487,6 +487,7 @@ export default {
         console.log('loadfinish:>>', this.loadFinish)
         if (done) done()
       } catch (err) {
+        console.log('异常', err)
         this.loadFinish = 0
         this.isload = false
         this.hideLoading()

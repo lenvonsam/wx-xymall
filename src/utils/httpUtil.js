@@ -99,7 +99,6 @@ function basicRequest (type, url, params, urlMethod, inputCharset = 'utf8') {
 
 function ironRequest (reqUrl, param, type) {
   const basicParams = Object.assign({}, param)
-  console.log('iron isLogin', this.isLogin)
   let ul = reqUrl
   if (this.isLogin && type === 'post') {
     basicParams.user_id = this.currentUser.user_id
