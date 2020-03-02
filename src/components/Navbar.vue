@@ -4,7 +4,7 @@
     .action.padding-right(v-if="isBack", @click="navBack")
       span.cuIcon-back
       slot(name="backText")
-    .action(v-if="leftMenu")
+    .action.padding-right(v-if="leftMenu")
       slot(name="leftMenu")
     .action.relative(v-if="serviceIcon")
       .service-btn

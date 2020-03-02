@@ -118,7 +118,9 @@ export default {
       }
     },
     pushMore (e) {
-      this.$emit('scrolltolower', e)
+      if (this.loadFinish < 2) {
+        this.$emit('scrolltolower', e)
+      }
     },
     finishRefresh () {
       const now = new Date().getTime()

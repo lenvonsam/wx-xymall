@@ -2,38 +2,39 @@
 div
   nav-bar(:title="pageTitle", :isBack="true")
   template(v-if="isLoad")
-    .padding(v-if="pageType === 'notice'")
-      .bg-white.margin-bottom(v-for="(data,idx) in listData", :key="idx", style="box-shadow: 0px 0px 2.5px rgba(7,1,2,0.04)", @click="jump('/pages/h5/main?title=公告详情&type=noticeDetail&id=' + data.id)")
-        .padding.border-bottom-line
-          div {{data.title}}
-          .margin-top.text-cut(style="color: #4d4d4d") {{data.summary}}
-          .text-right.ft-12.text-gray.margin-top-sm {{data.audittime}}
-        .padding.row.text-gray
-          .col 查看详情
-          .col.text-right
-            icon.adjust.cuIcon-right
-    .bg-white(v-else-if="pageType === 'noticeList'")
-      .row.padding-lr(v-for="(data, idx) in listData", :key="idx", @click="jumpDetail(data)")
-        .flex-60.relative
-          img(:src="imgProxy + (data.type == 2 ? 'wl_icon.png' : 'xx_icon.png')", style="height: 100rpx; width: 100rpx", v-if="imgProxy")
-          .red-dot(style="top: 0px; right: 20rpx", v-if="data.have_read === '0'")
-        .col.row.border-bottom-line(style="height: 140rpx")
-          .full-width
-            .row
-              .col {{data.title}}
-              .col.text-right
-                time-text(:content="data.time", v-if="data.time")
-            .mt-5.ft-12.text-gray.notice-line
-              div(v-html="data.content")
-    .bg-white(v-else-if="pageType === 'queryWithdrawList'")
-      .padding.border-bottom-line(v-for="(data, idx) in listData", :key="idx")
-        .row
-          .col
-            .ft-16 {{data.status}}
-            .ft-12.margin-top-sm.text-gray {{data.time}}
-          .flex-100.ft-16.text-gray.text-right
-            span ￥{{data.price}}
-    .padding.bg-gray.text-center(v-if="listData.length > 10") 加载中...
+    iron-scroll(@scrolltolower="loadMore", :height="screenHeight - customBar", :loadFinish="loadFinish")
+      .padding(v-if="pageType === 'notice'")
+        .bg-white.margin-bottom(v-for="(data,idx) in listData", :key="idx", style="box-shadow: 0px 0px 2.5px rgba(7,1,2,0.04)", @click="jump('/pages/h5/main?title=公告详情&type=noticeDetail&id=' + data.id)")
+          .padding.border-bottom-line
+            div {{data.title}}
+            .margin-top.text-cut(style="color: #4d4d4d") {{data.summary}}
+            .text-right.ft-12.text-gray.margin-top-sm {{data.audittime}}
+          .padding.row.text-gray
+            .col 查看详情
+            .col.text-right
+              icon.adjust.cuIcon-right
+      .bg-white(v-else-if="pageType === 'noticeList'")
+        .row.padding-lr(v-for="(data, idx) in listData", :key="idx", @click="jumpDetail(data)")
+          .flex-60.relative
+            img(:src="imgProxy + (data.type == 2 ? 'wl_icon.png' : 'xx_icon.png')", style="height: 100rpx; width: 100rpx", v-if="imgProxy")
+            .red-dot(style="top: 0px; right: 20rpx", v-if="data.have_read === '0'")
+          .col.row.border-bottom-line(style="height: 140rpx")
+            .full-width
+              .row
+                .col {{data.title}}
+                .col.text-right
+                  time-text(:content="data.time", v-if="data.time")
+              .mt-5.ft-12.text-gray.notice-line
+                div(v-html="data.content")
+      .bg-white(v-else-if="pageType === 'queryWithdrawList'")
+        .padding.border-bottom-line(v-for="(data, idx) in listData", :key="idx")
+          .row
+            .col
+              .ft-16 {{data.status}}
+              .ft-12.margin-top-sm.text-gray {{data.time}}
+            .flex-100.ft-16.text-gray.text-right
+              span ￥{{data.price}}
+      //- .padding.bg-gray.text-center(v-if="listData.length > 10") 加载中...
   time-line(v-else, type="mainres")
 </template>
 
@@ -48,6 +49,7 @@ export default {
       pageType: 'notice',
       currentPage: 0,
       listData: [],
+      loadFinish: 0,
       listMapKey: {
         'notice': 'notices',
         'noticeList': 'notices',
@@ -55,14 +57,14 @@ export default {
       }
     }
   },
-  onReachBottom () {
-    console.log('reach bottom')
-    const me = this
-    this.throttle(function () {
-      me.currentPage++
-      me.getListData()
-    }, 300)
-  },
+  // onReachBottom () {
+  //   console.log('reach bottom')
+  //   const me = this
+  //   this.throttle(function () {
+  //     me.currentPage++
+  //     me.getListData()
+  //   }, 300)
+  // },
   onShow () {
     const query = this.$root.$mp.query
     this.pageTitle = ''
@@ -78,6 +80,13 @@ export default {
     ...mapActions([
       'configVal'
     ]),
+    loadMore () {
+      const me = this
+      this.throttle(function () {
+        me.currentPage++
+        me.getListData()
+      }, 300)
+    },
     jumpDetail (obj) {
       if (Number(obj.have_read) === 0) {
         this.ironRequest(this.apiList.xy.readNotice.url, { id: obj.id }, this.apiList.xy.readNotice.method)
@@ -93,6 +102,7 @@ export default {
     async getListData () {
       try {
         if (this.currentPage === 0) this.isLoad = false
+        this.loadFinish = 1
         let url = this.apiList.xy[this.pageType].url
         let params = {}
         if (this.pageType === 'notice') {
@@ -114,9 +124,12 @@ export default {
         } else {
           this.currentPage--
           if (this.currentPage < 0) this.currentPage = 0
+          if (this.currentPage > 0) this.loadFinish = 2
         }
+        if (this.listData.length < 10) this.loadFinish = 0
       } catch (e) {
         this.showMsg(e)
+        this.loadFinish = 0
       }
     }
   }
