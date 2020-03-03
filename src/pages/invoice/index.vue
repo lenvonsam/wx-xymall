@@ -121,12 +121,8 @@ export default {
     this.configVal({key: 'tempObject', val: ''})
   },
   onShow () {
-    this.listData = []
+    // this.listData = []
     this.disabledBtn = false
-    this.queryObject = {
-      current_page: this.currentPage,
-      page_size: this.pageSize
-    }
     if (this.tempObject.tabName) {
       this.tabName = this.tempObject.tabName
       this.swiperCount = this.tabName
@@ -138,9 +134,22 @@ export default {
     if (this.tabName === '1' || this.tabName === '3') {
       this.pageHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 98 + 'rpx'
     } else {
+      this.currentPage = 0
+      this.queryObject = {
+        current_page: this.currentPage,
+        page_size: this.pageSize
+      }
+      this.loadData()
       this.pageHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 198 + 'rpx'
     }
-    this.loadData()
+    if (this.listData.length === 0) {
+      this.currentPage = 0
+      this.queryObject = {
+        current_page: this.currentPage,
+        page_size: this.pageSize
+      }
+      this.loadData()
+    }
   },
   methods: {
     ...mapActions([
@@ -275,6 +284,7 @@ export default {
               if (resp.returncode === '0') {
                 obj.goods_price = resp.goods_price
                 obj.lift_price = resp.lift_price
+                obj.invoice_no = resp.invoice_no
                 // me.showMsg('申请成功')
                 me.configVal({ key: 'tempObject', val: obj })
                 // me.back(-1)

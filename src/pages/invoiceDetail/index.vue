@@ -50,7 +50,7 @@ div
             span.ml-5.ft-15 发票地址
           .col.text-right
             input.text-gray.text-right(:placeholder="queryId != '0'?'':'请输入地址'", v-model="receiverAddr", :disabled="queryId != '0'")
-  .pt-half-rem(v-if="pickVal == '快递邮寄' && (queryId == '2' || queryId == '2' || queryId == '3')")
+  .pt-half-rem(v-if="pickVal == '快递邮寄' && (queryId == '2' || queryId == '3')")
     .bg-white
       .row.padding.flex-center.border-bottom-line
         .col.flex-100
@@ -62,6 +62,11 @@ div
           span.ml-5.ft-15 快递单号
         .col.text-right
           .c-gray.text-right {{expressNo}}
+      .row.padding.flex-center.border-bottom-line
+        .col.flex-100
+          span.ml-5.ft-15 发票代码
+        .col.text-right
+          .c-gray.text-right {{invoiceNo || '暂无'}}    
   .padding-sm.margin-top(@click="invoiceApply")
     .main-btn(v-if="queryId == '0'") 提交        
 </template>
@@ -78,6 +83,7 @@ export default {
       pickVal: '线下领取',
       expressName: '',
       expressNo: '',
+      invoiceNo: '',
       pickItems: ['快递邮寄', '线下领取'],
       listArray: [{
         name: '发票抬头',
@@ -109,6 +115,7 @@ export default {
     this.pickOpen = false
     this.expressName = ''
     this.expressNo = ''
+    this.invoiceNo = ''
     this.receiver = ''
     this.receiverMobile = ''
     this.receiverAddr = ''
@@ -143,6 +150,9 @@ export default {
       }
       if (this.tempObject.express_no) {
         this.expressNo = this.tempObject.express_no
+      }
+      if (this.tempObject.invoice_no) {
+        this.invoiceNo = this.tempObject.invoice_no
       }
     }
   },
