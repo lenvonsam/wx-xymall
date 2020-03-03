@@ -257,8 +257,13 @@ const wxMixins = {
               mwId = 1
             }
           }
+          let url = this.apiList.xy.addCart.url
+          if (this.currentUser.type === 'seller') {
+            // 卖家
+            url = this.apiList.xy.addCartSeller.url
+          }
           this.ironRequest(
-            'addCart.shtml',
+            url,
             {
               user_id: userId,
               product_id: val.id,

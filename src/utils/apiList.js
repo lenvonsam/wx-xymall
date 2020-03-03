@@ -25,7 +25,13 @@ export default {
     mallList: { url: 'mallList.shtml', method: 'post' },
     goodsList: { url: 'goodsList.shtml', method: 'post' },
     standardList: { url: 'standardList.shtml', method: 'post' },
-    cartListCount: { url: 'cartListCount.shtml', method: 'get' }
+    cartListCount: { url: 'cartListCount.shtml', method: 'get' },
+    addCart: {url: 'addCart.shtml', method: 'post'},
+    addCartSeller: { url: '/seller/addCartSeller.shtml', method: 'post' },
+    auditDxCheck: { url: '/seller/auditDxCheck.shtml', method: 'post' },
+    dx: { url: '/seller/dx.shtml', method: 'post' },
+    quotation: { url: '/seller/quotation.shtml', method: 'post' },
+    quotationDetail: { url: '/seller/quotationDetail.shtml', method: 'get' }
   },
   erp: {
     // 手机验证码登录
