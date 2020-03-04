@@ -110,7 +110,8 @@
         .solid-top.padding(v-for="(item, pickIdx) in pickWayList", :key="pickIdx")
           .text-bold.ft-15 {{item.title}}
           .text-gray.padding-top-sm {{item.content}}
-    alert(title="您还未登录，请先登录", v-model="alertShow", :cb="alertCb")
+    //- alert(title="您还未登录，请先登录", v-model="alertShow", :cb="alertCb")
+    alert(:title="alertText", :cb="alertCb", v-model="alertShow")
 </template>
 
 <script>
@@ -120,6 +121,7 @@ import timeLine from '@/components/TimeLine.vue'
 export default {
   data () {
     return {
+      alertText: '',
       alertShow: false,
       totalPrice: 0,
       totalWeight: 0,
@@ -221,7 +223,8 @@ export default {
       'configVal'
     ]),
     alertCb () {
-      this.jump('/pages/account/login/main')
+      // this.jump('/pages/account/login/main')
+      this.alertShow = false
     },
     openEdit () {
       this.pickWayShow = false
@@ -369,7 +372,9 @@ export default {
             }).catch(err => {
               me.btnDisable = false
               this.hideLoading()
-              me.showMsg(err || '网络异常')
+              // me.showMsg(err || '网络异常')
+              this.alertText = err || '网络异常'
+              this.alertShow = true
             })
           }
         })
