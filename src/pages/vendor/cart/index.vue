@@ -167,7 +167,6 @@ export default {
   watch: {
     carts: {
       handler (newVal, oldVal) {
-        debugger
         let filterArray = newVal.filter(item => {
           item.countWeight = this.$toFixed(Number(item.count * item.weight), 3)
           return item.choosed === true

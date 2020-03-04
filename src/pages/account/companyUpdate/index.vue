@@ -156,7 +156,7 @@ export default {
       currentKey: '',
       // 1 返回首页  2 不做惭怍
       backType: 1,
-      // 1 非个人中心来 2 个人中心来
+      // 1 非个人中心来 2 个人中心来 3 注册
       fromType: 1
     }
   },
@@ -185,7 +185,7 @@ export default {
     ]),
     backToLogin () {
       this.backType = 2
-      if (this.fromType === 2) {
+      if (this.fromType === 2 || this.fromType === 3) {
         this.redirect('/pages/account/login/main')
       } else {
         this.back()
