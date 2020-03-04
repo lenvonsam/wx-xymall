@@ -12,7 +12,7 @@ div
               input(placeholder="请输入关键词搜索", v-model="searchWord", confirm-type="search", @confirm="searchClick")
             icon.adjust.cuIcon-close.padding-left(@click="cleanSearch") 
       .flex-50.text-center.text-blue(@click="searchClick") 搜索
-  .padding
+  .padding(v-if="isLogin")
     .row
       .col 搜索历史
       .col.text-right(v-if="filterArray.length > 0")
@@ -34,7 +34,7 @@ export default {
   },
   onShow () {
     this.filterArray = []
-    if (this.currentUser.localSearchs) this.filterArray = this.currentUser.localSearchs
+    if (this.currentUser.localSearchs && this.isLogin) this.filterArray = this.currentUser.localSearchs
     this.searchWord = ''
   },
   methods: {
@@ -53,36 +53,20 @@ export default {
       })
     },
     searchClick (searchName) {
-      if (!this.isLogin) {
-        this.confirm({ content: '您未登录，请先登录' }).then(res => {
-          if (res === 'confirm') {
-            this.jump('/pages/account/login/main')
-          } else {
-            this.tab('/pages/index/main')
-          }
-        })
-        return
-      }
-      if (typeof (searchName) === 'string') {
-        this.configVal({ key: 'tempObject', val: { search: searchName } })
+      this.configVal({ key: 'tempObject', val: { search: this.searchWord || '' } })
+      if (this.isLogin) {
+        const index = this.filterArray.findIndex(itm => itm === this.searchWord.trim())
+        if (index < 0 && this.searchWord.length > 0) this.filterArray.unshift(this.searchWord.trim())
         this.setLocalSearch()
-        this.tab('/pages/mall/main')
-        return false
       }
-      // if (this.searchWord.toString().trim().length === 0) {
-      //   this.showMsg('请输入内容')
-      //   return
-      // }
-      const index = this.filterArray.findIndex(itm => itm === this.searchWord.trim())
-      if (index < 0 && this.searchWord.trim()) this.filterArray.unshift(this.searchWord.trim())
-      this.configVal({ key: 'tempObject', val: { search: this.searchWord } })
-      this.setLocalSearch()
       this.tab('/pages/mall/main')
     },
     setLocalSearch () {
-      const user = Object.assign({}, this.currentUser)
-      user.localSearchs = this.filterArray
-      this.setUser(user)
+      if (this.isLogin) {
+        const user = Object.assign({}, this.currentUser)
+        user.localSearchs = this.filterArray
+        this.setUser(user)
+      }
     },
     cleanSearch () {
       this.searchWord = ''
