@@ -195,6 +195,7 @@ export default {
   onShow () {
     this.alertShow = false
     // this.carts = []
+    debugger
     if (!this.isLogin) {
       const me = this
       this.confirm({ title: '友情提示', content: '您未登录,请先登录' }).then(res => {

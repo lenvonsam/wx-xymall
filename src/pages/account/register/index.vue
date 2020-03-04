@@ -109,7 +109,7 @@ export default {
             me.canClick = true
             me.resetVal()
             if (res === 'confirm') {
-              me.jump('/pages/account/companyUpdate/main')
+              me.jump('/pages/account/companyUpdate/main?type=3')
             } else {
               me.tab('/pages/index/main')
             }

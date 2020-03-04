@@ -9,7 +9,7 @@ div
             //- .flex-30
             icon.adjust.cuIcon-search.padding-right-sm
             .col
-              input(placeholder="请输入关键词搜索", v-model="searchWord")
+              input(placeholder="请输入关键词搜索", v-model="searchWord", confirm-type="search", @confirm="searchClick")
             icon.adjust.cuIcon-close.padding-left(@click="cleanSearch") 
       .flex-50.text-center.text-blue(@click="searchClick") 搜索
   .padding
@@ -53,6 +53,16 @@ export default {
       })
     },
     searchClick (searchName) {
+      if (!this.isLogin) {
+        this.confirm({ content: '您未登录，请先登录' }).then(res => {
+          if (res === 'confirm') {
+            this.jump('/pages/account/login/main')
+          } else {
+            this.tab('/pages/index/main')
+          }
+        })
+        return
+      }
       if (typeof (searchName) === 'string') {
         this.configVal({ key: 'tempObject', val: { search: searchName } })
         this.setLocalSearch()
@@ -75,7 +85,6 @@ export default {
       this.setUser(user)
     },
     cleanSearch () {
-      console.log('cleanSearch')
       this.searchWord = ''
     }
   }
