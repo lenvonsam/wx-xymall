@@ -6,7 +6,7 @@ div
 
   swiper(v-if="goodsNameList.length > 0", @change="swiperChange", @transition="swiperTransition", :current="swiperCount", :style="{height: scrollHeight+'rpx'}")
     swiper-item(v-for="(tabItem, swiperIdx) in goodsNameList.length", :key="swiperIdx")
-      .col.text-center.text-gray.pt-100(v-if="swiperCount === swiperIdx && !isload && goodsNameList[swiperIdx].data.length === 0")
+      .bg-gray.text-center.text-gray.pt-100(:style="{height: scrollHeight + 'rpx'}", v-if="swiperCount === swiperIdx && !isload && goodsNameList[swiperIdx].data.length === 0")
         empty-image(url="bill_empty.png", className="img-empty")
         .empty-content 
           span 暂时没有相关商品
@@ -294,9 +294,12 @@ export default {
       }
     },
     swiperTransition (e) {
+      // debugger
+      console.log('swiperTransition', e)
       // this.isload = true
     },
     swiperChange (e) {
+      debugger
       const idx = e.mp.detail.current
       this.mallTabVal = this.goodsNameList[idx].id
       if (this.goodsNameList[idx]) {
