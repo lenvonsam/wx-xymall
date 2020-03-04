@@ -4,15 +4,17 @@
     .h-left.ft-25(@click="classifyClick")
       .cuIcon-sort.lg.text-gra
       .ft-14 分类
-    .search.col(@click="jump('/pages/search/main')")
+    .search.col
       .flex.align-center
         .cuIcon-search.text-gra.ft-18
-        input.full-width.pl-10(id="mallSearchInput", :disabled="true", type="text", placeholder="品名、材质、规格、产地(空格号隔开)", v-model="searchVal")
+        input.full-width.pl-10(@click="jump('/pages/search/main')", id="mallSearchInput", :disabled="true", type="text", placeholder="品名、材质、规格、产地(空格号隔开)", v-model="searchVal")
+        .cuIcon-close.padding-xs(@click="cleanSearch", v-if="searchVal")
         //- input.full-width.pl-10(id="mallSearchInput", type="text", placeholder="品名、材质、规格、产地", v-model="searchVal")
   .relative
     .mt-15.text-center.flex.align-stretch
       .col.tab-content
-        scroll-view.nav(scroll-x, scroll-with-animation, :scroll-left="scrollLeft")
+        //- scroll-view.nav(scroll-x, scroll-with-animation, :scroll-left="scrollLeft")
+        scroll-view.nav(scroll-x, scroll-with-animation, :scroll-into-view="scrollId")  
           //- scroll-view.nav(scroll-x, scroll-with-animation, :scroll-into-view="searchCurId")
           .cu-item(:id="'idx_'+index", v-for="(item,index) in sortList[0].data", :class="item.id === tabVal?'text-blue cur':''", :key="index", @click="selectTab(item, index)")
             span {{item.name}}
@@ -122,7 +124,8 @@ export default {
       originStr: '',
       filterStr: '',
       isMore: false,
-      standardSearch: ''
+      standardSearch: '',
+      scrollId: 'idx_0'
     }
   },
   components: {
@@ -130,7 +133,8 @@ export default {
   },
   computed: {
     ...mapState({
-      tempObject: state => state.tempObject
+      tempObject: state => state.tempObject,
+      screenWidth: state => state.screenWidth
     })
   },
   // onUnload () {
@@ -180,6 +184,7 @@ export default {
         standard: [this.tempObject.standards]
       }
       this.$emit('filter', filters)
+
       // const idx = this.sortList[1].data.findIndex(item => {
       //   return item.name === this.tempObject.standards
       // })
@@ -195,6 +200,12 @@ export default {
     ...mapActions([
       'configVal'
     ]),
+    cleanSearch () {
+      this.configVal({ key: 'tempObject', val: { search: '' } })
+      this.searchVal = ''
+      this.currentPage = 0
+      this.sortCb('name')
+    },
     classifyClick () {
       const firstShare = mpvue.getStorageSync('firstShareMallClassify') || false
       if (!firstShare) {
@@ -291,30 +302,16 @@ export default {
     },
     selectTab (item, index) {
       this.tabVal = item.id
-      let scrollLeft = 0
-      const query = wx.createSelectorQuery()
+      if (index > 2) {
+        this.scrollId = 'idx_' + (index - 2)
+      } else {
+        this.scrollId = 'idx_0'
+      }
       this.sortList[0].data.map((item, idx) => {
         item.isActive = this.tabVal === item.id
-        if (idx < index) {
-          const id = '#idx_' + idx
-          query.select(id).boundingClientRect()
-        }
       })
-      const me = this
-      if (index === 0) {
-        me.scrollLeft = '0px'
-      } else {
-        query.exec(function (res) {
-        // res就是 该元素的信息 数组
-          console.log('res', res)
-          res.map(item => {
-            scrollLeft += item.width
-          })
-          me.scrollLeft = scrollLeft + 'px'
-        })
-      }
       this.configVal({ key: 'tempObject', val: {name: item.id} })
-      me.$emit('selectTab', { id: item.id, idx: index })
+      this.$emit('selectTab', { id: item.id, idx: index })
     },
     loadMore () {
       if (this.activeTab === 'standard') {
