@@ -1,5 +1,5 @@
 <template lang="pug">
-scroll-view.full-width(scroll-y, :style="{height: height + heightUnit}", :class="scrollClass", @touchstart="touchstart", @touchmove="touchmove", @touchend="touchend", @scrolltolower="pushMore", :lower-threshold="lowerThreshold")
+scroll-view.full-width.bg-gray(scroll-y, :style="{height: height + heightUnit}", :class="scrollClass", @touchstart="touchstart", @touchmove="touchmove", @touchend="touchend", @scrolltolower="pushMore", :lower-threshold="lowerThreshold")
   .iron-scroll(:style="{transform: 'translate3d(0, ' + scrollTop + 'px, 0)', top: '-' + headHeight + 'px'}")
     .head.text-gray(:style="{height: headBarHeight + 'px'}")
       span(v-if="refreshState == 1") {{refreshPullingText}}
