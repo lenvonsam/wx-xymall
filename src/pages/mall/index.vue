@@ -263,22 +263,23 @@ export default {
         this.showLoading()
         this.isload = true
         this.isRefresh = 'refresh'
-        this.currentPage = 0
+        // this.currentPage = 0
         this.queryObject.current_page = this.currentPage
         this.queryObject.name = this.mallTabVal
         Object.assign(this.queryObject, this.filterObj)
-        this.refresher()
+        // this.refresher()
+        this.onRefresh()
         console.log('prevIdx', this.prevIdx)
       }
     },
     getName (list) {
-      console.log('goodsName', list)
       list.map(item => {
         item.data = []
       })
       this.goodsNameList = list
       this.btnDisable = false
-      this.refresher()
+      // this.refresher()
+      this.onRefresh()
     },
     multipleFilter (filter) {
       console.log('filter', filter)
@@ -393,6 +394,7 @@ export default {
           if (me.isRefresh === 'refresh') {
             if (res.products.length > 0 && me.currentPage === 0) {
               me.goodsNameList[idx].data = res.products
+              me.isload = false
               if (me.goodsNameList[idx].data.length < 10) me.loadFinish = 2
             } else if (res.products.length === 0 && me.currentPage === 0) {
               me.goodsNameList[idx].data = []
@@ -410,7 +412,7 @@ export default {
           }
           me.$forceUpdate()
           me.hideLoading()
-          if (me.prevIdx !== null) {
+          if (me.prevIdx !== null && me.prevIdx !== -1) {
             me.goodsNameList[me.prevIdx].data = []
             me.prevIdx = null
           }
