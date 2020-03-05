@@ -5,12 +5,14 @@ div
     .row
       .col
         .padding-xs.padding-lr(style="background: #f6f6f6;border-radius: 38rpx;")
-          .flex.text-gray.align-stretch
+          .row.text-gray.align-stretch
             //- .flex-30
-            icon.adjust.cuIcon-search.padding-right-sm
+            .cuIcon-search.padding-right-sm
             .col
               input(placeholder="请输入关键词搜索", v-model="searchWord", confirm-type="search", @confirm="searchClick")
-            icon.adjust.cuIcon-close.padding-left(@click="cleanSearch") 
+            .close-icon(@click="cleanSearch", v-if="searchWord")
+              .cuIcon-close
+            //- icon.adjust.cuIcon-close.padding-left(@click="cleanSearch") 
       .flex-50.text-center.text-blue(@click="searchClick") 搜索
   .padding(v-if="isLogin")
     .row

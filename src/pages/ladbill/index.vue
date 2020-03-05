@@ -7,6 +7,8 @@ div
         .flex.align-center
           .cuIcon-search
           input.full-width.padding-left-sm(v-model="search", type="text", placeholder="品名/提单号/车牌号", confirm-type="search", @confirm="searchOrder")
+          .close-icon(@click="search = ''", v-if="search")
+            .cuIcon-close
       .search-btn.text-blue.padding-left-sm(@click="searchOrder") 搜索
     scroll-view.nav(scroll-x, style="height: 90rpx")
       .flex.text-center

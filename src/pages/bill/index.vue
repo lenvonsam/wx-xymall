@@ -7,6 +7,8 @@ div
         .flex.align-center
           .cuIcon-search
           input.full-width.padding-left-sm(v-model="billNo", type="text", placeholder="合同号", confirm-type="search", @confirm="searchOrder")
+          .close-icon(@click="billNo = ''", v-if="billNo")
+            .cuIcon-close
       .search-btn.text-blue.padding-left-sm(@click="searchOrder") 搜索
     scroll-view.nav(scroll-x)
       .flex.text-center
