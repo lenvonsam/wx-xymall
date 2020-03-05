@@ -185,8 +185,10 @@ export default {
     ]),
     backToLogin () {
       this.backType = 2
-      if (this.fromType === 2 || this.fromType === 3) {
+      if (this.fromType === 2) {
         this.redirect('/pages/account/login/main')
+      } else if (this.fromType === 3) {
+        this.back(2)
       } else {
         this.back()
       }

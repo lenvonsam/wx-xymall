@@ -45,8 +45,10 @@ const wxMixins = {
         url: url
       })
     },
-    back () {
-      mpvue.navigateBack(-1)
+    back (step = 1) {
+      mpvue.navigateBack({
+        delta: step
+      })
     },
     toHome () {
       mpvue.reLaunch('/pages/index/main')
