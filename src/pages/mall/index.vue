@@ -299,7 +299,6 @@ export default {
       // this.isload = true
     },
     swiperChange (e) {
-      debugger
       const idx = e.mp.detail.current
       this.mallTabVal = this.goodsNameList[idx].id
       if (this.goodsNameList[idx]) {
