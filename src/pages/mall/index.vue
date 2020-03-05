@@ -40,13 +40,13 @@ div
                   .pt-5.c-gray.ft-12(v-if="item[mallTypeObject[itemType].tolerance] || item[mallTypeObject[itemType].weightRange]")
                     span(v-if="item[mallTypeObject[itemType].tolerance]") 公差范围: {{item[mallTypeObject[itemType].tolerance]}}
                     span.ml-8(v-if="item[mallTypeObject[itemType].weightRange]") 重量范围: {{item[mallTypeObject[itemType].weightRange]}}
-                  .row.pt-5.flex-center.ft-13.c-gray
+                  .row.pt-5.flex-center.ft-13.text-gray
                     .col
                       span(v-if="item[mallTypeObject[itemType].max_count] > 0") {{item[mallTypeObject[itemType].max_count]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
-                    .flex-120.relative.text-right.ft-14
-                      .mall-row(:class="{'notice': item.max_count === 0}")
-                        .blue-buy(v-if="item.max_count == 0",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
-                        .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="item.show_price") 购买
+                    .flex-120.relative.text-right.ft-14.row.justify-end
+                      //- .mall-row(:class="{'notice': item.max_count === 0}")
+                      .blue-buy(v-if="item.max_count == 0",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
+                      .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="item.show_price") 购买
                 template(v-else)
                   .ft-15.row
                     span.text-bold {{item[mallTypeObject[itemType].name]}}
@@ -204,25 +204,10 @@ export default {
       Object.assign(this.queryObject, this.tempObject)
       this.refresher()
     } else {
-      // this.queryObject = {
-      //   current_page: this.currentPage,
-      //   page_size: this.pageSize,
-      //   search: '',
-      //   only_available: 1
-      // }
       this.queryObject.search = ''
       Object.assign(this.queryObject, this.tempObject)
       this.mallTabVal = this.tempObject.name || ''
     }
-    // if (!this.tempObject.name) {
-    //   this.btnDisable = false
-    //   // this.mallItems = []
-    //   // this.goodsNameList[this.swiperCount].data = []
-    //   this.refresher()
-    // }
-    // this.mallClassName = !this.mallFlag ? 'card-list' : 'solid-bottom bg-white'
-
-    console.log('mallTabVal', this.mallTabVal)
     if (this.isLogin) {
       this.setCartCount(this.currentUser.user_id)
     } else {
@@ -232,27 +217,8 @@ export default {
   mounted () {
     this.$nextTick(() => {
       this.showShareMall()
-      if (this.goodsNameList.length > 0) {
-        this.queryObject = {
-          current_page: this.currentPage,
-          page_size: this.pageSize,
-          search: '',
-          only_available: 1
-        }
-        this.refresher()
-      }
     })
   },
-  // onReachBottom () {
-  //   this.currentPage++
-  //   this.isRefresh = 'reachBottom'
-  //   this.refresher()
-  // },
-  // onPullDownRefresh () {
-  //   this.isRefresh = 'refresh'
-  //   this.currentPage = 0
-  //   this.refresher()
-  // },
   methods: {
     ...mapActions(['configVal']),
     testRefresh (e) {
@@ -265,13 +231,6 @@ export default {
     testAbort (e) {
       console.log('test abort', e)
     },
-    // loadMore () {
-    //   if (!this.isload && !this.goodsNameList[this.swiperCount].finished) {
-    //     this.currentPage++
-    //     this.isRefresh = 'reachBottom'
-    //     this.refresher()
-    //   }
-    // },
     onRefresh (done) {
       this.currentPage = 0
       this.refresher(done)
@@ -294,8 +253,7 @@ export default {
       }
     },
     swiperTransition (e) {
-      // debugger
-      console.log('swiperTransition', e)
+      // console.log('swiperTransition', e)
       // this.isload = true
     },
     swiperChange (e) {
@@ -319,10 +277,8 @@ export default {
         item.data = []
       })
       this.goodsNameList = list
-      if (!this.tempObject.name) {
-        this.btnDisable = false
-        this.refresher()
-      }
+      this.btnDisable = false
+      this.refresher()
     },
     multipleFilter (filter) {
       console.log('filter', filter)
@@ -412,30 +368,9 @@ export default {
       }
     },
     selectTab ({ id, idx }) {
-      // this.configVal({key: 'tempObject', val: { search: '' }})
-      // const prevId = JSON.parse(JSON.stringify(this.mallTabVal))
-      // this.prevGoodId = this.goodsNameList.findIndex(item => {
-      //   return item.id === prevId
-      // })
-      // this.prevIdx = this.swiperCount
       if (this.goodsNameList[idx]) {
         this.mallTabVal = id
         this.swiperCount = idx
-        // this.queryObject = {
-        //   current_page: this.currentPage,
-        //   page_size: this.pageSize,
-        //   // search: '',
-        //   name: id,
-        //   only_available: 1
-        // }
-        // this.queryObject.current_page = this.currentPage
-        // this.queryObject.name = id
-        // Object.assign(this.queryObject, this.filterObj)
-        // this.refresher()
-        // if (this.goodsNameList[idx].data.length === 0) {
-        //   this.showLoading()
-        //   this.refresher()
-        // }
         console.log('prevIdx', this.prevIdx)
       }
     },

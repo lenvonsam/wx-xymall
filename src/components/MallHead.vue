@@ -176,7 +176,7 @@ export default {
     this.sortCb('name')
   },
   onShow () {
-    if (!this.tempObject.search && !this.tempObject.name) this.sortCb('name')
+    if (this.sortList[0].data.length === 0) this.sortCb('name')
     if (this.tempObject.standards) {
       this.queryObject.search = this.tempObject.standards
       this.sortCb('standard', this.tempObject.standards)
@@ -184,12 +184,6 @@ export default {
         standard: [this.tempObject.standards]
       }
       this.$emit('filter', filters)
-
-      // const idx = this.sortList[1].data.findIndex(item => {
-      //   return item.name === this.tempObject.standards
-      // })
-      // this.sortList[1].data[idx].isActive = true
-      // this.selectSort(1, idx)
       this.standardStr = this.tempObject.standards
     }
     console.log('tempObject', this.tempObject.search)
