@@ -40,13 +40,13 @@ div
                   .pt-5.c-gray.ft-12(v-if="item[mallTypeObject[itemType].tolerance] || item[mallTypeObject[itemType].weightRange]")
                     span(v-if="item[mallTypeObject[itemType].tolerance]") 公差范围: {{item[mallTypeObject[itemType].tolerance]}}
                     span.ml-8(v-if="item[mallTypeObject[itemType].weightRange]") 重量范围: {{item[mallTypeObject[itemType].weightRange]}}
-                  .row.pt-5.flex-center.ft-13.c-gray
+                  .row.pt-5.flex-center.ft-13.text-gray
                     .col
                       span(v-if="item[mallTypeObject[itemType].max_count] > 0") {{item[mallTypeObject[itemType].max_count]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
-                    .flex-120.relative.text-right.ft-14
-                      .mall-row(:class="{'notice': item.max_count === 0}")
-                        .blue-buy(v-if="item.max_count == 0",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
-                        .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="item.show_price") 购买
+                    .flex-120.relative.text-right.ft-14.row.justify-end
+                      //- .mall-row(:class="{'notice': item.max_count === 0}")
+                      .blue-buy(v-if="item.max_count == 0",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
+                      .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="item.show_price") 购买
                 template(v-else)
                   .ft-15.row
                     span.text-bold {{item[mallTypeObject[itemType].name]}}

@@ -62,13 +62,14 @@
                     .col(style="flex: 0 0 60px;")
                       count-step(v-model="cart.count", @click.native="rowCartCount(cart)", @blur="rowCartCount(cart)", :max="cart.amount_left")
                     .padding-left-xs {{cart.countWeight}}吨
-            .pb-10(v-if="soldCarts.length > 0", :class="{'pt-10': carts.length === 0}")
+            //- .pb-10(v-if="soldCarts.length > 0", :class="{'pt-10': carts.length === 0}")
+            .margin-top-sm.padding-bottom-sm(v-if="soldCarts.length > 0", :class="{'padding-top-sm': carts.length === 0}")
               .bg-white
                 .row.padding.flex-center.border-bottom-line
                   .col 失效物资{{soldCarts.length}}件
                   .ocl.text-right
                     span.c-blue(@click="emptySoldItems") 清空失效物资
-                .border-bottom-line.ft-12.c-gray(v-for="(itm, itmIdx) in soldCarts", :key="itmIdx")
+                .solid-bottom.ft-12.c-gray(v-for="(itm, itmIdx) in soldCarts", :key="itmIdx")
                   .padding
                     span {{itm.product_name}}
                     span.ml-5 {{itm.product_supply}}
@@ -101,7 +102,7 @@
               .padding-xs 全选
             .text-right.flex.justify-end(v-show="!isEdit")
               span 合计：
-              b.c-red ￥{{totalPrice}}
+              b.text-red ￥{{totalPrice}}
           .text-right.ft-12(style="color:#999;", v-show="!isEdit") 共{{totalCount}}件 ，{{totalWeight}}吨，吊费: {{totalLiftCharge}}元
         .cart-settle-btn.ft-18(@click="goToSettle")
           span {{isEdit ? '删除' : '结算'}}
