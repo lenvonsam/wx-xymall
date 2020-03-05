@@ -69,7 +69,7 @@
                   .col 失效物资{{soldCarts.length}}件
                   .ocl.text-right
                     span.c-blue(@click="emptySoldItems") 清空失效物资
-                .solid-bottom.ft-12.c-gray(v-for="(itm, itmIdx) in soldCarts", :key="itmIdx")
+                .solid-bottom.ft-12.text-gray(v-for="(itm, itmIdx) in soldCarts", :key="itmIdx")
                   .padding
                     span {{itm.product_name}}
                     span.ml-5 {{itm.product_supply}}
@@ -194,6 +194,7 @@ export default {
   },
   onHide () {
     this.carts = []
+    this.soldCarts = []
   },
   onShow () {
     this.alertShow = false
@@ -238,6 +239,7 @@ export default {
       const me = this
       setTimeout(() => {
         me.carts = []
+        me.soldCarts = []
         me.allChoosed = false
         me.loadCartData(done)
       }, 300)
@@ -253,6 +255,7 @@ export default {
               me.showMsg('清空成功')
               me.btnDisable = false
               me.carts = []
+              me.soldCarts = []
               me.tabDot(0)
             } else {
               me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
@@ -499,6 +502,7 @@ export default {
         } else {
           this.showMsg(resp ? '网络异常' : resp.errormsg)
           this.carts = []
+          this.soldCarts = []
           this.tabDot(0)
           // if (done) done()
         }
