@@ -1,8 +1,7 @@
 <template lang="pug">
 div
   nav-bar(title="修改手机号码", isBack)
-  scroll-view.nav.bg-white.border-bottom-line(scroll-x)
-    .flex.text-center
+  .flex.text-center.nav.bg-white
       .cu-item.flex-sub(:class="{'text-blue cur': tabIndex === 1}", @click="selectTab(1)") 验证原手机号
       .cu-item.flex-sub(:class="{'text-gray': !canActive, 'text-blue cur': tabIndex === 2}", @click="selectTab(2)") 绑定新手机
   div(v-show="tabIndex==1")
@@ -99,6 +98,14 @@ export default {
           this.msgShow('验证码不能为空')
           return
         }
+        if (this.newPhone.trim().length === 0) {
+          this.msgShow('手机号不能为空')
+          return
+        }
+        if (!this.phoneReg.test(this.newPhone)) {
+          this.msgShow('请输入正确手机号')
+          return
+        }
         const me = this
         if (this.bindClick) {
           this.bindClick = false
@@ -117,3 +124,19 @@ export default {
   }
 }
 </script>
+
+<style lang="stylus" scoped>
+.nav .cu-item.cur
+  border-bottom none
+  position relative
+  &:after
+    display block
+    content ''
+    width 26px
+    height 2px
+    background #0081ff
+    position absolute
+    bottom 0
+    left 50%
+    margin-left -13px
+</style>

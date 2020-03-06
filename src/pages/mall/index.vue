@@ -353,7 +353,7 @@ export default {
                   me.btnDisable = false
                 },
                 err => {
-                  me.showMsg(err)
+                  me.showMsg(err === '该商品已经存在于购物车中' ? '该商品已加入购物车' : err)
                   me.btnDisable = false
                 }
               )

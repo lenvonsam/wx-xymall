@@ -21,7 +21,7 @@ div
       .col.text-right.text-gray {{currentUser.user_mark}}
     .bg-white.row.padding
       .col 姓名
-      .col.text-right.text-gray {{currentUser.nickname}}
+      .col.text-right.text-gray {{currentUser.linkman}}
     .bg-white.row.ft-16.padding(v-for="(item,idx) in jumpArray", :key="idx", :class="{'margin-top-sm': idx === 0, 'border-bottom-line': (idx < (jumpArray.length - 1))}", @click="jump(item.url)")
       .col {{item.name}}
       .col.text-right.text-gray(v-if="idx == (jumpArray.length - 1)") {{currentUser.phone}}
