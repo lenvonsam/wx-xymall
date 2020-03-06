@@ -234,12 +234,26 @@ export default {
         return this.mallTabVal === item.id
       })
       this.sortList[0].data[idx].isActive = true
+      if (this.standardStr) {
+        this.standardStr = ''
+        this.selectSort(1, 0)
+      }
+      if (this.materialStr) {
+        this.materialStr = ''
+        this.selectSort(2, 0)
+      }
+      if (this.originStr) {
+        this.originStr = ''
+        this.selectSort(3, 0)
+      }
       this.selectTab(this.sortList[0].data[idx], idx)
     },
     filterCancel (sortIdx) {
       if (this.temporary.length > 0) {
         this.temporary.map(item => {
-          this.sortList[sortIdx].data[item].isActive = !this.sortList[sortIdx].data[item].isActive
+          if (this.sortList[sortIdx].data.length > 0) {
+            this.sortList[sortIdx].data[item].isActive = !this.sortList[sortIdx].data[item].isActive
+          }
         })
         this.temporary = []
       }
@@ -335,10 +349,6 @@ export default {
       this.queryObject.name = this.tabVal
       this.queryObject.current_page = this.currentPage
       let queryObj = Object.assign({}, this.queryObject)
-
-      if (key === 'area') queryObj.region = ''
-      if (key === 'material') queryObj.material = ''
-      if (key === 'origin') queryObj.supply = ''
       this.showLoading()
       this.ironRequest(this.sortQueryList[key].reqUrl, queryObj, 'post').then(resp => {
         if (resp.returncode === '0') {

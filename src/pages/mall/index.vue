@@ -143,7 +143,7 @@ export default {
       swiperCount: 0,
       scrollHeight: 0,
       modalIntroShow: false,
-      filterObj: {},
+      // filterObj: {},
       finished: false,
       loadFinish: 0,
       prevIdx: null
@@ -266,11 +266,12 @@ export default {
         this.showLoading()
         this.isload = true
         this.isRefresh = 'refresh'
-        // this.currentPage = 0
-        this.queryObject.current_page = this.currentPage
-        this.queryObject.name = this.mallTabVal
-        Object.assign(this.queryObject, this.filterObj)
-        // this.refresher()
+        this.queryObject = {
+          current_page: this.currentPage,
+          page_size: this.pageSize,
+          name: this.mallTabVal,
+          only_available: 1
+        }
         this.onRefresh()
         console.log('prevIdx', this.prevIdx)
       }
@@ -305,7 +306,7 @@ export default {
       // }
       this.queryObject.current_page = this.currentPage
       this.queryObject.name = this.mallTabVal
-      this.filterObj = obj
+      // this.filterObj = obj
       Object.assign(this.queryObject, obj)
       if (!this.tempObject.standards) {
         this.refresher()
