@@ -54,7 +54,7 @@ div
             img(src="/static/images/customer_icon.png", mode="widthFix")
             .padding-left-sm 在线客服
         .cuIcon-right.text-gray
-    alert(:title="alertText", v-model="alertShow", :cb="alertCb")
+    alert(:msg="alertText", v-model="alertShow", :cb="alertCb")
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'

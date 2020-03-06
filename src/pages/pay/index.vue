@@ -76,7 +76,7 @@ div
         .info.c-gray.padding-top-xs.text-center
           span(v-if="currentBalance < payMountInfo") 点击按钮，线下收到货款，此单自动完成
           span(v-else) 点击按钮，此单自动完成
-    alert(:title="alertTitle", :cb="alertCb", v-model="alertShow")     
+    alert(:msg="alertTitle", :cb="alertCb", v-model="alertShow")     
 </template>
 <script>
 import { mapState } from 'vuex'

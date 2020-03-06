@@ -1,10 +1,13 @@
 <template lang="pug">
-.cu-modal(:class="modalName")
+.cu-modal(:class="modalName") 
   .cu-dialog.bg-white(style="mix-height: 280rpx; width: 70%")
-    .padding.text-xl.text-black.text-center {{title}}
+    .close(@click="btnClick('cancel')")
+      .cuIcon-close
+    .padding.text-xl.text-black.text-center.text-bold {{title}}
     .padding
-      input(:placeholder="placeholder", v-model="inputVal", type="password", v-if="type === 'password'", :maxlength="12")
-      input(:placeholder="placeholder", v-model="inputVal", v-else)
+      .bg-gray.input-box
+        input(:placeholder="placeholder", v-model="inputVal", type="password", v-if="type === 'password'", :maxlength="12")
+        input(:placeholder="placeholder", v-model="inputVal", v-else)
     .padding.row
       .col.text-center
         .confirm-btn.cancel(hover-class="hover-gray", @click="btnClick('cancel')") 取消
@@ -82,11 +85,34 @@ export default {
   margin 0 auto
   width 100px
   height 30px
-  border-radius 15px
+  border-radius 5px
   font-size 12px
   &.cancel
-    border 1px solid #888
+    background #999
+    color #fff
     display flex
     align-items center
     justify-content center
+.input-box
+  border-radius 5px
+  width 100%
+  height 40px
+  input
+    height 40px
+    width 100%    
+.cu-dialog
+  overflow initial!important 
+.close
+  background rgba(0,0,0,0.5)
+  border 1px solid #fff
+  width 25px
+  height 25px
+  line-height 25px
+  text-align center
+  position absolute
+  right -8px
+  top -8px
+  color #fff
+  border-radius 100%
+  z-index 1113    
 </style>

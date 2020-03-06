@@ -32,7 +32,7 @@ div
   .padding.margin-top-lg
    .main-btn(hover-class="hover-gray", @click="confirmWithdraw") 确认提现
   modal-input(v-model="modalShow", placeholder="请输入支付密码", title="支付密码", type="password", :cb="inputChange", confirmText="提现")
-  alert(title="提现申请成功，请耐心等待审批", :cb="alertCb", v-model="alertShow")
+  alert(msg="提现申请成功，请耐心等待审批", :cb="alertCb", v-model="alertShow")
 </template>
 
 <script>
