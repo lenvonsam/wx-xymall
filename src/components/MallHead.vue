@@ -48,12 +48,13 @@
                 .cuIcon-close
           .row.padding-sm(@click="sortClose(sortIdx)")
             .cuIcon-fold.ft-16
-        scroll-view(scroll-y, style="max-height: 700rpx", @scrolltolower="loadMore")
+        scroll-view(scroll-y, style="max-height: 700rpx")
           .grid.col-3.padding-top-sm.sort-content
             .sort-list(v-if="sort.data.length > 0", v-for="(item, index) in sort.data", :key="index")
               .sort-item(:class="{active: item.isActive}", @click.stop="selectSort(sortIdx, index)") 
                 .sort-name {{item.name}}
                 .check.cuIcon-check.bg-blue(v-show="item.isActive")
+          .padding-sm.text-center 加载完成
         .row.padding-sm.justify-around(v-if="sortIdx !== 0")
           .btn-cancel.col(@click="selectSort(sortIdx, 0)") 重选 
           .btn-sure.margin-left-sm.col(@click="searchHandler()") 确定            
@@ -77,11 +78,11 @@ export default {
       scrollLeft: 0,
       tabVal: '',
       activeTab: '',
-      pageSize: 29,
+      pageSize: 10000,
       currentPage: 0,
       queryObject: {
         current_page: 0,
-        page_size: 29
+        page_size: 10000
       },
       temporary: [],
       sortList: [
@@ -127,7 +128,7 @@ export default {
       originStr: '',
       filterStr: '',
       isMore: false,
-      standardSearch: '',
+      // standardSearch: '',
       scrollId: 'idx_0',
       standardVal: ''
     }
@@ -244,6 +245,7 @@ export default {
       }
     },
     searchHandler () {
+      debugger
       const list = ['standard', 'material', 'origin']
       const filters = {}
       this.sortList.map((item, idx) => {
@@ -254,6 +256,9 @@ export default {
               filters[item.key].push(itemKey.name)
             }
           })
+        }
+        if (filters[item.key].length === 0 && this[`${item.key}Str`]) {
+          filters[item.key] = this[`${item.key}Str`].split(',')
         }
       })
       this.$emit('filter', filters)
@@ -273,7 +278,7 @@ export default {
     },
     standardChange (e) {
       this.throttle(() => {
-        this.sortList[1].data = []
+        // this.sortList[1].data = []
         this.queryObject.search = e.mp.detail.value
         // this.standardSearch = e.mp.detail.value
         this.currentPage = 0
@@ -302,8 +307,9 @@ export default {
       if (sortIdx) {
         this.filterCancel(sortIdx)
       }
-      this.standardSearch = ''
+      // this.standardSearch = ''
       this.queryObject.search = ''
+      this.standardVal = ''
       this.activeTab = ''
     },
     selectTab (item, index) {
@@ -319,13 +325,13 @@ export default {
       this.configVal({ key: 'tempObject', val: {name: item.id} })
       this.$emit('selectTab', { id: item.id, idx: index })
     },
-    loadMore () {
-      if (this.activeTab === 'standard') {
-        this.isMore = true
-        this.currentPage++
-        this.sortCb(this.activeTab)
-      }
-    },
+    // loadMore () {
+    //   if (this.activeTab === 'standard') {
+    //     this.isMore = true
+    //     this.currentPage++
+    //     this.sortCb(this.activeTab)
+    //   }
+    // },
     sortCb (key, standard) {
       this.queryObject.name = this.tabVal
       this.queryObject.current_page = this.currentPage
@@ -339,6 +345,10 @@ export default {
         if (resp.returncode === '0') {
           let arr = resp[this.sortQueryList[key].respKey]
           const tabList = []
+          debugger
+          const idx = this.sortList.findIndex((item) => {
+            return item.key === key
+          })
           if (arr.length > 0) {
             if (standard) {
               // const standardIdx = arr.findIndex(item => item.name === standard)
@@ -346,9 +356,6 @@ export default {
               arr[1].isActive = true
               this.sortList[1].data = arr
             } else {
-              const idx = this.sortList.findIndex((item) => {
-                return item.key === key
-              })
               arr.map(item => {
                 item.isActive = false
                 const resActive = this.sortList[idx].data.filter((itemFilter) => {
@@ -366,16 +373,21 @@ export default {
                   tabList.push(obj)
                 }
               })
-              if ((this.currentPage === 0 || key !== 'standard') && !this.isMore) {
-                arr.unshift({ name: '全部', id: '', isActive: false })
-                this.sortList[idx].data = arr
-              } else {
-                this.sortList[idx].data.push(...arr)
-              }
+              arr.unshift({ name: '全部', id: '', isActive: false })
+              this.sortList[idx].data = arr
+              // if ((this.currentPage === 0 || key !== 'standard') && !this.isMore) {
+              //   arr.unshift({ name: '全部', id: '', isActive: false })
+              //   this.sortList[idx].data = arr
+              // } else {
+              //   this.sortList[idx].data.push(...arr)
+              // }
             }
-          } else if (this.currentPage !== 0) {
-            this.currentPage--
+          } else {
+            this.sortList[idx].data = arr
           }
+          // else if (this.currentPage !== 0) {
+          //   this.currentPage--
+          // }
           if (key === 'name') {
             tabList.unshift({ name: '全部', id: '', isActive: true })
             this.sortList[0].data = tabList
@@ -384,6 +396,7 @@ export default {
           } else if (standard) {
             this.activeTab = ''
             this.queryObject.search = ''
+            this.standardVal = ''
           } else {
             this.activeTab = key
           }
@@ -443,7 +456,7 @@ export default {
   left 0
   right 0
   bottom 0
-  height calc(100vh - 100px)
+  height calc(100vh - 122px)
   z-index 4
   background rgba(0, 0, 0, 0.5)
 .sort-list
