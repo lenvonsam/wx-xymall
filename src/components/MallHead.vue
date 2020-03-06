@@ -206,10 +206,11 @@ export default {
       this.sortCb('standard')
     },
     cleanSearch () {
-      this.configVal({ key: 'tempObject', val: { search: '' } })
+      this.configVal({ key: 'tempObject', val: '' })
       this.searchVal = ''
-      this.currentPage = 0
-      this.sortCb('name')
+      // this.currentPage = 0
+      this.$emit('cleanSearch')
+      // this.sortCb('name')
     },
     classifyClick () {
       const firstShare = mpvue.getStorageSync('firstShareMallClassify') || false

@@ -2,7 +2,7 @@
 div
   nav-bar(title="商城")
   div(style="height: 275rpx;")
-    mall-head(:mallTabVal="mallTabVal", @getName="getName", @filter="multipleFilter", @selectMall="selectMall", @selectTab="selectTab", @searchChange="searchChange")
+    mall-head(:mallTabVal="mallTabVal", @cleanSearch="cleanSearch", @getName="getName", @filter="multipleFilter", @selectMall="selectMall", @selectTab="selectTab", @searchChange="searchChange")
 
   swiper(v-if="goodsNameList.length > 0", @change="swiperChange", @transition="swiperTransition", :current="swiperCount", :style="{height: scrollHeight+'rpx'}")
     swiper-item(v-for="(tabItem, swiperIdx) in goodsNameList.length", :key="swiperIdx")
@@ -221,6 +221,10 @@ export default {
   },
   methods: {
     ...mapActions(['configVal']),
+    cleanSearch () {
+      this.queryObject.search = ''
+      this.onRefresh()
+    },
     testRefresh (e) {
       console.log('test refresh', e)
       console.log('scroll', this.$refs.testScroll[0])
