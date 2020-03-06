@@ -346,16 +346,11 @@ export default {
       this.sortList[0].data.map((item, idx) => {
         item.isActive = this.tabVal === item.id
       })
-<<<<<<< HEAD
       this.configVal({ key: 'tempObject', val: { name: item.id } })
-      this.$emit('selectTab', { id: item.id, idx: index })
-=======
-      this.configVal({ key: 'tempObject', val: {name: item.id} })
       const me = this
       setTimeout(() => {
         me.$emit('selectTab', { id: item.id, idx: index })
       }, 100)
->>>>>>> dd136a83ebc75d84c38d6a2614f2bb57dd305e35
     },
     // loadMore () {
     //   if (this.activeTab === 'standard') {
