@@ -75,14 +75,14 @@ export default {
     async avatarUpload () {
       try {
         const data = await this.ironFileUpload('cominfo')
-        console.log(data)
+        console.log('update data:>>', data)
         await this.ironRequest(this.apiList.xy.updateProfile.url, { user_id: this.currentUser.user_id, avatar_url: data }, 'post')
         const obj = this.currentUser
         obj.avatar = '/filepool' + data
         this.setUser(obj)
         this.showMsg('头像更新成功')
       } catch (e) {
-        this.showMsg(e)
+        this.showMsg(e.message || e)
       }
     }
   }

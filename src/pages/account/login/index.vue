@@ -13,9 +13,9 @@
         icon.ft-18.adjust.cuIcon-unlock
       .col
         input.no-border.ft-16(placeholder="请输入密码(6-12位)", type="password", v-model="upwd", :maxlength="12")
-    .row.margin-top
-      .col.text-blue(@click="jump('/pages/account/register/main')") 立即注册
-      .col.text-right(@click="jump('/pages/account/phoneLogin/main?type=forgetPwd')") 忘记密码？
+    .row
+      .col.text-blue.padding-top(@click="jump('/pages/account/register/main')") 立即注册
+      .col.text-right.padding-top(@click="jump('/pages/account/phoneLogin/main?type=forgetPwd')") 忘记密码？
     .mt-50.main-btn(hover-class="hover-gray", @click="remoteLogin") 登录
     .margin-top-sm.text-center.text-blue(@click="jump('/pages/account/phoneLogin/main')") 手机验证码登录
 
@@ -81,7 +81,7 @@ export default {
           if (data.isnew) {
             this.canClick = true
             const me = this
-            this.confirm({ content: '您是新用户，请先完成公司信息' }).then(res => {
+            this.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
               if (res === 'confirm') {
                 me.jump('/pages/account/companyUpdate/main')
               } else {
@@ -98,7 +98,7 @@ export default {
               } else {
                 me.tab('/pages/index/main')
               }
-            }, 2000)
+            }, 500)
           }
         }
       } catch (e) {

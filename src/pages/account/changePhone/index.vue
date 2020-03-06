@@ -5,31 +5,29 @@ div
       .cu-item.flex-sub(:class="{'text-blue cur': tabIndex === 1}", @click="selectTab(1)") 验证原手机号
       .cu-item.flex-sub(:class="{'text-gray': !canActive, 'text-blue cur': tabIndex === 2}", @click="selectTab(2)") 绑定新手机
   div(v-show="tabIndex==1")
+    .warning 温馨提示：修改成功后需使用新手机号登录
     .bg-white
       .row.padding.border-bottom-line
         .col {{phone}}
         .flex-90.text-center
           auth-btn(:phone="currentUser.phone", :codeType="3", v-if="tabIndex === 1 && codeBtnShow")
       .padding
-        input(placeholder="请输入验证码", v-model="code1")
+        input(placeholder="请输入验证码", v-model="code1", type="number")
     .margin-top-xl.padding
       .main-btn(hover-class="hover-gray", @click="nextStep") 下一步
-    .padding.text-red
-      div 温馨提示
-      .margin-top-sm 手机号码修改成功后需要使用新手机号码进行登录
   div(v-show="tabIndex === 2")
     .bg-white
       .row.padding.border-bottom-line
         .col
           input(placeholder="请输入新手机号", v-model="newPhone", type="number", :maxlength="11")
         .flex-90.text-center
-          auth-btn(:phone="newPhone", :codeType="4", v-if="tabIndex === 2")
+          auth-btn(:phone="newPhone", :codeType="4", v-if="tabIndex === 2", type="number")
       .row.padding
         .col
           input(placeholder="请输入验证码", v-model="code2", type="number")
     .padding.margin-top-xl
       .main-btn(hover-class="hover-gray", @click="bindPhone") 确认
-        
+  alert(msg="手机号更改成功，请重新登录", v-model="alertShow", :cb="alertCb")      
 </template>
 
 <script>
@@ -46,7 +44,8 @@ export default {
       newPhone: '',
       nextClick: true,
       bindClick: true,
-      codeBtnShow: false
+      codeBtnShow: false,
+      alertShow: false
     }
   },
   components: {
@@ -67,6 +66,11 @@ export default {
     ...mapActions([
       'exitUser'
     ]),
+    alertCb () {
+      this.exitUser()
+      this.bindClick = true
+      this.redirect('/pages/account/login/main?type=2')
+    },
     selectTab (val) {
       if (val === 2 && !this.canActive) {
         return
@@ -86,6 +90,8 @@ export default {
           this.nextClick = true
           this.canActive = true
           this.newPhone = ''
+          this.code2 = ''
+          this.bindClick = true
         }
       } catch (e) {
         this.nextClick = true
@@ -94,27 +100,22 @@ export default {
     },
     async bindPhone () {
       try {
-        if (this.code2.trim().length === 0) {
-          this.msgShow('验证码不能为空')
-          return
-        }
         if (this.newPhone.trim().length === 0) {
-          this.msgShow('手机号不能为空')
+          this.showMsg('手机号不能为空')
           return
         }
         if (!this.phoneReg.test(this.newPhone)) {
-          this.msgShow('请输入正确手机号')
+          this.showMsg('请输入正确手机号')
           return
         }
-        const me = this
+        if (this.code2.trim().length === 0) {
+          this.showMsg('验证码不能为空')
+          return
+        }
         if (this.bindClick) {
           this.bindClick = false
           await this.ironRequest(this.apiList.xy.bindNewPhone.url, { user_id: this.currentUser.user_id, user_phone: this.newPhone, msg_code: this.code2 }, this.apiList.xy.bindNewPhone.method)
-          me.confirm({ title: '友情提示', content: '手机号更改成功，请重新登录' }).then(() => {
-            me.exitUser()
-            me.bindClick = true
-            me.redirect('/pages/account/login/main?type=2')
-          })
+          this.alertShow = true
         }
       } catch (e) {
         this.bindClick = true
@@ -139,4 +140,9 @@ export default {
     bottom 0
     left 50%
     margin-left -13px
+.warning
+  background #fefcee
+  font-size 14px
+  color #e6763d
+  padding 8px 10px
 </style>

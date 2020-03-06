@@ -248,6 +248,7 @@ export default {
           if (filePath.indexOf('.jpg') > 0 || filePath.indexOf('.jpeg') > 0) {
             fileType = 'image/jpeg'
           }
+          console.log('fileType:>>', fileType)
           if (fileType === '') {
             reject(new Error('只支持png/jpeg'))
           } else {

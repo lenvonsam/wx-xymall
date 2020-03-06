@@ -11,7 +11,7 @@ div
             .col
               input(placeholder="请输入关键词搜索", v-model="searchWord", confirm-type="search", @confirm="searchClick")
             .close-icon(@click="cleanSearch", v-if="searchWord")
-              .cuIcon-close
+              .cuIcon-roundclosefill.ft-18
             //- icon.adjust.cuIcon-close.padding-left(@click="cleanSearch") 
       .flex-50.text-center.text-blue(@click="searchClick") 搜索
   .padding(v-if="isLogin")

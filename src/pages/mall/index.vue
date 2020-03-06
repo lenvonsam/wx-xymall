@@ -1,7 +1,7 @@
 <template lang="pug">
 div
   nav-bar(title="商城")
-  div(style="height: 275rpx;")
+  div(style="height: 285rpx;")
     mall-head(:mallTabVal="mallTabVal", @cleanSearch="cleanSearch", @getName="getName", @filter="multipleFilter", @selectMall="selectMall", @selectTab="selectTab", @searchChange="searchChange")
 
   swiper(v-if="goodsNameList.length > 0", @change="swiperChange", @transition="swiperTransition", :current="swiperCount", :style="{height: scrollHeight+'rpx'}")
@@ -16,7 +16,7 @@ div
           iron-scroll(:swiperIdx="swiperIdx", @scrolltolower="loadMore", heightUnit="rpx", :height="scrollHeight", :refresh="true", @onRefresh="onRefresh", :loadFinish="loadFinish")
             //- scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: scrollHeight}", :refresher-enabled="false", :refresher-threshold="50", @refresherrefresh="testRefresh", @refresherrestore="testRestore", @refresherabort="testAbort", ref="testScroll")
             //- div(:class="{cardSty: !mallFlag}", :style="{height: scrollHeight + 'rpx', 'padding-top': '6rpx'}")
-            div(:class="{cardSty: !mallFlag}", style="margin-top: 20rpx")
+            div(:class="{cardSty: !mallFlag}", style="margin-top: 8rpx")
               .padding.pr-10.pl-10(v-for="(item,idx) in goodsNameList[swiperIdx].data", :key="idx", :class="!mallFlag ? 'card-list' : 'bg-white margin-bottom-xs'")
                 template(v-if="mallFlag === 1")
                   .row
@@ -194,22 +194,21 @@ export default {
   },
   onShow () {
     this.isload = true
-    this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 275
+    this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 285
     if (this.tempObject.search === '' || this.tempObject.search || this.tempObject.name === '') {
       // this.goodsNameList[this.swiperCount].data = []
       this.isRefresh = 'refresh'
       this.currentPage = 0
       this.swiperCount = 0
       Object.assign(this.queryObject, this.tempObject)
-      this.refresher()
     } else if (this.tempObject.name === this.mallTabVal) {
       Object.assign(this.queryObject, this.tempObject)
-      this.refresher()
     } else {
       this.queryObject.search = ''
       Object.assign(this.queryObject, this.tempObject)
       this.mallTabVal = this.tempObject.name || ''
     }
+    this.refresher()
     if (this.isLogin) {
       this.setCartCount(this.currentUser.user_id)
     } else {
@@ -334,6 +333,7 @@ export default {
       this.refresher()
     },
     mallItemCb (obj, type, evt) {
+      console.log('evt', evt)
       const me = this
       if (obj.name === 'H型钢' && obj.price === '--') {
         this.showMsg(`此商品会在${obj.show_time}后开售`)
@@ -387,6 +387,7 @@ export default {
         this.loadFinish = 1
         const me = this
         this.queryObject.current_page = this.currentPage
+        this.queryObject.page_size = 20
         const data = await this.ironRequest(
           this.apiList.xy.mallList.url,
           this.queryObject,
@@ -413,9 +414,8 @@ export default {
               if (res.products.length < 10) me.loadFinish = 2
             } else {
               me.currentPage--
-              if (me.currentPage > 0) me.loadFinish = 2
+              if (me.currentPage > 0 && me.goodsNameList[idx].data.length > 10) me.loadFinish = 2
             }
-            if (me.goodsNameList[idx].data.length < 10) me.loadFinish = 0
           }
           me.$forceUpdate()
           me.hideLoading()
@@ -423,6 +423,7 @@ export default {
             me.goodsNameList[me.prevIdx].data = []
             me.prevIdx = null
           }
+          if (me.goodsNameList[idx].data.length < 10) me.loadFinish = 0
           // me.goodsNameList.mp((item, index) => {
           //   if (Math.abs(index - idx) > 1) {
           //     item.data = []

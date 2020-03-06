@@ -37,7 +37,7 @@ div
           input(placeholder="请输入密码", type="password",v-model="val3")
   .margin-top-xl.padding
     .main-btn(hover-class="hover-gray", @click="tabHandler") 完成
-  alert(:msg="alertText", :cb="alertCb", v-model="alertShow")
+  alert(:msg="alertText", :cb="alertCb", v-model="alertShow", :force="type === 'loginPwd'")
 </template>
 
 <script>

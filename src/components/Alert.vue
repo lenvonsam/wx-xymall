@@ -1,12 +1,12 @@
 <template lang="pug">
 .cu-modal(:class="modalName")
-  .cu-dialog.bg-white.relation(style="mix-height: 280rpx; width: 70%")
-    .close(@click="cancel")
+  .cu-dialog.bg-white.relation(style="mix-height: 280rpx; width: 60%")
+    //- .close(@click="cancel", v-if="!force")
       .cuIcon-close
     .padding.text-xl.text-black.text-center.text-bold {{title}}
     slot
       .padding-left.padding-right.ft-15.text-content {{msg}}
-    .padding.row
+    .padding.padding-lr-lg.row
       .main-btn.confirm-btn(hover-class="hover-gray", @click="btnClick") {{confirmText}}
 </template>
 
@@ -57,13 +57,13 @@ export default {
 .confirm-btn
   margin 0 auto
   width 100%
-  height 30px
+  height 40px
   border-radius 5px
-  font-size 12px 
+  font-size 14px
 .cu-dialog
-  overflow initial!important 
+  overflow initial !important
 .close
-  background rgba(0,0,0,0.5)
+  background rgba(0, 0, 0, 0.5)
   border 1px solid #fff
   width 25px
   height 25px
