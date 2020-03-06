@@ -165,6 +165,8 @@ export default {
     }
   },
   onHide () {
+    // if (!this.isLogin) this.mallTabVal = ''
+    // this.mallTabVal = ''
     this.queryObject.search = ''
     // this.queryObject = {
     //   current_page: this.currentPage,
@@ -211,6 +213,7 @@ export default {
     if (this.isLogin) {
       this.setCartCount(this.currentUser.user_id)
     } else {
+      this.mallTabVal = ''
       this.tabDot(0)
     }
   },

@@ -130,7 +130,8 @@ export default {
       isMore: false,
       // standardSearch: '',
       scrollId: 'idx_0',
-      standardVal: ''
+      standardVal: '',
+      isFilter: false
     }
   },
   components: {
@@ -142,7 +143,8 @@ export default {
       screenWidth: state => state.screenWidth
     })
   },
-  // onUnload () {
+  onUnload () {
+    // this.
   //   this.isActive = true
   //   this.searchVal = ''
   //   this.mallFlag = 1
@@ -166,7 +168,7 @@ export default {
   //     page_size: 29
   //   }
   //   this.temporary = []
-  // },
+  },
   watch: {
     mallTabVal () {
       this.mallTabValChange()
@@ -189,6 +191,7 @@ export default {
         standard: [this.tempObject.standards]
       }
       this.$emit('filter', filters)
+      this.isFilter = true
       this.standardStr = this.tempObject.standards
     }
     console.log('tempObject', this.tempObject.search)
@@ -234,9 +237,11 @@ export default {
         return this.mallTabVal === item.id
       })
       this.sortList[0].data[idx].isActive = true
-      if (this.standardStr) {
+      if (this.standardStr && !this.isFilter) {
         this.standardStr = ''
         this.selectSort(1, 0)
+      } else {
+        this.isFilter = false
       }
       if (this.materialStr) {
         this.materialStr = ''
@@ -286,7 +291,9 @@ export default {
         return item.key === this.activeTab
       })
       console.log('idx', idx)
-      this.sortClose(idx)
+      if (idx !== -1) {
+        this.sortClose(idx)
+      }
       this.jump('/pages/mallFilter/main?name=' + this.tabVal)
     },
     standardChange (e) {
@@ -310,7 +317,10 @@ export default {
       } else if (sortIdx !== 0) {
         this.sortList[sortIdx].data[0].isActive = false
       }
-      this.sortList[sortIdx].data[idx].isActive = !this.sortList[sortIdx].data[idx].isActive
+      if (this.sortList[sortIdx].data.length > 0) {
+        this.sortList[sortIdx].data[idx].isActive = !this.sortList[sortIdx].data[idx].isActive
+      }
+
       if (sortIdx === 0) {
         this.selectTab(this.sortList[sortIdx].data[idx], idx)
         this.sortClose()
