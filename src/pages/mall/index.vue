@@ -222,7 +222,7 @@ export default {
   methods: {
     ...mapActions(['configVal']),
     cleanSearch () {
-      this.queryObject.search = ''
+      delete this.queryObject.search
       this.onRefresh()
     },
     testRefresh (e) {
