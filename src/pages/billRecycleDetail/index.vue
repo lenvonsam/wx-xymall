@@ -251,9 +251,9 @@ export default {
       let arr = choosedList.filter(itm => itm.sold_out === 1)
       let arrSec = choosedList.filter(itm => itm.price.indexOf('--') >= 0)
       if (arr.length > 0) {
-        this.showMsg({ content: '商品货源不足,请去商城继续选购' })
+        this.showMsg('商品货源不足,请去商城继续选购')
       } else if (arrSec.length > 0) {
-        this.showMsg({ content: '商品9点之后开售' })
+        this.showMsg('商品9点之后开售')
       } else {
         if (!this.btnDisable) {
           let heFeiArray = choosedList.filter(itm => itm.wh_name.indexOf('合肥') >= 0)
@@ -286,7 +286,7 @@ export default {
                 body.mobile = me.pwPhone
                 body.end_addr = me.pwAddr + ' ' + me.pwAddrDetail
               }
-              me.ironRequest('generateOrder.shtml', body, 'post', me).then(resp => {
+              me.ironRequest('generateOrder.shtml', body, 'post').then(resp => {
                 if (resp && resp.returncode === '0') {
                   me.btnDisable = false
                   if (resp.order_size > 1) {
