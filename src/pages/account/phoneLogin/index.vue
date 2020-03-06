@@ -22,6 +22,9 @@
         icon.ft-18.adjust.cuIcon-lock.text-gray
       .col
         input.no-border.ft-16(placeholder="请输入新密码(6-12位)", v-model="pwd", type="password", :maxlength="12")
+    .row(v-if="pageType=='smsLogin'")
+      .col.text-blue.padding-top(@click="jump('/pages/account/register/main')") 立即注册
+      .col.text-right.padding-top(@click="jump('/pages/account/phoneLogin/main?type=forgetPwd')") 忘记密码？
     .mt-50.main-btn(hover-class="hover-gray", @click="remoteHandler") {{pageType === 'smsLogin' ? '登录' : '提交'}}
     .margin-top-sm.text-center.text-blue(@click="back", v-if="pageType === 'smsLogin'") 账号密码登录
 </template>
@@ -123,7 +126,7 @@ export default {
               me.configVal({ key: 'oldVersion', val: me.currentVersion })
               me.getRemoteSearchHistory(data)
               if (data.isnew) {
-                me.confirm({ content: '您是新用户，请先完成公司信息' }).then(res => {
+                me.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
                   if (res === 'confirm') {
                     me.jump('/pages/account/companyUpdate/main')
                   } else {
@@ -141,7 +144,7 @@ export default {
                 }
               })
             }
-          }, 2000)
+          }, 500)
         }
       } catch (e) {
         this.showMsg(e)

@@ -99,11 +99,11 @@ export default {
   height 40px
   input
     height 40px
-    width 100%    
+    width 100%
 .cu-dialog
-  overflow initial!important 
+  overflow initial !important
 .close
-  background rgba(0,0,0,0.5)
+  background rgba(0, 0, 0, 0.5)
   border 1px solid #fff
   width 25px
   height 25px
@@ -114,5 +114,5 @@ export default {
   top -8px
   color #fff
   border-radius 100%
-  z-index 1113    
+  z-index 1113
 </style>

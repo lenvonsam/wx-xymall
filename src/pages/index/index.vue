@@ -88,7 +88,7 @@ export default {
     }
   },
   onShow () {
-    this.echartHeight = (200 / 345) * (this.screenWidth - 30)
+    this.echartHeight = (400 / 345) * (this.screenWidth - 30)
     this.loadBanner()
     this.getTrends()
     this.loadNotice()

@@ -112,7 +112,7 @@
           .text-bold.ft-15 {{item.title}}
           .text-gray.padding-top-sm {{item.content}}
     //- alert(title="您还未登录，请先登录", v-model="alertShow", :cb="alertCb")
-    alert(:msg="alertText", :cb="alertCb", v-model="alertShow")
+    alert(:msg="alertText", :cb="alertCb", v-model="alertShow", force)
 </template>
 
 <script>

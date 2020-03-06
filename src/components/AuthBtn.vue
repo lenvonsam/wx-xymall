@@ -1,5 +1,6 @@
 <template lang="pug">
-.auth-btn(@click="getCode") {{btnTxt}}
+.auth-btn-wrap(@click="getCode")
+  .auth-btn {{btnTxt}}
 </template>
 
 <script>
@@ -86,6 +87,13 @@ export default {
 </script>
 
 <style scoped>
+.auth-btn-wrap {
+  height: 22px;
+  width: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .auth-btn {
   display: inline-block;
   width: 70px;

@@ -9,7 +9,7 @@
         .cuIcon-search.text-gra.ft-18
         input.full-width.pl-10(@click="jump('/pages/search/main')", id="mallSearchInput", :disabled="true", type="text", placeholder="品名、材质、规格、产地(空格号隔开)", v-model="searchVal")
         .close-icon(@click="cleanSearch", v-if="searchVal")
-          .cuIcon-close
+          .cuIcon-roundclosefill.ft-18
         //- input.full-width.pl-10(id="mallSearchInput", type="text", placeholder="品名、材质、规格、产地", v-model="searchVal")
   .relative
     .mt-15.text-center.flex.align-stretch
@@ -43,9 +43,9 @@
             span.pl-10.text-bold.ft-16 {{sort.title}}
             .search-input.row.bg-gray.margin-left-sm.text-gray(v-if="activeTab === 'standard'")
               .cuIcon-search.ft-16
-              input.full-width.pl-10(@input="standardChange", v-model="standardVal", type="text", placeholder="请输入规格快速查询")
+              input.full-width.pl-10.ft-13(@input="standardChange", v-model="standardVal", type="text", placeholder="请输入规格快速查询")
               .close-icon(@click="cleanStandard", v-if="standardVal")
-                .cuIcon-close
+                .cuIcon-roundclosefill.ft-16
           .row.padding-sm(@click="sortClose(sortIdx)")
             .cuIcon-fold.ft-16
         scroll-view(scroll-y, style="max-height: 700rpx")
@@ -54,7 +54,7 @@
               .sort-item(:class="{active: item.isActive}", @click.stop="selectSort(sortIdx, index)") 
                 .sort-name {{item.name}}
                 .check.cuIcon-check.bg-blue(v-show="item.isActive")
-          .padding-sm.text-center 加载完成
+          //- .padding-sm.text-center 加载完成
         .row.padding-sm.justify-around(v-if="sortIdx !== 0")
           .btn-cancel.col(@click="selectSort(sortIdx, 0)") 重选 
           .btn-sure.margin-left-sm.col(@click="searchHandler()") 确定            
@@ -321,7 +321,7 @@ export default {
       this.sortList[0].data.map((item, idx) => {
         item.isActive = this.tabVal === item.id
       })
-      this.configVal({ key: 'tempObject', val: {name: item.id} })
+      this.configVal({ key: 'tempObject', val: { name: item.id } })
       this.$emit('selectTab', { id: item.id, idx: index })
     },
     // loadMore () {
@@ -436,7 +436,7 @@ export default {
   border-radius 5px
   &.active
     border 2px solid #2485ff
-    background rgba(36,133,255,0.05)
+    background rgba(36, 133, 255, 0.05)
 .shop-head
   // position fixed
   // width 100%
@@ -468,7 +468,7 @@ export default {
     &.active
       border-color #0081ff
       color #0081ff
-    .sort-name  
+    .sort-name
       overflow hidden
       white-space nowrap
       text-overflow ellipsis

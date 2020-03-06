@@ -95,7 +95,7 @@ div
               img.add-icon(src="/static/images/add_icon.png")
     .margin-top.padding
       .main-btn(hover-class="hover-gray", @click="clickFinish") 完成
-  alert(msg="资料提交成功，会在24小时内给您答复", :cb="alertCb", v-model="alertShow")
+  alert(msg="资料提交成功,请耐心等待审核", :cb="alertCb", v-model="alertShow")
   invoice-modal(v-model="invoiceModalShow", :cb="invoiceCb")
 </template>
 
