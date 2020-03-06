@@ -212,7 +212,7 @@ export default {
         const imgUrl = await this.ironFileUpload('commInfo')
         this[key] = imgUrl
       } catch (e) {
-        this.showMsg(e)
+        this.showMsg(e.message || e)
       }
     },
     alertCb () {

@@ -331,6 +331,7 @@ export default {
       this.refresher()
     },
     mallItemCb (obj, type, evt) {
+      console.log('evt', evt)
       const me = this
       if (obj.name === 'H型钢' && obj.price === '--') {
         this.showMsg(`此商品会在${obj.show_time}后开售`)
