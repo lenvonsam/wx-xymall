@@ -243,39 +243,46 @@ export default {
         sizeType: ['compressed'],
         success (res) {
           const filePath = res.tempFilePaths[0]
-          const fileType =
-            filePath.indexOf('.png') > 0 ? 'image/png' : 'image/jpeg'
-          let suffix = '.png'
-          if (fileType === 'image/jpeg') suffix = '.jpg'
-          mpvue.getFileSystemManager().readFile({
-            filePath: filePath,
-            encoding: 'base64',
-            success (fdata) {
-              mpvue.request({
-                url: BASICURL + '/ironmart/fileUpload',
-                method: 'POST',
-                data: {
-                  model: model,
-                  filename: model + '-temp' + suffix,
-                  filetype: fileType,
-                  encryptfile: fdata.data
-                },
-                success (hresp) {
-                  if (hresp.data.success) {
-                    resolve(hresp.data.urls)
-                  } else {
-                    reject(new Error('图片上传失败'))
+          let fileType = ''
+          if (filePath.indexOf('.png') > 0) fileType = 'image/png'
+          if (filePath.indexOf('.jpg') > 0 || filePath.indexOf('.jpeg') > 0) {
+            fileType = 'image/jpeg'
+          }
+          if (fileType === '') {
+            reject(new Error('只支持png/jpeg'))
+          } else {
+            let suffix = '.png'
+            if (fileType === 'image/jpeg') suffix = '.jpg'
+            mpvue.getFileSystemManager().readFile({
+              filePath: filePath,
+              encoding: 'base64',
+              success (fdata) {
+                mpvue.request({
+                  url: BASICURL + '/ironmart/fileUpload',
+                  method: 'POST',
+                  data: {
+                    model: model,
+                    filename: model + '-temp' + suffix,
+                    filetype: fileType,
+                    encryptfile: fdata.data
+                  },
+                  success (hresp) {
+                    if (hresp.data.success) {
+                      resolve(hresp.data.urls)
+                    } else {
+                      reject(new Error('图片上传失败'))
+                    }
+                  },
+                  fail (err) {
+                    reject(err)
                   }
-                },
-                fail (err) {
-                  reject(err)
-                }
-              })
-            },
-            fail (err) {
-              reject(err)
-            }
-          })
+                })
+              },
+              fail (err) {
+                reject(err)
+              }
+            })
+          }
         },
         fail (err) {
           reject(err)

@@ -1,10 +1,9 @@
 <template lang="pug">
 div
   nav-bar(:title="titleMap[type].title", isBack)
-  scroll-view.nav.bg-white.border-bottom-line(scroll-x)
-    .flex.text-center
-      .cu-item.flex-sub(v-for="(item,index) in tabs", :class="item.tab === tabName?'text-blue cur':''", :key="index", @click="selectTab(item.tab)")
-        span {{item.title}}
+  .flex.text-center.nav.bg-white
+    .cu-item.flex-sub(v-for="(item,index) in tabs", :class="item.tab === tabName?'text-blue cur':''", :key="index", @click="selectTab(item.tab)")
+      span {{item.title}}
   .bg-white(v-if="tabName === 'tab1'")
     template(v-if="type === 'loginPwd' || type === 'payPwd'")
       .warning(v-if="type === 'payPwd'") 温馨提示：初始密码为管理员登录密码
@@ -120,10 +119,31 @@ export default {
     },
     validate () {
       let result = true
-      if (this.val1.trim().length === 0 || this.val2.trim().length === 0 || this.val3.trim().length === 0) {
-        result = false
+      let msg = ''
+      if (this.tabName === 'tab1') {
+        if (this.val1.trim().length === 0) {
+          msg = '旧密码不能为空'
+          result = false
+        } else if (this.val2.trim().length === 0) {
+          msg = '新密码不能为空'
+          result = false
+        } else if (this.val3.trim().length === 0) {
+          msg = '确认密码不能为空'
+          result = false
+        } else if (this.val2 !== this.val3) {
+          msg = '新密码和确认密码不一致'
+          result = false
+        }
+      } else {
+        if (this.val2.trim().length === 0) {
+          msg = '验证码不能为空'
+          result = false
+        } else if (this.val3.trim().length === 0) {
+          msg = '新密码不能为空'
+          result = false
+        }
       }
-      if (!result) this.showMsg('不能为空')
+      if (!result) this.showMsg(msg)
       return result
     },
     async loginPwdHandler () {
@@ -183,4 +203,17 @@ export default {
   font-size 14px
   color #e6763d
   padding 8px 10px
+.nav .cu-item.cur
+  border-bottom none
+  position relative
+  &:after
+    display block
+    content ''
+    width 26px
+    height 2px
+    background #0081ff
+    position absolute
+    bottom 0
+    left 50%
+    margin-left -13px
 </style>
