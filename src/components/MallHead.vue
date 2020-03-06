@@ -245,7 +245,6 @@ export default {
       }
     },
     searchHandler () {
-      debugger
       const list = ['standard', 'material', 'origin']
       const filters = {}
       this.sortList.map((item, idx) => {
@@ -345,7 +344,6 @@ export default {
         if (resp.returncode === '0') {
           let arr = resp[this.sortQueryList[key].respKey]
           const tabList = []
-          debugger
           const idx = this.sortList.findIndex((item) => {
             return item.key === key
           })
