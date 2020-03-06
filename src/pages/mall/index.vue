@@ -212,7 +212,6 @@ export default {
     if (this.isLogin) {
       this.setCartCount(this.currentUser.user_id)
     } else {
-      this.mallTabVal = ''
       this.tabDot(0)
     }
   },
