@@ -185,8 +185,9 @@ export default {
   onShow () {
     if (this.sortList[0].data.length === 0) this.sortCb('name')
     if (this.tempObject.standards) {
-      this.queryObject.search = this.tempObject.standards
-      this.sortCb('standard', this.tempObject.standards)
+      // this.queryObject.search = this.tempObject.standards
+      // this.sortCb('standard', this.tempObject.standards)
+
       const filters = {
         standard: [this.tempObject.standards]
       }
@@ -346,7 +347,10 @@ export default {
         item.isActive = this.tabVal === item.id
       })
       this.configVal({ key: 'tempObject', val: {name: item.id} })
-      this.$emit('selectTab', { id: item.id, idx: index })
+      const me = this
+      setTimeout(() => {
+        me.$emit('selectTab', { id: item.id, idx: index })
+      }, 100)
     },
     // loadMore () {
     //   if (this.activeTab === 'standard') {
@@ -356,6 +360,7 @@ export default {
     //   }
     // },
     sortCb (key, standard) {
+      debugger
       this.queryObject.name = this.tabVal
       this.queryObject.current_page = this.currentPage
       let queryObj = Object.assign({}, this.queryObject)
