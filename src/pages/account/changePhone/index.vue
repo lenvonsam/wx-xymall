@@ -27,7 +27,7 @@ div
           input(placeholder="请输入验证码", v-model="code2", type="number")
     .padding.margin-top-xl
       .main-btn(hover-class="hover-gray", @click="bindPhone") 确认
-        
+  alert(msg="手机号更改成功，请重新登录", v-model="alertShow", :cb="alertCb")      
 </template>
 
 <script>
@@ -44,7 +44,8 @@ export default {
       newPhone: '',
       nextClick: true,
       bindClick: true,
-      codeBtnShow: false
+      codeBtnShow: false,
+      alertShow: false
     }
   },
   components: {
@@ -65,6 +66,11 @@ export default {
     ...mapActions([
       'exitUser'
     ]),
+    alertCb () {
+      this.exitUser()
+      this.bindClick = true
+      this.redirect('/pages/account/login/main?type=2')
+    },
     selectTab (val) {
       if (val === 2 && !this.canActive) {
         return
@@ -84,6 +90,8 @@ export default {
           this.nextClick = true
           this.canActive = true
           this.newPhone = ''
+          this.code2 = ''
+          this.bindClick = true
         }
       } catch (e) {
         this.nextClick = true
@@ -104,15 +112,10 @@ export default {
           this.showMsg('验证码不能为空')
           return
         }
-        const me = this
         if (this.bindClick) {
           this.bindClick = false
           await this.ironRequest(this.apiList.xy.bindNewPhone.url, { user_id: this.currentUser.user_id, user_phone: this.newPhone, msg_code: this.code2 }, this.apiList.xy.bindNewPhone.method)
-          me.confirm({ title: '友情提示', content: '手机号更改成功，请重新登录' }).then(() => {
-            me.exitUser()
-            me.bindClick = true
-            me.redirect('/pages/account/login/main?type=2')
-          })
+          this.alertShow = true
         }
       } catch (e) {
         this.bindClick = true

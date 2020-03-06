@@ -51,7 +51,7 @@
         scroll-view(scroll-y, style="max-height: 700rpx")
           .grid.col-3.padding-top-sm.sort-content
             .sort-list(v-if="sort.data.length > 0", v-for="(item, index) in sort.data", :key="index")
-              .sort-item(:class="{active: item.isActive}", @click.stop="selectSort(sortIdx, index)") 
+              .sort-item(:class="{active: item.isActive, 'big': sortIdx !== 1}", @click.stop="selectSort(sortIdx, index)") 
                 .sort-name {{item.name}}
                 .check.cuIcon-check.bg-blue(v-show="item.isActive")
           //- .padding-sm.text-center 加载完成
@@ -145,29 +145,29 @@ export default {
   },
   onUnload () {
     // this.
-  //   this.isActive = true
-  //   this.searchVal = ''
-  //   this.mallFlag = 1
-  //   this.standards = []
-  //   this.materials = []
-  //   this.supplys = []
-  //   this.standardStr = ''
-  //   this.materialStr = ''
-  //   this.originStr = ''
-  //   this.filterStr = ''
-  //   this.isMore = false
-  //   this.standardSearch = ''
-  //   this.tabList = []
-  //   this.scrollLeft = 0
-  //   this.tabVal = ''
-  //   this.activeTab = ''
-  //   this.pageSize = 29
-  //   this.currentPage = 0
-  //   this.queryObject = {
-  //     current_page: 0,
-  //     page_size: 29
-  //   }
-  //   this.temporary = []
+    //   this.isActive = true
+    //   this.searchVal = ''
+    //   this.mallFlag = 1
+    //   this.standards = []
+    //   this.materials = []
+    //   this.supplys = []
+    //   this.standardStr = ''
+    //   this.materialStr = ''
+    //   this.originStr = ''
+    //   this.filterStr = ''
+    //   this.isMore = false
+    //   this.standardSearch = ''
+    //   this.tabList = []
+    //   this.scrollLeft = 0
+    //   this.tabVal = ''
+    //   this.activeTab = ''
+    //   this.pageSize = 29
+    //   this.currentPage = 0
+    //   this.queryObject = {
+    //     current_page: 0,
+    //     page_size: 29
+    //   }
+    //   this.temporary = []
   },
   watch: {
     mallTabVal () {
@@ -475,8 +475,13 @@ export default {
   right 0
   bottom 0
   height calc(100vh - 122px)
+  // height 100vh
   z-index 4
   background rgba(0, 0, 0, 0.5)
+  @media screen and (width: 375px)
+    height calc(100vh - 112px)
+  @media screen and (width: 414px)
+    height calc(100vh - 98px)
 .sort-list
   padding 5px
   text-align center
@@ -485,6 +490,8 @@ export default {
     border-radius 35px
     line-height 30px
     position relative
+    &.big
+      font-size 14px
     &.active
       border-color #0081ff
       color #0081ff
