@@ -286,7 +286,6 @@ export default {
                 body.mobile = me.pwPhone
                 body.end_addr = me.pwAddr + ' ' + me.pwAddrDetail
               }
-              // me.$ironLoad.show()
               me.ironRequest('generateOrder.shtml', body, 'post', me).then(resp => {
                 if (resp && resp.returncode === '0') {
                   me.btnDisable = false
@@ -298,16 +297,10 @@ export default {
                     })
                   } else {
                     // 跳转到支付确认页面
-                    // me.jump({path: 'billConfirm', query: {order_id: resp.order_id, csg_way: isDelivery}})
                     me.redirect(`/pages/pay/main?orderNo=${resp.order_no}&price=${me.totalObject.totalPrice}&pageType=offlinePay`)
                   }
-                } else {
-                  me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
-                  me.btnDisable = false
                 }
-                // me.$ironLoad.hide()
               }).catch(err => {
-                // me.$ironLoad.hide()
                 me.btnDisable = false
                 me.showMsg(err)
               })
