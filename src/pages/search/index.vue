@@ -55,8 +55,12 @@ export default {
       })
     },
     searchClick (searchName) {
-      this.configVal({ key: 'tempObject', val: { search: this.searchWord || '' } })
-      if (this.isLogin) {
+      if (typeof searchName === 'string') {
+        this.configVal({ key: 'tempObject', val: { search: searchName } })
+      } else {
+        this.configVal({ key: 'tempObject', val: { search: this.searchWord || '' } })
+      }
+      if (this.isLogin && typeof searchName !== 'string') {
         const index = this.filterArray.findIndex(itm => itm === this.searchWord.trim())
         if (index < 0 && this.searchWord.length > 0) this.filterArray.unshift(this.searchWord.trim())
         this.setLocalSearch()
