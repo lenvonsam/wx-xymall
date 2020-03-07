@@ -72,7 +72,7 @@ div
             .flex.padding-bottom-xs
               .col 支付方式
               .col.text-right.text-black {{billDetail.pay_type_desc}}
-                span(v-if="billDetail.status_desc === '待审核'") (预计定金: {{billDetail.pre_front_price}})
+                span(v-if="billDetail.status_desc === '待审核' && billDetail.pay_type_desc === '定金支付'") (预计定金: {{billDetail.pre_front_price}})
             .flex.padding-bottom-xs
               .col 已支付
               .col.text-right.text-black
