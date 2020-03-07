@@ -206,6 +206,8 @@ export default {
       } else if (this.tempObject.standards) {
         this.mallTabVal = this.tempObject.name || ''
       }
+    } else {
+      this.onRefresh()
     }
     // this.refresher()
     if (this.isLogin) {

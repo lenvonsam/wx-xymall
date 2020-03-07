@@ -174,6 +174,11 @@ export default {
       }
       this.standardStr = this.tempObject.standards
     }
+    if (this.tempObject.fromPage === 'search' && this.tempObject.noBack) {
+      this.standardStr = ''
+      this.materialStr = ''
+      this.originStr = ''
+    }
     console.log('tempObject', this.tempObject.search)
     this.currentPage = 0
     this.searchVal = this.tempObject.search || ''
