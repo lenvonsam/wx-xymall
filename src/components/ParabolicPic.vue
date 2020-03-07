@@ -62,7 +62,6 @@ export default {
       handler (newVal, oldVal) {
         // if (newVal) this.drop(newVal.touches[0])
         if (newVal) {
-          debugger
           const me = this
           this.animateShow = true
           setTimeout(function () {

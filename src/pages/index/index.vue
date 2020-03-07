@@ -39,6 +39,7 @@ div
     .text-center 型云价格指数
   modal-intro(v-model="shareModalShow", :images="introImages", type="home")
   //- alert(msg="资料提交成功,请耐心等待审核", v-model="alertShow")
+  //- modal-input(v-model="alertShow")
 </template>
 
 <script>
@@ -47,6 +48,7 @@ import mpvueEcharts from 'mpvue-echarts'
 import modalIntro from '../../components/ModalIntro.vue'
 import vertBanner from '../../components/VertBanner.vue'
 import lineOpts from '../../utils/lineOpts'
+import modalInput from '@/components/ModalInput.vue'
 // const echarts = require('../../../static/libs/echarts.min.js')
 // let chart = null
 export default {
@@ -69,7 +71,8 @@ export default {
   components: {
     mpvueEcharts,
     vertBanner,
-    modalIntro
+    modalIntro,
+    modalInput
   },
   beforeMount () {
     this.$nextTick(function () {
