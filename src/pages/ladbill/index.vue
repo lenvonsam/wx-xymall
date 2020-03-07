@@ -126,6 +126,7 @@ export default {
   },
   onUnload () {
     this.swiperCount = 0
+    this.tabName = '-2'
     this.loading = false
     this.search = ''
     this.billTab = [
