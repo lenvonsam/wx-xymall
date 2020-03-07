@@ -164,33 +164,41 @@ export default {
       })
     }
   },
-  onHide () {
-    this.queryObject.search = ''
-  },
+  // onHide () {
+  //   this.queryObject.search = ''
+  // },
   onShow () {
     this.isload = true
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 285
-    if (this.tempObject.search === '' || this.tempObject.search || this.tempObject.name === '') {
-      // this.goodsNameList[this.swiperCount].data = []
+    if (this.tempObject.fromPage === 'search' && this.tempObject.noBack) {
+      // 搜索
       this.isRefresh = 'refresh'
       this.currentPage = 0
       this.swiperCount = 0
       this.swiperFirst = 1
-      Object.assign(this.queryObject, this.tempObject)
-      this.refresher()
-    } else if (this.tempObject.name === this.mallTabVal) {
+      this.queryObject.current_page = this.currentPage
+      this.queryObject.name = this.mallTabVal
+      this.queryObject.search = this.tempObject.search
+      delete this.queryObject.standards
+      delete this.queryObject.materials
+      delete this.queryObject.supplys
+      if (!this.tempObject.name) this.refresher()
+    } else if (this.tempObject.fromPage === 'mallFilter' && this.tempObject.noBack) {
+      // 分类
       this.swiperFirst = 1
       this.queryObject.search = ''
       Object.assign(this.queryObject, this.tempObject)
-      this.refresher()
-    } else if (this.tempObject.standards) {
-      this.swiperFirst = 1
-      this.queryObject.search = ''
-      Object.assign(this.queryObject, this.tempObject)
-      this.mallTabVal = this.tempObject.name || ''
-    } else {
-      this.queryObject.search = ''
-      this.mallTabVal = this.tempObject.name || ''
+      delete this.queryObject.noBack
+      if (this.tempObject.name === '') {
+        this.isRefresh = 'refresh'
+        this.currentPage = 0
+        this.swiperCount = 0
+        this.refresher()
+      } else if (this.tempObject.name === this.mallTabVal) {
+        this.refresher()
+      } else if (this.tempObject.standards) {
+        this.mallTabVal = this.tempObject.name || ''
+      }
     }
     // this.refresher()
     if (this.isLogin) {
@@ -243,16 +251,12 @@ export default {
         this.showLoading()
         this.isload = true
         this.isRefresh = 'refresh'
-        if (this.swiperFirst === 1) {
-          this.queryObject.current_page = this.currentPage
-          this.queryObject.name = this.mallTabVal
-        } else {
-          this.queryObject = {
-            current_page: this.currentPage,
-            page_size: this.pageSize,
-            name: this.mallTabVal,
-            only_available: 1
-          }
+        this.queryObject.current_page = this.currentPage
+        this.queryObject.name = this.mallTabVal
+        if (this.swiperFirst !== 1) {
+          delete this.queryObject.standards
+          delete this.queryObject.materials
+          delete this.queryObject.supplys
         }
         this.onRefresh()
         console.log('prevIdx', this.prevIdx)

@@ -56,9 +56,9 @@ export default {
     },
     searchClick (searchName) {
       if (typeof searchName === 'string') {
-        this.configVal({ key: 'tempObject', val: { search: searchName } })
+        this.configVal({ key: 'tempObject', val: { search: searchName, fromPage: 'search', noBack: true } })
       } else {
-        this.configVal({ key: 'tempObject', val: { search: this.searchWord || '' } })
+        this.configVal({ key: 'tempObject', val: { search: this.searchWord || '', fromPage: 'search', noBack: true } })
       }
       if (this.isLogin && typeof searchName !== 'string') {
         const index = this.filterArray.findIndex(itm => itm === this.searchWord.trim())

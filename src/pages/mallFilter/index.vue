@@ -81,7 +81,9 @@ export default {
     selectStandard (val) {
       const res = {
         name: this.queryObject.name,
-        standards: val
+        standards: val,
+        fromPage: 'mallFilter',
+        noBack: true
       }
       this.configVal({ key: 'tempObject', val: res })
       this.back(-1)
