@@ -340,7 +340,6 @@ export default {
           if (res.choosed) {
             let isLift = me.wh_lift[res.wh_name]
             // const oldLift = isLift === '1' ? this.$toFixed(Number(res.weight) * lift, 2) : 0
-            // const oldLift = isLift === '1' ? this.$toFixed(Number(res.weight) * lift, 2) : 0
             delWeight += isLift === '1' ? Number(res.weight) : 0
             if (me.contractDetail.is_lift !== 1) {
               isLift = 2
