@@ -235,7 +235,8 @@ export default {
     promptClose () { },
     selectBill (bill) {
       bill.choosed = !bill.choosed
-      this.allChoosed = bill.choosed
+      const findList = this.carts.find(item => !item.choosed)
+      this.allChoosed = !findList
       this.$forceUpdate()
     },
     rowCartCount (item) {
