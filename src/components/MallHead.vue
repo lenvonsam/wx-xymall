@@ -161,16 +161,16 @@ export default {
     this.filterHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 95
   },
   onShow () {
+    this.isFilter = false
     if (this.sortList[0].data.length === 0) this.sortCb('name')
     if (this.tempObject.standards) {
-      // this.queryObject.search = this.tempObject.standards
-      // this.sortCb('standard', this.tempObject.standards)
-
       const filters = {
         standard: [this.tempObject.standards]
       }
       this.$emit('filter', filters)
-      this.isFilter = true
+      if (this.tempObject.name !== this.mallTabVal) {
+        this.isFilter = true
+      }
       this.standardStr = this.tempObject.standards
     }
     console.log('tempObject', this.tempObject.search)
@@ -315,6 +315,7 @@ export default {
       this.activeTab = ''
     },
     selectTab (item, index) {
+      this.isFilter = false
       this.tabVal = item.id
       if (index > 2) {
         this.scrollId = 'idx_' + (index - 2)

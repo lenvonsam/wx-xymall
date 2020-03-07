@@ -168,7 +168,6 @@ export default {
     this.queryObject.search = ''
   },
   onShow () {
-    debugger
     this.isload = true
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 285
     if (this.tempObject.search === '' || this.tempObject.search || this.tempObject.name === '') {
@@ -181,6 +180,7 @@ export default {
       this.refresher()
     } else if (this.tempObject.name === this.mallTabVal) {
       this.swiperFirst = 1
+      this.queryObject.search = ''
       Object.assign(this.queryObject, this.tempObject)
       this.refresher()
     } else if (this.tempObject.standards) {
@@ -236,7 +236,6 @@ export default {
       // this.isload = true
     },
     swiperChange (e) {
-      debugger
       const idx = e.mp.detail.current
       this.mallTabVal = this.goodsNameList[idx].id
       if (this.goodsNameList[idx]) {
@@ -246,7 +245,6 @@ export default {
         if (this.swiperFirst === 1) {
           this.queryObject.current_page = this.currentPage
           this.queryObject.name = this.mallTabVal
-          this.swiperFirst = 0
         } else {
           this.queryObject = {
             current_page: this.currentPage,
@@ -272,8 +270,9 @@ export default {
       console.log('filter', filter)
       const obj = {}
       Object.keys(filter).forEach((key) => {
+        const keyName = `${key}s` === 'origins' ? 'supplys' : `${key}s`
+        obj[keyName] = ''
         if (filter[key].length > 0) {
-          const keyName = `${key}s` === 'origins' ? 'supplys' : `${key}s`
           obj[keyName] = filter[key][0] === '全部' ? '' : filter[key].toString()
         }
       })
@@ -413,7 +412,10 @@ export default {
           // this.isload = true
         }
         console.log('loadfinish:>>', this.loadFinish)
-        this.swiperFirst = 0
+        if (this.swiperFirst === 1) {
+          this.configVal({ key: 'tempObject', val: '' })
+          this.swiperFirst = 0
+        }
         if (done) done()
       } catch (err) {
         console.log('异常', err)
