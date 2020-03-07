@@ -1,6 +1,9 @@
 <template lang="pug">
 .cu-modal(:class="modalName")
-  swiper.container(:current="currentIndex")
+  .container.mask.mall(v-if="type === 'home'", :style="{paddingTop: customBar + 55 + 'px'}", @click="hide")
+    img.arrow(src="/static/images/mall_arrow.png", :style="{top: customBar + 'px'}")
+    img.body(:src="imgProxy + 'mall_body.png'")
+  swiper.container(:current="currentIndex", v-else)
     swiper-item(v-for="(img, idx) in images", :key="idx")
       img(:src="imgProxy + img", v-if="imgProxy", @click="nextImg(idx)")
 </template>
@@ -10,6 +13,10 @@ export default {
   props: {
     value: [Boolean],
     images: [Array],
+    type: {
+      type: String,
+      default: 'mall'
+    },
     cb: {
       default: false
     }
@@ -39,6 +46,9 @@ export default {
       } else {
         this.currentIndex = idx
       }
+    },
+    hide () {
+      this.$emit('input', false)
     }
   }
 }
@@ -53,6 +63,19 @@ export default {
   right 0
   bottom 0
   overflow hidden
+  &.mask
+    background rgba(0, 0, 0, 0.3)
+  &.mall
+    .arrow
+      position absolute
+      right 18%
+      height 47px
+      width 177px
+      z-index 20
+    .body
+      width 300px
+      height 406px
+      margin 0 auto
   img
     width 100%
     height 100%

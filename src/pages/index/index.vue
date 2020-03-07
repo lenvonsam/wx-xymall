@@ -8,7 +8,7 @@ div
           //- .flex-30
           .cuIcon-search
           .col.padding-left-sm 请输入关键词搜索
-    swiper(v-if="gallery.length > 0", :indicator-dots="true", :autoplay="true", indicator-active-color="#fff", indicator-color="rgba(255, 255, 255, .3)")
+    swiper(v-if="gallery.length > 0", :indicator-dots="true", :autoplay="true", circular,indicator-active-color="#fff", indicator-color="rgba(255, 255, 255, .3)")
       swiper-item.border-radius(v-for="(g,idx) in gallery", :key="idx")
         img.response(:src="imgOuterUrl + g.url", v-if="imgOuterUrl", style="height: 300rpx", mode="widthFix")
     time-line(v-else, type="gallery")
@@ -37,7 +37,8 @@ div
     div(:style="{height: echartHeight + 'rpx'}", v-if="!shareModalShow")
       mpvue-echarts(:echarts="echarts", :onInit="initChart")
     .text-center 型云价格指数
-  modal-intro(v-model="shareModalShow", :images="introImages")
+  modal-intro(v-model="shareModalShow", :images="introImages", type="home")
+  //- alert(msg="资料提交成功,请耐心等待审核", v-model="alertShow")
 </template>
 
 <script>

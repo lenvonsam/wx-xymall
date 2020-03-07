@@ -83,20 +83,24 @@ div
     //-   empty-image(url="bill_empty.png", className="img-empty")
     //-   .empty-content 您暂时没有相关合同
   modal-intro(v-model="modalIntroShow", :images="introImages", :cb="modalIntroCb")
+  //- cart-ball(v-model="ballValue", :cb="ballCb")
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
 import mallHead from '@/components/MallHead'
 import mallItem from '@/components/MallItem'
 import modalIntro from '@/components/ModalIntro.vue'
+import cartBall from '@/components/ParabolicPic.vue'
 export default {
   components: {
     mallHead,
     mallItem,
-    modalIntro
+    modalIntro,
+    cartBall
   },
   data () {
     return {
+      ballValue: null,
       mallTypeObject: {
         'product': {
           name: 'name',
@@ -202,7 +206,6 @@ export default {
     }
     // this.refresher()
     if (this.isLogin) {
-      this.refreshUser()
       this.setCartCount(this.currentUser.user_id)
     } else {
       this.tabDot(0)
@@ -215,6 +218,9 @@ export default {
   },
   methods: {
     ...mapActions(['configVal']),
+    ballCb () {
+      console.log('ball cb')
+    },
     cleanSearch () {
       delete this.queryObject.search
       this.onRefresh()
@@ -320,6 +326,7 @@ export default {
     mallItemCb (obj, type, evt) {
       console.log('evt', evt)
       const me = this
+      me.ballValue = evt
       if (obj.name === 'H型钢' && obj.price === '--') {
         this.showMsg(`此商品会在${obj.show_time}后开售`)
         return
@@ -336,6 +343,7 @@ export default {
               this.btnDisable = true
               this.addCart(obj, type, this.currentUser.user_id).then(
                 rt => {
+                  // me.ballValue = evt
                   me.showMsg(rt.msg, '', 1000)
                   if (type === 'cart') me.setCartCount(me.currentUser.user_id)
                   me.btnDisable = false
