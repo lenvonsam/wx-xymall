@@ -176,7 +176,8 @@ export default {
     selectBill (bill) {
       if (this.isEdit) {
         bill.choosed = !bill.choosed
-        this.allChoosed = bill.choosed
+        const findList = this.modifyList.find(item => !item.choosed)
+        this.allChoosed = !findList
         this.$forceUpdate()
       }
     },
