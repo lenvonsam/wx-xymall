@@ -48,7 +48,7 @@
                 .cuIcon-roundclosefill.ft-16
           .row.padding-sm(@click="sortClose(sortIdx)")
             .cuIcon-fold.ft-16
-        scroll-view(scroll-y, style="max-height: 700rpx")
+        scroll-view(scroll-y, style="max-height: 700rpx", :scroll-top="scrollTop")
           .grid.col-3.padding-top-sm.sort-content
             .sort-list(v-if="sort.data.length > 0", v-for="(item, index) in sort.data", :key="index")
               .sort-item(:class="{active: item.isActive, 'big': sortIdx !== 1}", @click.stop="selectSort(sortIdx, index)") 
@@ -76,6 +76,7 @@ export default {
       modalIntroShow: false,
       tabList: [],
       scrollLeft: 0,
+      scrollTop: 3,
       tabVal: '',
       activeTab: '',
       pageSize: 10000,
@@ -304,6 +305,11 @@ export default {
         this.selectTab(this.sortList[sortIdx].data[idx], idx)
         this.sortClose()
       }
+      this.scrollTop = 0
+      const me = this
+      setTimeout(function () {
+        me.scrollTop = 3
+      }, 100)
     },
     sortClose (sortIdx) {
       if (sortIdx) {
