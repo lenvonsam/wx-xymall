@@ -168,6 +168,11 @@ export default {
       const filters = {
         standard: [this.tempObject.standards]
       }
+      this.sortList[1].data = [
+        {name: '全部', isActive: false},
+        {name: this.tempObject.standards, isActive: true}
+      ]
+      // this.sortList[1].data.push({name: this.tempObject.standards, isActive: true})
       this.$emit('filter', filters)
       if (this.tempObject.name !== this.mallTabVal) {
         this.isFilter = true
@@ -240,7 +245,7 @@ export default {
     },
     filterCancel (sortIdx) {
       if (this.temporary.length > 0) {
-        this.temporary.map(item => {
+        this.temporary.map((item, idx) => {
           if (this.sortList[sortIdx].data.length > 0) {
             this.sortList[sortIdx].data[item].isActive = !this.sortList[sortIdx].data[item].isActive
           }
@@ -265,6 +270,7 @@ export default {
         // }
       })
       this.$emit('filter', filters)
+
       this.standardStr = filters['standard'].toString() === '全部' ? '' : filters['standard'].toString()
       this.materialStr = filters['material'].toString() === '全部' ? '' : filters['material'].toString()
       this.originStr = filters['origin'].toString() === '全部' ? '' : filters['origin'].toString()
@@ -294,7 +300,9 @@ export default {
       this.$emit('searchChange', this.searchVal)
     },
     selectSort (sortIdx, idx) {
-      this.temporary.push(idx)
+      if (sortIdx !== 0) {
+        this.temporary.push(idx)
+      }
       if (idx === 0 || sortIdx === 0) {
         this.sortList[sortIdx].data.map(item => {
           item.isActive = false
