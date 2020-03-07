@@ -145,7 +145,7 @@ export default {
       bottomBarHeight: state => state.bottomBarHeight
     })
   },
-  onUnload () {},
+  onUnload () { },
   watch: {
     mallTabVal () {
       this.mallTabValChange()
@@ -461,9 +461,9 @@ export default {
   z-index 4
   background rgba(0, 0, 0, 0.5)
   // @media screen and (width: 375px)
-  //   height calc(100vh - 112px)
+  // height calc(100vh - 112px)
   // @media screen and (width: 414px)
-  //   height calc(100vh - 98px)
+  // height calc(100vh - 98px)
 .sort-list
   padding 5px
   text-align center
