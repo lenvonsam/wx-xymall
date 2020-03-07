@@ -305,11 +305,13 @@ export default {
         this.selectTab(this.sortList[sortIdx].data[idx], idx)
         this.sortClose()
       }
-      this.scrollTop = 0
-      const me = this
-      setTimeout(function () {
-        me.scrollTop = 3
-      }, 100)
+      if (idx === 0) {
+        this.scrollTop = 0
+        const me = this
+        setTimeout(function () {
+          me.scrollTop = 3
+        }, 100)
+      }
     },
     sortClose (sortIdx) {
       if (sortIdx) {

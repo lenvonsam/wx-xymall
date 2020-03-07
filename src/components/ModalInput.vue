@@ -1,10 +1,10 @@
 <template lang="pug">
 .cu-modal(:class="modalName") 
-  .cu-dialog.bg-white(style="mix-height: 280rpx; width: 70%")
+  .cu-dialog.bg-white(style="mix-height: 280rpx; width: 60%")
     .close(@click="btnClick('cancel')")
       .cuIcon-close
     .padding.text-xl.text-black.text-center.text-bold {{title}}
-    .padding
+    .padding.padding-lr-lg
       .bg-gray.input-box
         input(:placeholder="placeholder", v-model="inputVal", type="password", v-if="type === 'password'", :maxlength="12")
         input(:placeholder="placeholder", v-model="inputVal", v-else)
