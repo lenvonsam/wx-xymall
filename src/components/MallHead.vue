@@ -164,7 +164,12 @@ export default {
   onShow () {
     this.isFilter = false
     if (this.sortList[0].data.length === 0) this.sortCb('name')
-    if (this.tempObject.standards) {
+    if (this.tempObject.fromPage === 'search' && this.tempObject.noBack) {
+      this.searchVal = this.tempObject.search || ''
+      this.standardStr = ''
+      this.materialStr = ''
+      this.originStr = ''
+    } else if (this.tempObject.fromPage === 'mallFilter' && this.tempObject.noBack) {
       const filters = {
         standard: [this.tempObject.standards]
       }
@@ -172,21 +177,15 @@ export default {
         {name: '全部', isActive: false},
         {name: this.tempObject.standards, isActive: true}
       ]
-      // this.sortList[1].data.push({name: this.tempObject.standards, isActive: true})
       this.$emit('filter', filters)
       if (this.tempObject.name !== this.mallTabVal) {
         this.isFilter = true
       }
       this.standardStr = this.tempObject.standards
-    }
-    if (this.tempObject.fromPage === 'search' && this.tempObject.noBack) {
-      this.standardStr = ''
-      this.materialStr = ''
-      this.originStr = ''
+      this.searchVal = ''
     }
     console.log('tempObject', this.tempObject.search)
     this.currentPage = 0
-    this.searchVal = this.tempObject.search || ''
   },
   methods: {
     ...mapActions([
