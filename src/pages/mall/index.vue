@@ -210,6 +210,7 @@ export default {
     }
     this.refresher()
     if (this.isLogin) {
+      this.refreshUser()
       this.setCartCount(this.currentUser.user_id)
     } else {
       this.tabDot(0)

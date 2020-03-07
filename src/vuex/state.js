@@ -63,6 +63,20 @@ export default {
       { title: '普碳开平板', id: '185' },
       { title: '低合金开平板', id: '186' },
       { title: '圆钢', id: '272,181' }
+    ],
+    [
+      {
+        title: '热轧扁钢',
+        id: '273'
+      },
+      {
+        title: '纵剪扁钢',
+        id: '270'
+      },
+      {
+        title: '镀锌槽钢',
+        id: '215'
+      }
     ]
   ],
   billIcons: [
@@ -213,6 +227,8 @@ export default {
       url: {
         path: ''
       }
-    }, {}, {}
+    },
+    {},
+    {}
   ]
 }

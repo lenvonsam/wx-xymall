@@ -14,7 +14,7 @@ div
           .col.padding-left-sm
             .ft-15.padding-bottom-sm {{currentUser.user_mark}}
             .ft-12 {{currentUser.phone}}
-      .cuIcon-right.ft-25   
+      .cuIcon-right.ft-25(@click="jumpProfile")
     .account.bg-white.flex.align-center(@click="jumpBalance")
       .ft-16.text-bold 账户余额
       .col.ft-16.text-right
@@ -95,11 +95,7 @@ export default {
     if (this.isLogin) {
       this.setCartCount(this.currentUser.user_id)
       this.alertShow = false
-      if (this.currentUser.isnew) {
-        this.alertText = '您还需要完善公司信息才能正常工作'
-        this.alertShow = true
-        return
-      }
+      this.refreshUser()
       this.showNoticeIcon = this.currentUser.message_switch === '1'
       this.ironRequest('toOperCounts.shtml?user_id=' + this.currentUser.user_id, {}, 'get').then(resp => {
         // console.log(resp.data)
@@ -139,6 +135,22 @@ export default {
         this.jump('/pages/account/companyUpdate/main?type=2')
       } else {
         this.jump('/pages/account/login/main')
+      }
+    },
+    async refreshUser () {
+      try {
+        const data = await this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method)
+        console.log('refresh user:>>', data)
+        data.pwd = this.currentUser.pwd
+        data.localSearchs = this.currentUser.localSearchs || []
+        data.avatar = '/filepool' + data.avatar
+        this.setUser(data)
+        if (this.currentUser.isnew) {
+          this.alertText = '您还需要完善公司信息才能正常工作'
+          this.alertShow = true
+        }
+      } catch (e) {
+        console.error(e)
       }
     },
     jumpToPage (url) {
