@@ -174,10 +174,13 @@ export default {
       this.allChoosed = false
       this.isTabDisabled = true
       this.swiperCount = 0
-      this.tabName = '0'
       this.billTab[0].data = []
       this.pageHeight = this.tabName === '1' ? 150 : 100
-      this.refresher()
+      if (this.tabName === '0') {
+        this.refresher()
+      } else {
+        this.tabName = '0'
+      }
     },
     swiperChange (e) {
       this.showLoading()
