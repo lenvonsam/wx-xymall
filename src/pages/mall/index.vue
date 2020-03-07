@@ -174,7 +174,10 @@ export default {
   onShow () {
     this.isload = true
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 285
-    if (this.tempObject.fromPage === 'search' && this.tempObject.noBack) {
+    if (this.tempObject.fromPage === 'home') {
+      // 首页
+      this.mallTabVal = this.tempObject.name
+    } else if (this.tempObject.fromPage === 'search' && this.tempObject.noBack) {
       // 搜索
       this.isRefresh = 'refresh'
       this.currentPage = 0

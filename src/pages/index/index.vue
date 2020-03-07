@@ -118,7 +118,7 @@ export default {
     },
     classifyClick (id) {
       // this.configVal({ key: 'tempObject', val: { name: title } })
-      this.configVal({ key: 'tempObject', val: { name: id } })
+      this.configVal({ key: 'tempObject', val: { name: id, fromPage: 'home' } })
       this.tab('/pages/mall/main')
     },
     iconJump (path) {
