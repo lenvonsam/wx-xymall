@@ -31,7 +31,7 @@ div
         .col.text-center(v-for="(col,cidx) in row", :key="cidx")
           .btn-classify(@click="classifyClick(col.id)") {{col.title}}
       .margin-top.text-center.text-blue.ft-13(@click="mallMore") 查看更多>>
-  .margin-top-sm.margin-bottom-sm.bg-white.padding
+  //- .margin-top-sm.margin-bottom-sm.bg-white.padding
     .text-center.ft-16
       span.ml-15(v-for="(name,idx) in echartType", :key="name", :class="{'text-blue': idx === echartTabIndex}", @click="echartTabClick(name, idx)") {{name}}
     div(:style="{height: echartHeight + 'rpx'}", v-if="!shareModalShow")
@@ -46,8 +46,8 @@ import mpvueEcharts from 'mpvue-echarts'
 import modalIntro from '../../components/ModalIntro.vue'
 import vertBanner from '../../components/VertBanner.vue'
 import lineOpts from '../../utils/lineOpts'
-const echarts = require('../../../static/libs/echarts.min.js')
-let chart = null
+// const echarts = require('../../../static/libs/echarts.min.js')
+// let chart = null
 export default {
   data () {
     return {
@@ -55,7 +55,7 @@ export default {
       shareModalShow: false,
       echartType: ['H型钢', '工角槽', '普碳开平板'],
       echartTabIndex: 0,
-      echarts,
+      // echarts,
       echartHeight: 0,
       lineOptionData: [],
       gallery: [],
@@ -90,7 +90,7 @@ export default {
   onShow () {
     this.echartHeight = (400 / 345) * (this.screenWidth - 30)
     this.loadBanner()
-    this.getTrends()
+    // this.getTrends()
     this.loadNotice()
     if (this.isLogin) {
       this.setCartCount(this.currentUser.user_id)
@@ -132,37 +132,37 @@ export default {
     mallMore () {
       this.tab('/pages/mall/main')
     },
-    initChart (canvas, width, height) {
-      chart = echarts.init(canvas, null, {
-        width: width,
-        height: height
-      })
-      canvas.setChart(chart)
-      chart.setOption(this.lineOptions)
-      return chart // 返回 chart 后可以自动绑定触摸操作
-    },
-    async getTrends () {
-      try {
-        const res = await this.ironRequest(this.apiList.xy.trend.url, {}, this.apiList.xy.trend.method, this)
-        console.log('trends resp', res)
-        const lineOptionDataArr = []
-        for (let i = 0; i < this.echartType.length; i++) {
-          let key = this.echartType[i]
-          if (key === '工角槽') key = '槽钢'
-          lineOptionDataArr.push(res.data[key])
-        }
-        this.lineOptionData = lineOptionDataArr
-        this.lineOptions.series[0].data = res.data[this.echartType[0]].slice(-9)
-        chart.setOption(this.lineOptions)
-      } catch (e) {
-        this.showMsg(e)
-      }
-    },
-    echartTabClick (name, idx) {
-      this.echartTabIndex = idx
-      this.lineOptions.series[0].data = this.lineOptionData[idx].slice(-9)
-      chart.setOption(this.lineOptions)
-    },
+    // initChart (canvas, width, height) {
+    //   chart = echarts.init(canvas, null, {
+    //     width: width,
+    //     height: height
+    //   })
+    //   canvas.setChart(chart)
+    //   chart.setOption(this.lineOptions)
+    //   return chart // 返回 chart 后可以自动绑定触摸操作
+    // },
+    // async getTrends () {
+    //   try {
+    //     const res = await this.ironRequest(this.apiList.xy.trend.url, {}, this.apiList.xy.trend.method, this)
+    //     console.log('trends resp', res)
+    //     const lineOptionDataArr = []
+    //     for (let i = 0; i < this.echartType.length; i++) {
+    //       let key = this.echartType[i]
+    //       if (key === '工角槽') key = '槽钢'
+    //       lineOptionDataArr.push(res.data[key])
+    //     }
+    //     this.lineOptionData = lineOptionDataArr
+    //     this.lineOptions.series[0].data = res.data[this.echartType[0]].slice(-9)
+    //     chart.setOption(this.lineOptions)
+    //   } catch (e) {
+    //     this.showMsg(e)
+    //   }
+    // },
+    // echartTabClick (name, idx) {
+    //   this.echartTabIndex = idx
+    //   this.lineOptions.series[0].data = this.lineOptionData[idx].slice(-9)
+    //   chart.setOption(this.lineOptions)
+    // },
     async loadBanner () {
       try {
         const data = await this.ironRequest(this.apiList.xy.banner.url, {}, this.apiList.xy.banner.method, this)

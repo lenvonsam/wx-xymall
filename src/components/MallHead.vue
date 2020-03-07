@@ -360,7 +360,7 @@ export default {
     //   }
     // },
     sortCb (key, standard) {
-      debugger
+      // debugger
       this.queryObject.name = this.tabVal
       this.queryObject.current_page = this.currentPage
       let queryObj = Object.assign({}, this.queryObject)
