@@ -14,7 +14,6 @@ div
       template(v-else)
         div(:style="{height: scrollHeight + 'rpx'}")
           iron-scroll(:swiperIdx="swiperIdx", @scrolltolower="loadMore", heightUnit="rpx", :height="scrollHeight", :refresh="true", @onRefresh="onRefresh", :loadFinish="loadFinish")
-            //- scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: scrollHeight}", :refresher-enabled="false", :refresher-threshold="50", @refresherrefresh="testRefresh", @refresherrestore="testRestore", @refresherabort="testAbort", ref="testScroll")
             //- div(:class="{cardSty: !mallFlag}", :style="{height: scrollHeight + 'rpx', 'padding-top': '6rpx'}")
             div(:class="{cardSty: !mallFlag}", style="margin-top: 8rpx")
               .padding.pr-10.pl-10(v-for="(item,idx) in goodsNameList[swiperIdx].data", :key="idx", :class="!mallFlag ? 'card-list' : 'bg-white margin-bottom-xs'")
@@ -146,6 +145,7 @@ export default {
       // filterObj: {},
       finished: false,
       loadFinish: 0,
+      swiperFirst: 0,
       prevIdx: null
     }
   },
@@ -165,34 +165,10 @@ export default {
     }
   },
   onHide () {
-    // if (!this.isLogin) this.mallTabVal = ''
-    // this.mallTabVal = ''
     this.queryObject.search = ''
-    // this.queryObject = {
-    //   current_page: this.currentPage,
-    //   page_size: this.pageSize,
-    //   search: '',
-    //   only_available: 1
-    // }
-    // this.mallTabVal = ''
-    // this.mallItems = []
-    // // this.queryObject = {}
-    // this.isload = false
-    // this.isRefresh = 'refresh'
-    // this.pullDownRefresh = false
-    // this.currentPage = 0
-    // this.pageSize = 10
-    // this.mallFlag = 1
-    // this.btnDisable = false
-    // this.goodsNameList = []
-    // this.swiperCount = 0
-    // this.scrollHeight = 0
-    // this.modalIntroShow = false
-    // this.filterObj = {}
-    // this.finished = false
-    // this.loadFinish = false
   },
   onShow () {
+    debugger
     this.isload = true
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 285
     if (this.tempObject.search === '' || this.tempObject.search || this.tempObject.name === '') {
@@ -200,15 +176,23 @@ export default {
       this.isRefresh = 'refresh'
       this.currentPage = 0
       this.swiperCount = 0
+      this.swiperFirst = 1
       Object.assign(this.queryObject, this.tempObject)
+      this.refresher()
     } else if (this.tempObject.name === this.mallTabVal) {
+      this.swiperFirst = 1
       Object.assign(this.queryObject, this.tempObject)
-    } else {
+      this.refresher()
+    } else if (this.tempObject.standards) {
+      this.swiperFirst = 1
       this.queryObject.search = ''
       Object.assign(this.queryObject, this.tempObject)
       this.mallTabVal = this.tempObject.name || ''
+    } else {
+      this.queryObject.search = ''
+      this.mallTabVal = this.tempObject.name || ''
     }
-    this.refresher()
+    // this.refresher()
     if (this.isLogin) {
       this.refreshUser()
       this.setCartCount(this.currentUser.user_id)
@@ -226,16 +210,6 @@ export default {
     cleanSearch () {
       delete this.queryObject.search
       this.onRefresh()
-    },
-    testRefresh (e) {
-      console.log('test refresh', e)
-      console.log('scroll', this.$refs.testScroll[0])
-    },
-    testRestore (e) {
-      console.log('test restore', e)
-    },
-    testAbort (e) {
-      console.log('test abort', e)
     },
     onRefresh (done) {
       this.currentPage = 0
@@ -263,17 +237,24 @@ export default {
       // this.isload = true
     },
     swiperChange (e) {
+      debugger
       const idx = e.mp.detail.current
       this.mallTabVal = this.goodsNameList[idx].id
       if (this.goodsNameList[idx]) {
         this.showLoading()
         this.isload = true
         this.isRefresh = 'refresh'
-        this.queryObject = {
-          current_page: this.currentPage,
-          page_size: this.pageSize,
-          name: this.mallTabVal,
-          only_available: 1
+        if (this.swiperFirst === 1) {
+          this.queryObject.current_page = this.currentPage
+          this.queryObject.name = this.mallTabVal
+          this.swiperFirst = 0
+        } else {
+          this.queryObject = {
+            current_page: this.currentPage,
+            page_size: this.pageSize,
+            name: this.mallTabVal,
+            only_available: 1
+          }
         }
         this.onRefresh()
         console.log('prevIdx', this.prevIdx)
@@ -433,10 +414,12 @@ export default {
           // this.isload = true
         }
         console.log('loadfinish:>>', this.loadFinish)
+        this.swiperFirst = 0
         if (done) done()
       } catch (err) {
         console.log('异常', err)
         this.loadFinish = 0
+        this.swiperFirst = 0
         this.isload = false
         this.hideLoading()
         this.showMsg(err)
