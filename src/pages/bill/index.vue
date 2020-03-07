@@ -174,10 +174,13 @@ export default {
       this.allChoosed = false
       this.isTabDisabled = true
       this.swiperCount = 0
-      this.tabName = '0'
       this.billTab[0].data = []
       this.pageHeight = this.tabName === '1' ? 150 : 100
-      this.refresher()
+      if (this.tabName === '0') {
+        this.refresher()
+      } else {
+        this.tabName = '0'
+      }
     },
     swiperChange (e) {
       this.showLoading()
@@ -207,6 +210,7 @@ export default {
       const reqUrl = `orderList.shtml?user_id=${me.currentUser.user_id}&status=${this.tabName}&current_page=${this.currentPage}&page_size=${this.pageSize}&order_no=${this.billNo}&start_date=${this.startDate}&end_date=${this.endDate}`
       this.ironRequest(reqUrl, {}, 'get').then(resp => {
         const idx = me.swiperCount
+        this.serverTime = resp.server_time
         if (resp.returncode === '0') {
           let arr = resp.orders
           if (arr.length > 0 && me.currentPage === 0) {
@@ -284,6 +288,7 @@ export default {
             s = Math.floor(leftTime / 1000 % 60)
           }
           if (h + m + s === 0) {
+            debugger
             item.status = '违约'
           } else {
             h = h < 10 ? '0' + h : h

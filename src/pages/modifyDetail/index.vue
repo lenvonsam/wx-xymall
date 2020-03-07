@@ -176,7 +176,8 @@ export default {
     selectBill (bill) {
       if (this.isEdit) {
         bill.choosed = !bill.choosed
-        this.allChoosed = bill.choosed
+        const findList = this.modifyList.find(item => !item.choosed)
+        this.allChoosed = !findList
         this.$forceUpdate()
       }
     },
@@ -334,22 +335,26 @@ export default {
         const me = this
         const modifyList = JSON.parse(JSON.stringify(me.modifyList))
         const list = []
+        const lift = me.wh_lift.lift
+        let delWeight = 0
         modifyList.find((res, index) => {
           if (res.choosed) {
-            const lift = me.wh_lift.lift
             let isLift = me.wh_lift[res.wh_name]
-            const oldLift = isLift === '1' ? this.$toFixed(Number(res.weight) * lift, 2) : 0
+            // const oldLift = isLift === '1' ? this.$toFixed(Number(res.weight) * lift, 2) : 0
+            delWeight += isLift === '1' ? Number(res.weight) : 0
             if (me.contractDetail.is_lift !== 1) {
               isLift = 2
             }
             me.newPrice = Number(this.$toFixed(me.newPrice - res.price, 2))
-            me.newLift -= Number(oldLift)
-            me.newLift = Number(this.$toFixed(me.newLift, 2))
+            // me.newLift -= Number(oldLift)
+            // me.newLift = Number(this.$toFixed(me.newLift, 2))
             res.count = 0
             me.delModifyList.push(res)
           } else {
             list.push(res)
           }
+          me.newLift -= delWeight * lift
+          me.newLift = Number(this.$toFixed(me.newLift, 2))
           me.modifyList = list
         })
         this.getNewBillPrice()
@@ -370,7 +375,8 @@ export default {
       this.ironRequest(apiUrl, { id: this.$root.$mp.query.id }, 'post').then(resp => {
         this.isLoad = true
         let goodsPriceNew = 0
-        let liftPriceNew = 0
+        // let liftPriceNew = 0
+        let liftWeight = 0
         if (resp.returncode === '0') {
           this.contractDetail = resp
           // this.contractDetail.status = 19
@@ -393,20 +399,21 @@ export default {
             itm.weight = this.$toFixed(itm.weight, 3)
             itm.count = itm.left_qtt_new || itm.left_qtt_new === 0 ? itm.left_qtt_new : itm.left_qtt
             goodsPriceNew += itm.price
-            const lift = this.wh_lift.lift
+            // const lift = this.wh_lift.lift
             let isLift = this.wh_lift[itm.wh_name]
             if (this.contractDetail.is_lift !== 1) {
               isLift = 2
             }
-            const oldLift = isLift === '1' ? Number(this.$toFixed(Number(itm.weight) * lift, 2)) : 0
-            liftPriceNew += oldLift
+            // const oldLift = isLift === '1' ? Number(this.$toFixed(Number(itm.weight) * lift, 2)) : 0
+            // liftPriceNew += oldLift
+
+            liftWeight += isLift === '1' ? Number(itm.weight) : 0
             list.push(itm)
           })
           this.modifyList = list
-
           this.newPrice = this.type === '2' ? this.contractDetail.goods_price_new : goodsPriceNew
-          this.newLift = this.type === '2' ? this.contractDetail.lift_price_new : Number(this.$toFixed(liftPriceNew, 2))
-          // if (done) done()
+          // this.newLift = this.type === '2' ? this.contractDetail.lift_price_new : Number(this.$toFixed(liftPriceNew, 2))
+          this.newLift = this.type === '2' ? this.contractDetail.lift_price_new : Number(this.$toFixed(liftWeight * 25, 2))
           this.getContractStatus()
           this.getNewBillPrice()
         } else {
