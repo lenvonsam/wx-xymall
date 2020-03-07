@@ -288,7 +288,6 @@ export default {
             s = Math.floor(leftTime / 1000 % 60)
           }
           if (h + m + s === 0) {
-            debugger
             item.status = '违约'
           } else {
             h = h < 10 ? '0' + h : h
