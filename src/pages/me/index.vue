@@ -143,7 +143,7 @@ export default {
         console.log('refresh user:>>', data)
         data.pwd = this.currentUser.pwd
         data.localSearchs = this.currentUser.localSearchs || []
-        data.avatar = '/filepool' + data.avatar
+        data.avatar = data.avatar.indexOf('webpage/') > 0 ? data.avatar : '/filepool' + data.avatar
         this.setUser(data)
         if (this.currentUser.isnew) {
           this.alertText = '您还需要完善公司信息才能正常工作'
