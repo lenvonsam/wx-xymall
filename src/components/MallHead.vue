@@ -1,6 +1,6 @@
 <template lang="pug">
 .bg-white.full-width.text-gra.shop-head(:style="{top: customBar+'px'}")
-  .flex.align-center.pl-10.pr-10
+  .flex.align-center.pl-10.pr-10(style="height: 90rpx")
     .h-left.ft-25(@click="classifyClick")
       .cuIcon-sort.lg.text-gra
       .ft-14 分类
@@ -35,7 +35,7 @@
         .cuIcon-list(@click="selectMall(1)", :class="mallFlag ? 'text-blue' : 'text-gra'")
         .cuIcon-cascades.ml-5(@click="selectMall(0)", :class="!mallFlag ? 'text-blue' : 'text-gra'")
     //- 筛选 品名、材质、规格、产地
-    .filter-box(@click.prevent="sortClose(sortIdx)", @touchmove.stop="catchtouchmove", v-show="activeTab === sort.key", v-for="(sort, sortIdx) in sortList", :key="sortIdx")
+    .filter-box(:style="{height: filterHeight+'rpx'}", @click.prevent="sortClose(sortIdx)", @touchmove.stop="catchtouchmove", v-show="activeTab === sort.key", v-for="(sort, sortIdx) in sortList", :key="sortIdx")
       .bg-white.padding-sm.ft-11(@click.stop="")
         .flex.align-stretch.justify-between
           .flex.align-center
@@ -131,7 +131,8 @@ export default {
       // standardSearch: '',
       scrollId: 'idx_0',
       standardVal: '',
-      isFilter: false
+      isFilter: false,
+      filterHeight: 0
     }
   },
   components: {
@@ -140,35 +141,11 @@ export default {
   computed: {
     ...mapState({
       tempObject: state => state.tempObject,
-      screenWidth: state => state.screenWidth
+      screenWidth: state => state.screenWidth,
+      bottomBarHeight: state => state.bottomBarHeight
     })
   },
-  onUnload () {
-    // this.
-    //   this.isActive = true
-    //   this.searchVal = ''
-    //   this.mallFlag = 1
-    //   this.standards = []
-    //   this.materials = []
-    //   this.supplys = []
-    //   this.standardStr = ''
-    //   this.materialStr = ''
-    //   this.originStr = ''
-    //   this.filterStr = ''
-    //   this.isMore = false
-    //   this.standardSearch = ''
-    //   this.tabList = []
-    //   this.scrollLeft = 0
-    //   this.tabVal = ''
-    //   this.activeTab = ''
-    //   this.pageSize = 29
-    //   this.currentPage = 0
-    //   this.queryObject = {
-    //     current_page: 0,
-    //     page_size: 29
-    //   }
-    //   this.temporary = []
-  },
+  onUnload () { },
   watch: {
     mallTabVal () {
       this.mallTabValChange()
@@ -181,6 +158,7 @@ export default {
   },
   beforeMount () {
     this.sortCb('name')
+    this.filterHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 95
   },
   onShow () {
     if (this.sortList[0].data.length === 0) this.sortCb('name')
@@ -276,9 +254,9 @@ export default {
             }
           })
         }
-        if (filters[item.key].length === 0 && this[`${item.key}Str`]) {
-          filters[item.key] = this[`${item.key}Str`].split(',')
-        }
+        // if (filters[item.key].length === 0 && this[`${item.key}Str`]) {
+        //   filters[item.key] = this[`${item.key}Str`].split(',')
+        // }
       })
       this.$emit('filter', filters)
       this.standardStr = filters['standard'].toString() === '全部' ? '' : filters['standard'].toString()
@@ -360,7 +338,6 @@ export default {
     //   }
     // },
     sortCb (key, standard) {
-      // debugger
       this.queryObject.name = this.tabVal
       this.queryObject.current_page = this.currentPage
       let queryObj = Object.assign({}, this.queryObject)
@@ -479,14 +456,14 @@ export default {
   left 0
   right 0
   bottom 0
-  height calc(100vh - 122px)
+  // height calc(100vh - 122px)
   // height 100vh
   z-index 4
   background rgba(0, 0, 0, 0.5)
-  @media screen and (width: 375px)
-    height calc(100vh - 112px)
-  @media screen and (width: 414px)
-    height calc(100vh - 98px)
+  // @media screen and (width: 375px)
+  // height calc(100vh - 112px)
+  // @media screen and (width: 414px)
+  // height calc(100vh - 98px)
 .sort-list
   padding 5px
   text-align center

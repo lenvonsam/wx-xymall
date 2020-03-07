@@ -17,7 +17,7 @@ div
       template(v-if="listData.length > 0")
         scroll-view.scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: scrollHeight}")
           //- .scroll-view.bg-white(scroll-y, :style="{top:customBar + 40 + 'px'}")
-          .bg-white.padding-sm.margin-bottom-sm(v-for="(item, itemIdx) in listData", :key="itemIdx")
+          .bg-white.padding-sm.margin-bottom-sm(v-for="(item, itemIdx) in listData", :key="itemIdx", @click="jumpDetail(item)")
             .flex.justify-between.padding-bottom-sm
               .col
                 .flex.align-center
@@ -34,7 +34,7 @@ div
                   .padding-bottom-xs 吊费：¥{{item.lift_charge}}
                   .padding-bottom-xs 合同生成日期：{{item.create_time}}
                 div
-                  .bill-btn.round(@click="jumpDetail(item.no)") 恢复
+                  .bill-btn.round(@click.stop="jumpRestore(item.no)") 恢复
           .padding.text-gray.ft-13.text-center(v-if="loading") 努力加载中...
           .padding.text-gray.ft-13.text-center(v-if="finished") 加载完成
       .text-center.c-gray.pt-100(v-else)
@@ -84,7 +84,10 @@ export default {
   //   this.loadData()
   // },
   methods: {
-    jumpDetail (no) {
+    jumpDetail (item) {
+      this.jump(`/pages/billDetail/main?id=${item.no}`)
+    },
+    jumpRestore (no) {
       if (this.disabled) return false
       this.disabled = true
       this.jump('/pages/billRecycleDetail/main?no=' + no)
