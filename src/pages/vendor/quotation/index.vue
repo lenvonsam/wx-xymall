@@ -207,7 +207,7 @@ export default {
       if (res.returncode === '0') {
         return {
           title: '报价清单',
-          path: '/pages/vendor/quotation/main?pageType=share&&qutId=' + res.qut_id
+          path: '/quotation/main?pageType=share&&qutId=' + res.qut_id
         }
       }
     })

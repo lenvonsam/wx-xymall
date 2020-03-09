@@ -518,7 +518,7 @@ export default {
         totalLiftCharge: this.totalLiftCharge
       }
       this.configVal({key: 'tempObject', val: tempObject})
-      this.jump('/pages/vendor/quotation/main')
+      this.jump('/quotation/main')
     },
     async dx (filterArray) {
       // this.jump('/pages/vendor/quotation/main')
