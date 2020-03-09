@@ -503,7 +503,7 @@ export default {
   background #F6F6F6
   padding 0 8px
   text-align center
-  font-size 14px
+  font-size 12px
   border-radius 10px
   color #262626
 </style>

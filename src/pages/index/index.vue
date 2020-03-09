@@ -14,7 +14,7 @@ div
     time-line(v-else, type="gallery")
   .row.bg-white.padding-bottom-sm
     .col.text-center(v-for="(icon,idx) in mainIcons", :key="idx", @click="iconJump(icon.path)")
-      img(:src="icon.url", style="width: 106rpx; height: 112rpx")
+      img(:src="icon.url", style="width: 85rpx; height: 85rpx")
       .mt-5 {{icon.title}}
   .bg-white.padding.margin-top-sm
     .row
