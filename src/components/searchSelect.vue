@@ -62,7 +62,6 @@ export default {
     // }
   },
   beforeMount () {
-    debugger
     switch (this.selectType) {
       case 'dept':
         this.selectRemote = () => {
@@ -75,7 +74,6 @@ export default {
         }
         break
     }
-    debugger
     if (this.selectRemote) {
       this.selectRemote()
     }

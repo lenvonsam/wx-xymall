@@ -105,7 +105,6 @@ export default {
             deal_no: this.detailData.billNo,
             flag: flag === 'cancel' ? '0' : '1'
           }
-          debugger
           this.dxAudit(params)
           break
         case '延时':
@@ -139,7 +138,6 @@ export default {
     },
     async dxAudit (params) {
       try {
-        debugger
         const dxAudit = this.apiList.xy.dxAudit
         const data = this.ironRequest(dxAudit.url, params, dxAudit.method)
         if (data.returncode === '0') {

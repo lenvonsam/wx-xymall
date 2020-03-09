@@ -243,7 +243,6 @@ export default {
       }
     },
     countTime () {
-      debugger
       const idx = this.swiperCount
       const arr = this.billTab[idx].data
       arr.map(item => {
