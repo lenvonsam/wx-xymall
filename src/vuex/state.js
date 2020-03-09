@@ -119,7 +119,7 @@ export default {
       name: '待付款',
       dotKey: '',
       url: {
-        path: '/contractTrack/main?tabName=1'
+        path: '/pages/vendor/contractTrack/main?tabName=1'
       }
     },
     {
@@ -127,7 +127,7 @@ export default {
       name: '已支付待确认',
       dotKey: '',
       url: {
-        path: '/contractTrack/main?tabName=12'
+        path: '/pages/vendor/contractTrack/main?tabName=12'
       }
     },
     {
@@ -135,7 +135,7 @@ export default {
       name: '待提货',
       dotKey: '',
       url: {
-        path: '/contractTrack/main?tabName=8'
+        path: '/pages/vendor/contractTrack/main?tabName=8'
       }
     },
     {
@@ -143,7 +143,7 @@ export default {
       name: '修改中',
       dotKey: '',
       url: {
-        path: '/contractTrack/main?tabName=10'
+        path: '/pages/vendor/contractTrack/main?tabName=10'
       }
     }
   ],

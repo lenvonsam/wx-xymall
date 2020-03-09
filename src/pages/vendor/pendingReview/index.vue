@@ -130,7 +130,7 @@ export default {
       item.auditType = this.auditType[item.audit_type]
       item.statusStr = this.statusList[item.status] || '待审核'
       this.configVal({key: 'tempObject', val: item})
-      this.jump(`/reviewDetail/main`)
+      this.jump(`/pages/vendor/reviewDetail/main`)
     }
   }
 }
