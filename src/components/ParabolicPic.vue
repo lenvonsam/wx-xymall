@@ -1,5 +1,5 @@
 <template lang="pug">
-.ball(:animation="ballAnimate", v-if="animateShow")
+.ball(:animation="ballAnimate", :style="{right: ballRight + 'px', left: obj.x + 'px', top: obj.top + 'px'}", v-show="animateShow")
   //- div
     //- div(v-for="ball in balls")
     //-   //- 用了两种方式的动画,css和js钩子
@@ -24,7 +24,7 @@ export default {
   data () {
     return {
       ballAnimate: '',
-      obj: null,
+      obj: {},
       animateShow: false,
       balls: [
         {
@@ -62,13 +62,30 @@ export default {
       handler (newVal, oldVal) {
         // if (newVal) this.drop(newVal.touches[0])
         if (newVal) {
-          debugger
           const me = this
+          this.animateShow = false
+          // me.animation.rotate(180).step().scale(2).step()
+          const evt = newVal.touches[0]
+          console.log('entery', evt)
+          this.obj = {
+            top: evt.clientY - 30,
+            x: evt.clientX - 10
+          }
           this.animateShow = true
           setTimeout(function () {
-            me.animation.rotate(180).step().scale(2).step()
-            me.billAnimate = me.animation.export()
-          }, 1000)
+            me.animation.opacity(1).skewY(-10).top(me.obj.top - 80).left(me.obj.x - 60).right(me.ballRight - 60).step()
+            me.ballAnimate = me.animation.export()
+            setTimeout(function () {
+              me.animation.skewY(0).top(me.screenHeight - 60).left(me.obj.x - 100).right(me.ballRight - 100).opacity(0.2).step()
+              me.ballAnimate = me.animation.export()
+              setTimeout(function () {
+                me.animateShow = false
+                me.obj.top = evt.clientY - 30
+                me.obj.x = evt.clientX - 10
+                me.cb()
+              }, 500)
+            }, 300)
+          }, 100)
         }
       },
       deep: true
@@ -76,9 +93,11 @@ export default {
   },
   beforeMount () {
     if (!this.animation) {
-      var obj = mpvue.createAnimation({
-        duration: 1000,
-        delay: 100
+      console.log('ball before mount animate')
+      var obj = wx.createAnimation({
+        duration: 200,
+        timingFunction: 'cubic-bezier(0.49, -0.29, 0.75, 0.41)',
+        delay: 0
       })
       this.animation = obj
     }
@@ -160,10 +179,9 @@ export default {
   width 30px
   height 30px
   right 100px
-  bottom 30px
   z-index 200
   background red
-  transition all 0.4s cubic-bezier(0.49, -0.29, 0.75, 0.41)
+  // transition all 0.4s cubic-bezier(0.49, -0.29, 0.75, 0.41)
   .inner
     width 30px
     height 30px

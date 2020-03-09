@@ -83,12 +83,12 @@ export default {
 <style lang="stylus" scoped>
 .confirm-btn
   margin 0 auto
-  width 100px
-  height 30px
+  width 80px
+  height 40px
   border-radius 5px
-  font-size 12px
+  font-size 14px
   &.cancel
-    background #999
+    background #c9c9c9
     color #fff
     display flex
     align-items center
