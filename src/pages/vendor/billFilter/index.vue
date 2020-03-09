@@ -4,44 +4,45 @@ div
   .bg-white.text-right.text-gray(@click="closeSelect")
     .row.justify-between.solid-bottom.item
       .label 合同编号
-      input.col(type="text", placeholder="请输入合同号")
+      input.col(type="text", v-model="form.no", placeholder="请输入合同号")
     .row.justify-between.solid-bottom.item(@click="custmShow = !custmShow")
       .label 客户名称
       .text-right.row.justify-end.col.select
-        span 请选择客户
+        span {{customName || '请选择客户'}}
         span.cuIcon-unfold
       //- search-select(:selectSty="'top: 90rpx'", :show="custmShow", :total="6", :list="custmList")
     .row.justify-between.solid-bottom.item
       .label 起始日期
       picker.col(@change="startDateCb", mode="date")
-        .text-right.text-gray {{startDate}}
+        .text-right.text-gray {{form.startDate}}
     .row.justify-between.solid-bottom.item
       .label 结束日期
       picker.col(@change="endDateCb", mode="date")
-        .text-right.text-gray {{endDate}}
-    .row.justify-between.solid-bottom.item(@click.stop="openSelect('deptShow')")
+        .text-right.text-gray {{form.endDate}}
+    .row.justify-between.solid-bottom.item(@click.stop="openSelect('dept')")
       .label 业务部门
-      .text-right.row.justify-end.col.select
-        span 请选择客户
-        span.cuIcon-unfold
-      search-select(:selectSty="'top: 90rpx'", :scrollHeight="employeeHeight", :selectType="'dept'", @search="searchCb", :show="deptShow")  
+      .text-right.row.justify-end.col.select(:class="{'text-blue': selectShow==='dept'}")
+        span {{deptName || '请选择部门'}}
+        span(:class="selectShow==='dept' ? 'cuIcon-fold' : 'cuIcon-unfold'")
+      search-select(:selectSty="'top: 90rpx'", :scrollHeight="employeeHeight", :selectType="'dept'", @cb="selectCb($event, 'dept')", :show="selectShow==='dept'")  
     .row.justify-between.solid-bottom.item(@click.stop="openSelect('employee')")
       .label 业务人员
-      .text-right.row.justify-end.col.select(:class="{'text-blue': employeeShow}")
-        span 请选择客户
-        span(:class="employeeShow ? 'cuIcon-fold' : 'cuIcon-unfold'")
-      search-select(:selectSty="'top: 90rpx'", :scrollHeight="employeeHeight", :selectType="'employee'", @search="searchCb", :show="employeeShow", :inputShow="true")
+      .text-right.row.justify-end.col.select(:class="{'text-blue': selectShow==='employee'}")
+        span {{employeeName || '请选择业务员'}}
+        span(:class="selectShow==='employee' ? 'cuIcon-fold' : 'cuIcon-unfold'")
+      search-select(:selectSty="'top: 90rpx'", :scrollHeight="employeeHeight", :selectType="'employee'", @cb="selectCb($event,'employee')", :show="selectShow==='employee'", :inputShow="true")
     .row.justify-between.solid-bottom.item
       .label 状态
       .text-right.row.justify-end.col.select
-        picker.col(@change="statusCb", mode="selector", :range="statusList")
-          .text-right.text-gray {{status || '请选择状态'}}
+        picker.col(@change="statusCb", mode="selector", :range="statusList", range-key="label")
+          .text-right.text-gray {{statusStr || '请选择状态'}}
         span.cuIcon-unfold  
   .footer.row.bg-white.text-center.text-white.padding-sm(style="height: 100rpx")
-    .col.foot-cancel(@click="confirm('cancel')") 重置
+    .col.foot-cancel(@click="confirm('reset')") 重置
     .col.foot-confirm.margin-left-sm(@click="confirm") 搜索   
 </template>
 <script>
+import { mapState, mapActions } from 'vuex'
 import searchSelect from '@/components/searchSelect.vue'
 export default {
   components: {
@@ -51,53 +52,84 @@ export default {
     return {
       custmList: ['江苏省安徽四暗有限公司', '江苏省安徽四暗有限公司'],
       contentHeight: 0,
-      custmShow: false,
-      deptShow: false,
-      deptList: [],
-      employeeShow: false,
       employeeHeight: 0,
-      startDate: '',
-      endDate: '',
-      status: '',
-      statusList: []
+      selectShow: '',
+      statusList: [],
+      deptName: '',
+      employeeName: '',
+      customName: '',
+      statusStr: '',
+      form: {
+        no: '',
+        custom: '',
+        startDate: '',
+        endDate: '',
+        dept: '',
+        employee: '',
+        status: ''
+      }
     }
   },
+  computed: {
+    ...mapState({
+      tempObject: state => state.tempObject
+    })
+  },
   onShow () {
+    this.statusList = this.tempObject.statusList || []
     this.contentHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 100
     this.employeeHeight = this.contentHeight - 750
-    this.startDate = this.date2Str(new Date())
-    this.endDate = this.date2Str(new Date())
+    this.form.startDate = this.date2Str(new Date())
+    this.form.endDate = this.date2Str(new Date())
     console.log('this.employeeHeight', this.employeeHeight)
   },
   methods: {
+    ...mapActions(['configVal']),
     closeSelect () {
-      this.deptShow = false
-      this.employeeShow = false
+      this.selectShow = ''
     },
     openSelect (type) {
-      this.closeSelect()
-      this[type] = true
+      this.selectShow = this.selectShow === type ? '' : type
     },
-    statusCb () {},
-    confirm (flag) {},
+    statusCb (e) {
+      console.log(e.mp.detail.value)
+      const valObj = this.statusList[e.mp.detail.value]
+      this.statusStr = valObj.label
+      this.form.status = valObj.value
+    },
+    confirm (flag) {
+      if (flag === 'reset') {
+        this.employeeName = ''
+        this.deptName = ''
+        this.customName = ''
+        this.statusStr = ''
+        this.form = {
+          no: '',
+          custom: '',
+          startDate: this.date2Str(new Date()),
+          endDate: this.date2Str(new Date()),
+          dept: '',
+          employee: '',
+          status: ''
+        }
+      } else {
+        this.form.fromPage = 'billFilter'
+        this.configVal({ key: 'tempObject', val: this.form })
+        this.back()
+      }
+    },
     startDateCb (e) {
-      this.startDate = this.date2Str(new Date(e.mp.detail.value))
+      this.form.startDate = this.date2Str(new Date(e.mp.detail.value))
     },
     endDateCb (e) {
-      this.endDate = this.date2Str(new Date(e.mp.detail.value))
+      this.form.endDate = this.date2Str(new Date(e.mp.detail.value))
     },
-    searchCb (res) {
-      console.log('searchCb', res)
-    },
-    async deptList () {
-      try {
-        const deptList = this.apiList.xy.deptList
-        const params = {dept_name: ''}
-        const data = this.ironRequest(deptList.url, params, deptList.method)
-        console.log(data)
-      } catch (err) {
-        console.log(err)
-      }
+    selectCb (res, type) {
+      this[`${type}Name`] = res.name
+      this.form[type] = res
+      this.selectShow = ''
+      this.$forceUpdate()
+      console.log(this.form)
     }
   }
 }

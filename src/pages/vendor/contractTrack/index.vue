@@ -6,16 +6,25 @@ div
       .col.search-input.text-gray
         .flex.align-center
           .cuIcon-search
-          input.full-width.padding-left-sm(v-model="searchVal", type="text", placeholder="合同号/公司名称/状态")
+          input.full-width.padding-left-sm(v-model="searchVal", type="text", placeholder="合同号/公司名称")
       .search-btn.text-blue(@click="searchOrder") 搜索
       .filter-btn.row(@click="openFilter")
         span 筛选
         .cuIcon-filter
-        
-    scroll-view.nav(scroll-x)
-      .flex.text-center
-        .cu-item.flex-sub(v-for="(item,index) in billTab", :class="item.status === tabName?'text-blue cur':''", :key="index", @click="selectTabs(item, index)")
-          span {{item.title}}
+    .flex.align-stretch.justify-between
+      .col.tab-content
+        scroll-view.nav(scroll-x, scroll-with-animation, :scroll-into-view="scrollId")
+          .flex.text-center
+            .cu-item.flex-sub(:id="'idx_'+index", v-for="(item,index) in billTab", :class="item.status === tabName ? 'text-blue cur':''", :key="index", @click="selectTabs(item, index)")
+              span {{item.title}}
+      .tab-more.row.justify-center(@click="openStatus = !openStatus", :class="{'text-blue': openStatus}")
+        .cuIcon-fold.text-xl(v-if="openStatus")
+        .cuIcon-unfold.text-xl(v-else)
+    .relative(v-if="openStatus")
+      .status-box.solid-top(:style="{height: scrollHeight + 'rpx'}")
+        .bg-white.padding-sm.row.flex-wrap.text-center.justify-between
+          .status-item(:class="item.status === tabName ? 'text-white bg-blue':''", v-for="(item,index) in billTab", :key="index", @click="selectTabs(item, index)")
+            span {{item.title}}
   swiper.bill-content(@change="swiperChange", :current="swiperCount", :style="{height: scrollHeight+'rpx'}")
     swiper-item(v-for="(tabItem, swiperIdx) in billTab.length", :key="swiperIdx")
       template(v-if="isload")
@@ -42,16 +51,11 @@ div
                       .flex.justify-between.padding-bottom-xs 
                         span 共{{item.total_left_qtt}}支，{{item.total_provided_qtt}}吨
                         span 吊费：¥{{item.lift_money}}
-                      //- .flex.justify-between.padding-bottom-xs
-                        .col 吊费：¥{{item.lift_charge}}
                   .solid-top.text-black.ft-15.padding-sm.row(v-if="item.status === 15 || item.status === 14")
                     .col
                       template(v-if="item.status === 14")
                         span 倒计时：
                         span.padding-left-xs.text-red {{item.timeDown}}
-                      //- template(v-if="item.status === '待补款'")
-                        span 待补款：
-                        span.padding-left-xs.text-red ￥{{item.paid_price}}
                     .flex
                       .bill-gray-btn.round(v-if="item.cancel_button == 1", @click.stop="billCancel(item)") 取消合同
                       .bill-btn.round.margin-left-sm(v-if="item.edit_button", @click.stop="payBill(item)") 申请修改
@@ -62,26 +66,64 @@ div
           .empty-content 您暂时没有相关合同        
 </template>
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 export default {
   data () {
     return {
+      scrollId: 'idx_0',
       swiperCount: 0,
+      openStatus: false,
       billTab: [
-        { title: '全部', status: '6', data: [], isActive: true },
-        { title: '待付款', status: '1', data: [], isActive: false },
-        { title: '已支付待确认', status: '12', data: [], isActive: false },
-        { title: '待提货', status: '8', data: [], isActive: false },
-        { title: '修改中', status: '10', data: [], isActive: false },
-        { title: '已完成', status: '4', data: [], isActive: false }
+        { title: '全部',
+          status: '6',
+          data: [],
+          isActive: true,
+          statusList: [
+            {label: '全部', value: ''},
+            {label: '待支付', value: '14'},
+            {label: '待补款', value: '17'},
+            {label: '已付款', value: '15'},
+            {label: '待审核', value: '12,20'},
+            {label: '待确认', value: '16'},
+            {label: '修改中', value: '18,19'},
+            {label: '已完成', value: '-1'},
+            {label: '已违约', value: '13'}
+          ]
+        }, { title: '待付款',
+          status: '1',
+          data: [],
+          isActive: false,
+          statusList: [
+            {label: '待支付', value: '14'},
+            {label: '待补款', value: '17'}
+          ]
+        }, { title: '已支付待确认',
+          status: '12',
+          data: [],
+          isActive: false,
+          statusList: [
+            {label: '待审核', value: '12,20'}
+          ]
+        }, { title: '待提货',
+          status: '8',
+          data: [],
+          isActive: false,
+          statusList: [
+            {label: '全部', value: ''},
+            {label: '已付款', value: '15'},
+            {label: '待确认', value: '16'}
+          ]
+        },
+        { title: '修改中', status: '10', data: [], isActive: false, statusList: [{label: '修改中', value: '18,19'}] },
+        { title: '已完成', status: '4', data: [], isActive: false, statusList: [{label: '已违约', value: '13'}] }
       ],
       tabName: '6',
       currentPage: 0,
       listData: [],
       triggered: false,
       isload: false,
-      startDate: '',
-      endDate: '',
+      // startDate: '',
+      // endDate: '',
       isTabDisabled: false,
       btnDisable: false,
       scrollHeight: '0px',
@@ -89,51 +131,52 @@ export default {
       serverTime: '',
       loadFinish: 0,
       pageSize: 10,
-      status: ''
+      status: '',
+      filterArr: [],
+      searchVal: '',
+      statusList: []
     }
   },
+  // watch: {
+  //   searchVal (newVal) {
+  //     const me = this
+  //     this.throttle(function () {
+  //       me.currentPage = 0
+  //       me.refresher()
+  //     }, 300)
+  //   }
+  // },
   computed: {
     ...mapState({
       tempObject: state => state.tempObject
     })
   },
   onShow () {
+    if (this.tempObject.fromPage === 'billFilter') {
+      this.filterArr = []
+      const obj = {
+        employee_code: this.tempObject.employee.id,
+        dept_code: this.tempObject.dept.id,
+        other_id: this.tempObject.custom.id,
+        status: this.tempObject.status,
+        deal_time_e: this.tempObject.endDate,
+        deal_time_s: this.tempObject.startDate
+      }
+      Object.keys(obj).forEach(key => {
+        if (obj[key]) {
+          this.filterArr.push(`${key}=${obj[key]}`)
+        }
+      })
+      this.currentPage = 0
+      this.onRefresh()
+    }
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 203
-    this.tabName = this.$root.$mp.query.tabName
+    this.tabName = this.$root.$mp.query.tabName || '6'
+    console.log('tabName', this.tabName)
     // this.scrollHeight = this.screenHeight - this.customBar - 98
   },
   beforeMount () {
     this.onRefresh()
-  },
-  watch: {
-    listData: {
-      handler (newVal, oldVal) {
-        if (this.tabName === '1') {
-          let filterArr = newVal.filter(item => item.choosed === true)
-          this.totalPrice = 0
-          this.totalWeight = 0
-          this.totalCount = filterArr.length
-          filterArr.map(itm => {
-            this.totalPrice += itm.fact_price
-            this.totalWeight += itm.total_weight
-          })
-          this.totalPrice = this.$toFixed(Number(this.totalPrice), 2)
-          this.totalWeight = this.$toFixed(Number(this.totalWeight), 3)
-        }
-      },
-      deep: true
-    },
-    allChoosed (newVal, oldVal) {
-      if (newVal) {
-        this.listData.map(itm => {
-          if (itm.status === 14) itm.choosed = true
-        })
-      } else {
-        this.listData.map(itm => {
-          itm.choosed = false
-        })
-      }
-    }
   },
   mounted () {
     this.$nextTick(() => {
@@ -148,7 +191,10 @@ export default {
     clearInterval(this.timeInterval)
   },
   methods: {
+    ...mapActions(['configVal']),
     openFilter () {
+      const statusList = this.billTab[this.swiperCount].statusList
+      this.configVal({ key: 'tempObject', val: {statusList: statusList} })
       this.jump('/pages/vendor/billFilter/main')
     },
     onRefresh (done) {
@@ -171,9 +217,14 @@ export default {
     swiperChange (e) {
       this.showLoading()
       const idx = e.mp.detail.current
+      this.openStatus = false
+      if (idx > 2) {
+        this.scrollId = 'idx_' + (idx - 2)
+      } else {
+        this.scrollId = 'idx_0'
+      }
       this.swiperCount = idx
       this.tabName = this.billTab[idx].status
-      // this.billTab[idx].data = []
       this.isTabDisabled = true
       this.onRefresh()
     },
@@ -181,7 +232,14 @@ export default {
       this.loadFinish = 1
       const me = this
       const sellerOrderList = this.apiList.xy.sellerOrderList
-      const url = `${sellerOrderList.url}?current_page=${this.currentPage}&page_size=${this.pageSize}&tab_status=${this.tabName}&user_id=${this.currentUser.user_id}&search=${this.searchVal}&status=${this.status}`
+      let url = `${sellerOrderList.url}?current_page=${this.currentPage}&page_size=${this.pageSize}&tab_status=${this.tabName}&user_id=${this.currentUser.user_id}`
+      if (this.filterArr.length > 0) {
+        const filterStr = this.filterArr.toString().replace(/,/g, '&')
+        url += `&${filterStr}`
+      }
+      if (this.searchVal) {
+        url += `&search=${this.searchVal}`
+      }
       this.ironRequest(url, '', sellerOrderList.method).then(resp => {
         const idx = me.swiperCount
         this.serverTime = resp.server_time
@@ -210,22 +268,9 @@ export default {
       })
     },
     selectTabs (item, idx) {
+      console.log('status', item.status)
       this.tabName = item.status
-      // this.scrollLeft = (index - 1) * 60
       this.swiperCount = idx
-      // this.billTab.map((item, index) => {
-      //   item.isActive = this.tabName === item.status
-      // })
-      // this.billTab[idx].data = []
-      // this.currentPage = 0
-      // this.startDate = ''
-      // this.billNo = ''
-      // this.endDate = ''
-      // this.listData = []
-      // this.allChoosed = false
-      // this.isTabDisabled = true
-      // this.pageHeight = item.status === '1' ? 150 : 100
-      // this.refresher()
     },
     rowBillItem (obj, type) {
       if (type === 'cancel') {
@@ -275,50 +320,6 @@ export default {
       })
       this.$forceUpdate()
     },
-    loadData (done) {
-      this.loadFinish = 1
-      if (this.currentPage === 0) {
-        this.isload = true
-      } else {
-        this.isload = false
-      }
-      let reqUrl = `orderList.shtml?user_id=${this.currentUser.user_id}&status=${this.tabName}&current_page=${this.currentPage}&page_size=${this.pageSize}&order_no=${this.billNo}&start_date=${this.startDate}&end_date=${this.endDate}`
-      const me = this
-      this.ironRequest(reqUrl, {}, 'get').then(resp => {
-        const idx = me.swiperCount
-        this.serverTime = resp.server_time
-        if (resp && resp.returncode === '0') {
-          let arr = resp.orders
-          if (arr.length === 0 && me.currentPage === 0) {
-            me.listData = []
-            this.billTab[idx].data = []
-            me.isload = false
-          } else if (arr.length > 0 && me.currentPage === 0) {
-            arr.map(itm => {
-              itm.choosed = false
-              me.listData.push(itm)
-              this.billTab[idx].data.push(itm)
-            })
-            me.isload = false
-          } else if (arr.length > 0 && me.currentPage > 0) {
-            arr.map(item => {
-              item.choosed = false
-              me.listData.push(item)
-              this.billTab[idx].data.push(item)
-            })
-            me.isload = false
-          } else {
-            me.isload = false
-            me.currentPage--
-            if (me.billTab[idx].data.length >= 10) me.loadFinish = 2
-          }
-        }
-        me.isTabDisabled = false
-        me.hideLoading()
-        if (me.billTab[idx].data.length < 10) me.loadFinish = 0
-        if (done) done()
-      })
-    },
     loadMore () {
       const me = this
       this.throttle(function () {
@@ -326,10 +327,6 @@ export default {
         me.refresher()
       }, 300)
     },
-    // jumpSearch () {
-    //   this.statisticRequest({ event: 'click_app_myorder_search' })
-    //   this.jump({ path: '/bill/search' })
-    // },
     jumpDetail (item) {
       this.jump(`/pages/billDetail/main?id=${item.no}`)
     },
@@ -415,4 +412,21 @@ export default {
   width: 35px;
   height: 20px;
 }  
+.tab-content
+  overflow hidden
+.tab-more
+  width 50px 
+.status-box
+  position absolute
+  top 0
+  left 0
+  right 0
+  background rgba(0,0,0,0.5)
+  z-index 999
+  .status-item
+    width 30%
+    padding 10px
+    border-radius 20px
+    margin-bottom 10px
+    border 1px solid #EEEEEE
 </style>

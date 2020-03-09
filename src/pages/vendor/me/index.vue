@@ -22,7 +22,7 @@ div
           span 查看全部
           span.text-gray.cuIcon-right
       .flex.text-center.justify-between.padding-top-lg
-        .col(v-for="(bicon, biconIdx) in billIcons", :key="biconIdx", @click="jumpBicon(bicon.url)")
+        .col(v-for="(bicon, biconIdx) in billTrackIcons", :key="biconIdx", @click="jumpBicon(bicon.url)")
           .relative.contract-img
             img(:src="bicon.icon", mode="widthFix")
             .dot(v-if="rowCountObj[bicon.dotKey] > 0", :class="{'max': rowCountObj[bicon.dotKey] > 9}") 
@@ -67,7 +67,7 @@ export default {
   },
   computed: {
     ...mapState({
-      billIcons: state => state.billIcons,
+      billTrackIcons: state => state.billTrackIcons,
       featuresIcons: state => state.featuresIcons,
       meIconList: state => state.meIconList,
       tempObject: state => state.tempObject,

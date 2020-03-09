@@ -7,8 +7,8 @@
         input.col.padding-xs.margin-left-xs(type="text", v-model="searchVal", @input="inputChange")
     iron-scroll(:height="scrollHeight", heightUnit="rpx", @scrolltolower="loadMore", :loadFinish="loadFinish")
       .bg-white.solid-top.row.padding.justify-between(@click="tabSelect(item)", v-for="(item, pickIdx) in pickList", :key="pickIdx")
-        .custom-item
-          span {{item.name}}
+        .row.justify-between.response(:class="{'text-blue': item[valKey] === checkItem[valKey]}")
+          .col.text-left {{item.name}}
           .cuIcon-check(v-if="item[valKey] === checkItem[valKey]")
     .solid-top.text-right.padding.text-gray 共{{total}}条数据
 </template>
@@ -80,8 +80,10 @@ export default {
   },
   methods: {
     loadMore () {},
-    tabSelect () {
-      this.$emit('cb')
+    tabSelect (item) {
+      console.log('item', item)
+      this.checkItem = item
+      this.$emit('cb', this.checkItem)
     },
     inputChange (val) {
       this.selectRemote()
