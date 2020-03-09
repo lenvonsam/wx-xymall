@@ -149,7 +149,7 @@ export default {
   },
   methods: {
     openFilter () {
-      this.jump('/billFilter/main')
+      this.jump('/pages/vendor/billFilter/main')
     },
     onRefresh (done) {
       this.currentPage = 0
