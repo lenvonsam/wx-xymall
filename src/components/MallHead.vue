@@ -7,7 +7,7 @@
     .search.col
       .row
         .cuIcon-search.text-gray.ft-18
-        input.full-width.pl-10(@click="jump('/pages/search/main')", id="mallSearchInput", :disabled="true", type="text", placeholder="品名、材质、规格、产地(空格号隔开)", v-model="searchVal")
+        input.full-width.pl-10(@click="jumpSearchInput", id="mallSearchInput", :disabled="true", type="text", placeholder="品名、材质、规格、产地(空格号隔开)", v-model="searchVal")
         .close-icon(@click="cleanSearch", v-if="searchVal")
           .cuIcon-roundclosefill.ft-18
         //- input.full-width.pl-10(id="mallSearchInput", type="text", placeholder="品名、材质、规格、产地", v-model="searchVal")
@@ -146,7 +146,10 @@ export default {
       bottomBarHeight: state => state.bottomBarHeight
     })
   },
-  onUnload () { },
+  onHide () {
+    const sortIdx = this.sortList.findIndex(item => item.key === this.activeTab)
+    this.sortClose(sortIdx)
+  },
   watch: {
     mallTabVal () {
       this.mallTabValChange()
@@ -194,6 +197,9 @@ export default {
     ...mapActions([
       'configVal'
     ]),
+    jumpSearchInput () {
+      this.jump('/pages/search/main')
+    },
     cleanStandard () {
       this.standardVal = ''
       this.sortList[1].data = []

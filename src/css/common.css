@@ -336,7 +336,7 @@ page,
   position: absolute;
   background: #e54d42;
 }
-.close-icon {
+/* .close-icon {
   height: 40rpx;
 }
 .close-icon .cuIcon-close{
@@ -348,4 +348,4 @@ page,
   line-height: 40rpx;
   text-align: center;
   margin-left: 10rpx;
-}
+} */
