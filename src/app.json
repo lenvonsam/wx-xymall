@@ -1,11 +1,10 @@
 {
   "pages": [
-    "pages/index/main",
-    "pages/cart/main",
     "pages/mall/main",
+    "pages/cart/main",
+    "pages/index/main",
     "pages/ladbillConfirm/main",
     "pages/ladbillConfirmDetail/main",
-
     "pages/me/main",
     "pages/askBuy/main",
     "pages/askBuyCreate/main",
@@ -20,7 +19,6 @@
     "pages/billRecycleDetail/main",
     "pages/bill/main",
     "pages/billDetail/main",
-
     "pages/pay/main",
     "pages/modifyDetail/main",
     "pages/mallFilter/main",
@@ -50,13 +48,17 @@
         "phoneLogin/main",
         "companyUpdate/main"
       ]
-    },
-    {
+    }, {
       "root": "pages/vendor",
       "pages": [
+        "billFilter/main",
         "cart/main",
+        "me/main",
         "quotation/main",
-        "me/main"
+        "contractTrack/main",
+        "contractDelay/main",
+        "pendingReview/main",
+        "reviewDetail/main"
       ]
     }
   ],

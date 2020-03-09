@@ -109,7 +109,7 @@
           .solid-top.row.padding.justify-between(@click="tabSelect('lift', item)", :class="{'text-blue': liftSelect === item}", v-for="(item, liftIdx) in liftList", :key="liftIdx")
             span {{item.label}}  
             .cuIcon-check(v-show="liftSelect === item")
-    alert(title="您还未登录，请先登录", v-model="alertShow", :cb="alertCb")
+    alert(msg="您还未登录，请先登录", v-model="alertShow", :cb="alertCb")
 </template>
 
 <script>

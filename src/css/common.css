@@ -202,17 +202,40 @@ page,
   margin-top: 100rpx;
 }
 
-.main-btn {
+.main-btn,.cancel-btn {
   height: 90rpx;
   width: 100%;
   border-radius: 60rpx;
-  background: #2485ff;
   color: #ffffff;
   font-size: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
   letter-spacing: 6rpx;
+}
+.cancel-btn{
+  background: #C8C8C8;
+}
+.main-btn {
+  background: #2485ff;
+}
+
+.foot-confirm,.foot-cancel {
+  height: 80rpx;
+  width: 100%;
+  border-radius: 10rpx;
+  color: #ffffff;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 6rpx;
+}
+.foot-confirm{
+  background: #2485ff;
+}
+.foot-cancel{
+  background: #C8C8C8;
 }
 
 .main-btn.reverse {
@@ -262,6 +285,7 @@ page,
   width: 20px;
   height: 20px;
 }
+
 .w-200 {
   width: 200px;
 }
@@ -311,4 +335,17 @@ page,
   border-radius: 50%;
   position: absolute;
   background: #e54d42;
+}
+.close-icon {
+  height: 40rpx;
+}
+.close-icon .cuIcon-close{
+  background: #aaa;
+  border-radius: 100%;
+  color: #fff;
+  width: 40rpx;
+  height: 40rpx;
+  line-height: 40rpx;
+  text-align: center;
+  margin-left: 10rpx;
 }

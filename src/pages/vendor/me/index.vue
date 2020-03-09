@@ -39,7 +39,7 @@ div
               label {{rowCountObj[ficon.dotKey] > 99 ? '99+' : rowCountObj[ficon.dotKey]}}
           .padding-top-xs.ft-15 {{ficon.name}}
 
-    alert(:title="alertText", v-model="alertShow", :cb="alertCb")
+    alert(:msg="alertText", v-model="alertShow", :cb="alertCb")
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'

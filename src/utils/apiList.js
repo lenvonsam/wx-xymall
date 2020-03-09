@@ -31,7 +31,17 @@ export default {
     auditDxCheck: { url: '/seller/auditDxCheck.shtml', method: 'post' },
     dx: { url: '/seller/dx.shtml', method: 'post' },
     quotation: { url: '/seller/quotation.shtml', method: 'post' },
-    quotationDetail: { url: '/seller/quotationDetail.shtml', method: 'get' }
+    quotationDetail: { url: '/seller/quotationDetail.shtml', method: 'get' },
+    sellerOrderList: { url: '/seller/orderList.shtml', method: 'get' },
+    sellerNeedAudit: { url: '/seller/needAudit.shtml', method: 'get' },
+    sellerDxAudit: { url: '/seller/dxAudit.shtml', method: 'get' },
+    sellerReturnGoodsAudit: { url: '/seller/returnGoodsAudit.shtml', method: 'get' },
+    sellerOrderDelayAudit: { url: '/seller/orderDelayAudit.shtml', method: 'get' },
+    returnGoodsAudit: { url: '/seller/returnGoodsAudit.shtml', method: 'post' },
+    dxAudit: { url: '/seller/dxAudit.shtml', method: 'post' },
+    orderDelayAudit: { url: '/seller/orderDelayAudit.shtml', method: 'post' },
+    deptList: { url: '/deptList.shtml', method: 'post' },
+    employeeList: { url: 'employeeList.shtml', method: 'post' }
   },
   erp: {
     // 手机验证码登录
