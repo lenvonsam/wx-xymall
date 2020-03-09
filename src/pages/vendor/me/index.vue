@@ -188,7 +188,7 @@ export default {
 .contract
   margin-top 20px
   border-radius 5px
-.contract-img
+.contract-img, .contract-img img
   width 25px
   // height 20px
   margin 0 auto
