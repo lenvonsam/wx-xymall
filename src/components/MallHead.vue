@@ -15,7 +15,7 @@
     .mt-15.text-center.flex.align-stretch
       .col.tab-content
         //- scroll-view.nav(scroll-x, scroll-with-animation, :scroll-left="scrollLeft")
-        scroll-view.nav(scroll-x, scroll-with-animation, :scroll-into-view="scrollId")  
+        scroll-view.nav(scroll-x, :scroll-into-view="scrollId")  
           //- scroll-view.nav(scroll-x, scroll-with-animation, :scroll-into-view="searchCurId")
           .cu-item(:id="'idx_'+index", v-for="(item,index) in sortList[0].data", :class="item.id === tabVal?'text-blue cur':''", :key="index", @click="selectTab(item, index)")
             span {{item.name}}
@@ -349,8 +349,7 @@ export default {
         item.isActive = this.tabVal === item.id
       })
       this.configVal({ key: 'tempObject', val: { name: item.id } })
-      const me = this
-      me.$emit('selectTab', { id: item.id, idx: index })
+      this.$emit('selectTab', { id: item.id, idx: index })
     },
     // loadMore () {
     //   if (this.activeTab === 'standard') {
