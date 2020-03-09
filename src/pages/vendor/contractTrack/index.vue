@@ -99,6 +99,7 @@ export default {
   },
   onShow () {
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 203
+    this.tabName = this.$root.$mp.query.tabName
     // this.scrollHeight = this.screenHeight - this.customBar - 98
   },
   beforeMount () {

@@ -119,15 +119,15 @@ export default {
       name: '待付款',
       dotKey: '',
       url: {
-        path: ''
+        path: '/contractTrack/main?tabName=1'
       }
     },
     {
       icon: '/static/images/dfk_icon.png',
-      name: '待付款确认',
+      name: '已支付待确认',
       dotKey: '',
       url: {
-        path: ''
+        path: '/contractTrack/main?tabName=12'
       }
     },
     {
@@ -135,7 +135,7 @@ export default {
       name: '待提货',
       dotKey: '',
       url: {
-        path: ''
+        path: '/contractTrack/main?tabName=8'
       }
     },
     {
@@ -143,7 +143,7 @@ export default {
       name: '修改中',
       dotKey: '',
       url: {
-        path: ''
+        path: '/contractTrack/main?tabName=10'
       }
     }
   ],
@@ -153,7 +153,7 @@ export default {
       name: '待审核',
       dotKey: '',
       url: {
-        path: ''
+        path: '/pendingReview/main'
       }
     },
     {
@@ -169,7 +169,7 @@ export default {
       name: '合同延时',
       dotKey: '',
       url: {
-        path: ''
+        path: '/contractDelay/main'
       }
     },
     {
