@@ -5,90 +5,90 @@ div
       .relative(@click="jump('/pages/cardList/main?title=消息中心&type=noticeList')", v-if="showNoticeIcon")
         img(src="/static/images/notice_w_icon.png", style="width:30rpx; height: 36rpx")
         .red-dot(v-show="rowCountObj.to_notice > 0", style="width: 12rpx; height: 12rpx; top: 0rpx; right: -10rpx;")
-  template(v-if="currentUser.type && currentUser.type === 'buyer'")
-    .relative
-      .bg-blue.flex.padding-sm.text-white.align-center.me-header
-        .col(@click="jumpProfile")
+  //- template(v-if="currentUser.type && currentUser.type === 'buyer'")
+  .relative
+    .bg-blue.flex.padding-sm.text-white.align-center.me-header
+      .col(@click="jumpProfile")
+        .flex.align-center
+          .author
+            img(:src="imgOuterUrl + (currentUser.avatar == undefined ? '/webpage/zhd/images/img.png' : currentUser.avatar)", v-if="imgOuterUrl")
+          .col.padding-left-sm
+            .ft-15.padding-bottom-sm {{currentUser.user_mark}}
+            .ft-12 {{currentUser.phone}}
+      .cuIcon-right.ft-25(@click="jumpProfile")
+    .account.bg-white.flex.align-center(@click="jumpBalance")
+      .ft-16.text-bold 账户余额
+      .col.ft-16.text-right
+        span.text-blue.text-bold ￥ {{currentUser.account_balance}}
+        span.text-gray.cuIcon-right
+  .padding-sm
+    .bg-white.contract.padding-sm
+      .flex.justify-between
+        .ft-16.text-bold 我的合同
+        .text-gray.ft-14(@click="jumpBillMore") 查看全部
+          span.cuIcon-right
+      .flex.text-center.justify-between.padding-top-lg
+        .col(v-for="(bicon, biconIdx) in billIcons", :key="biconIdx", @click="jumpBicon(bicon.url)")
+          .relative.contract-img
+            img(:src="bicon.icon", mode="widthFix")
+            .dot(v-if="rowCountObj[bicon.dotKey] > 0", :class="{'max': rowCountObj[bicon.dotKey] > 9}") 
+              label {{rowCountObj[bicon.dotKey] > 99 ? '99+' : rowCountObj[bicon.dotKey]}}
+          .padding-top-xs.ft-15 {{bicon.name}}
+    .margin-top-sm.me-icon.bg-white.ft-15(v-for="(cardItem, index) in cardList", :key="index", style="overflow:hidden;border-radius: 10rpx")
+      .item.padding-sm.flex.align-center(v-for="(item, idx) in cardItem", :key="idx", @click="jumpToPage(item.url)")
+        .col
+          .row
+            img(:src="item.imgPath", mode="widthFix")
+            .margin-left-sm.col(:class="{'solid-bottom': idx < (cardItem.length - 1)}", style="color:#000") {{item.title}}
+        .cuIcon-right.text-gray
+    .margin-top-sm.me-icon.bg-white.ft-15(style="overflow:hidden;border-radius: 10rpx")
+      .item.padding-sm.flex.align-center(@click="jump('/pages/account/setting/main')")
+        .col
+          .row
+            img(src="/static/images/wdwld.png", mode="widthFix")
+            .margin-left-sm.col.solid-bottom 用户设置
+        .cuIcon-right.text-gray
+      .item.padding-sm.flex.solid-bottom.align-center.relative.ft-15
+        button(open-type="contact", style="position: absolute; left:0;right: 0; top:0; bottom: 0; z-index: 10; background: transparent")
+        .col
           .flex.align-center
-            .author
-              img(:src="imgOuterUrl + (currentUser.avatar == undefined ? '/webpage/zhd/images/img.png' : currentUser.avatar)", v-if="imgOuterUrl")
-            .col.padding-left-sm
-              .ft-15.padding-bottom-sm {{currentUser.user_mark}}
-              .ft-12 {{currentUser.phone}}
-        .cuIcon-right.ft-25(@click="jumpProfile")
-      .account.bg-white.flex.align-center(@click="jumpBalance")
-        .ft-16.text-bold 账户余额
-        .col.ft-16.text-right
-          span.text-blue.text-bold ￥ {{currentUser.account_balance}}
-          span.text-gray.cuIcon-right
-    .padding-sm
-      .bg-white.contract.padding-sm
-        .flex.justify-between
-          .ft-16.text-bold 我的合同
-          .text-gray.ft-14(@click="jumpBillMore") 查看全部
-            span.cuIcon-right
-        .flex.text-center.justify-between.padding-top-lg
-          .col(v-for="(bicon, biconIdx) in billIcons", :key="biconIdx", @click="jumpBicon(bicon.url)")
-            .relative.contract-img
-              img(:src="bicon.icon", mode="widthFix")
-              .dot(v-if="rowCountObj[bicon.dotKey] > 0", :class="{'max': rowCountObj[bicon.dotKey] > 9}") 
-                label {{rowCountObj[bicon.dotKey] > 99 ? '99+' : rowCountObj[bicon.dotKey]}}
-            .padding-top-xs.ft-15 {{bicon.name}}
-      .margin-top-sm.me-icon.bg-white.ft-15(v-for="(cardItem, index) in cardList", :key="index", style="overflow:hidden;border-radius: 10rpx")
-        .item.padding-sm.flex.align-center(v-for="(item, idx) in cardItem", :key="idx", @click="jumpToPage(item.url)")
-          .col
-            .row
-              img(:src="item.imgPath", mode="widthFix")
-              .margin-left-sm.col(:class="{'solid-bottom': idx < (cardItem.length - 1)}", style="color:#000") {{item.title}}
-          .cuIcon-right.text-gray
-      .margin-top-sm.me-icon.bg-white.ft-15(style="overflow:hidden;border-radius: 10rpx")
-        .item.padding-sm.flex.align-center(@click="jump('/pages/account/setting/main')")
-          .col
-            .row
-              img(src="/static/images/wdwld.png", mode="widthFix")
-              .margin-left-sm.col.solid-bottom 用户设置
-          .cuIcon-right.text-gray
-        .item.padding-sm.flex.solid-bottom.align-center.relative.ft-15
-          button(open-type="contact", style="position: absolute; left:0;right: 0; top:0; bottom: 0; z-index: 10; background: transparent")
-          .col
-            .flex.align-center
-              img(src="/static/images/customer_icon.png", mode="widthFix")
-              .padding-left-sm 在线客服
-          .cuIcon-right.text-gray
-  template(v-else)
-    .relative(style="height: 410rpx")
-      .bg-blue.flex.padding-sm.text-white.align-center.me-header
-        .col(@click="jumpProfile")
-          .flex.align-center
-            .author
-              img(:src="imgOuterUrl + (currentUser.avatar == undefined ? '' : currentUser.avatar)", v-if="imgOuterUrl")
-            .col.padding-left-sm
-              .ft-15.padding-bottom-sm {{currentUser.user_mark}}
-              .ft-12 {{currentUser.phone}}
-        .cuIcon-right.ft-25   
-      .account.bg-white.contract(@click="jumpBalance")
-        .row
-          .ft-16.text-bold 合同跟踪
-          .col.ft-16.text-right
-            span 查看全部
-            span.text-gray.cuIcon-right
-        .flex.text-center.justify-between.padding-top-lg
-          .col(v-for="(bicon, biconIdx) in billIcons", :key="biconIdx", @click="jumpBicon(bicon.url)")
-            .relative.contract-img
-              img(:src="bicon.icon", mode="widthFix")
-              .dot(v-if="rowCountObj[bicon.dotKey] > 0", :class="{'max': rowCountObj[bicon.dotKey] > 9}") 
-                label {{rowCountObj[bicon.dotKey] > 99 ? '99+' : rowCountObj[bicon.dotKey]}}
-            .padding-top-xs.ft-15 {{bicon.name}} 
-    .padding-sm
-      .bg-white.features
-        .ft-18.text-bold.padding-sm.padding-top.padding-bottom 功能列表
-        .grid.col-3.text-center
-          .features-card(v-for="(ficon, fIdx) in featuresIcons", :key="fIdx")
-            .relative.contract-img(v-if="ficon.icon")
-              img(:src="ficon.icon", mode="widthFix")
-              .dot(v-if="rowCountObj[ficon.dotKey] > 0", :class="{'max': rowCountObj[ficon.dotKey] > 9}") 
-                label {{rowCountObj[ficon.dotKey] > 99 ? '99+' : rowCountObj[ficon.dotKey]}}
-            .padding-top-xs.ft-15 {{ficon.name}}
+            img(src="/static/images/customer_icon.png", mode="widthFix")
+            .padding-left-sm 在线客服
+        .cuIcon-right.text-gray
+  //- template(v-else)
+  //-   .relative(style="height: 410rpx")
+  //-     .bg-blue.flex.padding-sm.text-white.align-center.me-header
+  //-       .col(@click="jumpProfile")
+  //-         .flex.align-center
+  //-           .author
+  //-             img(:src="imgOuterUrl + (currentUser.avatar == undefined ? '/webpage/zhd/images/img.png' : currentUser.avatar)", v-if="imgOuterUrl")
+  //-           .col.padding-left-sm
+  //-             .ft-15.padding-bottom-sm {{currentUser.user_mark}}
+  //-             .ft-12 {{currentUser.phone}}
+  //-       .cuIcon-right.ft-25   
+  //-     .account.bg-white.contract(@click="jumpBalance")
+  //-       .row
+  //-         .ft-16.text-bold 合同跟踪
+  //-         .col.ft-16.text-right
+  //-           span 查看全部
+  //-           span.text-gray.cuIcon-right
+  //-       .flex.text-center.justify-between.padding-top-lg
+  //-         .col(v-for="(bicon, biconIdx) in billIcons", :key="biconIdx", @click="jumpBicon(bicon.url)")
+  //-           .relative.contract-img
+  //-             img(:src="bicon.icon", mode="widthFix")
+  //-             .dot(v-if="rowCountObj[bicon.dotKey] > 0", :class="{'max': rowCountObj[bicon.dotKey] > 9}") 
+  //-               label {{rowCountObj[bicon.dotKey] > 99 ? '99+' : rowCountObj[bicon.dotKey]}}
+  //-           .padding-top-xs.ft-15 {{bicon.name}} 
+  //-   .padding-sm
+  //-     .bg-white.features
+  //-       .ft-18.text-bold.padding-sm.padding-top.padding-bottom 功能列表
+  //-       .grid.col-3.text-center
+  //-         .features-card(v-for="(ficon, fIdx) in featuresIcons", :key="fIdx")
+  //-           .relative.contract-img(v-if="ficon.icon")
+  //-             img(:src="ficon.icon", mode="widthFix")
+  //-             .dot(v-if="rowCountObj[ficon.dotKey] > 0", :class="{'max': rowCountObj[ficon.dotKey] > 9}") 
+  //-               label {{rowCountObj[ficon.dotKey] > 99 ? '99+' : rowCountObj[ficon.dotKey]}}
+  //-           .padding-top-xs.ft-15 {{ficon.name}}
   alert(:msg="alertText", v-model="alertShow", :cb="alertCb")
 </template>
 <script>
