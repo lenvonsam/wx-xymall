@@ -189,13 +189,14 @@ export default {
       delete this.queryObject.standards
       delete this.queryObject.materials
       delete this.queryObject.supplys
+      delete this.queryObject.fromPage
       if (!this.tempObject.name) this.refresher()
     } else if (this.tempObject.fromPage === 'mallFilter' && this.tempObject.noBack) {
       // 分类
       this.swiperFirst = 1
-      this.queryObject.search = ''
       Object.assign(this.queryObject, this.tempObject)
-      delete this.queryObject.noBack
+      delete this.queryObject.fromPage
+      delete this.queryObject.search
       if (this.tempObject.name === '') {
         this.isRefresh = 'refresh'
         this.currentPage = 0
@@ -204,6 +205,11 @@ export default {
       } else if (this.tempObject.name === this.mallTabVal) {
         this.refresher()
       } else if (this.tempObject.standards) {
+        delete this.queryObject.noBack
+        // delete this.queryObject.materials
+        // delete this.queryObject.supplys
+        // delete this.queryObject.fromPage
+        // delete this.queryObject.search
         this.mallTabVal = this.tempObject.name || ''
       }
     } else {
@@ -256,6 +262,8 @@ export default {
       // this.isload = true
     },
     swiperChange (e) {
+      // debugger
+      console.log('swiperChange---------')
       const idx = e.mp.detail.current
       this.mallTabVal = this.goodsNameList[idx].id
       if (this.goodsNameList[idx]) {
@@ -266,15 +274,14 @@ export default {
         this.queryObject.name = this.mallTabVal
         if (this.swiperFirst !== 1) {
           delete this.queryObject.standards
-          delete this.queryObject.materials
-          delete this.queryObject.supplys
         }
+        delete this.queryObject.materials
+        delete this.queryObject.supplys
         console.log('swiperFirst', this.swiperFirst)
         const me = this
         setTimeout(() => {
           me.onRefresh()
         }, 100)
-
         console.log('prevIdx', this.prevIdx)
       }
     },
