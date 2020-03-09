@@ -6,7 +6,7 @@
       .ft-14 分类
     .search.col
       .row
-        .cuIcon-search.text-gra.ft-18
+        .cuIcon-search.text-gray.ft-18
         input.full-width.pl-10(@click="jump('/pages/search/main')", id="mallSearchInput", :disabled="true", type="text", placeholder="品名、材质、规格、产地(空格号隔开)", v-model="searchVal")
         .close-icon(@click="cleanSearch", v-if="searchVal")
           .cuIcon-roundclosefill.ft-18
@@ -177,8 +177,8 @@ export default {
         standard: [this.tempObject.standards]
       }
       this.sortList[1].data = [
-        {name: '全部', isActive: false},
-        {name: this.tempObject.standards, isActive: true}
+        { name: '全部', isActive: false },
+        { name: this.tempObject.standards, isActive: true }
       ]
       this.$emit('filter', filters)
       if (this.tempObject.name !== this.mallTabVal) {
