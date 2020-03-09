@@ -269,7 +269,12 @@ export default {
           delete this.queryObject.materials
           delete this.queryObject.supplys
         }
-        this.onRefresh()
+        console.log('swiperFirst', this.swiperFirst)
+        const me = this
+        setTimeout(() => {
+          me.onRefresh()
+        }, 100)
+
         console.log('prevIdx', this.prevIdx)
       }
     },

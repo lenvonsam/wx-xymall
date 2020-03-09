@@ -320,10 +320,18 @@ export default {
       }
       const result = this.calc(options)
       const money = Number(this.$toFixed(result.price, 2))
-      const oldLift = isLift === '1' ? this.$toFixed(Number(item.weight) * lift, 2) : 0
-      const everyLift = isLift === '1' ? this.$toFixed(Number(result.weight * lift), 2) : 0
-      this.newLift = Number(this.$toFixed(this.newLift + Number(everyLift) - Number(oldLift), 2))
+      // const oldLift = isLift === '1' ? this.$toFixed(Number(item.weight) * lift, 2) : 0
+      // const everyLift = isLift === '1' ? this.$toFixed(Number(result.weight * lift), 2) : 0
+      // this.newLift = Number(this.$toFixed(this.newLift + Number(everyLift) - Number(oldLift), 2))
+
       item.weight = this.$toFixed(result.weight, 3)
+      let totalWeight = 0
+      this.modifyList.map(res => {
+        if (isLift === '1') {
+          totalWeight += Number(res.weight)
+        }
+      })
+      this.newLift = Number(this.$toFixed(totalWeight * lift, 2))
       console.log('weight', item.weight)
       this.newPrice = Number(this.$toFixed(this.newPrice + money - item.price, 2))
       item.price = Number(money)

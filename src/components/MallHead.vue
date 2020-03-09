@@ -169,6 +169,9 @@ export default {
       this.standardStr = ''
       this.materialStr = ''
       this.originStr = ''
+      this.sortList[1].data = []
+      this.sortList[2].data = []
+      this.sortList[3].data = []
     } else if (this.tempObject.fromPage === 'mallFilter' && this.tempObject.noBack) {
       const filters = {
         standard: [this.tempObject.standards]
@@ -347,9 +350,7 @@ export default {
       })
       this.configVal({ key: 'tempObject', val: { name: item.id } })
       const me = this
-      setTimeout(() => {
-        me.$emit('selectTab', { id: item.id, idx: index })
-      }, 100)
+      me.$emit('selectTab', { id: item.id, idx: index })
     },
     // loadMore () {
     //   if (this.activeTab === 'standard') {
