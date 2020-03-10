@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  nav-bar(:title="pageTitle", isBack)
+  nav-bar(:title="pageTitle", :isBack="!share", :isCustom="share")
   .padding(v-if="pageType === 'noticeDetail'")
     .bg-white.padding(style="box-shadow: 0 0 5rpx rgba(7, 1, 2, 0.04)")
       div {{obj.title}}
@@ -31,7 +31,8 @@ export default {
     return {
       pageTitle: '',
       pageType: 'noticeDetail',
-      obj: {}
+      obj: {},
+      share: false
     }
   },
   computed: {
@@ -43,10 +44,30 @@ export default {
   onShow () {
     this.pageTitle = ''
     this.pageType = 'noticeDetail'
+    this.share = false
     const query = this.$root.$mp.query
     if (query.title) this.pageTitle = query.title
     if (query.type) this.pageType = query.type
+    if (query.shareMe) this.share = true
     if (this.pageType !== 'registProtocol' || this.pageTitle !== 'aboutUs') this.getRemoteInfo()
+  },
+  onShareAppMessage () {
+    const query = this.$root.$mp.query
+    let path = 'pages/h5/main?shareMe=1&title=' + query.title + '&type=' + query.type
+    if (query.type === 'noticeDetail') {
+      path += '&id=' + query.id
+    }
+    console.log('123333', path)
+    return {
+      title: '公告详情',
+      path: path,
+      success () {
+        this.showMsg('转发成功')
+      },
+      error () {
+        this.showMsg('转发失败')
+      }
+    }
   },
   methods: {
     async getRemoteInfo () {

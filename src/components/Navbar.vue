@@ -10,9 +10,9 @@
       .service-btn
         img(src="/static/images/service_icon.png")
         button(open-type="contact")
-    .action.border-custom(:style="{width: custom.width + 'px', height: custom.height + 'px', marginLeft: 'calc(750rpx - ' + custom.right + 'px)'}", v-if="isCustom")
-      text.cuIcon-back(@click="back")
-      text.cuIcon-homefill(@click="toHome")
+    .action.padding-right(v-if="isCustom")
+      //- text.cuIcon-back(@click="back")
+      span.cuIcon-homefill(@click="toHome")
     .content(:style="{top: statusBar + 'px'}")
       div {{title}}
 </template>

@@ -73,6 +73,7 @@ export default {
     })
   },
   onShow () {
+    this.whiteStatusBar()
     this.getMonth()
     this.typeLabel = '全部'
     this.monthLabel = '时间'
