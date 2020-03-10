@@ -53,7 +53,7 @@ const wxMixins = {
       })
     },
     toHome () {
-      mpvue.reLaunch('/pages/index/main')
+      mpvue.switchTab({ url: '/pages/index/main' })
     },
     redirect (url) {
       mpvue.redirectTo({

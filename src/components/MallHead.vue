@@ -459,7 +459,7 @@ export default {
   width 50px
 .filter-list
   margin 0 5px
-  width 30%
+  width 25%
   line-height 30px
   padding 0 5px
   border-radius 5px
