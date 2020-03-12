@@ -9,7 +9,7 @@ div
             //- .flex-30
             .cuIcon-search.padding-right-sm
             .col
-              input(placeholder="请输入关键词搜索", v-model="searchWord", confirm-type="search", @confirm="searchClick")
+              input(placeholder="请输入关键词搜索", v-model="searchWord", confirm-type="search", @confirm="searchClick", auto-focus)
             .close-icon(@click="cleanSearch", v-if="searchWord")
               .cuIcon-roundclosefill.ft-18
             //- icon.adjust.cuIcon-close.padding-left(@click="cleanSearch") 

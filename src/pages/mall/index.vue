@@ -41,7 +41,8 @@ div
                     span.ml-8(v-if="item[mallTypeObject[itemType].weightRange]") 重量范围: {{item[mallTypeObject[itemType].weightRange]}}
                   .row.pt-5.flex-center.ft-13.text-gray
                     .col
-                      span(v-if="item[mallTypeObject[itemType].max_count] > 0") {{item[mallTypeObject[itemType].max_count]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
+                      span(v-if="item[mallTypeObject[itemType].max_count] > 0 && isLogin") {{item[mallTypeObject[itemType].max_count]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
+                      span(v-else) --支/--吨
                     .flex-120.relative.text-right.ft-14.row.justify-end
                       //- .mall-row(:class="{'notice': item.max_count === 0}")
                       .blue-buy(v-if="item.max_count == 0 && isLogin",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
@@ -60,7 +61,8 @@ div
                     span.ft-10 公差/重量范围
                     span.ml-8 {{item[mallTypeObject[itemType].tolerance] ? item[mallTypeObject[itemType].tolerance] : '--'}}/{{item[mallTypeObject[itemType].weightRange]?item[mallTypeObject[itemType].weightRange]: '--'}}
                   .text-gray.ft-12
-                    span(v-if="item[mallTypeObject[itemType].max_count] > 0") {{item[mallTypeObject[itemType].max_count]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
+                    span(v-if="item[mallTypeObject[itemType].max_count] > 0 && isLogin") {{item[mallTypeObject[itemType].max_count]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
+                    span(v-else) --支/--吨
                   .text-blue.ft-15.text-bold 
                     //- ￥{{item[mallTypeObject[itemType].price]}}
                     span.text-red.ft-13(v-if="item.price === '--'") 开售时间:{{item.show_time}}
@@ -166,6 +168,18 @@ export default {
       this.prevIdx = this.goodsNameList.findIndex(item => {
         return item.id === oldVal
       })
+    }
+  },
+  onShareAppMessage () {
+    return {
+      title: '型云商城',
+      path: 'pages/mall/main',
+      success () {
+        this.showMsg('转发成功')
+      },
+      error () {
+        this.showMsg('转发失败')
+      }
     }
   },
   // onHide () {

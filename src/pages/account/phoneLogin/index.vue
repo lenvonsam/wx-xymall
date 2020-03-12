@@ -24,7 +24,7 @@
         input.no-border.ft-16(placeholder="请输入新密码(6-12位)", v-model="pwd", type="password", :maxlength="12")
     .row(v-if="pageType=='smsLogin'")
       .col.text-blue.padding-top(@click="jump('/pages/account/register/main')") 立即注册
-      .col.text-right.padding-top(@click="jump('/pages/account/phoneLogin/main?type=forgetPwd')") 忘记密码？
+      .col.text-right.padding-top(@click="jumpToChildPwd") 忘记密码？
     .mt-50.main-btn(hover-class="hover-gray", @click="remoteHandler") {{pageType === 'smsLogin' ? '登录' : '提交'}}
     .margin-top-sm.text-center.text-blue(@click="back", v-if="pageType === 'smsLogin'") 账号密码登录
 </template>
@@ -47,7 +47,8 @@ export default {
   },
   computed: {
     ...mapState({
-      currentVersion: state => state.currentVersion
+      currentVersion: state => state.currentVersion,
+      tempObject: state => state.tempObject
     })
   },
   components: {
@@ -58,6 +59,11 @@ export default {
     this.canClick = true
     this.pageType = 'smsLogin'
     if (this.$root.$mp.query.type) this.pageType = this.$root.$mp.query.type
+    if (this.tempObject.action && this.tempObject.action === 'pageBack') {
+      this.pageType = 'smsLogin'
+      this.configVal({ key: 'tempObject', val: {} })
+    }
+    this.pageType === 'smsLogin' ? this.pageTitle = '手机登录' : this.pageTitle = '找回密码'
     console.log('pageType:>>', this.pageType)
   },
   onUnload () {
@@ -65,12 +71,19 @@ export default {
     this.phone = ''
     this.code = ''
     this.pwd = ''
+    if (this.tempObject.action && this.tempObject.action === 'pageForward') {
+      this.configVal({ key: 'tempObject', val: { action: 'pageBack' } })
+    }
   },
   methods: {
     ...mapActions([
       'setUser',
       'configVal'
     ]),
+    jumpToChildPwd () {
+      this.configVal({ key: 'tempObject', val: { action: 'pageForward' } })
+      this.jump('/pages/account/phoneLogin/main?type=forgetPwd')
+    },
     resetVal () {
       this.phone = ''
       this.code = ''
@@ -140,7 +153,12 @@ export default {
               me.confirm({ title: '友情提示', content: '登录密码修改成功，请重新登录' }).then(res => {
                 if (res === 'confirm') {
                   me.resetVal()
-                  me.back()
+                  if (me.tempObject.action && me.tempObject.action === 'pageForward') {
+                    me.configVal({ key: 'tempObject', val: {} })
+                    me.back(2)
+                  } else {
+                    me.back()
+                  }
                 }
               })
             }

@@ -1,8 +1,8 @@
 {
   "pages": [
+    "pages/index/main",
     "pages/mall/main",
     "pages/cart/main",
-    "pages/index/main",
     "pages/ladbillConfirm/main",
     "pages/ladbillConfirmDetail/main",
     "pages/me/main",
