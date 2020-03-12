@@ -7,6 +7,8 @@ div
         .flex.align-center
           .cuIcon-search
           input.full-width.padding-left-sm(v-model="searchVal", type="text", placeholder="合同号/公司名称")
+          .close-icon(@click="searchVal = ''", v-if="searchVal")
+            .cuIcon-roundclosefill.ft-18
       .search-btn.text-blue(@click="searchOrder") 搜索
       .filter-btn.row(@click="openFilter")
         span 筛选
@@ -122,8 +124,6 @@ export default {
       listData: [],
       triggered: false,
       isload: false,
-      // startDate: '',
-      // endDate: '',
       isTabDisabled: false,
       btnDisable: false,
       scrollHeight: '0px',
@@ -137,15 +137,6 @@ export default {
       statusList: []
     }
   },
-  // watch: {
-  //   searchVal (newVal) {
-  //     const me = this
-  //     this.throttle(function () {
-  //       me.currentPage = 0
-  //       me.refresher()
-  //     }, 300)
-  //   }
-  // },
   computed: {
     ...mapState({
       tempObject: state => state.tempObject
@@ -153,8 +144,10 @@ export default {
   },
   onShow () {
     if (this.tempObject.fromPage === 'billFilter') {
+      this.tabName = '6'
       this.filterArr = []
       const obj = {
+        tstc_no: this.tempObject.no,
         employee_code: this.tempObject.employee.id,
         dept_code: this.tempObject.dept.id,
         other_id: this.tempObject.custom.id,
@@ -169,11 +162,15 @@ export default {
       })
       this.currentPage = 0
       this.onRefresh()
+    } else if (this.$root.$mp.query.tabName) {
+      this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 203
+      this.tabName = this.$root.$mp.query.tabName
+      const idx = this.billTab.findIndex(item => item.status === this.tabName)
+      this.swiperCount = idx
+    } else {
+      this.tabName = '6'
+      this.swiperCount = 0
     }
-    this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 203
-    this.tabName = this.$root.$mp.query.tabName || '6'
-    console.log('tabName', this.tabName)
-    // this.scrollHeight = this.screenHeight - this.customBar - 98
   },
   beforeMount () {
     this.onRefresh()
@@ -185,6 +182,9 @@ export default {
         me.countTime()
         me.serverTime += 1000
       }, 1000)
+      if (this.swiperCount > 2) {
+        this.scrollId = 'idx_' + (this.swiperCount - 2)
+      }
     })
   },
   onUnload () {
@@ -203,13 +203,10 @@ export default {
       this.refresher(done)
     },
     searchOrder () {
-      this.startDate = ''
-      this.endDate = ''
       this.listData = []
-      this.allChoosed = false
       this.isTabDisabled = true
       this.swiperCount = 0
-      this.tabName = '0'
+      this.tabName = '6'
       this.billTab[0].data = []
       this.isload = true
       this.refresher()
@@ -269,6 +266,7 @@ export default {
     },
     selectTabs (item, idx) {
       console.log('status', item.status)
+      debugger
       this.tabName = item.status
       this.swiperCount = idx
     },
@@ -328,7 +326,7 @@ export default {
       }, 300)
     },
     jumpDetail (item) {
-      this.jump(`/pages/billDetail/main?id=${item.no}`)
+      this.jump(`/pages/billDetail/main?id=${item.tstc_no}`)
     },
     billCancel (item) {
       if (this.tabName === '0') this.statisticRequest({ event: 'click_app_myorder_all_cancel' })
@@ -344,7 +342,6 @@ export default {
             if (res && res.returncode === '0') {
               me.showMsg('合同已取消', 'positive')
               // this.listData = []
-              // this.allChoosed = false
               this.isTabDisabled = true
               me.billTab[me.swiperCount].data = []
               this.currentPage = 0

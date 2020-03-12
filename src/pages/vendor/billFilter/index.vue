@@ -2,36 +2,36 @@
 div
   nav-bar(title="条件筛选", isBack)
   .bg-white.text-right.text-gray(@click="closeSelect")
-    .row.justify-between.solid-bottom.item
+    .row.justify-between.solid-bottom.item(:style="itemSty")
       .label 合同编号
       input.col(type="text", v-model="form.no", placeholder="请输入合同号")
-    .row.justify-between.solid-bottom.item(@click="custmShow = !custmShow")
+    .row.justify-between.solid-bottom.item(@click="custmShow = !custmShow", :style="itemSty")
       .label 客户名称
       .text-right.row.justify-end.col.select
         span {{customName || '请选择客户'}}
         span.cuIcon-unfold
       //- search-select(:selectSty="'top: 90rpx'", :show="custmShow", :total="6", :list="custmList")
-    .row.justify-between.solid-bottom.item
+    .row.justify-between.solid-bottom.item(:style="itemSty")
       .label 起始日期
       picker.col(@change="startDateCb", mode="date")
-        .text-right.text-gray {{form.startDate}}
-    .row.justify-between.solid-bottom.item
+        .text-right.text-gray {{form.startDate || '请选择起始日期'}}
+    .row.justify-between.solid-bottom.item(:style="itemSty")
       .label 结束日期
       picker.col(@change="endDateCb", mode="date")
-        .text-right.text-gray {{form.endDate}}
-    .row.justify-between.solid-bottom.item(@click.stop="openSelect('dept')")
+        .text-right.text-gray {{form.endDate || '请选择结束日期'}}
+    .row.justify-between.solid-bottom.item(@click.stop="openSelect('dept')", :style="itemSty")
       .label 业务部门
       .text-right.row.justify-end.col.select(:class="{'text-blue': selectShow==='dept'}")
         span {{deptName || '请选择部门'}}
         span(:class="selectShow==='dept' ? 'cuIcon-fold' : 'cuIcon-unfold'")
-      search-select(:selectSty="'top: 90rpx'", :scrollHeight="employeeHeight", :selectType="'dept'", @cb="selectCb($event, 'dept')", :show="selectShow==='dept'")  
-    .row.justify-between.solid-bottom.item(@click.stop="openSelect('employee')")
+      search-select(:selectSty="'top: 90rpx; height: '+ (contentHeight - 450) +'rpx'", :scrollHeight="300", :selectType="'dept'", @cb="selectCb($event, 'dept')", :show="selectShow==='dept'")  
+    .row.justify-between.solid-bottom.item(@click.stop="openSelect('employee')", :style="itemSty")
       .label 业务人员
       .text-right.row.justify-end.col.select(:class="{'text-blue': selectShow==='employee'}")
         span {{employeeName || '请选择业务员'}}
         span(:class="selectShow==='employee' ? 'cuIcon-fold' : 'cuIcon-unfold'")
-      search-select(:selectSty="'top: 90rpx'", :scrollHeight="employeeHeight", :selectType="'employee'", @cb="selectCb($event,'employee')", :show="selectShow==='employee'", :inputShow="true")
-    .row.justify-between.solid-bottom.item
+      search-select(:selectSty="'top: 90rpx; height: '+ (contentHeight - 500) +'rpx'", :scrollHeight="300", :selectType="'employee'", @cb="selectCb($event,'employee')", :show="selectShow==='employee'", :inputShow="true")
+    .row.justify-between.solid-bottom.item(:style="itemSty")
       .label 状态
       .text-right.row.justify-end.col.select
         picker.col(@change="statusCb", mode="selector", :range="statusList", range-key="label")
@@ -50,9 +50,9 @@ export default {
   },
   data () {
     return {
+      itemSty: 'height: 90rpx',
       custmList: ['江苏省安徽四暗有限公司', '江苏省安徽四暗有限公司'],
       contentHeight: 0,
-      employeeHeight: 0,
       selectShow: '',
       statusList: [],
       deptName: '',
@@ -77,11 +77,7 @@ export default {
   },
   onShow () {
     this.statusList = this.tempObject.statusList || []
-    this.contentHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 100
-    this.employeeHeight = this.contentHeight - 750
-    this.form.startDate = this.date2Str(new Date())
-    this.form.endDate = this.date2Str(new Date())
-    console.log('this.employeeHeight', this.employeeHeight)
+    this.contentHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar)
   },
   methods: {
     ...mapActions(['configVal']),
@@ -106,8 +102,8 @@ export default {
         this.form = {
           no: '',
           custom: '',
-          startDate: this.date2Str(new Date()),
-          endDate: this.date2Str(new Date()),
+          startDate: '',
+          endDate: '',
           dept: '',
           employee: '',
           status: ''
@@ -139,8 +135,9 @@ export default {
   text-align left 
   color #000
 .item
-  height 45px
+  // height 45px
   padding 0 10px
+  // padding 10px
   position relative
   input,.select
     height 100%

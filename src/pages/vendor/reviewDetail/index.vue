@@ -27,7 +27,7 @@ div
       .ft-18.padding-top-sm.padding-bottom-sm 商品信息
       .bg-white.card(v-for="(item, idx) in detailData.list", :key="idx")
         .row.justify-between.padding-bottom-xs
-          .text-black.col {{item.name}} {{item. standard}}
+          .text-black.col {{item.name}} {{item.standard}}
           .text-blue ¥ {{auditType === '定向' ? item.order_price : item.money}}
         .text-gray
           template(v-if="auditType === '定向'")  

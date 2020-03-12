@@ -48,17 +48,25 @@
         "phoneLogin/main",
         "companyUpdate/main"
       ]
-    },
-    {
+    },{
       "root": "pages/vendor",
       "pages": [
-        "billFilter/main",
-        "cart/main",
         "me/main",
-        "quotation/main",
-        "contractTrack/main",
+        "returnApplicationDetail/main",
+        "returnApplicationList/main",
+        "returnApplication/main",
+        "sumGoods/main",
+        "receivables/main",
+        "balance/main",
+        "balanceFilter/main",
+        "quotationList/main",
+        "quotationDetail/main",
         "contractDelay/main",
         "pendingReview/main",
+        "contractTrack/main",
+        "billFilter/main",
+        "cart/main",
+        "quotation/main",
         "reviewDetail/main"
       ]
     }

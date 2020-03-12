@@ -32,7 +32,7 @@ div
     .bg-white.features
       .ft-18.text-bold.padding-sm.padding-top.padding-bottom 功能列表
       .grid.col-3.text-center
-        .features-card(v-for="(ficon, fIdx) in featuresIcons", :key="fIdx")
+        .features-card(v-for="(ficon, fIdx) in featuresIcons", :key="fIdx", @click="jump(ficon.url.path)")
           .relative.contract-img(v-if="ficon.icon")
             img(:src="ficon.icon", mode="widthFix")
             .dot(v-if="rowCountObj[ficon.dotKey] > 0", :class="{'max': rowCountObj[ficon.dotKey] > 9}") 
@@ -46,17 +46,6 @@ import { mapState, mapActions } from 'vuex'
 export default {
   data () {
     return {
-      cardList: [
-        [
-          { title: '合同回收站', imgPath: '/static/images/recycle_icon.png', url: '/pages/billRecycle/main' },
-          { title: '我的提单', imgPath: '/static/images/order_icon.png', url: '/pages/ladbill/main' },
-          { title: '我的发票', imgPath: '/static/images/wdfp.png', url: '/pages/invoice/main' },
-          { title: '合同修改', imgPath: '/static/images/contract_icon.png', url: '/pages/modify/main' }
-        ], [
-          { title: '我的加工', imgPath: '/static/images/operating_icon.png', url: '/pages/process/main' },
-          { title: '我的求购', imgPath: '/static/images/shop_icon.png', url: '/pages/askBuy/main' }
-        ]
-      ],
       avatarDirection: 'none',
       // 全部订单下面一行的数字显示
       rowCountObj: {},
@@ -67,9 +56,8 @@ export default {
   },
   computed: {
     ...mapState({
-      billTrackIcons: state => state.billTrackIcons,
-      featuresIcons: state => state.featuresIcons,
-      meIconList: state => state.meIconList,
+      billTrackIcons: state => state.vendor.billTrackIcons,
+      featuresIcons: state => state.vendor.featuresIcons,
       tempObject: state => state.tempObject,
       serviceCall: state => state.serviceCall
     })
@@ -87,10 +75,18 @@ export default {
         return
       }
       this.showNoticeIcon = this.currentUser.message_switch === '1'
-      this.ironRequest('toOperCounts.shtml?user_id=' + this.currentUser.user_id, {}, 'get').then(resp => {
+      const modules = this.apiList.xy.modules
+      this.ironRequest(modules.url, {user_id: this.currentUser.user_id}, modules.method).then(resp => {
+      // FIXME 权限和数量
+      // this.ironRequest('toOperCounts.shtml?user_id=' + this.currentUser.user_id, {}, 'get').then(resp => {
         // console.log(resp.data)
         if (resp && resp.returncode === '0') {
-          this.rowCountObj = resp
+          // this.rowCountObj = resp
+          // resp.map(item => {
+          //   if (item.flag) {
+          //     this.rowCountObj[item.memu_name] = item.count
+          //   }
+          // })
           this.$forceUpdate()
         }
       })
@@ -126,18 +122,6 @@ export default {
       } else {
         this.jump('/pages/account/login/main')
       }
-    },
-    jumpToPage (url) {
-      console.log('jumpToPage', url)
-      if (url === '/pages/modify/main') this.statisticRequest({ event: 'click_app_me_modify' })
-      if (url === '/pages/recycle/main') this.statisticRequest({ event: 'click_app_me_recycle' })
-      if (url === '/pages/ladbill/main') this.statisticRequest({ event: 'click_app_me_lad' })
-      if (url === '/pages/invoice/main') this.statisticRequest({ event: 'click_app_me_invoice' })
-      if (url === '/pages/contract/main') this.statisticRequest({ event: 'click_app_me_contract' })
-      if (url === '/pages/process/main') this.statisticRequest({ event: 'click_app_me_process' })
-      if (url === '/pages/askBuy/main') this.statisticRequest({ event: 'click_app_me_demand' })
-      if (url === '/pages/address/main') this.statisticRequest({ event: 'click_app_me_address' })
-      this.jump(url)
     },
     jumpProfile () {
       this.statisticRequest({ event: 'click_app_me_information' })

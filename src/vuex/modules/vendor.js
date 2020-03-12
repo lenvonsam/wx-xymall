@@ -57,7 +57,7 @@ export default {
         name: '合同延时',
         dotKey: '',
         url: {
-          path: '/contractDelay/main'
+          path: '/pages/vendor/contractDelay/main'
         }
       },
       {
@@ -65,7 +65,7 @@ export default {
         name: '报价单管理',
         dotKey: '',
         url: {
-          path: ''
+          path: '/pages/vendor/quotationList/main'
         }
       },
       {
@@ -73,7 +73,7 @@ export default {
         name: '账户余额',
         dotKey: '',
         url: {
-          path: ''
+          path: '/pages/vendor/balance/main'
         }
       },
       {
@@ -81,7 +81,7 @@ export default {
         name: '应收款预警',
         dotKey: '',
         url: {
-          path: ''
+          path: '/pages/vendor/receivables/main'
         }
       },
       {
@@ -89,7 +89,7 @@ export default {
         name: '现货物资',
         dotKey: '',
         url: {
-          path: ''
+          path: '/pages/vendor/sumGoods/main'
         }
       },
       {
@@ -113,7 +113,7 @@ export default {
         name: '退货管理',
         dotKey: '',
         url: {
-          path: ''
+          path: '/pages/vendor/returnApplicationList/main'
         }
       },
       {},

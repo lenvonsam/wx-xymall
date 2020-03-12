@@ -4,10 +4,11 @@
     .close(@click="btnClick('cancel')")
       .cuIcon-close
     .padding.text-xl.text-black.text-center.text-bold {{title}}
-    .padding.padding-lr-lg
-      .bg-gray.input-box
-        input(:placeholder="placeholder", v-model="inputVal", type="password", v-if="type === 'password'", :maxlength="12")
-        input(:placeholder="placeholder", v-model="inputVal", v-else)
+    slot
+      .padding.padding-lr-lg
+        .bg-gray.input-box
+          input(:placeholder="placeholder", v-model="inputVal", type="password", v-if="type === 'password'", :maxlength="12")
+          input(:placeholder="placeholder", v-model="inputVal", v-else)
     .padding.row
       .col.text-center
         .confirm-btn.cancel(hover-class="hover-gray", @click="btnClick('cancel')") 取消
@@ -57,7 +58,7 @@ export default {
   },
   methods: {
     btnClick (val) {
-      if (val === 'confirm') {
+      if (val === 'confirm' && this.type !== 'customize') {
         if (this.inputVal.trim().length === 0) {
           this.showMsg('不能为空')
           return

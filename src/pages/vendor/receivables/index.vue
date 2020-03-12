@@ -1,47 +1,53 @@
 <template lang="pug">
 div
-  nav-bar(title="待审核", isBack)
+  nav-bar(title="应收款预警", isBack)
   .head.bg-white(:style="{height: '115rpx'}")
     .serach.flex.align-center.padding-sm
       .col.search-input.text-gray
         .flex.align-center
           .cuIcon-search
-          input.full-width.padding-left-sm(v-model="searchVal", type="text", placeholder="单号")
+          input.full-width.padding-left-sm(v-model="searchVal", type="text", placeholder="公司名称/部门/业务员")
           .close-icon(@click="searchVal = ''", v-if="searchVal")
             .cuIcon-roundclosefill.ft-18
       .search-btn.text-blue(@click="searchOrder") 搜索
-      .filter-btn.row(@click="openFilter")
-        span 筛选
-        .cuIcon-filter
   template(v-if="isload")
     time-line(type="mallist")
   template(v-else)
     template(v-if="listData.length > 0")
       div(:style="{height: scrollHeight+'rpx'}")
-        iron-scroll(:swiperIdx="swiperIdx", @scrolltolower="loadMore", heightUnit="rpx", :height="scrollHeight", :refresh="true", @onRefresh="onRefresh", :loadFinish="loadFinish")          
+        iron-scroll(@scrolltolower="loadMore", heightUnit="rpx", :height="scrollHeight", :refresh="true", @onRefresh="onRefresh", :loadFinish="loadFinish")          
           .bill-list(v-for="(item, itemIdx) in listData", :key="itemIdx", @click="jumpDetail(item)")
             .bg-white.box
               .padding-sm
                 .flex.justify-between.padding-bottom-sm
                   .col
                     .flex.align-center
-                      .ft-16.padding-right-sm {{auditType[item.audit_type]}} - {{item.tstc_no}}
-                  .text-red {{statusList[item.status] || '待审核'}}
+                      .ft-16.padding-right-sm {{item.datas_balcorpname}}
+                  .text-black ￥{{item.zh}}
                 .text-gray
-                  .flex.justify-between.padding-bottom-xs 
-                    span {{item.oper_name}}
-                    .text-black(v-if="item.audit_type === 1") 截至时间：{{item.times}}
-                    .text-black(v-else) {{item.times}}
-                  .padding-bottom-xs {{item.emp_name}}
+                  .padding-bottom-xs 
+                    span 智恒达：￥{{item.aa}}
+                    span.padding-left-xs 岳阳通：￥{{item.bb}}
+                  .padding-bottom-xs
+                    span {{item.dept_name}}
+                    span.padding-left-xs {{item. employee_name}}
+                .solid-top.text-black.ft-15.margin-top-xs.padding-top-sm.row.justify-between(v-if="item.bankroll_date")
+                  .col
+                    span 最近应收：
+                    span.padding-left-xs.text-red {{item.bankroll_date}}  
+                  span {{item.ts}}天
     .text-center.c-gray.pt-100(v-else)
       empty-image(url="bill_empty.png", className="img-empty")
-      .empty-content 您暂时没有相关合同        
+ 
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
+import modalInput from '@/components/ModalInput.vue'
 export default {
   data () {
     return {
+      delayDate: 0,
+      modalShow: false,
       currentPage: 0,
       listData: [],
       triggered: false,
@@ -54,16 +60,15 @@ export default {
       scrollHeight: '0px',
       loadFinish: 0,
       pageSize: 10,
-      auditType: {
-        '1': '定向',
-        '2': '延时',
-        '3': '退货'
-      },
       statusList: {
-        '5': '定向初审',
-        '3': '定向复审'
+        '0': '未限制',
+        '1': '已限制'
       },
-      filterArr: []
+      filterArr: [],
+      delayMax: 2,
+      checkRow: {},
+      textVal: '',
+      hideZero: 'no'
     }
   },
   computed: {
@@ -71,24 +76,29 @@ export default {
       tempObject: state => state.tempObject
     })
   },
-  onShow () {
-    if (this.tempObject.fromPage === 'billFilter') {
-      this.filterArr = []
-      const obj = {
-        tstc_no: this.tempObject.no,
-        cust_id: this.tempObject.custom.id,
-        dept_code: this.tempObject.dept.id,
-        employee_code: this.tempObject.employee.id,
-        deal_time_s: this.tempObject.startDate,
-        deal_time_e: this.tempObject.endDate
+  components: {
+    modalInput
+  },
+  watch: {
+    delayDate () {
+      const delayDate = Number(this.delayDate)
+      if (delayDate > 19) {
+        this.delayDate = 19
+        return false
+      } else if (delayDate < 0) {
+        this.delayDate = 0
+        return false
       }
-      Object.keys(obj).forEach(key => {
-        if (obj[key]) {
-          this.filterArr.push(`${key}=${obj[key]}`)
-        }
-      })
-      this.currentPage = 0
+      let delayDateStr = this.delayDate.toString()
+      if (delayDateStr.length === 1) {
+        delayDateStr = delayDateStr.replace(/[^1-9]/g, '')
+      } else {
+        delayDateStr = delayDateStr.replace(/\D/g, '')
+      }
+      this.delayDate = Number(delayDateStr)
     }
+  },
+  onShow () {
     this.onRefresh()
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 115
   },
@@ -96,23 +106,26 @@ export default {
     ...mapActions([
       'configVal'
     ]),
+    openModal (item) {
+      debugger
+      this.checkRow = item
+      this.modalShow = true
+    },
+    modalHandler ({type}) {
+      console.log('type', type)
+      if (type === 'confirm') {
+        this.balanceRestrict()
+      }
+    },
     openFilter () {
-      const statusList = []
-      Object.keys(this.auditType).forEach(key => {
-        const obj = {label: this.auditType[key], value: key}
-        statusList.push(obj)
-      })
-      this.configVal({ key: 'tempObject', val: {statusList: statusList} })
-      this.jump('/pages/vendor/billFilter/main')
+      this.jump('/pages/vendor/balanceFilter/main')
     },
     onRefresh (done) {
       this.currentPage = 0
-      this.isload = true
+      this.showLoading()
       this.refresher(done)
     },
     searchOrder () {
-      this.startDate = ''
-      this.endDate = ''
       this.listData = []
       this.isTabDisabled = true
       this.isload = true
@@ -121,19 +134,14 @@ export default {
     refresher (done) {
       this.loadFinish = 1
       const me = this
-      // searchVal
-      const sellerNeedAudit = this.apiList.xy.sellerNeedAudit
-      let url = `${sellerNeedAudit.url}?user_id=${this.currentUser.user_id}&current_page=${this.currentPage}&page_size=${this.pageSize}`
-      if (this.filterArr.length > 0) {
-        const filterStr = this.filterArr.toString().replace(/,/g, '&')
-        url += `&${filterStr}`
-      }
+      const gatherinsgBeforeWarning = this.apiList.xy.gatherinsgBeforeWarning
+      let url = `${gatherinsgBeforeWarning.url}?current_page=${this.currentPage}&page_size=${this.pageSize}`
       if (this.searchVal) {
         url += `&search=${this.searchVal}`
       }
-      this.ironRequest(url, '', sellerNeedAudit.method).then(resp => {
+      this.ironRequest(url, '', gatherinsgBeforeWarning.method).then(resp => {
         if (resp.returncode === '0') {
-          let arr = resp.resultlist
+          let arr = resp.data
           if (arr.length === 0 && me.currentPage === 0) {
             me.listData = []
             me.isload = false
@@ -163,10 +171,7 @@ export default {
       }, 300)
     },
     jumpDetail (item) {
-      item.auditType = this.auditType[item.audit_type]
-      item.statusStr = this.statusList[item.status] || '待审核'
-      this.configVal({key: 'tempObject', val: item})
-      this.jump(`/pages/vendor/reviewDetail/main`)
+      this.jump(`/pages/billDetail/main?id=${item.tstc_no}`)
     }
   }
 }
@@ -215,5 +220,25 @@ export default {
 .dingjin-icon {
   width: 35px;
   height: 20px;
-}  
+}
+.cuIcon-box
+  width 160px
+  margin 0 auto
+.cuIcon-item
+  border 1px #c9c9c9 solid
+  color #c9c9c9
+  font-weight bold
+  font-size 18px
+  text-align center
+  width 45px
+  height 35px
+  line-height 35px
+  border-radius 5px
+.input-box
+  border-radius 5px
+  width 100%
+  height 40px
+  input
+    height 40px
+    width 100%  
 </style>

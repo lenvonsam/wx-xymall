@@ -41,25 +41,13 @@ export default {
   },
   data () {
     return {
-      // modalName: ''
       pickList: [],
       checkItem: {},
       searchVal: '',
       selectRemote: '',
-      loadFinish: 0
+      loadFinish: 0,
+      total: 0
     }
-  },
-  watch: {
-    // list: {
-    //   handler (newVal, oldVal) {
-    //     this.pickList = newVal
-    //   },
-    //   deep: true
-    // }
-    // show (newVal, oldVal) {
-    //   if (newVal) this.modalName = 'show'
-    //   else this.modalName = ''
-    // }
   },
   beforeMount () {
     switch (this.selectType) {
@@ -81,7 +69,6 @@ export default {
   methods: {
     loadMore () {},
     tabSelect (item) {
-      console.log('item', item)
       this.checkItem = item
       this.$emit('cb', this.checkItem)
     },
@@ -94,11 +81,11 @@ export default {
       const params = {dept_name: this.searchVal}
       const me = this
       this.ironRequest(deptList.url, params, deptList.method).then((res) => {
-        console.log('res', res)
         if (res.returncode === '0') {
           me.pickList = res.list
+          me.total = res.amount.amount
+          me.pickList.unshift({name: '全部', id: ''})
         }
-        console.log('pickList', me.pickList)
         me.$forceUpdate()
       })
     },
@@ -111,11 +98,11 @@ export default {
       }
       const me = this
       this.ironRequest(employeeList.url, params, employeeList.method).then((res) => {
-        console.log('res', res)
         if (res.returncode === '0') {
           me.pickList = res.list
+          me.total = res.amount.amount
+          me.pickList.unshift({name: '全部', id: ''})
         }
-        console.log('pickList', me.pickList)
         me.$forceUpdate()
       })
     }
@@ -130,5 +117,5 @@ export default {
   z-index 99
   background rgba(0, 0, 0, 0.5)
   bottom 0
-  height 100vh
+  // height 100vh
 </style>

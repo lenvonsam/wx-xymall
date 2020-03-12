@@ -41,7 +41,23 @@ export default {
     dxAudit: { url: '/seller/dxAudit.shtml', method: 'post' },
     orderDelayAudit: { url: '/seller/orderDelayAudit.shtml', method: 'post' },
     deptList: { url: '/deptList.shtml', method: 'post' },
-    employeeList: { url: 'employeeList.shtml', method: 'post' }
+    employeeList: { url: 'employeeList.shtml', method: 'post' },
+    orderDelayList: { url: '/seller/orderDelay.shtml', method: 'get' },
+    orderDelay: { url: ' /seller/orderDelay.shtml', method: 'post' },
+    orderDelayAgain: { url: ' /seller/orderDelayAgain.shtml', method: 'post' },
+    quotationList: { url: '/seller/quotationList.shtml', method: 'post' },
+    quotationCancel: { url: '/seller/quotationCancel.shtml', method: 'post' },
+    quotationRelease: { url: '/seller/quotationRelease.shtml', method: 'post' },
+    quotationDx: { url: '/seller/quotationDx.shtml', method: 'post' },
+    quotationLock: { url: '/seller/quotationLock.shtml', method: 'post' },
+    copyQuotation: { url: '/seller/copyQuotation.shtml', method: 'post' },
+    sellerBalance: { url: '/seller/balance.shtml', method: 'get' },
+    balanceRestrict: { url: '/seller/balanceRestrict.shtml', method: 'post' },
+    gatherinsgBeforeWarning: { url: '/seller/erp/gatherinsgBeforeWarning.shtml', method: 'get' },
+    returnGoodsList: { url: '/seller/returnGoods.shtml', method: 'get' },
+    returnGoods: { url: '/seller/returnGoods.shtml', method: 'post' },
+    returnGoodsDetail: { url: '/seller/returnGoodsDetail.shtml', method: 'get' },
+    modules: { url: '/seller/modules.shtml', method: 'post' }
   },
   erp: {
     // 手机验证码登录
