@@ -13,56 +13,72 @@
             .cart-empty-btn(@click="tab('/pages/mall/main')") ^_^去商城逛逛吧
       .s-content-wrap(v-else)
         .s-content
-          .flex.padding-sm.bg-white.align-center.justify-between(style="height: 100rpx")
-            //- .col(@click="openPickWay")
-            .flex.align-center(@click="openPickWay")
-              .cuIcon-location
-              .padding-left-xs 提货方式
-              .padding-left-xs.cuIcon-unfold
-            .text-center
-              .padding-xs(v-show="isEdit", @click="openEdit") 完成
-              .flex(v-show="!isEdit")
-                .padding-xs.mr-5(@click="openEdit") 编辑
-                .padding-xs(@click="clearCarts") 清空
+          template(v-if="currentUser.type === 'seller'")
+            .solid-bottom.flex.padding-sm.bg-white.align-center.justify-between(style="height: 100rpx")
+              .quotation.text-blue.line-blue.solid(@click="auditDxCheck(2)") 生成报价单
+              .text-center
+                .padding-xs(v-show="isEdit", @click="openEdit") 完成
+                .flex(v-show="!isEdit")
+                  .padding-xs.mr-5(@click="openEdit") 编辑
+                  .padding-xs(@click="clearCarts") 清空
+            .row.text-gray.text-center.bg-white(style="height: 100rpx")
+              .row.col.tab-select(@click="openPickWay(1)", :class="{'text-blue': pickWayShow && tabActive === 1}")
+                .col {{customerName || '客户选择'}}
+                i(:class="pickWayShow && tabActive === 1 ? 'cuIcon-fold' : 'cuIcon-unfold'")
+              .row.col.tab-select(@click="openPickWay(2)", :class="{'text-blue': pickWayShow && tabActive === 2}")
+                .col {{liftSelect}}
+                i(:class="pickWayShow && tabActive === 2 ? 'cuIcon-fold' : 'cuIcon-unfold'")
+          template(v-else)
+            .flex.padding-sm.bg-white.align-center.justify-between(style="height: 100rpx")
+              //- .col(@click="openPickWay")
+              .flex.align-center(@click="openPickWay")
+                .cuIcon-location
+                .padding-left-xs 提货方式
+                .padding-left-xs.cuIcon-unfold
+              .text-center
+                .padding-xs(v-show="isEdit", @click="openEdit") 完成
+                .flex(v-show="!isEdit")
+                  .padding-xs.mr-5(@click="openEdit") 编辑
+                  .padding-xs(@click="clearCarts") 清空
           scroll-view.scroll-view(scroll-y, :style="{height: scrollHeight}")
-            .cart-items(v-for="(cart, cartIdx) in carts", :key="cartIdx")
-              .cart-item.padding-sm
-                .flex.flex-center.align-center.ft-15.text-bold
-                  .col.flex-25(@click="cart.choosed = !cart.choosed", style="padding-top: 5px;")
-                    img.choose-icon(src="/static/images/blue_check.png", v-if="cart.choosed")
-                    img.choose-icon(src="/static/images/btn_ck_n.png", v-else)
-                  .col(@click="cart.choosed = !cart.choosed")
-                    span {{cart.product_name}}
-                    span.padding-left-xs {{cart.product_standard}}
-                  .text-blue ￥{{cart.price}}/吨
-                .content.ft-13
-                  .flex.flex-center.justify-between
-                    div
-                      div
-                        span {{cart.product_material}}
-                        span.ml-5 {{cart.product_length}}米
-                        span.ml-5 {{cart.wh_name}}
-                        span.sub-mark.ml-5 {{cart.product_supply}}
-                      .pt-5
-                        span {{cart.amount_left}}支 / {{cart.weight_left}}吨
-                        span.padding-left-xs 吊费:
-                        span.ml-10 {{cart.price === '--' ? '--' : cart.lift_charge > 0 ? '￥' + cart.lift_charge + '/吨' : cart.lift_charge == 0 ? '无' : '线下结算'}}
-                      .pt-5(v-if="cart.tolerance_range || cart.weight_range")
-                        span(v-if="cart.tolerance_range") 公差范围:
-                        span.ml-10.mr-10(v-if="cart.tolerance_range") {{cart.tolerance_range}}
-                      .pt-5
-                        span(v-if="cart.weight_range") 重量范围:
-                        span.ml-10(v-if="cart.weight_range") {{cart.weight_range}} 
-                    .text-right
-                      .flex.flex-direction.justify-between
-                        z-radio(@checkHander="weightChoose(r.m_way, cart)", v-for="(r, rIdx) in cart.radios", :key="rIdx", :label="r.label", :checked="cart.measure_way_id === r.m_way")
+            cart-item(v-for="(cart, idx) in carts", :key="idx", :cart="cart")
+            //- .cart-items(v-for="(cart, cartIdx) in carts", :key="cartIdx")
+            //-   .cart-item.padding-sm
+            //-     .flex.flex-center.align-center.ft-15.text-bold
+            //-       .col.flex-25(@click="cart.choosed = !cart.choosed", style="padding-top: 5px;")
+            //-         img.choose-icon(src="/static/images/blue_check.png", v-if="cart.choosed")
+            //-         img.choose-icon(src="/static/images/btn_ck_n.png", v-else)
+            //-       .col(@click="cart.choosed = !cart.choosed")
+            //-         span {{cart.product_name}}
+            //-         span.padding-left-xs {{cart.product_standard}}
+            //-       .text-blue ￥{{cart.price}}/吨
+            //-     .content.ft-13
+            //-       .flex.flex-center.justify-between
+            //-         div
+            //-           div
+            //-             span {{cart.product_material}}
+            //-             span.ml-5 {{cart.product_length}}米
+            //-             span.ml-5 {{cart.wh_name}}
+            //-             span.sub-mark.ml-5 {{cart.product_supply}}
+            //-           .pt-5
+            //-             span {{cart.amount_left}}支 / {{cart.weight_left}}吨
+            //-             span.padding-left-xs 吊费:
+            //-             span.ml-10 {{cart.price === '--' ? '--' : cart.lift_charge > 0 ? '￥' + cart.lift_charge + '/吨' : cart.lift_charge == 0 ? '无' : '线下结算'}}
+            //-           .pt-5(v-if="cart.tolerance_range || cart.weight_range")
+            //-             span(v-if="cart.tolerance_range") 公差范围:
+            //-             span.ml-10.mr-10(v-if="cart.tolerance_range") {{cart.tolerance_range}}
+            //-           .pt-5
+            //-             span(v-if="cart.weight_range") 重量范围:
+            //-             span.ml-10(v-if="cart.weight_range") {{cart.weight_range}} 
+            //-         .text-right
+            //-           .flex.flex-direction.justify-between
+            //-             z-radio(@checkHander="weightChoose(r.m_way, cart)", v-for="(r, rIdx) in cart.radios", :key="rIdx", :label="r.label", :checked="cart.measure_way_id === r.m_way")
                         
-                  .row.padding-xs.justify-end.align-end
-                    .col
-                    .col(style="flex: 0 0 60px;")
-                      count-step(v-model="cart.count", @click.native="rowCartCount(cart)", @blur="rowCartCount(cart)", :max="cart.amount_left")
-                    .padding-left-xs {{cart.countWeight}}吨
-            //- .pb-10(v-if="soldCarts.length > 0", :class="{'pt-10': carts.length === 0}")
+            //-       .row.padding-xs.justify-end.align-end
+            //-         .col
+            //-         .col(style="flex: 0 0 60px;")
+            //-           count-step(v-model="cart.count", @click.native="rowCartCount(cart)", @blur="rowCartCount(cart)", :max="cart.amount_left")
+            //-         .padding-left-xs {{cart.countWeight}}吨
             .margin-top-sm.padding-bottom-sm(v-if="soldCarts.length > 0", :class="{'padding-top-sm': carts.length === 0}")
               .bg-white
                 .row.padding.flex-center.border-bottom-line
@@ -88,11 +104,6 @@
 
     .s-footer(v-if="carts.length > 0", style="height: 100rpx")
       .cart-footer.justify-between
-        //- .row.flex-center(@click="choosedAll", style="padding-left: 10px;")
-          .flex.flex-center
-            img.choose-icon(src="/static/images/blue_check.png", v-if="allChoosed")
-            img.choose-icon(src="/static/images/btn_ck_n.png", v-else)
-          .padding-xs 全选
         .col.cart-footer-col
           .row.justify-between
             .row.flex-center(@click="choosedAll", style="padding-left: 10px;")
@@ -104,9 +115,28 @@
               span 合计：
               b.text-red ￥{{totalPrice}}
           .text-right.ft-12(style="color:#999;", v-show="!isEdit") 共{{totalCount}}件 ，{{totalWeight}}吨，吊费: {{totalLiftCharge}}元
-        .cart-settle-btn.ft-18(@click="goToSettle")
+        .cart-settle-btn.ft-18(@click="auditDxCheck(1)", v-if="currentUser.type === 'seller'")
+          span {{isEdit ? '删除' : '定向'}}
+        .cart-settle-btn.ft-18(@click="goToSettle", v-else)
           span {{isEdit ? '删除' : '结算'}}
-    .address-dialog(@click="openPickWay", :style="{top: customBar + 40 + 'px'}", v-show="pickWayShow")
+    .tab-select-dialog.solid-top(:style="{top: customBar + 80 + 'px'}", v-show="pickWayShow && currentUser.type === 'seller'")
+      .bg-white
+        template(v-if="tabActive === 1")
+          .padding
+            .select-search.bg-gray.round.row.padding-xs
+              .cuIcon-search.padding-left-sm
+              input.col.padding-xs.margin-left-xs(type="text")
+          .solid-top.row.padding.justify-between(@click="tabSelect('custom', item)", v-for="(item, pickIdx) in 6", :key="pickIdx")
+            //- scroll-view(style="max-height: 500rpx")
+            .custom-item
+              span 江苏省安徽四暗有限公司
+                //- .cuIcon-check
+          .solid-top.text-right.padding.text-gray 共4条数据
+        template(v-else)
+          .solid-top.row.padding.justify-between(@click="tabSelect('lift', item)", :class="{'text-blue': liftSelect === item}", v-for="(item, liftIdx) in liftList", :key="liftIdx")
+            span {{item.label}}  
+            .cuIcon-check(v-show="liftSelect === item")
+    .address-dialog(@click="openPickWay", :style="{top: customBar + 40 + 'px'}", v-show="pickWayShow && currentUser.type === 'buyer'")
       .bg-white
         .solid-top.padding(v-for="(item, pickIdx) in pickWayList", :key="pickIdx")
           .text-bold.ft-15 {{item.title}}
@@ -117,11 +147,27 @@
 
 <script>
 import CountStep from '@/components/CountStep.vue'
+import CartItem from '@/components/CartItem.vue'
 import { mapState, mapActions } from 'vuex'
-import timeLine from '@/components/TimeLine.vue'
 export default {
   data () {
     return {
+      // 卖家变量
+      liftSelect: '收吊费',
+      liftSelectVal: 1,
+      tabActive: 0,
+      customerName: '无锡海铭通物贸有限公司',
+      liftList: [{
+        label: '收吊费',
+        val: 1
+      }, {
+        label: '免吊费',
+        val: 2
+      }, {
+        label: '开平免吊费',
+        val: 3
+      }],
+      // 买家变量
       alertText: '',
       alertShow: false,
       totalPrice: 0,
@@ -149,7 +195,7 @@ export default {
   },
   components: {
     CountStep,
-    timeLine
+    CartItem
   },
   computed: {
     ...mapState({
@@ -217,7 +263,11 @@ export default {
         this.pwAddrDetail = this.tempObject.detail
       }
     }
-    this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 200 + 'rpx'
+    if (this.currentUser.type === 'seller') {
+      this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 300 + 'rpx'
+    } else {
+      this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 200 + 'rpx'
+    }
     this.loadCartData()
   },
   methods: {
@@ -232,8 +282,26 @@ export default {
       this.pickWayShow = false
       this.isEdit = !this.isEdit
     },
-    openPickWay () {
-      this.pickWayShow = !this.pickWayShow
+    tabSelect (type, item) {
+      if (type === 'lift') {
+        this.liftSelect = item.label
+        this.liftSelectVal = item.val
+        this.pickWayShow = false
+        this.tabActive = 0
+      }
+    },
+    openPickWay (type) {
+      if (this.currentUser.type === 'seller') {
+        if (this.tabActive === type) {
+          this.pickWayShow = !(this.tabActive === type)
+          this.tabActive = 0
+          return false
+        }
+        this.pickWayShow = true
+        this.tabActive = type
+      } else {
+        this.pickWayShow = !this.pickWayShow
+      }
     },
     refresher (done) {
       const me = this
@@ -430,6 +498,60 @@ export default {
         })
       }
     },
+    async auditDxCheck (flag) {
+      try {
+        let filterArray = this.carts.filter(itm => itm.choosed === true)
+        if (this.isEdit) {
+          if (filterArray.length === 0) {
+            this.showMsg('请选择所需删除的商品')
+            return false
+          }
+          // 删除
+          this.delCartRow(filterArray)
+          return false
+        }
+        if (filterArray.length === 0) {
+          this.showMsg('请选择需要操作的物资')
+          return false
+        }
+        if (this.customerName === '') {
+          this.showMsg('请选择客户')
+          return false
+        }
+        let orderIds = []
+        let dxPrices = []
+        let costPrices = []
+        let jlTypes = []
+        filterArray.map(itm => {
+          orderIds.push(itm.order_id)
+          dxPrices.push(itm.dx_prices)
+          costPrices.push(itm.cost_prices)
+          jlTypes.push(itm.measure_way_id)
+        })
+        const params = {
+          user_id: this.currentUser.user_id,
+          buyer_name: this.customerName,
+          order_ids: orderIds.toString(),
+          dx_prices: dxPrices.toString(),
+          cost_prices: costPrices.toString(),
+          jl_types: jlTypes.toString(),
+          needLift: this.liftSelectVal
+        }
+        const data = await this.ironRequest(this.apiList.xy.auditDxCheck.url, params, this.apiList.xy.auditDxCheck.method)
+        console.log(data)
+        if (data.returncode === '0') {
+          if (flag === 1) {
+            // 定向
+            this.dx(filterArray)
+          } else {
+            // 生成报价单
+            this.generateQuotation(filterArray)
+          }
+        }
+      } catch (e) {
+        this.showMsg(e)
+      }
+    },
     loadCartData () {
       this.isLoad = false
       const me = this
@@ -472,10 +594,12 @@ export default {
               itm.weight = weight1
               itm.price = prArr[0]
               itm.originPrice = oldPrArr[0]
+              if (this.currentUser.type === 'seller') itm.dx_prices = oldPrArr[0]
               if (itm.measure_way_id === 1) {
                 itm.weight = weight2
                 itm.price = prArr[1]
                 itm.originPrice = oldPrArr[1]
+                if (this.currentUser.type === 'seller') itm.dx_prices = oldPrArr[1]
               }
               if (itm.measure_way_id === 0) {
                 itm.measure_way_id = 2
@@ -494,7 +618,9 @@ export default {
               itm.weight = wt
               itm.price = itm.product_price
               itm.originPrice = itm.origin_price
+              if (this.currentUser.type === 'seller') itm.dx_prices = itm.origin_price
             }
+            if (this.currentUser.type === 'seller') itm.cost_prices = 0
             this.carts.push(itm)
           })
           this.tabDot(this.carts.length + this.soldCarts.length)
@@ -511,6 +637,63 @@ export default {
         me.showMsg(err || '网络异常')
         // if (done) done()
       })
+    },
+    // 卖家方法
+    async dx (filterArray) {
+      // this.jump('/pages/vendor/quotation/main')
+      let orderIds = []
+      let dxPrices = []
+      let costPrices = []
+      let jlTypes = []
+      let amounts = []
+      let weights = []
+      let orderPrices = []
+      filterArray.map(itm => {
+        orderIds.push(itm.order_id)
+        dxPrices.push(itm.dx_prices)
+        costPrices.push(itm.cost_prices)
+        jlTypes.push(itm.measure_way_id)
+        amounts.push(itm.count)
+        weights.push(itm.countWeight)
+        orderPrices.push(itm.price)
+      })
+      const params = {
+        user_id: this.currentUser.user_id,
+        buyer_name: this.customerName,
+        order_ids: orderIds.toString(),
+        dx_prices: dxPrices.toString(),
+        cost_prices: costPrices.toString(),
+        jl_types: jlTypes.toString(),
+        need_lift: this.liftSelectVal,
+        amount_s: amounts.toString(),
+        weight_s: weights.toString(),
+        order_prices: orderPrices.toString(),
+        total_money: this.totalPrice,
+        total_amount: this.totalCount,
+        total_weight: this.totalWeight,
+        lift_money: this.totalLiftCharge
+      }
+      const data = await this.ironRequest(
+        this.apiList.xy.dx.url,
+        params,
+        this.apiList.xy.dx.method
+      )
+      console.log(data)
+    },
+    generateQuotation () {
+      const filterArray = this.carts.filter(itm => itm.choosed === true)
+      const tempObject = {
+        list: filterArray,
+        buyer_name: this.customerName,
+        need_lift: this.liftSelectVal,
+        user_id: this.currentUser.user_id,
+        totalPrice: this.totalPrice,
+        totalCount: this.totalCount,
+        totalWeight: this.totalWeight,
+        totalLiftCharge: this.totalLiftCharge
+      }
+      this.configVal({ key: 'tempObject', val: tempObject })
+      this.jump('/pages/vendor/quotation/main')
     }
   }
 }
@@ -611,4 +794,31 @@ radio.radio[checked]::after
   z-index 99
   background rgba(0, 0, 0, 0.5)
   bottom 0
+// 卖家样式
+.quotation
+  padding 5px 10px  
+  border-radius 100px
+.tab-select-dialog
+  position fixed
+  left 0
+  right 0
+  z-index 99
+  background rgba(0, 0, 0, 0.5)
+  bottom 0 
+.tab-select
+  padding 20px 10px
+  position relative
+  &:after
+    content ''
+    position absolute
+    top 50%
+    margin-top -10px
+    right 0
+    display block
+    width 1px
+    height 20px
+    background rgba(0,0,0,0.1)
+  &:last-child
+    &:after
+      display none
 </style>

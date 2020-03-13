@@ -99,7 +99,9 @@ export default {
       } catch (e) {
         console.error('exituser:>>', e)
       }
-      state.currentUser = {}
+      state.currentUser = {
+        type: 'buyer'
+      }
       state.isLogin = false
     },
     AUTOUSER (state) {
