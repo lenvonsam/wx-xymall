@@ -8,13 +8,13 @@ export default {
   // 屏幕高度
   screenHeight: 667,
   // 导航栏高度
-  statusBar: 0,
+  statusBar: 20,
   // 自定义导航栏对象
   custom: {},
   // 自定义导航栏内容的高度
-  customBar: 0,
+  customBar: 64,
   // 底部tab高度
-  bottomBarHeight: 0,
+  bottomBarHeight: 48,
   // 首页图片
   mainIcons: [
     {
