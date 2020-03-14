@@ -73,7 +73,7 @@ export default {
     })
   },
   onUnload () {
-    this.tabName = '1'
+    this.tabName = '1,2'
     this.currentPage = 0
     this.listData = []
     this.finished = true
@@ -84,6 +84,7 @@ export default {
   },
   onShow () {
     this.listData = []
+    debugger
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 205
     if (this.$root.$mp.query.tabName) this.tabName = this.$root.$mp.query.tabName
     this.onRefresh()
@@ -223,7 +224,7 @@ export default {
     overflow hidden
     .solid-top
       border-top 0.5px solid #eee
-.bill-btn, .bill-red-btn,.bill-gray-btn
+.bill-btn, .bill-red-btn, .bill-gray-btn
   padding 2px 8px
   text-align center
   font-size 13px
@@ -239,7 +240,7 @@ export default {
 .bill-content
   height 100%
 .filter-btn
-  padding 10px 0 10px 10px  
+  padding 10px 0 10px 10px
 .search-btn
   padding 10px
 .nav
@@ -271,5 +272,5 @@ export default {
   padding 5px 10px
   border-radius 35px
 .search-btn
-  padding 10px  
+  padding 10px
 </style>

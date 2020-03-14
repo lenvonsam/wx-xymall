@@ -2,28 +2,43 @@
 div
   nav-bar(title="待审核", isBack)
   .padding-sm
-    .bg-white.card
-      .row.justify-between.padding-bottom-xs
-        .col.text-blue {{detailData.billNo}}
-        .text-red {{detailData.status}}
-      .row.justify-between.padding-bottom-xs
-        .text-gray.col {{detailData.custName}}
-        .text-black ¥ {{detailData.totalMoeny}}
-      template(v-if="auditType === '退货'")
-        .text-gray.padding-bottom-xs
-          span {{detailData.invoiceStatus}}
-          span.padding-left-xs 操作员：{{detailData.operName}}
-      template(v-else)
+    template(v-if="auditType === '延时'")
+      .bg-white.card(v-for="(item, idx) in detailData.list", :key="idx")
+        .row.justify-between.padding-bottom-xs
+          .col.text-blue {{item.deal_no}}
+          .text-red {{statusList[item.status] || '待审核'}}
+        .row.justify-between.padding-bottom-xs
+          .text-gray.col {{item.cust_name}}
+          .text-black ¥ 32940.60 少字段
         .row.justify-between.text-gray.padding-bottom-xs
-          .col 共{{detailData.totalAmount}}支，{{detailData.totalWeight}}吨
-          span 操作员：{{detailData.operName}}
-      .solid-top.padding-top-xs.padding-bottom-xs
-        template(v-if="auditType !== '退货'")
-          span {{auditType==='定向' ? '' : '付款'}}截至时间：
-          span.text-red.padding-left-xs {{detailData.endTime}}
-        template(v-else)  
-          span.text-black {{detailData.endTime}}
-    template(v-if="auditType !== '延时'")     
+          .col 共{{item.amount}}支，{{item.weight}}吨
+          span 操作员：{{item.opt_name}}
+        .solid-top.padding-top-xs.padding-bottom-xs
+          span 付款截至时间：
+          span.text-red.padding-left-xs {{item.order_end_time}}
+    template(v-else)
+      .bg-white.card
+        .row.justify-between.padding-bottom-xs
+          .col.text-blue {{detailData.billNo}}
+          .text-red {{detailData.status}}
+        .row.justify-between.padding-bottom-xs
+          .text-gray.col {{detailData.custName}}
+          .text-black ¥ {{detailData.totalMoeny}}
+        template(v-if="auditType === '退货'")
+          .text-gray.padding-bottom-xs
+            span {{detailData.invoiceStatus}}
+            span.padding-left-xs 操作员：{{detailData.operName}}
+        template(v-else)
+          .row.justify-between.text-gray.padding-bottom-xs
+            .col 共{{detailData.totalAmount}}支，{{detailData.totalWeight}}吨
+            span 操作员：{{detailData.operName}}
+        .solid-top.padding-top-xs.padding-bottom-xs
+          template(v-if="auditType !== '退货'")
+            span {{auditType==='定向' ? '' : '付款'}}截至时间：
+            span.text-red.padding-left-xs {{detailData.endTime}}
+          template(v-else)  
+            span.text-black {{detailData.endTime}}
+      //- template(v-if="auditType !== '延时'")     
       .ft-18.padding-top-sm.padding-bottom-sm 商品信息
       .bg-white.card(v-for="(item, idx) in detailData.list", :key="idx")
         .row.justify-between.padding-bottom-xs
@@ -41,10 +56,10 @@ div
             .padding-bottom-xs {{item.amount}}支/{{item.weight}}吨
             .solid-top.padding-top-xs.padding-bottom-xs.text-black
               span 定向价：
-              span.text-blue {{item.dx_price}}
-              span.padding-left-xs 费用：{{item.cost_price}}
+              span.text-blue ￥{{item.dx_price}}
+              span.padding-left-xs 费用：￥{{item.cost_price}}
               span.padding-left-xs 价差：
-              span.text-red {{item.diff}}
+              span.text-red ￥{{item.diff}}
           template(v-else)    
             .row.justify-between.text-gray.padding-bottom-xs
               .col 
@@ -65,7 +80,11 @@ export default {
     return {
       auditType: '',
       detailData: '',
-      disabled: false
+      disabled: false,
+      statusList: {
+        '5': '定向初审',
+        '3': '定向复审'
+      }
     }
   },
   computed: {
@@ -98,14 +117,14 @@ export default {
             params.reject_cause = ''
             params.kp_flag = this.detailData.invoiceFlag
           }
-          this.returnGoodsAudit(params)
+          this.confirmAudit(params, this.apiList.xy.returnGoodsAudit)
           break
         case '定向':
           params = {
             deal_no: this.detailData.billNo,
             flag: flag === 'cancel' ? '0' : '1'
           }
-          this.dxAudit(params)
+          this.confirmAudit(params, this.apiList.xy.dxAudit)
           break
         case '延时':
           if (flag === 'cancel') {
@@ -116,47 +135,21 @@ export default {
             id: this.detailData.billNo,
             status: '1'
           }
-          this.orderDelayAudit(params)
+          this.confirmAudit(params, this.apiList.xy.orderDelayAudit)
           break
         default:
           console.log('default')
       }
     },
-    async orderDelayAudit (params) {
+    async confirmAudit (params, api) {
       try {
-        const orderDelayAudit = this.apiList.xy.orderDelayAudit
-        const data = await this.ironRequest(orderDelayAudit.url, params, orderDelayAudit.method)
+        const data = await this.ironRequest(api.url, params, api.method)
         if (data.returncode === '0') {
           this.showMsg('操作成功')
-          this.back()
-        }
-        this.disabled = false
-      } catch (err) {
-        this.disabled = false
-        this.showMsg(err || '网络错误')
-      }
-    },
-    async dxAudit (params) {
-      try {
-        const dxAudit = this.apiList.xy.dxAudit
-        const data = this.ironRequest(dxAudit.url, params, dxAudit.method)
-        if (data.returncode === '0') {
-          this.showMsg('操作成功')
-          this.back()
-        }
-        this.disabled = false
-      } catch (err) {
-        this.disabled = false
-        this.showMsg(err || '网络错误')
-      }
-    },
-    async returnGoodsAudit (params) {
-      try {
-        const returnGoodsAudit = this.apiList.xy.returnGoodsAudit
-        const data = await this.ironRequest(returnGoodsAudit.url, params, returnGoodsAudit.method)
-        if (data.returncode === '0') {
-          this.showMsg('操作成功')
-          this.back()
+          const me = this
+          setTimeout(() => {
+            me.back()
+          }, 1000)
         }
         this.disabled = false
       } catch (err) {
@@ -217,16 +210,9 @@ export default {
               }
               break
             case '延时':
+              // const
               this.detailData = {
-                billNo: data.deal_no,
-                custName: data.cust_name,
-                // totalAmount: data.amount,
-                // totalWeight: data.weight,
-                // totalMoeny: data.moeny,
-                endTime: data.order_end_time,
-                status: data.status,
-                operName: data.opt_name,
-                list: data.list
+                list: data.data.resultlist
               }
           }
           this.hideLoading()
@@ -247,5 +233,5 @@ export default {
   position fixed
   bottom 0
   left 0
-  right 0  
+  right 0
 </style>

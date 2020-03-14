@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  nav-bar(title="待审核", isBack)
+  nav-bar(title="审核历史", isBack)
   .head.bg-white(:style="{height: '115rpx'}")
     .serach.flex.align-center.padding-sm
       .col.search-input.text-gray
@@ -122,9 +122,8 @@ export default {
     refresher (done) {
       this.loadFinish = 1
       const me = this
-      // searchVal
-      const sellerNeedAudit = this.apiList.xy.sellerNeedAudit
-      let url = `${sellerNeedAudit.url}?user_id=${this.currentUser.user_id}&current_page=${this.currentPage}&page_size=${this.pageSize}`
+      const auditHistory = this.apiList.xy.auditHistory
+      let url = `${auditHistory.url}?user_id=${this.currentUser.user_id}&current_page=${this.currentPage}&page_size=${this.pageSize}`
       if (this.filterArr.length > 0) {
         const filterStr = this.filterArr.toString().replace(/,/g, '&')
         url += `&${filterStr}`
@@ -132,7 +131,7 @@ export default {
       if (this.searchVal) {
         url += `&tstc_no=${this.searchVal}`
       }
-      this.ironRequest(url, '', sellerNeedAudit.method).then(resp => {
+      this.ironRequest(url, '', auditHistory.method).then(resp => {
         if (resp.returncode === '0') {
           let arr = resp.resultlist
           if (arr.length === 0 && me.currentPage === 0) {

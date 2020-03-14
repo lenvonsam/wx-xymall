@@ -5,7 +5,7 @@ export default {
       {
         icon: '/static/images/dfk.png',
         name: '待付款',
-        dotKey: '',
+        dotKey: 'pay_count',
         url: {
           path: '/pages/vendor/contractTrack/main?tabName=1'
         }
@@ -13,7 +13,7 @@ export default {
       {
         icon: '/static/images/dfk_icon.png',
         name: '已付待确认',
-        dotKey: '',
+        dotKey: 'confirm_count',
         url: {
           path: '/pages/vendor/contractTrack/main?tabName=12'
         }
@@ -21,7 +21,7 @@ export default {
       {
         icon: '/static/images/seller_wait_pick_icon.png',
         name: '待提货',
-        dotKey: '',
+        dotKey: 'delivery_count',
         url: {
           path: '/pages/vendor/contractTrack/main?tabName=8'
         }
@@ -29,7 +29,7 @@ export default {
       {
         icon: '/static/images/invoice_icon.png',
         name: '修改中',
-        dotKey: '',
+        dotKey: 'eidt_count',
         url: {
           path: '/pages/vendor/contractTrack/main?tabName=10'
         }
@@ -49,7 +49,7 @@ export default {
         name: '审核历史',
         dotKey: '',
         url: {
-          path: ''
+          path: '/pages/vendor/reviewHistory/main'
         }
       },
       {
@@ -105,7 +105,7 @@ export default {
         name: '银企直联',
         dotKey: '',
         url: {
-          path: ''
+          path: '/pages/vendor/bankWater/main'
         }
       },
       {

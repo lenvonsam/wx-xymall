@@ -52,7 +52,7 @@ div
       .padding-top-xs.padding-bottom-xs.row.cuIcon-box
         .cuIcon-item(@click="delayHandler('reduce')")
           .cuIcon-move
-        input(type="number", v-model="delayDate", :min="0", :max="19", @input="delaykeyup")
+        input(type="number", v-model="delayDate", :min="0", :max="19")
         .cuIcon-item(@click="delayHandler('add')")
           .cuIcon-add
       template(v-if="checkRow.att54")
@@ -100,9 +100,13 @@ export default {
   },
   watch: {
     delayDate () {
+      let maxDelayDate = 2
       const delayDate = Number(this.delayDate)
-      if (delayDate > 19) {
-        this.delayDate = 19
+      const minDate = new Date(this.date2Str(new Date()) + ' 15:00').getTime()
+      const nowDate = new Date().getTime()
+      if (nowDate > minDate) maxDelayDate = 19
+      if (delayDate > maxDelayDate) {
+        this.delayDate = maxDelayDate
         return false
       } else if (delayDate < 0) {
         this.delayDate = 0
@@ -173,7 +177,7 @@ export default {
       this.checkRow = item
       this.modalShow = true
     },
-    modalHandler ({type}) {
+    modalHandler ({ type }) {
       console.log('type', type)
       if (type === 'confirm') {
         this.orderDelay()
@@ -192,12 +196,6 @@ export default {
       }
     },
     openFilter () {
-      const statusList = []
-      Object.keys(this.auditType).forEach(key => {
-        const obj = {label: this.auditType[key], value: key}
-        statusList.push(obj)
-      })
-      this.configVal({ key: 'tempObject', val: {statusList: statusList} })
       this.jump('/pages/vendor/billFilter/main')
     },
     onRefresh (done) {
@@ -283,7 +281,7 @@ export default {
     overflow hidden
     .solid-top
       border-top 0.5px solid #eee
-.bill-btn, .bill-red-btn,.bill-gray-btn
+.bill-btn, .bill-red-btn, .bill-gray-btn
   padding 2px 8px
   text-align center
   font-size 13px
@@ -299,13 +297,12 @@ export default {
 .bill-content
   height 100%
 .filter-btn
-  padding 10px 0 10px 10px  
+  padding 10px 0 10px 10px
 .search-btn
   padding 10px
-.dingjin-icon {
-  width: 35px;
-  height: 20px;
-}
+.dingjin-icon
+  width 35px
+  height 20px
 .cuIcon-box
   width 160px
   margin 0 auto
@@ -325,5 +322,5 @@ export default {
   height 40px
   input
     height 40px
-    width 100%  
+    width 100%
 </style>

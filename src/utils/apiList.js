@@ -77,7 +77,9 @@ export default {
     bankWaterAudit: { url: '/seller/bankWaterAudit.shtml', method: 'post' },
     bankWaterRestore: { url: '/seller/bankWaterRestore.shtml', method: 'post' },
     bankWaterDelete: { url: '/seller/bankWaterDelete.shtml', method: 'post' },
-    bankWaterDetail: { url: '/seller/bankWaterDetail.shtml', method: 'get' }
+    bankWaterDetail: { url: '/seller/bankWaterDetail.shtml', method: 'get' },
+    orderCount: { url: '/seller/orderCount.shtml', method: 'get' },
+    auditHistory: { url: '/seller/auditHistory.shtml', method: 'get' }
   },
   erp: {
     // 手机验证码登录
