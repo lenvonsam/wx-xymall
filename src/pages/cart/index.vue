@@ -40,7 +40,8 @@
                   .padding-xs.mr-5(@click="openEdit") 编辑
                   .padding-xs(@click="clearCarts") 清空
           scroll-view.scroll-view(scroll-y, :style="{height: scrollHeight}")
-            cart-item(v-for="(cart, idx) in carts", :key="idx", :cart="cart")
+            .padding-top-sm
+              cart-item(v-for="(cart, idx) in carts", :key="idx", :cart="cart")
             .margin-top-sm.padding-bottom-sm(v-if="soldCarts.length > 0", :class="{'padding-top-sm': carts.length === 0}")
               .bg-white
                 .row.padding.flex-center.border-bottom-line
@@ -85,9 +86,9 @@
       .bg-white
         template(v-if="tabActive === 1")
           .padding
-            .select-search.bg-gray.round.row.padding-xs
+            .select-search.bg-gray.round.row.padding-sm
               .cuIcon-search.padding-left-sm
-              input.col.padding-xs.margin-left-xs(type="text", v-model="customSearchVal", @input="customChange")
+              input.col.margin-left-xs(type="text", v-model="customSearchVal", @input="customChange")
               .close-icon(@click="customSearchVal = ''", v-if="customSearchVal")
                 .cuIcon-roundclosefill.ft-18
           template(v-if="customList.length > 0")    
@@ -243,7 +244,12 @@ export default {
         this.selectDialogTop = this.getRpx(this.customBar) + 200
         this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 300 + 'rpx'
       } else {
+        debugger
+        console.log('screenHeight', this.getRpx(this.screenHeight))
+        console.log('customBar', this.getRpx(this.customBar))
+        console.log('bottomBarHeight', this.getRpx(this.bottomBarHeight))
         this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 200 + 'rpx'
+        console.log('scrollHeight', this.scrollHeight)
       }
       this.loadCartData()
     }
@@ -703,17 +709,17 @@ export default {
       }, 300)
     },
     customChange (e) {
-      const name = e.mp.detail.value
+      this.customSearchVal = e.mp.detail.value
       const me = this
       this.throttle(function () {
         me.cstmCurrentPage = 0
-        me.loadCstmList(name)
+        me.loadCstmList()
       }, 300)
     },
-    async loadCstmList (name) {
+    async loadCstmList () {
       try {
         let queryUrl = '?pageSize=' + this.pageSize + '&currentPage=' + this.cstmCurrentPage
-        if (name) queryUrl += '&name=' + encodeURIComponent(name)
+        if (this.customSearchVal) queryUrl += '&name=' + encodeURIComponent(this.customSearchVal)
         let data = await this.request(this.crmProxy + this.apiList.crm.cstmList.url + queryUrl, {}, this.apiList.crm.cstmList.method)
         this.customTotal = data.total
         let arr = data.list
@@ -755,7 +761,7 @@ export default {
 .cart-items
   .cart-item
     background #fff
-    margin-top 10px
+    // margin-top 10px
     .sub-mark
       display inline-block
       padding 1px 5px

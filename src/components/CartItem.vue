@@ -87,7 +87,7 @@ export default {
 .cart-items
   .cart-item
     background #fff
-    margin-top 10px
+    margin-bottom 10px
     .sub-mark
       display inline-block
       padding 1px 5px
