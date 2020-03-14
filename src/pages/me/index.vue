@@ -108,7 +108,6 @@ export default {
           { title: '我的求购', imgPath: '/static/images/shop_icon.png', url: '/pages/askBuy/main', event: 'click_app_me_demand' }
         ]
       ],
-      avatarDirection: 'none',
       // 全部订单下面一行的数字显示
       rowCountObj: {},
       showNoticeIcon: false,
@@ -134,14 +133,22 @@ export default {
     this.showNoticeIcon = false
     this.rowCountObj = {}
     if (this.isLogin) {
-      console.log('currentUser:>>', this.currentUser)
       this.setCartCount(this.currentUser.user_id)
       this.alertShow = false
       this.showNoticeIcon = this.currentUser.message_switch === '1'
-      if (this.currentUser.type === 'buyer') {
+      if (this.currentUser.type === 'seller') {
+        // TODO 卖家相关接口
+        const orderCount = this.apiList.xy.orderCount
+        this.ironRequest(orderCount.url, '', orderCount.method).then(resp => {
+          console.log('resp', resp)
+          if (resp && resp.returncode === '0') {
+            this.rowCountObj = resp.data
+            this.$forceUpdate()
+          }
+        })
+      } else {
         this.refreshUser()
         this.ironRequest('toOperCounts.shtml?user_id=' + this.currentUser.user_id, {}, 'get').then(resp => {
-          // console.log(resp.data)
           if (resp && resp.returncode === '0') {
             this.rowCountObj = resp
             this.$forceUpdate()
@@ -153,16 +160,6 @@ export default {
             obj.account_balance = resp.balance
             this.currentUser.account_balance = resp.balance
             this.setUser(obj)
-            this.$forceUpdate()
-          }
-        })
-      } else {
-        // TODO 卖家相关接口
-        const orderCount = this.apiList.xy.orderCount
-        this.ironRequest(orderCount.url, '', orderCount.method).then(resp => {
-          console.log('resp', resp)
-          if (resp && resp.returncode === '0') {
-            this.rowCountObj = resp.data
             this.$forceUpdate()
           }
         })
