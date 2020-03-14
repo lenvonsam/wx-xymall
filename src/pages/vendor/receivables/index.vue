@@ -16,7 +16,7 @@ div
     template(v-if="listData.length > 0")
       div(:style="{height: scrollHeight+'rpx'}")
         iron-scroll(@scrolltolower="loadMore", heightUnit="rpx", :height="scrollHeight", :refresh="true", @onRefresh="onRefresh", :loadFinish="loadFinish")          
-          .bill-list(v-for="(item, itemIdx) in listData", :key="itemIdx", @click="jumpDetail(item)")
+          .bill-list(v-for="(item, itemIdx) in listData", :key="itemIdx")
             .bg-white.box
               .padding-sm
                 .flex.justify-between.padding-bottom-sm
@@ -41,34 +41,18 @@ div
  
 </template>
 <script>
-import { mapState, mapActions } from 'vuex'
-import modalInput from '@/components/ModalInput.vue'
+import { mapState } from 'vuex'
 export default {
   data () {
     return {
-      delayDate: 0,
-      modalShow: false,
       currentPage: 0,
       listData: [],
-      triggered: false,
       isload: false,
-      startDate: '',
-      endDate: '',
       searchVal: '',
       isTabDisabled: false,
-      btnDisable: false,
       scrollHeight: '0px',
       loadFinish: 0,
-      pageSize: 10,
-      statusList: {
-        '0': '未限制',
-        '1': '已限制'
-      },
-      filterArr: [],
-      delayMax: 2,
-      checkRow: {},
-      textVal: '',
-      hideZero: 'no'
+      pageSize: 10
     }
   },
   computed: {
@@ -76,50 +60,11 @@ export default {
       tempObject: state => state.tempObject
     })
   },
-  components: {
-    modalInput
-  },
-  watch: {
-    delayDate () {
-      const delayDate = Number(this.delayDate)
-      if (delayDate > 19) {
-        this.delayDate = 19
-        return false
-      } else if (delayDate < 0) {
-        this.delayDate = 0
-        return false
-      }
-      let delayDateStr = this.delayDate.toString()
-      if (delayDateStr.length === 1) {
-        delayDateStr = delayDateStr.replace(/[^1-9]/g, '')
-      } else {
-        delayDateStr = delayDateStr.replace(/\D/g, '')
-      }
-      this.delayDate = Number(delayDateStr)
-    }
-  },
   onShow () {
     this.onRefresh()
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 115
   },
   methods: {
-    ...mapActions([
-      'configVal'
-    ]),
-    openModal (item) {
-      debugger
-      this.checkRow = item
-      this.modalShow = true
-    },
-    modalHandler ({type}) {
-      console.log('type', type)
-      if (type === 'confirm') {
-        this.balanceRestrict()
-      }
-    },
-    openFilter () {
-      this.jump('/pages/vendor/balanceFilter/main')
-    },
     onRefresh (done) {
       this.currentPage = 0
       this.showLoading()
@@ -169,9 +114,6 @@ export default {
         me.currentPage++
         me.refresher()
       }, 300)
-    },
-    jumpDetail (item) {
-      this.jump(`/pages/billDetail/main?id=${item.tstc_no}`)
     }
   }
 }
@@ -198,7 +140,7 @@ export default {
     overflow hidden
     .solid-top
       border-top 0.5px solid #eee
-.bill-btn, .bill-red-btn,.bill-gray-btn
+.bill-btn, .bill-red-btn, .bill-gray-btn
   padding 2px 8px
   text-align center
   font-size 13px
@@ -214,13 +156,12 @@ export default {
 .bill-content
   height 100%
 .filter-btn
-  padding 10px 0 10px 10px  
+  padding 10px 0 10px 10px
 .search-btn
   padding 10px
-.dingjin-icon {
-  width: 35px;
-  height: 20px;
-}
+.dingjin-icon
+  width 35px
+  height 20px
 .cuIcon-box
   width 160px
   margin 0 auto
@@ -240,5 +181,5 @@ export default {
   height 40px
   input
     height 40px
-    width 100%  
+    width 100%
 </style>
