@@ -70,9 +70,15 @@ export default {
     },
     returnGoodsList: { url: '/seller/returnGoods.shtml', method: 'get' },
     returnGoods: { url: '/seller/returnGoods.shtml', method: 'post' },
-    returnGoodsDetail: { url: '/seller/returnGoodsDetail.shtml', method: 'get' },
+    returnGoodsDetail: {
+      url: '/seller/returnGoodsDetail.shtml',
+      method: 'get'
+    },
     modules: { url: '/seller/modules.shtml', method: 'post' },
-    returnGoodsReason: { url: '/seller/returnGoodsReason.shtml', method: 'get' },
+    returnGoodsReason: {
+      url: '/seller/returnGoodsReason.shtml',
+      method: 'get'
+    },
     bankWater: { url: '/seller/bankWater.shtml', method: 'get' },
     bankWaterAudit: { url: '/seller/bankWaterAudit.shtml', method: 'post' },
     bankWaterRestore: { url: '/seller/bankWaterRestore.shtml', method: 'post' },
@@ -126,5 +132,9 @@ export default {
     jfDetailList: 'driver/$/integralDetail',
     // 票券列表
     quanList: 'driver/$/quan'
+  },
+  crm: {
+    // 客户列表
+    cstmList: { url: 'customer', method: 'get' }
   }
 }
