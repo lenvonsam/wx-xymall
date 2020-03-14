@@ -26,7 +26,7 @@ export default {
     goodsList: { url: 'goodsList.shtml', method: 'post' },
     standardList: { url: 'standardList.shtml', method: 'post' },
     cartListCount: { url: 'cartListCount.shtml', method: 'get' },
-    addCart: {url: 'addCart.shtml', method: 'post'},
+    addCart: { url: 'addCart.shtml', method: 'post' },
     addCartSeller: { url: '/seller/addCartSeller.shtml', method: 'post' },
     auditDxCheck: { url: '/seller/auditDxCheck.shtml', method: 'post' },
     dx: { url: '/seller/dx.shtml', method: 'post' },
@@ -57,7 +57,13 @@ export default {
     returnGoodsList: { url: '/seller/returnGoods.shtml', method: 'get' },
     returnGoods: { url: '/seller/returnGoods.shtml', method: 'post' },
     returnGoodsDetail: { url: '/seller/returnGoodsDetail.shtml', method: 'get' },
-    modules: { url: '/seller/modules.shtml', method: 'post' }
+    modules: { url: '/seller/modules.shtml', method: 'post' },
+    returnGoodsReason: { url: '/seller/returnGoodsReason.shtml', method: 'get' },
+    bankWater: { url: '/seller/bankWater.shtml', method: 'get' },
+    bankWaterAudit: { url: '/seller/bankWaterAudit.shtml', method: 'post' },
+    bankWaterRestore: { url: '/seller/bankWaterRestore.shtml', method: 'post' },
+    bankWaterDelete: { url: '/seller/bankWaterDelete.shtml', method: 'post' },
+    bankWaterDetail: { url: '/seller/bankWaterDetail.shtml', method: 'get' }
   },
   erp: {
     // 手机验证码登录

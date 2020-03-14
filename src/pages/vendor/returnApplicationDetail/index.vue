@@ -2,30 +2,19 @@
 div
   nav-bar(title="退货明细", isBack)
   .margin-sm.bg-white.radius
-    .solid-bottom.padding-sm(v-for="(item, idx) in 2", :key="idx")
+    .solid-bottom.padding-sm(v-for="(item, idx) in listData", :key="idx")
       .row.padding-bottom-xs.justify-between.text-black.text-bold
         span {{item.name}} {{item.standard}}
-        .text-blue ¥ {{auditType === '定向' ? item.order_price : item.money}}
+        .text-blue ¥ {{auditType === '定向' ? item.order_price : item.price}}
       .row.padding-bottom-xs
         .col.row
-          span Q235B
-          span.padding-left-xs 12米 
-          span.padding-left-xs 1号门
-          .sub-mark.ml-5 马钢
-        span (理计)  
-      .row 281支/581.016吨
-      //- .row.justify-between.padding-bottom-xs
-      //-   .col
-      //-     span {{item.material}}
-      //-     span {{item.length}}
-      //-     span {{item.warehouse}}
-      //-     span.sub-mark.ml-5 {{item.supply}}
-      //-   span ({{item.metering_way}})
-      //- .padding-bottom-xs {{item.amount}}支/{{item.weight}}吨
+          span {{item.material}}
+        span ({{item.metering_way_str}}) 
+      .padding-bottom-xs {{item.amount}}支/{{item.weight}}吨/{{item.money}}元
     .padding-sm.text-black(style="margin-bottom: 100rpx")
-      .row.justify-between.padding-bottom-xs
+      //- .row.justify-between.padding-bottom-xs
         span 合计
-        .text-gray 15支/15吨/1600元
+        .text-gray {{detailData.amount}}支/{{detailData.weight}}吨/{{detailData.all_price_}}元
       .row.justify-between
         span 吊费
         .text-gray 80.88元
@@ -57,7 +46,8 @@ export default {
       isload: false,
       scrollHeight: 0,
       subsNo: '',
-      status: ''
+      status: '',
+      detailData: {}
     }
   },
   computed: {
@@ -81,10 +71,12 @@ export default {
     async returnGoodsDetail () {
       try {
         const sellerReturnGoodsAudit = this.apiList.xy.sellerReturnGoodsAudit
-        const url = `${sellerReturnGoodsAudit.url}?subs_no=HT20030300003&status=${this.status}`
+        const url = `${sellerReturnGoodsAudit.url}?subs_no=HT20030300010&status=4`
         const data = await this.ironRequest(url, '', sellerReturnGoodsAudit.method)
-        const resData = data.data.resultlist
-        this.listData = resData
+        if (data.returncode === '0') {
+          this.listData = data.list
+          this.detailData = data.data
+        }
       } catch (err) {
         console.log(err)
         this.showMsg(err)
@@ -104,7 +96,7 @@ export default {
     overflow hidden
     .solid-top
       border-top 0.5px solid #eee
-.bill-btn, .bill-red-btn,.bill-gray-btn
+.bill-btn, .bill-red-btn, .bill-gray-btn
   padding 2px 8px
   text-align center
   font-size 13px
@@ -120,7 +112,7 @@ export default {
 .bill-content
   height 100%
 .filter-btn
-  padding 10px 0 10px 10px  
+  padding 10px 0 10px 10px
 .search-btn
   padding 10px
 .nav
@@ -159,7 +151,7 @@ export default {
   left 0
   right 0
   background #fff
-  z-index 9  
+  z-index 9
 .cart-footer
   flex 5
   min-height 50px
