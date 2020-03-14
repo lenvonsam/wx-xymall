@@ -157,6 +157,14 @@ export default {
         })
       } else {
         // TODO 卖家相关接口
+        const orderCount = this.apiList.xy.orderCount
+        this.ironRequest(orderCount.url, '', orderCount.method).then(resp => {
+          console.log('resp', resp)
+          if (resp && resp.returncode === '0') {
+            this.rowCountObj = resp.data
+            this.$forceUpdate()
+          }
+        })
       }
     } else {
       this.tabDot(0)

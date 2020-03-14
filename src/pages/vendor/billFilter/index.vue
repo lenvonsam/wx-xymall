@@ -31,7 +31,7 @@ div
         span {{employeeName || '请选择业务员'}}
         span(:class="selectShow==='employee' ? 'cuIcon-fold' : 'cuIcon-unfold'")
       search-select(:selectSty="'top: 90rpx; height: '+ (contentHeight - 500) +'rpx'", :scrollHeight="300", :selectType="'employee'", @cb="selectCb($event,'employee')", :show="selectShow==='employee'", :inputShow="true")
-    .row.justify-between.solid-bottom.item(:style="itemSty")
+    .row.justify-between.solid-bottom.item(:style="itemSty", v-if="statusList.length > 0")
       .label 状态
       .text-right.row.justify-end.col.select
         picker.col(@change="statusCb", mode="selector", :range="statusList", range-key="label")
@@ -132,18 +132,18 @@ export default {
 </script>
 <style lang="stylus" scoped>
 .label
-  text-align left 
+  text-align left
   color #000
 .item
   // height 45px
   padding 0 10px
   // padding 10px
   position relative
-  input,.select
+  input, .select
     height 100%
 .footer
   position fixed
   bottom 0
   left 0
-  right 0     
+  right 0
 </style>

@@ -48,13 +48,15 @@
         "phoneLogin/main",
         "companyUpdate/main"
       ]
-    },{
+    },
+    {
       "root": "pages/vendor",
       "pages": [
         "me/main",
         "returnApplicationDetail/main",
         "returnApplicationList/main",
         "returnApplication/main",
+        "returnApplicationFilter/main",
         "sumGoods/main",
         "receivables/main",
         "balance/main",
@@ -67,7 +69,11 @@
         "billFilter/main",
         "cart/main",
         "quotation/main",
-        "reviewDetail/main"
+        "reviewDetail/main",
+        "reviewHistory/main",
+        "bankWater/main",
+        "bankWaterFilter/main",
+        "bankWaterDetail/main"
       ]
     }
   ],
@@ -76,7 +82,6 @@
     "backgroundColor": "#fff",
     "selectedColor": "#2485ff",
     "borderStyle": "white",
-
     "list": [
       {
         "text": "首页",

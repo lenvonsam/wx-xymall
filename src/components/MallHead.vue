@@ -214,7 +214,7 @@ export default {
       this.activeTab = 'name'
     },
     jumpSearchInput () {
-      this.statisticRequest({ event: 'click_app_mall_standard_search' })
+      this.statisticRequest({ event: 'click_app_mall_search' })
       this.jump('/pages/search/main')
     },
     cleanStandard () {
