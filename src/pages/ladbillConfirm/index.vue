@@ -11,7 +11,7 @@ div
           .col
             span.ft-15.text-blue.text-bold {{item.no}}
             copy-btn(:copyUrl="item.no")
-          .confirm-btn.text-blue(@click="jump('/pages/ladbillConfirmDetail/main?no='+item.no)") 确认提单
+          .confirm-btn.text-blue(@click="jumpConfirm(item)") 确认提单
         .padding-bottom-xs {{item.product_name}}
         .padding-bottom-xs 
           span 共{{item.total_count}}支，{{item.weight_csg}}吨
@@ -58,6 +58,10 @@ export default {
     onRefresh (done) {
       this.currentPage = 0
       this.loadData(done)
+    },
+    jumpConfirm (item) {
+      this.statisticRequest({ event: 'click_app_td_confirm' })
+      this.jump('/pages/ladbillConfirmDetail/main?no=' + item.no)
     },
     loadData (done) {
       const reqUrl = 'orderLadList.shtml'

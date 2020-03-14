@@ -9,7 +9,7 @@
     .action.relative(v-if="serviceIcon")
       .service-btn
         img(src="/static/images/service_icon.png")
-        button(open-type="contact")
+        button(open-type="contact", @contact="handleContact")
     .action.padding-right(v-if="isCustom")
       //- text.cuIcon-back(@click="back")
       span.cuIcon-homefill(@click="toHome")
@@ -57,6 +57,10 @@ export default {
     })
   },
   methods: {
+    handleContact () {
+      this.statisticRequest({ event: 'click_app_index_kf' })
+      console.log('handleContact')
+    },
     navBack () {
       if (this.cb) {
         this.cb()

@@ -85,10 +85,12 @@ export default {
         fromPage: 'mallFilter',
         noBack: true
       }
+      this.statisticRequest({ event: 'app_mall_category', goods_name: res.name, standard: res.standards })
       this.configVal({ key: 'tempObject', val: res })
       this.back(-1)
     },
     searchChange () {
+      this.statisticRequest({ event: 'click_app_mall_category_search' })
       this.supplyList = []
       this.queryObject.search = this.searchVal
       this.currentPage = 0

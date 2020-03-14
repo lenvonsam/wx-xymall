@@ -19,16 +19,16 @@
           //- scroll-view.nav(scroll-x, scroll-with-animation, :scroll-into-view="searchCurId")
           .cu-item(:id="'idx_'+index", v-for="(item,index) in sortList[0].data", :class="item.id === tabVal?'text-blue cur':''", :key="index", @click="selectTab(item, index)")
             span {{item.name}}
-      .tab-more.row.justify-center(@click="activeTab = 'name'")
+      .tab-more.row.justify-center(@click="openName")
         .cuIcon-unfold.text-xl
     .padding-sm.flex.align-center.solid-top
-      .col.filter-list.bg-gray.flex(:class="{active: standardStr}", @click.prevent="sortCb('standard')")
+      .col.filter-list.bg-gray.flex(:class="{active: standardStr}", @click.prevent="openStandard")
         .col.text-center.text-cut {{standardStr || '规格'}}
         .cuIcon-unfold
-      .col.filter-list.bg-gray.flex(:class="{active: materialStr}", @click.prevent="sortCb('material')")
+      .col.filter-list.bg-gray.flex(:class="{active: materialStr}", @click.prevent="openMaterial")
         .col.text-center.text-cut {{materialStr || '材质'}}
         .cuIcon-unfold
-      .col.filter-list.bg-gray.flex(:class="{active: originStr}", @click.prevent="sortCb('origin')")
+      .col.filter-list.bg-gray.flex(:class="{active: originStr}", @click.prevent="openSupply")
         .col.text-center.text-cut {{originStr || '产地'}}
         .cuIcon-unfold
       .setting-list.flex.ft-25
@@ -197,7 +197,24 @@ export default {
     ...mapActions([
       'configVal'
     ]),
+    openStandard () {
+      this.statisticRequest({ event: 'click_app_mall_standard' })
+      this.sortCb('standard')
+    },
+    openMaterial () {
+      this.statisticRequest({ event: 'click_app_mall_material' })
+      this.sortCb('material')
+    },
+    openSupply () {
+      this.statisticRequest({ event: 'click_app_mall_supply' })
+      this.sortCb('origin')
+    },
+    openName () {
+      this.statisticRequest({ event: 'click_app_mall_goods_drop_down' })
+      this.activeTab = 'name'
+    },
     jumpSearchInput () {
+      this.statisticRequest({ event: 'click_app_mall_standard_search' })
       this.jump('/pages/search/main')
     },
     cleanStandard () {
@@ -215,6 +232,7 @@ export default {
       // this.sortCb('name')
     },
     classifyClick () {
+      this.statisticRequest({ event: 'click_app_mall_category' })
       const firstShare = mpvue.getStorageSync('firstShareMallClassify') || false
       if (!firstShare) {
         this.modalIntroShow = true
@@ -283,6 +301,7 @@ export default {
       this.materialStr = filters['material'].toString() === '全部' ? '' : filters['material'].toString()
       this.originStr = filters['origin'].toString() === '全部' ? '' : filters['origin'].toString()
       this.temporary = []
+      this.statisticRequest({ event: 'app_mall_filter', goods_name: this.tabVal, standard: this.standardStr, material: this.materialStr, supply: this.originStr })
       this.sortClose()
     },
     openFilter () {
@@ -298,6 +317,7 @@ export default {
     standardChange (e) {
       this.throttle(() => {
         // this.sortList[1].data = []
+        this.statisticRequest({ event: 'click_app_mall_category_search' })
         this.queryObject.search = e.mp.detail.value
         // this.standardSearch = e.mp.detail.value
         this.currentPage = 0
@@ -440,6 +460,11 @@ export default {
       })
     },
     selectMall (flag) {
+      if (flag) {
+        this.statisticRequest({ event: 'click_app_mall_view_list' })
+      } else {
+        this.statisticRequest({ event: 'click_app_mall_view_grid' })
+      }
       this.mallFlag = flag
       this.$emit('selectMall', flag)
     }

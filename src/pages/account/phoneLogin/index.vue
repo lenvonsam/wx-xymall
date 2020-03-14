@@ -26,7 +26,7 @@
       .col.text-blue.padding-top(@click="jump('/pages/account/register/main')") 立即注册
       .col.text-right.padding-top(@click="jumpToChildPwd") 忘记密码？
     .mt-50.main-btn(hover-class="hover-gray", @click="remoteHandler") {{pageType === 'smsLogin' ? '登录' : '提交'}}
-    .margin-top-sm.text-center.text-blue(@click="back", v-if="pageType === 'smsLogin'") 账号密码登录
+    .margin-top-sm.text-center.text-blue(@click="jumpBack", v-if="pageType === 'smsLogin'") 账号密码登录
 </template>
 
 <script>
@@ -80,6 +80,10 @@ export default {
       'setUser',
       'configVal'
     ]),
+    jumpBack () {
+      this.statisticRequest({ event: 'click_app_login_pwd' })
+      this.back()
+    },
     jumpToChildPwd () {
       this.configVal({ key: 'tempObject', val: { action: 'pageForward' } })
       this.jump('/pages/account/phoneLogin/main?type=forgetPwd')

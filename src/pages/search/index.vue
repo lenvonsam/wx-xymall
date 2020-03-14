@@ -55,6 +55,7 @@ export default {
       })
     },
     searchClick (searchName) {
+      this.statisticRequest({ event: 'app_mall_search', search: searchName })
       if (typeof searchName === 'string') {
         this.configVal({ key: 'tempObject', val: { search: searchName, fromPage: 'search', noBack: true } })
       } else {

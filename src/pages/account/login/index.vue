@@ -14,10 +14,10 @@
       .col
         input.no-border.ft-16(placeholder="请输入密码(6-12位)", type="password", v-model="upwd", :maxlength="12")
     .row
-      .col.text-blue.padding-top(@click="jump('/pages/account/register/main')") 立即注册
-      .col.text-right.padding-top(@click="jump('/pages/account/phoneLogin/main?type=forgetPwd')") 忘记密码？
+      .col.text-blue.padding-top(@click="jumpReg") 立即注册
+      .col.text-right.padding-top(@click="jumpForgetPwd") 忘记密码？
     .mt-50.main-btn(hover-class="hover-gray", @click="remoteLogin") 登录
-    .margin-top-sm.text-center.text-blue(@click="jump('/pages/account/phoneLogin/main')") 手机验证码登录
+    .margin-top-sm.text-center.text-blue(@click="jumpPhoneLogin") 手机验证码登录
 
 
         
@@ -55,6 +55,18 @@ export default {
       'setUser',
       'configVal'
     ]),
+    jumpReg () {
+      this.statisticRequest({ event: 'click_app_register' })
+      this.jump('/pages/account/register/main')
+    },
+    jumpForgetPwd () {
+      this.statisticRequest({ event: 'click_app_forgetpwd' })
+      this.jump('/pages/account/phoneLogin/main?type=forgetPwd')
+    },
+    jumpPhoneLogin () {
+      this.statisticRequest({ event: 'click_app_login_phone' })
+      this.jump('/pages/account/phoneLogin/main')
+    },
     async remoteLogin () {
       try {
         if (this.uname.trim().length === 0) {
@@ -78,6 +90,7 @@ export default {
           this.setUser(data)
           this.configVal({ key: 'oldVersion', val: this.currentVersion })
           this.getRemoteSearchHistory(data)
+          this.statisticRequest({ event: 'click_app_login' })
           if (data.isnew) {
             this.canClick = true
             const me = this

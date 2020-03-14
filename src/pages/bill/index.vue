@@ -168,6 +168,7 @@ export default {
       this.refresher(done)
     },
     searchOrder () {
+      this.statisticRequest({ event: 'click_app_order_search' })
       this.startDate = ''
       this.endDate = ''
       this.listData = []
@@ -360,8 +361,9 @@ export default {
       this.jump(`/pages/billDetail/main?id=${item.no}`)
     },
     billCancel (item) {
-      if (this.tabName === '0') this.statisticRequest({ event: 'click_app_myorder_all_cancel' })
-      if (this.tabName === '1') this.statisticRequest({ event: 'click_app_myorder_needpay_cancel' })
+      // if (this.tabName === '0') this.statisticRequest({ event: 'click_app_myorder_all_cancel' })
+      // if (this.tabName === '1') this.statisticRequest({ event: 'click_app_myorder_needpay_cancel' })
+      this.statisticRequest({ event: 'click_app_order_cancel' })
       const me = this
       this.confirm({ content: '您确定要取消合同吗？' }).then((res) => {
         if (!me.btnDisable && res === 'confirm') {
@@ -388,8 +390,9 @@ export default {
       })
     },
     payBill (item) {
-      if (this.tabName === '0') this.statisticRequest({ event: 'click_app_myorder_all_pay' })
-      if (this.tabName === '1') this.statisticRequest({ event: 'click_app_myorder_needpay_pay' })
+      // if (this.tabName === '0') this.statisticRequest({ event: 'click_app_myorder_all_pay' })
+      // if (this.tabName === '1') this.statisticRequest({ event: 'click_app_myorder_needpay_pay' })
+      this.statisticRequest({ event: 'click_app_order_to_pay' })
       this.jump(`/pages/pay/main?pageType=offlinePay&orderNo=${item.no}&price=${item.fact_price}`)
     }
   }

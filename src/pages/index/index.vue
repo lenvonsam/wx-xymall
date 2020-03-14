@@ -3,7 +3,7 @@ div
   nav-bar(title="首页", :serviceIcon="true")
   .padding.bg-white(style="padding-top: 50px")
     .fixed.top.home-top-bar(:style="{height: '40px', 'padding-bottom': '50px', top: customBar + 'px'}")
-      .padding-sm.padding-lr.margin-bottom-sm(style="background: #f6f6f6;border-radius: 38rpx;", @click="jump('/pages/search/main')")
+      .padding-sm.padding-lr.margin-bottom-sm(style="background: #f6f6f6;border-radius: 38rpx;", @click="jumpSearch")
         .row.text-gray
           //- .flex-30
           .cuIcon-search
@@ -13,7 +13,7 @@ div
         img.response(:src="imgOuterUrl + g.url", v-if="imgOuterUrl", style="height: 300rpx", mode="widthFix")
     time-line(v-else, type="gallery")
   .row.bg-white.padding-bottom-sm
-    .col.text-center(v-for="(icon,idx) in mainIcons", :key="idx", @click="iconJump(icon.path)")
+    .col.text-center(v-for="(icon,idx) in mainIcons", :key="idx", @click="iconJump(icon)")
       img(:src="icon.url", style="width: 85rpx; height: 85rpx")
       .mt-5 {{icon.title}}
   .bg-white.padding.margin-top-sm
@@ -23,7 +23,7 @@ div
       .col.row(style="overflow hidden")
         vert-banner(:quees="notices")
         //- span(v-else) 暂无消息
-      .flex-60.text-gray.ft-12.text-right(@click="jump('/pages/cardList/main?title=型云公告&type=notice')") 更多>>
+      .flex-60.text-gray.ft-12.text-right(@click="jumpNotice") 更多>>
   .bg-white.padding.margin-top-sm
     .ft-18.text-blod 产品分类
     .margin-top
@@ -112,6 +112,14 @@ export default {
     ...mapActions([
       'configVal'
     ]),
+    jumpNotice () {
+      this.statisticRequest({ event: 'click_app_index_notice_more' })
+      this.jump('/pages/cardList/main?title=型云公告&type=notice')
+    },
+    jumpSearch () {
+      this.statisticRequest({ event: 'click_app_index_search' })
+      this.jump('/pages/search/main')
+    },
     showShareBanner () {
       const firstShare = mpvue.getStorageSync('firstShare') || false
       if (!firstShare) {
@@ -121,12 +129,14 @@ export default {
     },
     classifyClick (id) {
       // this.configVal({ key: 'tempObject', val: { name: title } })
+      this.statisticRequest({ event: 'click_app_index_category' })
       this.configVal({ key: 'tempObject', val: { name: id, fromPage: 'home' } })
       this.tab('/pages/mall/main')
     },
-    iconJump (path) {
+    iconJump (icon) {
+      this.statisticRequest({ event: icon.event })
       if (this.isLogin) {
-        this.jump(path)
+        this.jump(icon.path)
       } else {
         this.confirm({ title: '友情提示', content: '您未登录，请先登录' }).then(res => {
           if (res === 'confirm') this.jump('/pages/account/login/main')
@@ -134,6 +144,7 @@ export default {
       }
     },
     mallMore () {
+      this.statisticRequest({ event: 'click_app_index_category' })
       this.tab('/pages/mall/main')
     },
     // initChart (canvas, width, height) {

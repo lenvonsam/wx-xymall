@@ -20,22 +20,26 @@ export default {
     {
       url: '/static/images/ht_icon.png',
       title: '合同付款',
-      path: '/pages/bill/main?tabName=1'
+      path: '/pages/bill/main?tabName=1',
+      event: 'click_app_index_pay'
     },
     {
       url: '/static/images/td_icon.png',
       title: '我的提单',
-      path: '/pages/ladbill/main'
+      path: '/pages/ladbill/main',
+      event: 'click_app_index_td'
     },
     {
       url: '/static/images/fp_icon.png',
       title: '发票申请',
-      path: '/pages/invoice/main'
+      path: '/pages/invoice/main',
+      event: 'click_app_index_invoice'
     },
     {
       url: '/static/images/zh_icon.png',
       title: '帮我找货',
-      path: '/pages/askBuyCreate/main'
+      path: '/pages/askBuyCreate/main',
+      event: 'click_app_index_seek'
     }
   ],
   // 首页产品分类

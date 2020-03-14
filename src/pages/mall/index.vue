@@ -182,9 +182,9 @@ export default {
       }
     }
   },
-  // onHide () {
-  //   this.queryObject.search = ''
-  // },
+  onTabItemTap (item) {
+    this.statisticRequest({ event: 'click_app_nav_mall' })
+  },
   onShow () {
     this.isload = true
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 285

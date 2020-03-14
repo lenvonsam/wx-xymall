@@ -10,7 +10,7 @@
             empty-image(url="cart_empty.png", className="img-empty")
           .text-center.empty-content 购物车空空如也
           .text-center.margin-top-sm
-            .cart-empty-btn(@click="tab('/pages/mall/main')") ^_^去商城逛逛吧
+            .cart-empty-btn(@click="jumpMall") ^_^去商城逛逛吧
       .s-content-wrap(v-else)
         .s-content
           template(v-if="currentUser.type === 'seller'")
@@ -238,6 +238,9 @@ export default {
       deep: true
     }
   },
+  onTabItemTap (item) {
+    this.statisticRequest({ event: 'click_app_nav_cart' })
+  },
   onHide () {
     this.carts = []
     this.soldCarts = []
@@ -274,12 +277,17 @@ export default {
     ...mapActions([
       'configVal'
     ]),
+    jumpMall () {
+      this.statisticRequest({ event: 'click_app_cart_go_mall' })
+      this.tab('/pages/mall/main')
+    },
     alertCb () {
       // this.jump('/pages/account/login/main')
       this.alertShow = false
     },
     openEdit () {
       this.pickWayShow = false
+      if (!this.isEdit) this.statisticRequest({ event: 'click_app_cart_modify' })
       this.isEdit = !this.isEdit
     },
     tabSelect (type, item) {
@@ -300,6 +308,7 @@ export default {
         this.pickWayShow = true
         this.tabActive = type
       } else {
+        this.statisticRequest({ event: 'click_app_cart_address' })
         this.pickWayShow = !this.pickWayShow
       }
     },
@@ -313,6 +322,7 @@ export default {
       }, 300)
     },
     clearCarts () {
+      this.statisticRequest({ event: 'click_app_cart_del_all' })
       const me = this
       this.confirm({ content: '确定清空购物车？' }).then((res) => {
         if (res === 'confirm') {
@@ -357,6 +367,7 @@ export default {
       }
     },
     choosedAll () {
+      this.statisticRequest({ event: 'click_app_cart_checkall' })
       this.allChoosed = !this.allChoosed
       if (this.allChoosed) {
         this.carts.map(itm => {
@@ -377,6 +388,7 @@ export default {
       let canSellArray = filterArray.filter(itm => itm.price.indexOf('--') >= 0)
       const me = this
       if (this.isEdit) {
+        this.statisticRequest({ event: 'click_app_cart_del' })
         if (filterArray.length === 0) {
           this.showMsg('请选择所需删除的商品')
           return false
@@ -796,7 +808,7 @@ radio.radio[checked]::after
   bottom 0
 // 卖家样式
 .quotation
-  padding 5px 10px  
+  padding 5px 10px
   border-radius 100px
 .tab-select-dialog
   position fixed
@@ -804,7 +816,7 @@ radio.radio[checked]::after
   right 0
   z-index 99
   background rgba(0, 0, 0, 0.5)
-  bottom 0 
+  bottom 0
 .tab-select
   padding 20px 10px
   position relative
@@ -817,7 +829,7 @@ radio.radio[checked]::after
     display block
     width 1px
     height 20px
-    background rgba(0,0,0,0.1)
+    background rgba(0, 0, 0, 0.1)
   &:last-child
     &:after
       display none

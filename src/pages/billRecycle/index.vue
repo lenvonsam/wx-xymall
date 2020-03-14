@@ -90,9 +90,11 @@ export default {
     jumpRestore (no) {
       if (this.disabled) return false
       this.disabled = true
+      this.statisticRequest({ event: 'click_app_recycle_restore' })
       this.jump('/pages/billRecycleDetail/main?no=' + no)
     },
     searchOrder () {
+      this.statisticRequest({ event: 'click_app_recycle_search' })
       this.currentPage = 0
       this.loadData()
     },

@@ -14,7 +14,7 @@ div
       iron-scroll(@scrolltolower="loadMore", :height="scrollHeight", heightUnit="rpx", :refresh="true", @onRefresh="onRefresh", :loadFinish="loadFinish")
         //- scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: screenHeight - 140 +'px'}")  
         .padding-top-sm
-          .padding-sm.bg-white.margin-bottom-sm(@click="jump(`/pages/modifyDetail/main?id=${item.discussid}&type=${tabName}`)", v-for="(item, itemIdx) in listData", :key="itemIdx")
+          .padding-sm.bg-white.margin-bottom-sm(@click="jumpModifyDetail(item)", v-for="(item, itemIdx) in listData", :key="itemIdx")
             .flex.align-center
               .ft-16.padding-right-sm {{item.tstc_no}}
               img.ding-icon(src="/static/images/ding.png", v-if="item.contract_type == 12")
@@ -158,14 +158,11 @@ export default {
         this.isTabDisabled = true
         me.loadData()
       }, 300)
+    },
+    jumpModifyDetail (item) {
+      if (this.tabName === '1') this.statisticRequest({ event: 'click_app_editorder_apply' })
+      this.jump(`/pages/modifyDetail/main?id=${item.discussid}&type=${this.tabName}`)
     }
-    // loadMore () {
-    //   if (!this.isLoad) {
-    //     this.currentPage++
-    //     this.isTabDisabled = true
-    //     this.loadData()
-    //   }
-    // }
   }
 }
 </script>

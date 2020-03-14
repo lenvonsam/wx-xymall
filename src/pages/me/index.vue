@@ -2,7 +2,7 @@
 div 
   nav-bar(title="我的", :bgClass="'bg-blue text-white'", leftMenu)
     div(slot="leftMenu")
-      .relative(@click="jump('/pages/cardList/main?title=消息中心&type=noticeList')", v-if="showNoticeIcon")
+      .relative(@click="jumpNoticeList", v-if="showNoticeIcon")
         img(src="/static/images/notice_w_icon.png", style="width:30rpx; height: 36rpx")
         .red-dot(v-show="rowCountObj.to_notice > 0", style="width: 12rpx; height: 12rpx; top: 0rpx; right: -10rpx;")
   template(v-if="currentUser.type && currentUser.type === 'buyer'")
@@ -35,14 +35,14 @@ div
                 label {{rowCountObj[bicon.dotKey] > 99 ? '99+' : rowCountObj[bicon.dotKey]}}
             .padding-top-xs.ft-15 {{bicon.name}}
       .margin-top-sm.me-icon.bg-white.ft-15(v-for="(cardItem, index) in cardList", :key="index", style="overflow:hidden;border-radius: 10rpx")
-        .item.padding-sm.flex.align-center(v-for="(item, idx) in cardItem", :key="idx", @click="jumpToPage(item.url)")
+        .item.padding-sm.flex.align-center(v-for="(item, idx) in cardItem", :key="idx", @click="jumpToPage(item)")
           .col
             .row
               img(:src="item.imgPath", mode="widthFix")
               .margin-left-sm.col(:class="{'solid-bottom': idx < (cardItem.length - 1)}", style="color:#000") {{item.title}}
           .cuIcon-right.text-gray
       .margin-top-sm.me-icon.bg-white.ft-15(style="overflow:hidden;border-radius: 10rpx")
-        .item.padding-sm.flex.align-center(@click="jump('/pages/account/setting/main')")
+        .item.padding-sm.flex.align-center(@click="jumpSetting")
           .col
             .row
               img(src="/static/images/wdwld.png", mode="widthFix")
@@ -98,13 +98,13 @@ export default {
     return {
       cardList: [
         [
-          { title: '合同回收站', imgPath: '/static/images/recycle_icon.png', url: '/pages/billRecycle/main' },
-          { title: '我的提单', imgPath: '/static/images/order_icon.png', url: '/pages/ladbill/main' },
-          { title: '我的发票', imgPath: '/static/images/wdfp.png', url: '/pages/invoice/main' },
-          { title: '合同修改', imgPath: '/static/images/contract_icon.png', url: '/pages/modify/main' }
+          { title: '合同回收站', imgPath: '/static/images/recycle_icon.png', url: '/pages/billRecycle/main', event: 'click_app_me_recycle' },
+          { title: '我的提单', imgPath: '/static/images/order_icon.png', url: '/pages/ladbill/main', event: 'click_app_me_lad' },
+          { title: '我的发票', imgPath: '/static/images/wdfp.png', url: '/pages/invoice/main', event: 'click_app_me_invoice' },
+          { title: '合同修改', imgPath: '/static/images/contract_icon.png', url: '/pages/modify/main', event: 'click_app_me_editorder' }
         ], [
-          { title: '我的加工', imgPath: '/static/images/operating_icon.png', url: '/pages/process/main' },
-          { title: '我的求购', imgPath: '/static/images/shop_icon.png', url: '/pages/askBuy/main' }
+          { title: '我的加工', imgPath: '/static/images/operating_icon.png', url: '/pages/process/main', event: 'click_app_me_process' },
+          { title: '我的求购', imgPath: '/static/images/shop_icon.png', url: '/pages/askBuy/main', event: 'click_app_me_demand' }
         ]
       ],
       avatarDirection: 'none',
@@ -124,6 +124,9 @@ export default {
       featuresIcons: state => state.vendor.featuresIcons,
       billTrackIcons: state => state.vendor.billTrackIcons
     })
+  },
+  onTabItemTap (item) {
+    this.statisticRequest({ event: 'click_app_nav_me' })
   },
   onShow () {
     this.whiteStatusBar()
@@ -172,6 +175,10 @@ export default {
       'setUser',
       'configVal'
     ]),
+    jumpNoticeList () {
+      this.statisticRequest({ event: 'click_app_me_message' })
+      this.jump('/pages/cardList/main?title=消息中心&type=noticeList')
+    },
     alertCb () {
       if (this.isLogin) {
         if (this.currentUser.type === 'buyer') this.jump('/pages/account/companyUpdate/main?type=2')
@@ -196,20 +203,17 @@ export default {
         console.error(e)
       }
     },
-    jumpToPage (url) {
-      console.log('jumpToPage', url)
-      if (url === '/pages/modify/main') this.statisticRequest({ event: 'click_app_me_modify' })
-      if (url === '/pages/recycle/main') this.statisticRequest({ event: 'click_app_me_recycle' })
-      if (url === '/pages/ladbill/main') this.statisticRequest({ event: 'click_app_me_lad' })
-      if (url === '/pages/invoice/main') this.statisticRequest({ event: 'click_app_me_invoice' })
-      if (url === '/pages/contract/main') this.statisticRequest({ event: 'click_app_me_contract' })
-      if (url === '/pages/process/main') this.statisticRequest({ event: 'click_app_me_process' })
-      if (url === '/pages/askBuy/main') this.statisticRequest({ event: 'click_app_me_demand' })
-      if (url === '/pages/address/main') this.statisticRequest({ event: 'click_app_me_address' })
-      this.jump(url)
+    jumpSetting () {
+      this.statisticRequest({ event: 'click_app_me_setting' })
+      this.jump('/pages/account/setting/main')
+    },
+    jumpToPage (item) {
+      this.statisticRequest({ event: item.event })
+      this.jump(item.url)
     },
     jumpProfile () {
-      this.statisticRequest({ event: 'click_app_me_information' })
+      // this.statisticRequest({ event: 'click_app_me_information' })
+      this.statisticRequest({ event: 'click_app_me_profile' })
       this.jump('/pages/account/profile/main')
     },
     jumpBalance () {
@@ -222,14 +226,15 @@ export default {
       }
     },
     jumpBillMore () {
-      this.statisticRequest({ event: 'click_app_me_myorder_more' })
+      // this.statisticRequest({ event: 'click_app_me_myorder_more' })
+      this.statisticRequest({ event: 'click_app_me_order_all' })
       this.jump('/pages/bill/main')
     },
     jumpBicon (url) {
-      // if (url.path === '/bill?tabName=1') this.statisticRequest({ event: 'click_app_me_to_pay_order' })
-      // if (url.path === '/ladbill/confirm/list') this.statisticRequest({ event: 'click_app_me_to_confirm' })
-      // if (url.path === '/ladbill?tabName=4') this.statisticRequest({ event: 'click_app_me_to_pay_contract' })
-      // if (url.path === '/invoice') this.statisticRequest({ event: 'click_app_me_to_invoice' })
+      if (url.path === '/pages/bill/main?tabName=1') this.statisticRequest({ event: 'click_app_me_to_pay' })
+      if (url.path === '/pages/ladbillConfirm/main') this.statisticRequest({ event: 'click_app_me_to_confirm' })
+      if (url.path === '/pages/bill/main?tabName=6') this.statisticRequest({ event: 'click_app_me_to_lad' })
+      if (url.path === '/pages/invoice/main?tabName=0') this.statisticRequest({ event: 'click_app_me_to_invoice' })
       this.jump(url.path)
     }
   }
