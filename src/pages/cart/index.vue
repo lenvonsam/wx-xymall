@@ -22,11 +22,11 @@
                   .padding-xs.mr-5(@click="openEdit") 编辑
                   .padding-xs(@click="clearCarts") 清空
             .row.text-gray.text-center.bg-white(style="height: 100rpx")
-              .row.col.tab-select(@click="openPickWay(1)", :class="{'text-blue': pickWayShow && tabActive === 1}")
-                .col {{customerName || '客户选择'}}
+              .row.tab-select(@click="openPickWay(1)", :class="{'text-blue': pickWayShow && tabActive === 1}")
+                .col.text-cut {{customerName || '客户选择'}}
                 i(:class="pickWayShow && tabActive === 1 ? 'cuIcon-fold' : 'cuIcon-unfold'")
-              .row.col.tab-select(@click="openPickWay(2)", :class="{'text-blue': pickWayShow && tabActive === 2}")
-                .col {{liftSelect}}
+              .row.tab-select(@click="openPickWay(2)", :class="{'text-blue': pickWayShow && tabActive === 2}")
+                .col.text-cut {{liftSelect}}
                 i(:class="pickWayShow && tabActive === 2 ? 'cuIcon-fold' : 'cuIcon-unfold'")
           template(v-else)
             .flex.padding-sm.bg-white.align-center.justify-between(style="height: 100rpx")
@@ -81,43 +81,53 @@
           span {{isEdit ? '删除' : '定向'}}
         .cart-settle-btn.ft-18(@click="goToSettle", v-else)
           span {{isEdit ? '删除' : '结算'}}
-    .tab-select-dialog.solid-top(:style="{top: customBar + 80 + 'px'}", v-show="pickWayShow && currentUser.type === 'seller'")
+    .tab-select-dialog.solid-top(:style="{top: selectDialogTop + 'rpx'}", v-show="pickWayShow && currentUser.type === 'seller'")
       .bg-white
         template(v-if="tabActive === 1")
           .padding
             .select-search.bg-gray.round.row.padding-xs
               .cuIcon-search.padding-left-sm
-              input.col.padding-xs.margin-left-xs(type="text")
-          .solid-top.row.padding.justify-between(@click="tabSelect('custom', item)", v-for="(item, pickIdx) in 6", :key="pickIdx")
-            //- scroll-view(style="max-height: 500rpx")
-            .custom-item
-              span 江苏省安徽四暗有限公司
-                //- .cuIcon-check
-          .solid-top.text-right.padding.text-gray 共4条数据
+              input.col.padding-xs.margin-left-xs(type="text", v-model="customSearchVal", @input="customChange")
+              .close-icon(@click="customSearchVal = ''", v-if="customSearchVal")
+                .cuIcon-roundclosefill.ft-18
+          template(v-if="customList.length > 0")    
+            iron-scroll(:height="400", heightUnit="rpx", @scrolltolower="customloadMore", :loadFinish="customLoadFinish")    
+              .bg-white.solid-top.row.padding.justify-between(@click="tabSelect('custom', item)", :class="{'text-blue': customerName === item.name}", v-for="(item, customPickIdx) in customList", :key="customPickIdx")
+                .col {{item.name}}
+                .cuIcon-check(v-if="customerName === item.name")
+          template(v-else)         
+            .text-center 暂无数据
+          .solid-top.text-right.padding.text-gray 共{{customTotal}}条数据
         template(v-else)
-          .solid-top.row.padding.justify-between(@click="tabSelect('lift', item)", :class="{'text-blue': liftSelect === item}", v-for="(item, liftIdx) in liftList", :key="liftIdx")
+          .solid-top.row.padding.justify-between(@click="tabSelect('lift', item)", :class="{'text-blue': liftSelectVal === item.val}", v-for="(item, liftIdx) in liftList", :key="liftIdx")
             span {{item.label}}  
-            .cuIcon-check(v-show="liftSelect === item")
+            .cuIcon-check(v-show="liftSelectVal === item.val")
     .address-dialog(@click="openPickWay", :style="{top: customBar + 40 + 'px'}", v-show="pickWayShow && currentUser.type === 'buyer'")
       .bg-white
         .solid-top.padding(v-for="(item, pickIdx) in pickWayList", :key="pickIdx")
           .text-bold.ft-15 {{item.title}}
           .text-gray.padding-top-sm {{item.content}}
     alert(:msg="alertText", :cb="alertCb", v-model="alertShow", force)
+    modal(v-model="modalShow", @cb="modalCb")
+      .padding-sm {{modalMsg}}
 </template>
 
 <script>
 import CountStep from '@/components/CountStep.vue'
 import CartItem from '@/components/CartItem.vue'
+import Modal from '@/components/Modal.vue'
 import { mapState, mapActions } from 'vuex'
 export default {
   data () {
     return {
+      modalShow: false,
+      modalMsg: '',
       // 卖家变量
+      customSearchVal: '',
       liftSelect: '收吊费',
       liftSelectVal: 1,
       tabActive: 0,
-      customerName: '无锡海铭通物贸有限公司',
+      customerName: '',
       liftList: [{
         label: '收吊费',
         val: 1
@@ -128,6 +138,13 @@ export default {
         label: '开平免吊费',
         val: 3
       }],
+      cstmCurrentPage: 1,
+      selectDialogTop: 0,
+      customList: [],
+      customTotal: 0,
+      customLoadFinish: 0,
+      disabled: false,
+      dxFilterArray: [],
       // 买家变量
       alertText: '',
       alertShow: false,
@@ -151,13 +168,13 @@ export default {
         { title: '自提点2-合肥徽商库', content: '合肥市庐阳区徽商钢材市场' },
         { title: '自提点3-合肥东港库', content: '合肥市大兴镇南淝河旁，合肥东港码头w' }
       ],
-      scrollHeight: 0,
-      cstmCurrentPage: 1
+      scrollHeight: 0
     }
   },
   components: {
     CountStep,
-    CartItem
+    CartItem,
+    Modal
   },
   computed: {
     ...mapState({
@@ -223,6 +240,7 @@ export default {
       })
     } else {
       if (this.currentUser.type === 'seller') {
+        this.selectDialogTop = this.getRpx(this.customBar) + 200
         this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 300 + 'rpx'
       } else {
         this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 200 + 'rpx'
@@ -246,6 +264,13 @@ export default {
       this.statisticRequest({ event: 'click_app_cart_go_mall' })
       this.tab('/pages/mall/main')
     },
+    modalCb (flag) {
+      if (flag === 'confirm' && this.dxFilterArray.length > 0) {
+        this.dx()
+      } else {
+        this.modalShow = false
+      }
+    },
     alertCb () {
       this.alertShow = false
     },
@@ -259,10 +284,14 @@ export default {
         this.liftSelect = item.label
         this.liftSelectVal = item.val
         this.pickWayShow = false
-        this.tabActive = 0
+      } else {
+        this.customerName = item.name
+        this.pickWayShow = false
       }
+      this.tabActive = 0
     },
     openPickWay (type) {
+      debugger
       if (this.currentUser.type === 'seller') {
         if (this.tabActive === type) {
           this.pickWayShow = !(this.tabActive === type)
@@ -498,7 +527,9 @@ export default {
         if (data.returncode === '0') {
           if (flag === 1) {
             // 定向
-            this.dx(filterArray)
+            this.modalMsg = data.errormsg
+            this.modalShow = true
+            this.dxFilterArray = filterArray
           } else {
             // 生成报价单
             this.generateQuotation(filterArray)
@@ -595,46 +626,59 @@ export default {
       })
     },
     // 卖家方法
-    async dx (filterArray) {
-      // this.jump('/pages/vendor/quotation/main')
-      let orderIds = []
-      let dxPrices = []
-      let costPrices = []
-      let jlTypes = []
-      let amounts = []
-      let weights = []
-      let orderPrices = []
-      filterArray.map(itm => {
-        orderIds.push(itm.order_id)
-        dxPrices.push(itm.dx_prices)
-        costPrices.push(itm.cost_prices)
-        jlTypes.push(itm.measure_way_id)
-        amounts.push(itm.count)
-        weights.push(itm.countWeight)
-        orderPrices.push(itm.price)
-      })
-      const params = {
-        user_id: this.currentUser.user_id,
-        buyer_name: this.customerName,
-        order_ids: orderIds.toString(),
-        dx_prices: dxPrices.toString(),
-        cost_prices: costPrices.toString(),
-        jl_types: jlTypes.toString(),
-        need_lift: this.liftSelectVal,
-        amount_s: amounts.toString(),
-        weight_s: weights.toString(),
-        order_prices: orderPrices.toString(),
-        total_money: this.totalPrice,
-        total_amount: this.totalCount,
-        total_weight: this.totalWeight,
-        lift_money: this.totalLiftCharge
+    async dx () {
+      try {
+        if (this.disabled) return false
+        this.disabled = true
+        const filterArray = this.dxFilterArray
+        let orderIds = []
+        let dxPrices = []
+        let costPrices = []
+        let jlTypes = []
+        let amounts = []
+        let weights = []
+        let orderPrices = []
+        filterArray.map(itm => {
+          orderIds.push(itm.order_id)
+          dxPrices.push(itm.dx_prices)
+          costPrices.push(itm.cost_prices)
+          jlTypes.push(itm.measure_way_id)
+          amounts.push(itm.count)
+          weights.push(itm.countWeight)
+          orderPrices.push(itm.price)
+        })
+        const params = {
+          user_id: this.currentUser.user_id,
+          buyer_name: this.customerName,
+          order_ids: orderIds.toString(),
+          dx_prices: dxPrices.toString(),
+          cost_prices: costPrices.toString(),
+          jl_types: jlTypes.toString(),
+          need_lift: this.liftSelectVal,
+          amount_s: amounts.toString(),
+          weight_s: weights.toString(),
+          order_prices: orderPrices.toString(),
+          total_money: this.totalPrice,
+          total_amount: this.totalCount,
+          total_weight: this.totalWeight,
+          lift_money: this.totalLiftCharge
+        }
+        const data = await this.ironRequest(
+          this.apiList.xy.dx.url,
+          params,
+          this.apiList.xy.dx.method
+        )
+        this.showMsg(data.errormsg)
+        this.disabled = false
+        this.modalShow = false
+        this.loadCartData()
+        this.dxFilterArray = []
+      } catch (err) {
+        this.showMsg(err)
+        this.modalShow = false
+        this.disabled = false
+        this.dxFilterArray = []
       }
-      const data = await this.ironRequest(
-        this.apiList.xy.dx.url,
-        params,
-        this.apiList.xy.dx.method
-      )
-      console.log(data)
     },
     generateQuotation () {
       const filterArray = this.carts.filter(itm => itm.choosed === true)
@@ -651,12 +695,46 @@ export default {
       this.configVal({ key: 'tempObject', val: tempObject })
       this.jump('/pages/vendor/quotation/main')
     },
+    customloadMore () {
+      const me = this
+      this.throttle(function () {
+        me.cstmCurrentPage++
+        me.loadCstmList()
+      }, 300)
+    },
+    customChange (e) {
+      const name = e.mp.detail.value
+      const me = this
+      this.throttle(function () {
+        me.cstmCurrentPage = 0
+        me.loadCstmList(name)
+      }, 300)
+    },
     async loadCstmList (name) {
       try {
+        debugger
         let queryUrl = '?pageSize=' + this.pageSize + '&currentPage=' + this.cstmCurrentPage
         if (name) queryUrl += '&name=' + name
         let data = await this.request(this.crmProxy + this.apiList.crm.cstmList.url + queryUrl, {}, this.apiList.crm.cstmList.method)
-        console.log('cstm list data:>>', data)
+        this.customTotal = data.total
+        let arr = data.list
+        const me = this
+        if (arr.length === 0 && me.cstmCurrentPage === 0) {
+          me.customList = []
+          me.isload = false
+        } else if (arr.length > 0 && me.cstmCurrentPage === 0) {
+          me.customList = arr
+          me.isload = false
+        } else if (arr.length > 0 && me.cstmCurrentPage > 0) {
+          arr.map(item => {
+            me.customList.push(item)
+          })
+        } else {
+          if (me.customList.length >= 10) me.customLoadFinish = 2
+          me.cstmCurrentPage--
+        }
+        if (this.customList.length < 10) this.customLoadFinish = 0
+        this.$forceUpdate()
       } catch (e) {
         console.error(e)
       }
@@ -772,6 +850,7 @@ radio.radio[checked]::after
   background rgba(0, 0, 0, 0.5)
   bottom 0
 .tab-select
+  width 50%
   padding 20px 10px
   position relative
   &:after
