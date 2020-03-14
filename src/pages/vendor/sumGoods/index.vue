@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  nav-bar(title="ERP现货物资")
+  nav-bar(title="ERP现货物资", isBack)
   div(style="height: 285rpx;")
     mall-head(:mallTabVal="mallTabVal", @cleanSearch="cleanSearch", @getName="getName", @filter="multipleFilter", @selectMall="selectMall", @selectTab="selectTab", @searchChange="searchChange")
 

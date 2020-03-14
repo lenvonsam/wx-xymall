@@ -23,7 +23,7 @@
       .col
         input.no-border.ft-16(placeholder="请输入新密码(6-12位)", v-model="pwd", type="password", :maxlength="12")
     .row(v-if="pageType=='smsLogin'")
-      .col.text-blue.padding-top(@click="jump('/pages/account/register/main')") 立即注册
+      .col.text-blue.padding-top(@click="jumpReg") 立即注册
       .col.text-right.padding-top(@click="jumpToChildPwd") 忘记密码？
     .mt-50.main-btn(hover-class="hover-gray", @click="remoteHandler") {{pageType === 'smsLogin' ? '登录' : '提交'}}
     .margin-top-sm.text-center.text-blue(@click="jumpBack", v-if="pageType === 'smsLogin'") 账号密码登录
@@ -84,7 +84,12 @@ export default {
       this.statisticRequest({ event: 'click_app_login_pwd' })
       this.back()
     },
+    jumpReg () {
+      this.statisticRequest({ event: 'click_app_register' })
+      this.jump('/pages/account/register/main')
+    },
     jumpToChildPwd () {
+      this.statisticRequest({ event: 'click_app_forgetpwd' })
       this.configVal({ key: 'tempObject', val: { action: 'pageForward' } })
       this.jump('/pages/account/phoneLogin/main?type=forgetPwd')
     },

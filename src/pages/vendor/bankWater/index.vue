@@ -45,7 +45,7 @@ div
                     .row
                       template(v-if="tabName === '0'")
                         .text-gray(v-if="item.match_status === 3") 不匹配
-                        .bill-btn.round.margin-left-sm(v-else-if="(item.match_status === 3)") 删除
+                        .bill-btn.round.margin-left-sm(v-else-if="(item.match_status === 3)", @click="delBankWater(item.id)") 删除
                         .bill-btn.round.margin-left-sm(v-else, @click.stop="jumpDetail(item, 'review')") 审核
                       .bill-btn.round.margin-left-sm(@click.stop="jumpDetail(item)", v-else) 详情
                       .bill-btn.round.margin-left-sm(v-if="tabName === '3'", @click.stop="jumpDetail(item, 'restore')") 恢复                      
@@ -54,12 +54,17 @@ div
                       //- .bill-btn.round.margin-left-sm(v-else, @click.stop="bankWaterHandler(item)") {{tabName === '0' ? '审核' : tabName === '1' ? '详情' : '恢复'}}
         .text-center.c-gray.pt-100(v-else)
           empty-image(url="bill_empty.png", className="img-empty")
+  modal(v-model="modalShow", @cb="modalCb")
+    .padding-sm {{modalMsg}}        
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
+import Modal from '@/components/Modal.vue'
 export default {
   data () {
     return {
+      modalShow: false,
+      modalMsg: '',
       scrollId: 'idx_0',
       swiperCount: 0,
       openStatus: false,
@@ -83,8 +88,12 @@ export default {
       status: '',
       filterArr: [],
       searchVal: '',
-      statusList: []
+      statusList: [],
+      delBankWaterId: ''
     }
+  },
+  components: {
+    Modal
   },
   computed: {
     ...mapState({
@@ -117,6 +126,34 @@ export default {
   },
   methods: {
     ...mapActions(['configVal']),
+    delBankWater (id) {
+      this.delBankWaterId = id
+      this.modalShow = true
+      this.modalMsg = '是否确认删除？'
+    },
+    modalCb (flag) {
+      if (flag === 'confirm') {
+        this.bankWaterDelete()
+      } else {
+        this.modalShow = false
+      }
+    },
+    async bankWaterDelete () {
+      try {
+        const bankWaterDelete = this.apiList.xy.bankWaterDelete
+        const params = {
+          id: this.delBankWaterId,
+          user_id: this.currentUser.user_id
+        }
+        const data = await this.ironRequest(bankWaterDelete.url, params, bankWaterDelete.method)
+        this.delBankWaterId = ''
+        this.modalShow = false
+        this.showMsg(data.errormsg)
+      } catch (err) {
+        this.modalShow = false
+        this.showMsg(err)
+      }
+    },
     openFilter () {
       // const statusList = this.billTab[this.swiperCount].statusList
       // this.configVal({ key: 'tempObject', val: { statusList: statusList } })

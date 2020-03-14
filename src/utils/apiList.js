@@ -65,7 +65,7 @@ export default {
     sellerBalance: { url: '/seller/balance.shtml', method: 'get' },
     balanceRestrict: { url: '/seller/balanceRestrict.shtml', method: 'post' },
     gatherinsgBeforeWarning: {
-      url: '/seller/erp/gatherinsgBeforeWarning.shtml',
+      url: '/seller/gatherinsgBeforeWarning.shtml',
       method: 'get'
     },
     returnGoodsList: { url: '/seller/returnGoods.shtml', method: 'get' },
