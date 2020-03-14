@@ -712,9 +712,8 @@ export default {
     },
     async loadCstmList (name) {
       try {
-        debugger
         let queryUrl = '?pageSize=' + this.pageSize + '&currentPage=' + this.cstmCurrentPage
-        if (name) queryUrl += '&name=' + name
+        if (name) queryUrl += '&name=' + encodeURIComponent(name)
         let data = await this.request(this.crmProxy + this.apiList.crm.cstmList.url + queryUrl, {}, this.apiList.crm.cstmList.method)
         this.customTotal = data.total
         let arr = data.list
