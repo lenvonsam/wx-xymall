@@ -2,7 +2,6 @@
 div
   nav-bar(title="条件筛选", isBack)
   .bg-white.text-right.text-gray(@click="closeSelect")
-    
     .row.justify-between.solid-bottom.item(@click="custmShow = !custmShow")
       .label 客户名称
       .text-right.row.justify-end.col.select
@@ -91,17 +90,17 @@ export default {
 </script>
 <style lang="stylus" scoped>
 .label
-  text-align left 
+  text-align left
   color #000
 .item
   height 45px
   padding 0 10px
   position relative
-  input,.select
+  input, .select
     height 100%
 .footer
   position fixed
   bottom 0
   left 0
-  right 0     
+  right 0
 </style>

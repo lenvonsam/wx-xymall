@@ -10,6 +10,9 @@ div
           .close-icon(@click="searchVal = ''", v-if="searchVal")
             .cuIcon-roundclosefill.ft-18
       .search-btn.text-blue(@click="onRefresh") 搜索
+      .filter-btn.row(@click="openFilter")
+        span 筛选
+        .cuIcon-filter
     .flex.text-center.nav.bg-white.relative(style="height: 90rpx")
       .tab-line
       .cu-item.flex-sub(v-for="(item,index) in billTab", :class="item.status === tabName?'text-blue cur':''", :key="index", @click="selectTabs(item, index)")
@@ -49,7 +52,7 @@ div
       empty-image(url="bill_empty.png", className="img-empty")      
 </template>
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import copyBtn from '@/components/CopyBtn.vue'
 export default {
   data () {
@@ -99,6 +102,7 @@ export default {
     this.onRefresh()
   },
   methods: {
+    ...mapActions(['configVal']),
     jumpDetail (item) {
       this.jump(`/pages/vendor/quotationDetail/main?id=${item.id}`)
     },
@@ -153,11 +157,13 @@ export default {
         me.loadData()
       }, 300)
     },
-
+    openFilter () {
+      this.jump('/pages/vendor/returnApplicationFilter/main?tabName=' + this.tabName)
+    },
     async application (item, flag) {
       try {
         if (flag === '申请') {
-          this.jump(`/pages/vendor/returnApplication/main?subsNo=${item.lad_no}&status=${item.status}`)
+          this.jump(`/pages/vendor/returnApplication/main?subsNo=${item.lad_no}&status=${item.status}&id=${item.id}`)
           return false
         }
         const returnGoods = this.apiList.xy.returnGoods
@@ -182,7 +188,7 @@ export default {
     overflow hidden
     .solid-top
       border-top 0.5px solid #eee
-.bill-btn, .bill-red-btn,.bill-gray-btn
+.bill-btn, .bill-red-btn, .bill-gray-btn
   padding 2px 8px
   text-align center
   font-size 13px
@@ -198,7 +204,7 @@ export default {
 .bill-content
   height 100%
 .filter-btn
-  padding 10px 0 10px 10px  
+  padding 10px 0 10px 10px
 .search-btn
   padding 10px
 .nav
@@ -230,5 +236,5 @@ export default {
   padding 5px 10px
   border-radius 35px
 .search-btn
-  padding 10px  
+  padding 10px
 </style>

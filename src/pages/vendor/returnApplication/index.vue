@@ -4,18 +4,17 @@ div
   .bg-white
     .ft-16.padding-sm 退货选择
     .solid-top.row.padding-sm
-      .col.row(@click="isGoodsShow = !isGoodsShow")
+      .col.row(@click="returnGoodsCheck('isGoodsShow')")
         img.choose-icon(src="/static/images/blue_check.png", v-if="isGoodsShow")
         img.choose-icon(src="/static/images/btn_ck_n.png", v-else)
         span.padding-left-sm 退货款
-      .col.row(@click="isliftShow = !isliftShow")
+      .col.row(@click="returnGoodsCheck('isliftShow')")
         img.choose-icon(src="/static/images/blue_check.png", v-if="isliftShow")
         img.choose-icon(src="/static/images/btn_ck_n.png", v-else)
         span.padding-left-sm 退吊费
-  .margin-sm.bg-white.radius.padding-sm(v-if="isGoodsShow")
+  .margin-sm.bg-white.radius.padding-sm(v-if="isGoodsShow && listData.length > 0")
     .goods-list
       .row.padding-bottom-sm.solid-bottom
-        //- img.choose-icon(src="/static/images/btn_ck_n.png")
         span.text-blue.padding-left-xs {{listData[0].tstc_no}}
       .padding-top-sm.solid-bottom(v-for="(item, idx) in listData", :key="idx")
         .row.padding-bottom-xs(@click="item.choosed = !item.choosed")
@@ -45,21 +44,26 @@ div
     .row.padding-top-sm
       span.text-red *
       span 吊费金额
-      .col.text-right.margin-right-xs.padding-left-sm
-        input(type="text", :placeholder="liftPlaceholder")
+      .col.text-right.margin-right-xs.padding-left-sm.row
+        input.col(type="text", :placeholder="liftPlaceholder", v-model="totalLiftCharge", @input="liftInput")
+        span 元
   .margin-sm.bg-white.radius(style="margin-bottom: 120rpx")
     .solid-bottom.text-black.ft-16.padding-sm 上传退货协议
     .row.justify-between.solid-bottom.padding-sm
-      span 退款总金额
-      span.text-gray 2550.3元
+      .col 退款总金额
+      .text-gray {{totalPrice}}元
+        //- input.col(type="Number", v-model="totalPrice")
+        //- span 元
     .row.justify-between.solid-bottom.padding-sm
       span 发票状态
-      span.text-gray 待申请
+      span.text-gray {{invoiceStatusStr}}
     .row.justify-between.solid-bottom.padding-sm
       span.text-red *
       span 退货原因
       .col.text-right.margin-right-xs.padding-left-sm
-        input(type="text", placeholder="不想要了")
+        picker.col(@change="returnReasonCb", :range="returnReasonList", range-key="name")
+          .text-right.text-gray {{returnReason || '请选择退货原因'}}
+          //- input(type="text", v-model="returnReason")
   .s-footer
     .cart-footer.justify-between
       .col.cart-footer-col
@@ -72,8 +76,9 @@ div
           .text-right.flex.justify-end
             span 合计：
             b.text-red ￥ {{totalPrice}}
-        .text-right.ft-12 共{{totalCount}}件 ，{{totalWeight}}吨，吊费: {{totalLiftCharge}}元
-      .cart-settle-btn.ft-18.bg-blue
+        .text-right.ft-12 共{{totalCount}}件 ，{{totalWeight}}吨
+          span(v-if="isliftShow") ，吊费: {{totalLiftCharge}}元
+      .cart-settle-btn.ft-18.bg-blue(@click="returnGoods")
         span 申请    
 </template>
 <script>
@@ -82,6 +87,8 @@ import CountStep from '@/components/CountStep.vue'
 export default {
   data () {
     return {
+      maxLift: '',
+      returnReason: '',
       liftPlaceholder: '',
       allChoosed: false,
       isGoodsShow: true,
@@ -92,10 +99,6 @@ export default {
       totalWeight: 0,
       totalLiftCharge: 0,
       totalCount: 0,
-      billTab: [
-        { title: '待申请', status: '0,2', data: [], isActive: true },
-        { title: '申请历史', status: '-1', data: [], isActive: false }
-      ],
       isTabDisabled: false,
       tabName: '0,2',
       currentPage: 0,
@@ -103,7 +106,11 @@ export default {
       isload: false,
       scrollHeight: 0,
       subsNo: '',
-      status: ''
+      htNo: '',
+      status: '',
+      invoiceStatus: '',
+      invoiceStatusStr: '',
+      returnReasonList: []
     }
   },
   components: {
@@ -117,55 +124,125 @@ export default {
   watch: {
     listData: {
       handler (newVal, oldVal) {
-        let filterArray = newVal.filter(item => {
-          item.countWeight = this.$toFixed(Number(item.count * item.weight), 3)
-          return item.choosed === true
-        })
-        this.totalCount = filterArray.length
-        this.allChoosed = this.totalCount === newVal.length
-        this.totalGoodsWeight = 0
-        this.totalGoodsPrice = 0
-        this.totalPrice = 0
-        this.totalWeight = 0
-        this.totalLiftCharge = 0
-        if (filterArray.length > 0) {
-          filterArray.map(itm => {
-            if (itm.price.indexOf('--') < 0) {
-              if (Number(itm.lift_charge) > 0) {
-                const countWeight = Number(this.$toFixed(itm.count * itm.weight, 3))
-                const countLiftWeight = countWeight * itm.lift_charge
-                this.totalPrice += itm.price * countWeight + countLiftWeight
-                this.totalLiftCharge += countLiftWeight
-              } else {
-                this.totalPrice += itm.price * Number(this.$toFixed(itm.count * itm.weight, 3))
-              }
-              this.totalWeight += Number(this.$toFixed(itm.weight * itm.count, 3))
-            }
-          })
-          this.totalLiftCharge = this.$toFixed(Number(this.totalLiftCharge), 2)
-          this.totalPrice = this.$toFixed(Number(this.totalPrice), 2)
-          this.totalWeight = this.$toFixed(Number(this.totalWeight), 3)
-        }
+        this.listChange(newVal)
       },
       deep: true
     }
   },
   onUnload () {
-    this.tabName = '1'
     this.currentPage = 0
     this.listData = []
     this.finished = true
     this.isload = false
     this.scrollHeight = 0
+    this.statusStr = ''
+    this.subsNo = ''
+    this.htNo = ''
+    this.status = ''
   },
   onShow () {
     this.subsNo = this.$root.$mp.query.subsNo
     this.status = this.$root.$mp.query.status
+    this.htNo = this.subsNo.replace('TD', 'HT')
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 205
     if (this.$root.$mp.query.tabName) this.tabName = this.$root.$mp.query.tabName
     this.returnGoodsDetail()
+    // this.returnGoodsReason()
+  },
+  beforeMount () {
+    this.returnGoodsReason()
   },
   methods: {
+    returnGoodsCheck (key) {
+      this[key] = !this[key]
+      this.listChange(this.listData)
+    },
+    listChange (listData) {
+      let filterArray = listData.filter(item => {
+        item.countWeight = this.$toFixed(Number(item.count * item.singleWeight), 3)
+        return item.choosed === true
+      })
+      this.totalCount = filterArray.length
+      this.allChoosed = this.totalCount === listData.length
+      this.totalGoodsWeight = 0
+      this.totalGoodsPrice = 0
+      this.totalPrice = 0
+      this.totalWeight = 0
+
+      if (filterArray.length > 0) {
+        filterArray.map(itm => {
+          const countWeight = itm.count * itm.singleWeight
+          this.totalGoodsWeight += countWeight
+          this.totalGoodsPrice += itm.price * countWeight
+        })
+        this.totalGoodsPrice = this.$toFixed(Number(this.totalGoodsPrice), 2)
+        this.totalGoodsWeight = this.$toFixed(Number(this.totalGoodsWeight), 3)
+
+        this.totalPrice = this.isliftShow ? this.$toFixed(Number(this.totalGoodsPrice) + Number(this.totalLiftCharge), 2) : this.totalGoodsPrice
+        this.totalWeight = this.totalGoodsWeight
+      }
+    },
+    liftInput (e) {
+      const val = Number(e.mp.detail.value)
+      if (val > this.maxLift) {
+        this.totalLiftCharge = this.maxLift
+      } else if (val < 0) {
+        this.totalLiftCharge = 0
+      }
+    },
+    returnReasonCb (e) {
+      this.returnReason = this.returnReasonList[e.mp.detail.value].name
+    },
+    async returnGoodsReason () {
+      try {
+        const returnGoodsReason = this.apiList.xy.returnGoodsReason
+        const data = await this.ironRequest(returnGoodsReason.url, '', returnGoodsReason.method)
+        console.log('data', data)
+        this.returnReasonList = data.list
+      } catch (err) {
+        this.showMsg(err || '网络错误')
+      }
+    },
+    async returnGoods () {
+      try {
+        const list = this.listData
+        const filterArray = list.filter(item => {
+          return item.choosed === true
+        })
+        if (filterArray.length === 0 && (!this.isliftShow || !this.totalLiftCharge)) {
+          this.showMsg('请正确填写退货物资数量')
+          return false
+        }
+        if (!this.returnReason) {
+          this.showMsg('请选择退货原因')
+          return false
+        }
+        const returnGoods = this.apiList.xy.returnGoods
+
+        const params = {
+          user_id: this.currentUser.user_id,
+          return_id: this.$root.$mp.query.id,
+          seq_d_more: filterArray[0].seq_d,
+          amount_more: this.totalCount,
+          weight_more: this.totalGoodsWeight,
+          price_more: this.totalGoodsPrice,
+          status: this.status,
+          tostatus: 4,
+          payment_real: this.totalPrice,
+          subs_no: this.htNo,
+          return_reason: this.returnReason,
+          lift_money: this.isliftShow ? this.totalLiftCharge : 0,
+          invoice_status: this.invoiceStatus
+        }
+        const data = await this.ironRequest(returnGoods.url, params, returnGoods.method)
+        console.log(data)
+        if (data.returncode === '0') {
+          this.jump(`/pages/vendor/returnApplicationDetail/main?subsNo=${this.htNo}&status=4`)
+        }
+      } catch (err) {
+        console.log(err)
+      }
+    },
     choosedAll () {
       this.allChoosed = !this.allChoosed
       if (this.allChoosed) {
@@ -180,24 +257,39 @@ export default {
     },
     rowCartCount (obj) {
       console.log(obj.count)
-      this.ironRequest('cartUpdate.shtml', { cart_id: obj.cart_id, user_id: this.currentUser.user_id, measure_way: obj.measure_way_id, count: obj.count }, 'post').then(res => {
+      this.ironRequest('cartUpdate.shtml', { cart_id: obj.cart_id, user_id: this.currentUser.user_id, measure_way: obj.metering_way, count: obj.count }, 'post').then(res => {
       })
     },
     async returnGoodsDetail () {
       try {
+        this.showLoading()
         const returnGoodsDetail = this.apiList.xy.returnGoodsDetail
-        const url = `${returnGoodsDetail.url}?subs_no=HT20030300003&status=${this.status}`
+        const url = `${returnGoodsDetail.url}?subs_no=${this.htNo}&status=${this.status}`
         const data = await this.ironRequest(url, '', returnGoodsDetail.method)
-        const resData = data.data.resultlist
-        resData.map(item => {
+        const resData = data.data
+        const list = resData.resultlist
+        this.totalLiftCharge = resData.lift_money
+        this.invoiceStatus = resData.invoice_status
+        this.invoiceStatusStr = resData.invoice_status_desc
+        const meteringWay = {
+          '1': 'att8',
+          '2': 'att8',
+          '3': 'att9',
+          '4': 'att10'
+        }
+        list.map(item => {
           item.choosed = false
           item.countWeight = item.deal_weight
           item.count = item.deal_amount
+          item.singleWeight = Number(item[meteringWay[item.metering_way]])
         })
-        this.liftPlaceholder = `最大可退吊费金额${data.data.lift_money}元`
-        this.listData = resData
+        this.maxLift = resData.lift_money
+        this.liftPlaceholder = `最大可退吊费金额${this.maxLift}`
+        this.listData = list
+        this.hideLoading()
       } catch (err) {
         console.log(err)
+        this.hideLoading()
         this.showMsg(err)
       }
     }
@@ -215,7 +307,7 @@ export default {
     overflow hidden
     .solid-top
       border-top 0.5px solid #eee
-.bill-btn, .bill-red-btn,.bill-gray-btn
+.bill-btn, .bill-red-btn, .bill-gray-btn
   padding 2px 8px
   text-align center
   font-size 13px
@@ -231,7 +323,7 @@ export default {
 .bill-content
   height 100%
 .filter-btn
-  padding 10px 0 10px 10px  
+  padding 10px 0 10px 10px
 .search-btn
   padding 10px
 .nav
@@ -270,7 +362,7 @@ export default {
   left 0
   right 0
   background #fff
-  z-index 9  
+  z-index 9
 .cart-footer
   flex 5
   min-height 50px
