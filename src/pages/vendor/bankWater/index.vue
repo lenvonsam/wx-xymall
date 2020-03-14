@@ -202,7 +202,6 @@ export default {
       this.ironRequest(url, '', bankWater.method).then(resp => {
         const idx = me.swiperCount
         if (resp.returncode === '0') {
-          debugger
           let arr = resp.data.resultlist
           if (arr.length === 0 && me.currentPage === 0) {
             me.listData = []
@@ -228,7 +227,6 @@ export default {
     },
     selectTabs (item, idx) {
       console.log('status', item.status)
-      debugger
       this.tabName = item.status
       this.swiperCount = idx
     },

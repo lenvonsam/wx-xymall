@@ -84,7 +84,6 @@ export default {
   },
   onShow () {
     this.listData = []
-    debugger
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 205
     if (this.$root.$mp.query.tabName) this.tabName = this.$root.$mp.query.tabName
     this.onRefresh()
@@ -124,9 +123,7 @@ export default {
     countTime () {
       if (this.tabName === '1,2') {
         const arr = this.listData
-        debugger
         arr.map(item => {
-          debugger
           const nowTime = this.serverTime
           const endTimeFormat = item.end_time.replace(/-/g, '/')
           const endTime = new Date(endTimeFormat).getTime()

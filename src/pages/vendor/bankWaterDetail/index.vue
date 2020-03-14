@@ -50,7 +50,6 @@ export default {
   onShow () {
     this.bankWaterId = this.$root.$mp.query.id
     this.flag = this.$root.$mp.query.flag
-    debugger
     this.bankWaterDetail()
   },
   methods: {

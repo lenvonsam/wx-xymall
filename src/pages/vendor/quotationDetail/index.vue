@@ -128,7 +128,6 @@ export default {
         const params = {}
         const data = await this.ironRequest(quotationRelease.url, params, quotationRelease.method)
         console.log(data)
-        debugger
         if (data.returncode === '0') {
           this.resData = data
         }
@@ -142,7 +141,6 @@ export default {
         const params = {}
         const data = await this.ironRequest(quotationDx.url, params, quotationDx.method)
         console.log(data)
-        debugger
         if (data.returncode === '0') {
           this.resData = data
         }
@@ -164,7 +162,7 @@ export default {
     overflow hidden
     .solid-top
       border-top 0.5px solid #eee
-.bill-btn, .bill-red-btn,.bill-gray-btn
+.bill-btn, .bill-red-btn, .bill-gray-btn
   padding 2px 8px
   text-align center
   font-size 13px
@@ -180,7 +178,7 @@ export default {
 .bill-content
   height 100%
 .filter-btn
-  padding 10px 0 10px 10px  
+  padding 10px 0 10px 10px
 .search-btn
   padding 10px
 .nav
@@ -217,5 +215,5 @@ export default {
   position fixed
   bottom 0
   left 0
-  right 0    
+  right 0
 </style>

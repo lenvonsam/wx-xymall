@@ -266,7 +266,6 @@ export default {
     },
     selectTabs (item, idx) {
       console.log('status', item.status)
-      debugger
       this.tabName = item.status
       this.swiperCount = idx
     },

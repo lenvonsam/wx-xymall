@@ -149,8 +149,6 @@ function ironRequest (reqUrl, param, type) {
 
 export default {
   proxy: {
-    // 测试
-    // erp: 'http://172.16.120.245:8980/eep/interfacesAjax!',
     // 开发
     // erp: 'http://192.168.80.147:8980/eep/interfacesAjax!',
     // dev
@@ -159,21 +157,18 @@ export default {
     // erp: 'http://erp-pro.xingyun361.com/eep/interfacesAjax!',
     // prod
     // erp: 'http://erp.xingyun361.com/eep/interfacesAjax!',
-    // wh: 'http://192.168.80.147:8080/app/interfacesAjax!',
     // dev
     wh: 'http://wms-test.xingyun361.com/app/interfacesAjax!',
     // stage
     // wh: 'http://wms-pro.xingyun361.com/app/interfacesAjax!',
     // prod
     // wh: 'http://wms.xingyun361.com/app/interfacesAjax!',
-    // dr: 'http://172.16.16.201:6889/api/'
-    // dr: 'http://192.168.80.99:8080/driver-bk/api/'
     // dev
     dr: 'http://appadmin-test.xingyun361.com/driver-bk/api/',
     // prod
     // dr: 'http://appadmin.xingyun361.com/driver-bk/api/'
     // dev
-    crm: 'http://appadmin-test.xingyun361.com/crmserver/api/v1/wxmini/'
+    crm: 'http://crm-admin-test.xingyun361.com/crmserver/api/v1/wxmini/'
   },
   ironRequest,
   request (url, params, urlMethod) {
@@ -187,7 +182,6 @@ export default {
     if (this.isLogin) {
       basicParams.user_id = this.currentUser.user_id
     }
-    // fly.post(BASICURL + 'ironmart/statisticsProxy', { params: serializeformQuery(basicParams, true) })
     const baiscUrl = BASICURL + '/ironmart/statisticsProxy'
     const reqBody = {
       params: serializeformQuery(basicParams, true)
@@ -218,7 +212,6 @@ export default {
     const bytes = UTF8.encode(paramStr)
     const base64Param = BASE64.encode(bytes)
     const reqParam = serializeformQuery({ data: base64Param })
-    // return fly.post(basicUrl, { param: reqParam })
     return new Promise((resolve, reject) => {
       const body = {
         url: basicUrl,
