@@ -26,10 +26,7 @@ export default {
     goodsList: { url: 'goodsList.shtml', method: 'post' },
     standardList: { url: 'standardList.shtml', method: 'post' },
     cartListCount: { url: 'cartListCount.shtml', method: 'get' },
-<<<<<<< HEAD
-=======
     cartUpdate: { url: '', method: 'post' },
->>>>>>> e6317fd7b65bebb3a2abbc6988a22c5412099e46
     addCart: { url: 'addCart.shtml', method: 'post' },
     addCartSeller: { url: '/seller/addCartSeller.shtml', method: 'post' },
     auditDxCheck: { url: '/seller/auditDxCheck.shtml', method: 'post' },
