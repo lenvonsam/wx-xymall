@@ -212,17 +212,15 @@ export default {
       this.jump(item.url)
     },
     jumpProfile () {
-      // this.statisticRequest({ event: 'click_app_me_information' })
       this.statisticRequest({ event: 'click_app_me_profile' })
       this.jump('/pages/account/profile/main')
     },
     jumpBalance () {
-      console.log('this.currenUSER', this.currentUser)
-      if (this.currentUser.type === 'buyer') {
+      if (this.currentUser.type === 'seller') {
+        this.jump('/pages/vendor/contractTrack/main')
+      } else {
         this.statisticRequest({ event: 'click_app_me_balance' })
         this.jump('/pages/account/balance/main')
-      } else {
-        this.jump('/pages/vendor/contractTrack/main')
       }
     },
     jumpBillMore () {
