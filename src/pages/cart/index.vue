@@ -30,7 +30,6 @@
                 i(:class="pickWayShow && tabActive === 2 ? 'cuIcon-fold' : 'cuIcon-unfold'")
           template(v-else)
             .flex.padding-sm.bg-white.align-center.justify-between(style="height: 100rpx")
-              //- .col(@click="openPickWay")
               .flex.align-center(@click="openPickWay")
                 .cuIcon-location
                 .padding-left-xs 提货方式
@@ -42,43 +41,6 @@
                   .padding-xs(@click="clearCarts") 清空
           scroll-view.scroll-view(scroll-y, :style="{height: scrollHeight}")
             cart-item(v-for="(cart, idx) in carts", :key="idx", :cart="cart")
-            //- .cart-items(v-for="(cart, cartIdx) in carts", :key="cartIdx")
-            //-   .cart-item.padding-sm
-            //-     .flex.flex-center.align-center.ft-15.text-bold
-            //-       .col.flex-25(@click="cart.choosed = !cart.choosed", style="padding-top: 5px;")
-            //-         img.choose-icon(src="/static/images/blue_check.png", v-if="cart.choosed")
-            //-         img.choose-icon(src="/static/images/btn_ck_n.png", v-else)
-            //-       .col(@click="cart.choosed = !cart.choosed")
-            //-         span {{cart.product_name}}
-            //-         span.padding-left-xs {{cart.product_standard}}
-            //-       .text-blue ￥{{cart.price}}/吨
-            //-     .content.ft-13
-            //-       .flex.flex-center.justify-between
-            //-         div
-            //-           div
-            //-             span {{cart.product_material}}
-            //-             span.ml-5 {{cart.product_length}}米
-            //-             span.ml-5 {{cart.wh_name}}
-            //-             span.sub-mark.ml-5 {{cart.product_supply}}
-            //-           .pt-5
-            //-             span {{cart.amount_left}}支 / {{cart.weight_left}}吨
-            //-             span.padding-left-xs 吊费:
-            //-             span.ml-10 {{cart.price === '--' ? '--' : cart.lift_charge > 0 ? '￥' + cart.lift_charge + '/吨' : cart.lift_charge == 0 ? '无' : '线下结算'}}
-            //-           .pt-5(v-if="cart.tolerance_range || cart.weight_range")
-            //-             span(v-if="cart.tolerance_range") 公差范围:
-            //-             span.ml-10.mr-10(v-if="cart.tolerance_range") {{cart.tolerance_range}}
-            //-           .pt-5
-            //-             span(v-if="cart.weight_range") 重量范围:
-            //-             span.ml-10(v-if="cart.weight_range") {{cart.weight_range}} 
-            //-         .text-right
-            //-           .flex.flex-direction.justify-between
-            //-             z-radio(@checkHander="weightChoose(r.m_way, cart)", v-for="(r, rIdx) in cart.radios", :key="rIdx", :label="r.label", :checked="cart.measure_way_id === r.m_way")
-                        
-            //-       .row.padding-xs.justify-end.align-end
-            //-         .col
-            //-         .col(style="flex: 0 0 60px;")
-            //-           count-step(v-model="cart.count", @click.native="rowCartCount(cart)", @blur="rowCartCount(cart)", :max="cart.amount_left")
-            //-         .padding-left-xs {{cart.countWeight}}吨
             .margin-top-sm.padding-bottom-sm(v-if="soldCarts.length > 0", :class="{'padding-top-sm': carts.length === 0}")
               .bg-white
                 .row.padding.flex-center.border-bottom-line
@@ -141,7 +103,6 @@
         .solid-top.padding(v-for="(item, pickIdx) in pickWayList", :key="pickIdx")
           .text-bold.ft-15 {{item.title}}
           .text-gray.padding-top-sm {{item.content}}
-    //- alert(title="您还未登录，请先登录", v-model="alertShow", :cb="alertCb")
     alert(:msg="alertText", :cb="alertCb", v-model="alertShow", force)
 </template>
 
@@ -216,16 +177,18 @@ export default {
         this.totalPrice = 0
         this.totalWeight = 0
         this.totalLiftCharge = 0
+        let priceKey = 'price'
+        if (this.currentUser.type === 'seller') priceKey = 'dx_prices'
         if (filterArray.length > 0) {
           filterArray.map(itm => {
-            if (itm.price.indexOf('--') < 0) {
+            if (itm[priceKey].indexOf('--') < 0) {
               if (Number(itm.lift_charge) > 0) {
                 const countWeight = Number(this.$toFixed(itm.count * itm.weight, 3))
                 const countLiftWeight = countWeight * itm.lift_charge
-                this.totalPrice += itm.price * countWeight + countLiftWeight
+                this.totalPrice += itm[priceKey] * countWeight + countLiftWeight
                 this.totalLiftCharge += countLiftWeight
               } else {
-                this.totalPrice += itm.price * Number(this.$toFixed(itm.count * itm.weight, 3))
+                this.totalPrice += itm[priceKey] * Number(this.$toFixed(itm.count * itm.weight, 3))
               }
               this.totalWeight += Number(this.$toFixed(itm.weight * itm.count, 3))
             }
@@ -253,7 +216,13 @@ export default {
           me.tab('/pages/index/main')
         }
       })
-      return
+    } else {
+      if (this.currentUser.type === 'seller') {
+        this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 300 + 'rpx'
+      } else {
+        this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 200 + 'rpx'
+      }
+      this.loadCartData()
     }
     if (this.tempObject.type) {
       this.pickway = this.tempObject.type
@@ -263,19 +232,12 @@ export default {
         this.pwAddrDetail = this.tempObject.detail
       }
     }
-    if (this.currentUser.type === 'seller') {
-      this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 300 + 'rpx'
-    } else {
-      this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 200 + 'rpx'
-    }
-    this.loadCartData()
   },
   methods: {
     ...mapActions([
       'configVal'
     ]),
     alertCb () {
-      // this.jump('/pages/account/login/main')
       this.alertShow = false
     },
     openEdit () {
@@ -318,7 +280,7 @@ export default {
         if (res === 'confirm') {
           me.btnDisable = true
           this.showLoading()
-          me.ironRequest('cartEmpty.shtml', { user_id: me.currentUser.user_id }, 'post').then(resp => {
+          me.ironRequest(this.apiList.xy.cartEmpty.url, { user_id: me.currentUser.user_id }, this.apiList.xy.cartEmpty.method).then(resp => {
             if (resp && resp.returncode === '0') {
               me.showMsg('清空成功')
               me.btnDisable = false
@@ -343,7 +305,7 @@ export default {
         this.confirm({ content: '您确定要清空失效物资吗？' }).then((res) => {
           if (res !== 'confirm') return false
           me.btnDisable = true
-          me.ironRequest('cartEmpty.shtml', { user_id: me.currentUser.user_id, type: 1 }, 'post').then(resp => {
+          me.ironRequest(this.apiList.xy.cartEmpty.url, { user_id: me.currentUser.user_id, type: 1 }, this.apiList.xy.cartEmpty.method).then(resp => {
             if (resp && resp.returncode === '0') {
               me.showMsg('清空成功')
               me.btnDisable = false
@@ -423,7 +385,7 @@ export default {
               body.end_addr = me.pwAddr + ' ' + me.pwAddrDetail
             }
             this.showLoading()
-            me.ironRequest('generateOrder.shtml', body, 'post').then(resp => {
+            me.ironRequest(this.apiList.xy.generateOrder.url, body, this.apiList.xy.generateOrder.method).then(resp => {
               this.hideLoading()
               if (resp && resp.returncode === '0') {
                 me.btnDisable = false
@@ -454,26 +416,6 @@ export default {
         this.showMsg('请选择结算商品', 'warn')
       }
     },
-    weightChoose (val, rowItem) {
-      rowItem.measure_way_id = val
-      if (val === 2) {
-        rowItem.weight = rowItem.radios[0].weight
-        rowItem.price = rowItem.radios[0].price
-        rowItem.originPrice = rowItem.radios[0].originPrice
-      } else {
-        rowItem.weight = rowItem.radios[1].weight
-        rowItem.price = rowItem.radios[1].price
-        rowItem.originPrice = rowItem.radios[1].price
-      }
-      this.ironRequest('cartUpdate.shtml', { cart_id: rowItem.cart_id, user_id: this.currentUser.user_id, measure_way: val, count: rowItem.count }, 'post').then(res => {
-      })
-      this.$forceUpdate()
-    },
-    rowCartCount (obj) {
-      console.log(obj.count)
-      this.ironRequest('cartUpdate.shtml', { cart_id: obj.cart_id, user_id: this.currentUser.user_id, measure_way: obj.measure_way_id, count: obj.count }, 'post').then(res => {
-      })
-    },
     delCartRow (row) {
       if (!this.btnDisable) {
         const me = this
@@ -484,9 +426,9 @@ export default {
         this.confirm({ content: '您确定要删除吗?' }).then((res) => {
           if (res === 'confirm') {
             me.btnDisable = true
-            me.ironRequest('cartDel.shtml', { cart_ids: idsList.toString() }, 'post', me).then(res => {
+            me.ironRequest(this.apiList.xy.cartDel.url, { cart_ids: idsList.toString() }, this.apiList.xy.cartDel.method).then(res => {
               if (res.returncode === '0') {
-                this.showMsg('删除成功')
+                me.showMsg('删除成功')
                 me.carts = me.carts.filter(item => {
                   return idsList.indexOf(item.cart_id) === -1
                 })
@@ -555,7 +497,7 @@ export default {
     loadCartData () {
       this.isLoad = false
       const me = this
-      this.ironRequest('cartList.shtml?user_id=' + me.currentUser.user_id, {}, 'get').then(resp => {
+      this.ironRequest(this.apiList.xy.cartList.url + '?user_id=' + me.currentUser.user_id, {}, this.apiList.xy.cartList.method).then(resp => {
         this.isLoad = true
         if (resp.returncode === '0') {
           let arr = resp.carts
@@ -796,7 +738,7 @@ radio.radio[checked]::after
   bottom 0
 // 卖家样式
 .quotation
-  padding 5px 10px  
+  padding 5px 10px
   border-radius 100px
 .tab-select-dialog
   position fixed
@@ -804,7 +746,7 @@ radio.radio[checked]::after
   right 0
   z-index 99
   background rgba(0, 0, 0, 0.5)
-  bottom 0 
+  bottom 0
 .tab-select
   padding 20px 10px
   position relative
@@ -817,7 +759,7 @@ radio.radio[checked]::after
     display block
     width 1px
     height 20px
-    background rgba(0,0,0,0.1)
+    background rgba(0, 0, 0, 0.1)
   &:last-child
     &:after
       display none

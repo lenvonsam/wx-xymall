@@ -69,10 +69,12 @@ export default {
         rowItem.weight = rowItem.radios[0].weight
         rowItem.price = rowItem.radios[0].price
         rowItem.originPrice = rowItem.radios[0].originPrice
+        if (this.currentUser.type === 'seller') rowItem.dx_prices = rowItem.radios[0].dx_prices
       } else {
         rowItem.weight = rowItem.radios[1].weight
         rowItem.price = rowItem.radios[1].price
         rowItem.originPrice = rowItem.radios[1].price
+        if (this.currentUser.type === 'seller') rowItem.dx_prices = rowItem.radios[1].dx_prices
       }
       this.ironRequest(this.apiList.xy.cartUpdate.url, { cart_id: rowItem.cart_id, user_id: this.currentUser.user_id, measure_way: val, count: rowItem.count }, this.apiList.xy.cartUpdate.method)
       this.$forceUpdate()
