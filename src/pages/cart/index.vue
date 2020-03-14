@@ -291,7 +291,6 @@ export default {
       this.tabActive = 0
     },
     openPickWay (type) {
-      debugger
       if (this.currentUser.type === 'seller') {
         if (this.tabActive === type) {
           this.pickWayShow = !(this.tabActive === type)

@@ -137,7 +137,6 @@ export default {
       }
     },
     openModal (item) {
-      debugger
       this.checkRow = item
       this.modalShow = true
     },

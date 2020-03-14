@@ -5,7 +5,41 @@ div
       .relative(@click="jumpNoticeList", v-if="showNoticeIcon")
         img(src="/static/images/notice_w_icon.png", style="width:30rpx; height: 36rpx")
         .red-dot(v-show="rowCountObj.to_notice > 0", style="width: 12rpx; height: 12rpx; top: 0rpx; right: -10rpx;")
-  template(v-if="currentUser.type && currentUser.type === 'buyer'")
+  template(v-if="currentUser.type === 'seller'")
+    .relative(style="height: 410rpx")
+      .bg-blue.flex.padding-sm.text-white.align-center.me-header
+        .col(@click="jumpProfile")
+          .flex.align-center
+            .author
+              img(:src="imgOuterUrl + (currentUser.avatar == undefined ? '/webpage/zhd/images/img.png' : currentUser.avatar)", v-if="imgOuterUrl")
+            .col.padding-left-sm
+              .ft-15.padding-bottom-sm {{currentUser.user_mark}}
+              .ft-12 {{currentUser.phone}}
+        .cuIcon-right.ft-25   
+      .account.vendor.bg-white.contract(@click="jumpBalance")
+        .row
+          .ft-16.text-bold 合同跟踪
+          .col.ft-16.text-right
+            span 查看全部
+            span.text-gray.cuIcon-right
+        .flex.text-center.justify-between.padding-top-lg
+          .col(v-for="(bicon, biconIdx) in billTrackIcons", :key="biconIdx", @click="jumpBicon(bicon.url)")
+            .relative.contract-img
+              img(:src="bicon.icon", mode="widthFix")
+              .dot(v-if="rowCountObj[bicon.dotKey] > 0", :class="{'max': rowCountObj[bicon.dotKey] > 9}") 
+                label {{rowCountObj[bicon.dotKey] > 99 ? '99+' : rowCountObj[bicon.dotKey]}}
+            .padding-top-xs.ft-15 {{bicon.name}} 
+    .padding-sm
+      .bg-white.features
+        .ft-18.text-bold.padding-sm.padding-top.padding-bottom 功能列表
+        .grid.col-3.text-center
+          .features-card(v-for="(ficon, fIdx) in featuresIcons", :key="fIdx", @click="jump(ficon.url.path)")
+            .relative.contract-img(v-if="ficon.icon")
+              img(:src="ficon.icon", mode="widthFix")
+              .dot(v-if="rowCountObj[ficon.dotKey] > 0", :class="{'max': rowCountObj[ficon.dotKey] > 9}") 
+                label {{rowCountObj[ficon.dotKey] > 99 ? '99+' : rowCountObj[ficon.dotKey]}}
+            .padding-top-xs.ft-15 {{ficon.name}}
+  template(v-else)
     .relative
       .bg-blue.flex.padding-sm.text-white.align-center.me-header
         .col(@click="jumpProfile")
@@ -55,40 +89,7 @@ div
               img(src="/static/images/customer_icon.png", mode="widthFix")
               .padding-left-sm 在线客服
           .cuIcon-right.text-gray
-  template(v-else)
-    .relative(style="height: 410rpx")
-      .bg-blue.flex.padding-sm.text-white.align-center.me-header
-        .col(@click="jumpProfile")
-          .flex.align-center
-            .author
-              img(:src="imgOuterUrl + (currentUser.avatar == undefined ? '/webpage/zhd/images/img.png' : currentUser.avatar)", v-if="imgOuterUrl")
-            .col.padding-left-sm
-              .ft-15.padding-bottom-sm {{currentUser.user_mark}}
-              .ft-12 {{currentUser.phone}}
-        .cuIcon-right.ft-25   
-      .account.vendor.bg-white.contract(@click="jumpBalance")
-        .row
-          .ft-16.text-bold 合同跟踪
-          .col.ft-16.text-right
-            span 查看全部
-            span.text-gray.cuIcon-right
-        .flex.text-center.justify-between.padding-top-lg
-          .col(v-for="(bicon, biconIdx) in billTrackIcons", :key="biconIdx", @click="jumpBicon(bicon.url)")
-            .relative.contract-img
-              img(:src="bicon.icon", mode="widthFix")
-              .dot(v-if="rowCountObj[bicon.dotKey] > 0", :class="{'max': rowCountObj[bicon.dotKey] > 9}") 
-                label {{rowCountObj[bicon.dotKey] > 99 ? '99+' : rowCountObj[bicon.dotKey]}}
-            .padding-top-xs.ft-15 {{bicon.name}} 
-    .padding-sm
-      .bg-white.features
-        .ft-18.text-bold.padding-sm.padding-top.padding-bottom 功能列表
-        .grid.col-3.text-center
-          .features-card(v-for="(ficon, fIdx) in featuresIcons", :key="fIdx", @click="jump(ficon.url.path)")
-            .relative.contract-img(v-if="ficon.icon")
-              img(:src="ficon.icon", mode="widthFix")
-              .dot(v-if="rowCountObj[ficon.dotKey] > 0", :class="{'max': rowCountObj[ficon.dotKey] > 9}") 
-                label {{rowCountObj[ficon.dotKey] > 99 ? '99+' : rowCountObj[ficon.dotKey]}}
-            .padding-top-xs.ft-15 {{ficon.name}}
+  
   alert(:msg="alertText", v-model="alertShow", :cb="alertCb")
 </template>
 <script>

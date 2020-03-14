@@ -107,11 +107,10 @@ export default {
       'configVal'
     ]),
     openModal (item) {
-      debugger
       this.checkRow = item
       this.modalShow = true
     },
-    modalHandler ({type}) {
+    modalHandler ({ type }) {
       console.log('type', type)
       if (type === 'confirm') {
         this.balanceRestrict()
@@ -198,7 +197,7 @@ export default {
     overflow hidden
     .solid-top
       border-top 0.5px solid #eee
-.bill-btn, .bill-red-btn,.bill-gray-btn
+.bill-btn, .bill-red-btn, .bill-gray-btn
   padding 2px 8px
   text-align center
   font-size 13px
@@ -214,13 +213,12 @@ export default {
 .bill-content
   height 100%
 .filter-btn
-  padding 10px 0 10px 10px  
+  padding 10px 0 10px 10px
 .search-btn
   padding 10px
-.dingjin-icon {
-  width: 35px;
-  height: 20px;
-}
+.dingjin-icon
+  width 35px
+  height 20px
 .cuIcon-box
   width 160px
   margin 0 auto
@@ -240,5 +238,5 @@ export default {
   height 40px
   input
     height 40px
-    width 100%  
+    width 100%
 </style>

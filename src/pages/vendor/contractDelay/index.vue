@@ -223,7 +223,6 @@ export default {
       }
       this.ironRequest(url, '', orderDelayList.method).then(resp => {
         if (resp.returncode === '0') {
-          debugger
           let arr = resp.data.resultlist
           if (arr.length === 0 && me.currentPage === 0) {
             me.listData = []
