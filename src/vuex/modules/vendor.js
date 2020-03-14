@@ -12,7 +12,7 @@ export default {
       },
       {
         icon: '/static/images/dfk_icon.png',
-        name: '已支付待确认',
+        name: '已付待确认',
         dotKey: '',
         url: {
           path: '/pages/vendor/contractTrack/main?tabName=12'

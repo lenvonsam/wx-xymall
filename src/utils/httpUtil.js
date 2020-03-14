@@ -4,7 +4,7 @@ const BASICURL = 'https://mobileapp.xingyun361.com/quasarserverdev'
 // const BASICURL = 'https://mobileapp.xingyun361.com/quasarserverstage'
 // const BASICURL = 'https://mobileapp.xingyun361.com/quasarserver'
 // const BASICURL = 'https://47.97.195.16/quasarserver'
-// const BASICURL = 'http://172.16.16.201:8077'
+// const BASICURL = 'http://localhost:8077'
 const PROXYDCODEURL = BASICURL + '/common/proxyDecode'
 const COMMURL = BASICURL + '/common/proxy'
 

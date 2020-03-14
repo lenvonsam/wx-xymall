@@ -5,90 +5,90 @@ div
       .relative(@click="jump('/pages/cardList/main?title=消息中心&type=noticeList')", v-if="showNoticeIcon")
         img(src="/static/images/notice_w_icon.png", style="width:30rpx; height: 36rpx")
         .red-dot(v-show="rowCountObj.to_notice > 0", style="width: 12rpx; height: 12rpx; top: 0rpx; right: -10rpx;")
-  //- template(v-if="currentUser.type && currentUser.type === 'buyer'")
-  .relative
-    .bg-blue.flex.padding-sm.text-white.align-center.me-header
-      .col(@click="jumpProfile")
-        .flex.align-center
-          .author
-            img(:src="imgOuterUrl + (currentUser.avatar == undefined ? '/webpage/zhd/images/img.png' : currentUser.avatar)", v-if="imgOuterUrl")
-          .col.padding-left-sm
-            .ft-15.padding-bottom-sm {{currentUser.user_mark}}
-            .ft-12 {{currentUser.phone}}
-      .cuIcon-right.ft-25(@click="jumpProfile")
-    .account.bg-white.flex.align-center(@click="jumpBalance")
-      .ft-16.text-bold 账户余额
-      .col.ft-16.text-right
-        span.text-blue.text-bold ￥ {{currentUser.account_balance}}
-        span.text-gray.cuIcon-right
-  .padding-sm
-    .bg-white.contract.padding-sm
-      .flex.justify-between
-        .ft-16.text-bold 我的合同
-        .text-gray.ft-14(@click="jumpBillMore") 查看全部
-          span.cuIcon-right
-      .flex.text-center.justify-between.padding-top-lg
-        .col(v-for="(bicon, biconIdx) in billIcons", :key="biconIdx", @click="jumpBicon(bicon.url)")
-          .relative.contract-img
-            img(:src="bicon.icon", mode="widthFix")
-            .dot(v-if="rowCountObj[bicon.dotKey] > 0", :class="{'max': rowCountObj[bicon.dotKey] > 9}") 
-              label {{rowCountObj[bicon.dotKey] > 99 ? '99+' : rowCountObj[bicon.dotKey]}}
-          .padding-top-xs.ft-15 {{bicon.name}}
-    .margin-top-sm.me-icon.bg-white.ft-15(v-for="(cardItem, index) in cardList", :key="index", style="overflow:hidden;border-radius: 10rpx")
-      .item.padding-sm.flex.align-center(v-for="(item, idx) in cardItem", :key="idx", @click="jumpToPage(item.url)")
-        .col
-          .row
-            img(:src="item.imgPath", mode="widthFix")
-            .margin-left-sm.col(:class="{'solid-bottom': idx < (cardItem.length - 1)}", style="color:#000") {{item.title}}
-        .cuIcon-right.text-gray
-    .margin-top-sm.me-icon.bg-white.ft-15(style="overflow:hidden;border-radius: 10rpx")
-      .item.padding-sm.flex.align-center(@click="jump('/pages/account/setting/main')")
-        .col
-          .row
-            img(src="/static/images/wdwld.png", mode="widthFix")
-            .margin-left-sm.col.solid-bottom 用户设置
-        .cuIcon-right.text-gray
-      .item.padding-sm.flex.solid-bottom.align-center.relative.ft-15
-        button(open-type="contact", style="position: absolute; left:0;right: 0; top:0; bottom: 0; z-index: 10; background: transparent")
-        .col
+  template(v-if="currentUser.type && currentUser.type === 'buyer'")
+    .relative
+      .bg-blue.flex.padding-sm.text-white.align-center.me-header
+        .col(@click="jumpProfile")
           .flex.align-center
-            img(src="/static/images/customer_icon.png", mode="widthFix")
-            .padding-left-sm 在线客服
-        .cuIcon-right.text-gray
-  //- template(v-else)
-  //-   .relative(style="height: 410rpx")
-  //-     .bg-blue.flex.padding-sm.text-white.align-center.me-header
-  //-       .col(@click="jumpProfile")
-  //-         .flex.align-center
-  //-           .author
-  //-             img(:src="imgOuterUrl + (currentUser.avatar == undefined ? '/webpage/zhd/images/img.png' : currentUser.avatar)", v-if="imgOuterUrl")
-  //-           .col.padding-left-sm
-  //-             .ft-15.padding-bottom-sm {{currentUser.user_mark}}
-  //-             .ft-12 {{currentUser.phone}}
-  //-       .cuIcon-right.ft-25   
-  //-     .account.bg-white.contract(@click="jumpBalance")
-  //-       .row
-  //-         .ft-16.text-bold 合同跟踪
-  //-         .col.ft-16.text-right
-  //-           span 查看全部
-  //-           span.text-gray.cuIcon-right
-  //-       .flex.text-center.justify-between.padding-top-lg
-  //-         .col(v-for="(bicon, biconIdx) in billIcons", :key="biconIdx", @click="jumpBicon(bicon.url)")
-  //-           .relative.contract-img
-  //-             img(:src="bicon.icon", mode="widthFix")
-  //-             .dot(v-if="rowCountObj[bicon.dotKey] > 0", :class="{'max': rowCountObj[bicon.dotKey] > 9}") 
-  //-               label {{rowCountObj[bicon.dotKey] > 99 ? '99+' : rowCountObj[bicon.dotKey]}}
-  //-           .padding-top-xs.ft-15 {{bicon.name}} 
-  //-   .padding-sm
-  //-     .bg-white.features
-  //-       .ft-18.text-bold.padding-sm.padding-top.padding-bottom 功能列表
-  //-       .grid.col-3.text-center
-  //-         .features-card(v-for="(ficon, fIdx) in featuresIcons", :key="fIdx")
-  //-           .relative.contract-img(v-if="ficon.icon")
-  //-             img(:src="ficon.icon", mode="widthFix")
-  //-             .dot(v-if="rowCountObj[ficon.dotKey] > 0", :class="{'max': rowCountObj[ficon.dotKey] > 9}") 
-  //-               label {{rowCountObj[ficon.dotKey] > 99 ? '99+' : rowCountObj[ficon.dotKey]}}
-  //-           .padding-top-xs.ft-15 {{ficon.name}}
+            .author
+              img(:src="imgOuterUrl + (currentUser.avatar == undefined ? '/webpage/zhd/images/img.png' : currentUser.avatar)", v-if="imgOuterUrl")
+            .col.padding-left-sm
+              .ft-15.padding-bottom-sm {{currentUser.user_mark}}
+              .ft-12 {{currentUser.phone}}
+        .cuIcon-right.ft-25(@click="jumpProfile")
+      .account.bg-white.flex.align-center(@click="jumpBalance")
+        .ft-16.text-bold 账户余额
+        .col.ft-16.text-right
+          span.text-blue.text-bold ￥ {{currentUser.account_balance}}
+          span.text-gray.cuIcon-right
+    .padding-sm
+      .bg-white.contract.padding-sm
+        .flex.justify-between
+          .ft-16.text-bold 我的合同
+          .text-gray.ft-14(@click="jumpBillMore") 查看全部
+            span.cuIcon-right
+        .flex.text-center.justify-between.padding-top-lg
+          .col(v-for="(bicon, biconIdx) in billIcons", :key="biconIdx", @click="jumpBicon(bicon.url)")
+            .relative.contract-img
+              img(:src="bicon.icon", mode="widthFix")
+              .dot(v-if="rowCountObj[bicon.dotKey] > 0", :class="{'max': rowCountObj[bicon.dotKey] > 9}") 
+                label {{rowCountObj[bicon.dotKey] > 99 ? '99+' : rowCountObj[bicon.dotKey]}}
+            .padding-top-xs.ft-15 {{bicon.name}}
+      .margin-top-sm.me-icon.bg-white.ft-15(v-for="(cardItem, index) in cardList", :key="index", style="overflow:hidden;border-radius: 10rpx")
+        .item.padding-sm.flex.align-center(v-for="(item, idx) in cardItem", :key="idx", @click="jumpToPage(item.url)")
+          .col
+            .row
+              img(:src="item.imgPath", mode="widthFix")
+              .margin-left-sm.col(:class="{'solid-bottom': idx < (cardItem.length - 1)}", style="color:#000") {{item.title}}
+          .cuIcon-right.text-gray
+      .margin-top-sm.me-icon.bg-white.ft-15(style="overflow:hidden;border-radius: 10rpx")
+        .item.padding-sm.flex.align-center(@click="jump('/pages/account/setting/main')")
+          .col
+            .row
+              img(src="/static/images/wdwld.png", mode="widthFix")
+              .margin-left-sm.col.solid-bottom 用户设置
+          .cuIcon-right.text-gray
+        .item.padding-sm.flex.solid-bottom.align-center.relative.ft-15
+          button(open-type="contact", style="position: absolute; left:0;right: 0; top:0; bottom: 0; z-index: 10; background: transparent")
+          .col
+            .flex.align-center
+              img(src="/static/images/customer_icon.png", mode="widthFix")
+              .padding-left-sm 在线客服
+          .cuIcon-right.text-gray
+  template(v-else)
+    .relative(style="height: 410rpx")
+      .bg-blue.flex.padding-sm.text-white.align-center.me-header
+        .col(@click="jumpProfile")
+          .flex.align-center
+            .author
+              img(:src="imgOuterUrl + (currentUser.avatar == undefined ? '/webpage/zhd/images/img.png' : currentUser.avatar)", v-if="imgOuterUrl")
+            .col.padding-left-sm
+              .ft-15.padding-bottom-sm {{currentUser.user_mark}}
+              .ft-12 {{currentUser.phone}}
+        .cuIcon-right.ft-25   
+      .account.vendor.bg-white.contract(@click="jumpBalance")
+        .row
+          .ft-16.text-bold 合同跟踪
+          .col.ft-16.text-right
+            span 查看全部
+            span.text-gray.cuIcon-right
+        .flex.text-center.justify-between.padding-top-lg
+          .col(v-for="(bicon, biconIdx) in billTrackIcons", :key="biconIdx", @click="jumpBicon(bicon.url)")
+            .relative.contract-img
+              img(:src="bicon.icon", mode="widthFix")
+              .dot(v-if="rowCountObj[bicon.dotKey] > 0", :class="{'max': rowCountObj[bicon.dotKey] > 9}") 
+                label {{rowCountObj[bicon.dotKey] > 99 ? '99+' : rowCountObj[bicon.dotKey]}}
+            .padding-top-xs.ft-15 {{bicon.name}} 
+    .padding-sm
+      .bg-white.features
+        .ft-18.text-bold.padding-sm.padding-top.padding-bottom 功能列表
+        .grid.col-3.text-center
+          .features-card(v-for="(ficon, fIdx) in featuresIcons", :key="fIdx", @click="jump(ficon.url.path)")
+            .relative.contract-img(v-if="ficon.icon")
+              img(:src="ficon.icon", mode="widthFix")
+              .dot(v-if="rowCountObj[ficon.dotKey] > 0", :class="{'max': rowCountObj[ficon.dotKey] > 9}") 
+                label {{rowCountObj[ficon.dotKey] > 99 ? '99+' : rowCountObj[ficon.dotKey]}}
+            .padding-top-xs.ft-15 {{ficon.name}}
   alert(:msg="alertText", v-model="alertShow", :cb="alertCb")
 </template>
 <script>
@@ -121,7 +121,8 @@ export default {
       meIconList: state => state.meIconList,
       tempObject: state => state.tempObject,
       serviceCall: state => state.serviceCall,
-      featuresIcons: state => state.vendor.featuresIcons
+      featuresIcons: state => state.vendor.featuresIcons,
+      billTrackIcons: state => state.vendor.billTrackIcons
     })
   },
   onShow () {
@@ -132,24 +133,28 @@ export default {
       console.log('currentUser:>>', this.currentUser)
       this.setCartCount(this.currentUser.user_id)
       this.alertShow = false
-      this.refreshUser()
       this.showNoticeIcon = this.currentUser.message_switch === '1'
-      this.ironRequest('toOperCounts.shtml?user_id=' + this.currentUser.user_id, {}, 'get').then(resp => {
-        // console.log(resp.data)
-        if (resp && resp.returncode === '0') {
-          this.rowCountObj = resp
-          this.$forceUpdate()
-        }
-      })
-      this.ironRequest('balanceList.shtml?type=0&only_all=1&user_id=' + this.currentUser.user_id, {}, 'get').then(resp => {
-        if (resp && resp.returncode === '0') {
-          let obj = this.currentUser
-          obj.account_balance = resp.balance
-          this.currentUser.account_balance = resp.balance
-          this.setUser(obj)
-          this.$forceUpdate()
-        }
-      })
+      if (this.currentUser.type === 'buyer') {
+        this.refreshUser()
+        this.ironRequest('toOperCounts.shtml?user_id=' + this.currentUser.user_id, {}, 'get').then(resp => {
+          // console.log(resp.data)
+          if (resp && resp.returncode === '0') {
+            this.rowCountObj = resp
+            this.$forceUpdate()
+          }
+        })
+        this.ironRequest('balanceList.shtml?type=0&only_all=1&user_id=' + this.currentUser.user_id, {}, 'get').then(resp => {
+          if (resp && resp.returncode === '0') {
+            let obj = this.currentUser
+            obj.account_balance = resp.balance
+            this.currentUser.account_balance = resp.balance
+            this.setUser(obj)
+            this.$forceUpdate()
+          }
+        })
+      } else {
+        // TODO 卖家相关接口
+      }
     } else {
       this.tabDot(0)
       const me = this
@@ -169,7 +174,7 @@ export default {
     ]),
     alertCb () {
       if (this.isLogin) {
-        this.jump('/pages/account/companyUpdate/main?type=2')
+        if (this.currentUser.type === 'buyer') this.jump('/pages/account/companyUpdate/main?type=2')
       } else {
         this.jump('/pages/account/login/main')
       }
@@ -177,7 +182,6 @@ export default {
     async refreshUser () {
       try {
         const data = await this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method)
-        console.log('refresh user:>>', data)
         data.pwd = this.currentUser.pwd
         data.type = this.currentUser.type || 'buyer'
         data.localSearchs = this.currentUser.localSearchs || []
@@ -209,8 +213,13 @@ export default {
       this.jump('/pages/account/profile/main')
     },
     jumpBalance () {
-      this.statisticRequest({ event: 'click_app_me_balance' })
-      this.jump('/pages/account/balance/main')
+      console.log('this.currenUSER', this.currentUser)
+      if (this.currentUser.type === 'buyer') {
+        this.statisticRequest({ event: 'click_app_me_balance' })
+        this.jump('/pages/account/balance/main')
+      } else {
+        this.jump('/pages/vendor/contractTrack/main')
+      }
     },
     jumpBillMore () {
       this.statisticRequest({ event: 'click_app_me_myorder_more' })
@@ -222,10 +231,6 @@ export default {
       // if (url.path === '/ladbill?tabName=4') this.statisticRequest({ event: 'click_app_me_to_pay_contract' })
       // if (url.path === '/invoice') this.statisticRequest({ event: 'click_app_me_to_invoice' })
       this.jump(url.path)
-    },
-    serviceCallUrl () {
-      this.statisticRequest({ event: 'click_app_me_tel' })
-      window.location.href = 'tel://' + this.serviceCall
     }
   }
 }
@@ -250,6 +255,9 @@ export default {
   width 96%
   left 50%
   margin-left -48%
+  &.vendor
+    top auto
+    bottom 0px
 .contract
   margin-top 20px
   border-radius 5px

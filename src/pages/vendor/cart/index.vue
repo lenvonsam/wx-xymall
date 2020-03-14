@@ -517,7 +517,7 @@ export default {
         totalWeight: this.totalWeight,
         totalLiftCharge: this.totalLiftCharge
       }
-      this.configVal({key: 'tempObject', val: tempObject})
+      this.configVal({ key: 'tempObject', val: tempObject })
       this.jump('/pages/vendor/quotation/main')
     },
     async dx (filterArray) {
@@ -661,7 +661,7 @@ radio.radio[checked]::after
   background rgba(0, 0, 0, 0.5)
   bottom 0
 .quotation
-  padding 5px 10px  
+  padding 5px 10px
   border-radius 100px
 .tab-select
   padding 20px 10px
@@ -675,7 +675,7 @@ radio.radio[checked]::after
     display block
     width 1px
     height 20px
-    background rgba(0,0,0,0.1)
+    background rgba(0, 0, 0, 0.1)
   &:last-child
     &:after
       display none

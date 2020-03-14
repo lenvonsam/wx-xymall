@@ -26,6 +26,10 @@ export default {
     goodsList: { url: 'goodsList.shtml', method: 'post' },
     standardList: { url: 'standardList.shtml', method: 'post' },
     cartListCount: { url: 'cartListCount.shtml', method: 'get' },
+<<<<<<< HEAD
+=======
+    cartUpdate: { url: '', method: 'post' },
+>>>>>>> e6317fd7b65bebb3a2abbc6988a22c5412099e46
     addCart: { url: 'addCart.shtml', method: 'post' },
     addCartSeller: { url: '/seller/addCartSeller.shtml', method: 'post' },
     auditDxCheck: { url: '/seller/auditDxCheck.shtml', method: 'post' },
@@ -35,8 +39,14 @@ export default {
     sellerOrderList: { url: '/seller/orderList.shtml', method: 'get' },
     sellerNeedAudit: { url: '/seller/needAudit.shtml', method: 'get' },
     sellerDxAudit: { url: '/seller/dxAudit.shtml', method: 'get' },
-    sellerReturnGoodsAudit: { url: '/seller/returnGoodsAudit.shtml', method: 'get' },
-    sellerOrderDelayAudit: { url: '/seller/orderDelayAudit.shtml', method: 'get' },
+    sellerReturnGoodsAudit: {
+      url: '/seller/returnGoodsAudit.shtml',
+      method: 'get'
+    },
+    sellerOrderDelayAudit: {
+      url: '/seller/orderDelayAudit.shtml',
+      method: 'get'
+    },
     returnGoodsAudit: { url: '/seller/returnGoodsAudit.shtml', method: 'post' },
     dxAudit: { url: '/seller/dxAudit.shtml', method: 'post' },
     orderDelayAudit: { url: '/seller/orderDelayAudit.shtml', method: 'post' },
@@ -53,7 +63,10 @@ export default {
     copyQuotation: { url: '/seller/copyQuotation.shtml', method: 'post' },
     sellerBalance: { url: '/seller/balance.shtml', method: 'get' },
     balanceRestrict: { url: '/seller/balanceRestrict.shtml', method: 'post' },
-    gatherinsgBeforeWarning: { url: '/seller/erp/gatherinsgBeforeWarning.shtml', method: 'get' },
+    gatherinsgBeforeWarning: {
+      url: '/seller/erp/gatherinsgBeforeWarning.shtml',
+      method: 'get'
+    },
     returnGoodsList: { url: '/seller/returnGoods.shtml', method: 'get' },
     returnGoods: { url: '/seller/returnGoods.shtml', method: 'post' },
     returnGoodsDetail: { url: '/seller/returnGoodsDetail.shtml', method: 'get' },
