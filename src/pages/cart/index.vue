@@ -244,12 +244,7 @@ export default {
         this.selectDialogTop = this.getRpx(this.customBar) + 200
         this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 300 + 'rpx'
       } else {
-        debugger
-        console.log('screenHeight', this.getRpx(this.screenHeight))
-        console.log('customBar', this.getRpx(this.customBar))
-        console.log('bottomBarHeight', this.getRpx(this.bottomBarHeight))
         this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 200 + 'rpx'
-        console.log('scrollHeight', this.scrollHeight)
       }
       this.loadCartData()
     }
@@ -297,7 +292,6 @@ export default {
       this.tabActive = 0
     },
     openPickWay (type) {
-      debugger
       if (this.currentUser.type === 'seller') {
         if (this.tabActive === type) {
           this.pickWayShow = !(this.tabActive === type)
