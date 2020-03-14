@@ -51,7 +51,7 @@ function basicRequest (type, url, params, urlMethod, inputCharset = 'utf8') {
         if (res.statusCode === 200) {
           console.log('comm', res)
           if (type === 'comm') {
-            if (res.data.return_code === 0) {
+            if (res.data.return_code === 0 || res.data.returncode === '0') {
               resolve(res.data)
             } else {
               showMsg(res.data.msg)
@@ -169,9 +169,11 @@ export default {
     // dr: 'http://172.16.16.201:6889/api/'
     // dr: 'http://192.168.80.99:8080/driver-bk/api/'
     // dev
-    dr: 'http://appadmin-test.xingyun361.com/driver-bk/api/'
+    dr: 'http://appadmin-test.xingyun361.com/driver-bk/api/',
     // prod
     // dr: 'http://appadmin.xingyun361.com/driver-bk/api/'
+    // dev
+    crm: 'http://appadmin-test.xingyun361.com/crmserver/api/v1/wxmini/'
   },
   ironRequest,
   request (url, params, urlMethod) {

@@ -151,7 +151,8 @@ export default {
         { title: '自提点2-合肥徽商库', content: '合肥市庐阳区徽商钢材市场' },
         { title: '自提点3-合肥东港库', content: '合肥市大兴镇南淝河旁，合肥东港码头w' }
       ],
-      scrollHeight: 0
+      scrollHeight: 0,
+      cstmCurrentPage: 1
     }
   },
   components: {
@@ -209,6 +210,7 @@ export default {
     this.soldCarts = []
   },
   onShow () {
+    this.loadCstmList()
     this.alertShow = false
     if (!this.isLogin) {
       const me = this
@@ -648,6 +650,16 @@ export default {
       }
       this.configVal({ key: 'tempObject', val: tempObject })
       this.jump('/pages/vendor/quotation/main')
+    },
+    async loadCstmList (name) {
+      try {
+        let queryUrl = '?pageSize=' + this.pageSize + '&currentPage=' + this.cstmCurrentPage
+        if (name) queryUrl += '&name=' + name
+        let data = await this.request(this.crmProxy + this.apiList.crm.cstmList.url + queryUrl, {}, this.apiList.crm.cstmList.method)
+        console.log('cstm list data:>>', data)
+      } catch (e) {
+        console.error(e)
+      }
     }
   }
 }
