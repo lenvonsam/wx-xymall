@@ -4,7 +4,9 @@
     .padding(v-if="inputShow")
       .select-search.bg-gray.round.row.padding-xs
         .cuIcon-search.padding-left-sm
-        input.col.padding-xs.margin-left-xs(type="text", v-model="searchVal", @input="inputChange")
+        input.col.padding-xs.margin-left-xs.text-left(type="text", v-model="searchVal")
+        .close-icon(@click="searchVal = ''", v-if="searchVal")
+          .cuIcon-roundclosefill.ft-18
     iron-scroll(:height="scrollHeight", heightUnit="rpx", @scrolltolower="loadMore", :loadFinish="loadFinish")
       .bg-white.solid-top.row.padding.justify-between(@click="tabSelect(item)", v-for="(item, pickIdx) in pickList", :key="pickIdx")
         .row.justify-between.response(:class="{'text-blue': item[valKey] === checkItem[valKey]}")
@@ -46,45 +48,40 @@ export default {
       searchVal: '',
       selectRemote: '',
       loadFinish: 0,
-      total: 0
+      total: 0,
+      currentPage: 0,
+      pageSize: 10
+    }
+  },
+  watch: {
+    searchVal (newVal) {
+      // this.customSearchVal = e.mp.detail.value
+      const me = this
+      this.throttle(function () {
+        me.currentPage = 0
+        me.loadData()
+        me.$emit('search', this.customSearchVal)
+      }, 300)
     }
   },
   beforeMount () {
-    switch (this.selectType) {
-      case 'dept':
-        this.selectRemote = () => {
-          return this.deptList()
-        }
-        break
-      case 'employee':
-        this.selectRemote = () => {
-          return this.employeeList()
-        }
-        break
-    }
-    if (this.selectRemote) {
-      this.selectRemote()
-    }
+    this.loadData()
   },
   methods: {
-    loadMore () {},
+    // loadMore () { },
     tabSelect (item) {
       this.checkItem = item
       this.$emit('cb', this.checkItem)
     },
-    inputChange (val) {
-      this.selectRemote()
-      this.$emit('search', val)
-    },
     deptList () {
       const deptList = this.apiList.xy.deptList
-      const params = {dept_name: this.searchVal}
+      const params = { dept_name: this.searchVal }
       const me = this
       this.ironRequest(deptList.url, params, deptList.method).then((res) => {
         if (res.returncode === '0') {
           me.pickList = res.list
           me.total = res.amount.amount
-          me.pickList.unshift({name: '全部', id: ''})
+          me.pickList.unshift({ name: '全部', id: '' })
         }
         me.$forceUpdate()
       })
@@ -101,10 +98,80 @@ export default {
         if (res.returncode === '0') {
           me.pickList = res.list
           me.total = res.amount.amount
-          me.pickList.unshift({name: '全部', id: ''})
+          me.pickList.unshift({ name: '全部', id: '' })
         }
         me.$forceUpdate()
       })
+    },
+    loadMore () {
+      const me = this
+      this.throttle(function () {
+        me.currentPage++
+        me.loadData()
+      }, 300)
+    },
+    // searchChange (e) {
+    //   this.customSearchVal = e.mp.detail.value
+    //   const me = this
+    //   this.throttle(function () {
+    //     me.currentPage = 0
+    //     me.loadData()
+    //     me.$emit('search', e)
+    //   }, 300)
+    // },
+    async loadData () {
+      try {
+        let api = {}
+        let params = {}
+        let data = ''
+        switch (this.selectType) {
+          case 'dept':
+            api = this.apiList.xy.deptList
+            params = {
+              dept_name: this.searchVal,
+              current_page: this.currentPage,
+              page_size: this.pageSize
+            }
+            data = await this.ironRequest(api.url, params, api.method)
+            break
+          case 'employee':
+            api = this.apiList.xy.employeeList
+            params = {
+              employee_name: this.searchVal,
+              current_page: this.currentPage,
+              page_size: this.pageSize
+            }
+            data = await this.ironRequest(api.url, params, api.method)
+            break
+          case 'custom':
+            let queryUrl = '?pageSize=' + this.pageSize + '&currentPage=' + this.currentPage
+            if (this.searchVal) queryUrl += '&name=' + encodeURIComponent(this.searchVal)
+            data = await this.request(this.crmProxy + this.apiList.crm.cstmList.url + queryUrl, {}, this.apiList.crm.cstmList.method)
+            break
+        }
+        this.total = this.selectType === 'custom' ? data.total : data.amount.amount
+        let arr = data.list
+        const me = this
+        if (arr.length === 0 && me.currentPage === 0) {
+          me.pickList = []
+          me.isload = false
+        } else if (arr.length > 0 && me.currentPage === 0) {
+          arr.unshift({ name: '全部', id: '' })
+          me.pickList = arr
+          me.isload = false
+        } else if (arr.length > 0 && me.currentPage > 0) {
+          arr.map(item => {
+            me.pickList.push(item)
+          })
+        } else {
+          if (me.pickList.length >= 10) me.currentPage = 2
+          me.cstmCurrentPage--
+        }
+        if (this.pickList.length < 10) this.currentPage = 0
+        this.$forceUpdate()
+      } catch (e) {
+        console.error(e)
+      }
     }
   }
 }

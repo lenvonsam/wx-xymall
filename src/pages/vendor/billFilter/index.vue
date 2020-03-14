@@ -5,12 +5,12 @@ div
     .row.justify-between.solid-bottom.item(:style="itemSty")
       .label 合同编号
       input.col(type="text", v-model="form.no", placeholder="请输入合同号")
-    .row.justify-between.solid-bottom.item(@click="custmShow = !custmShow", :style="itemSty")
+    .row.justify-between.solid-bottom.item(@click.stop="openSelect('custom')", :style="itemSty")
       .label 客户名称
       .text-right.row.justify-end.col.select
         span {{customName || '请选择客户'}}
-        span.cuIcon-unfold
-      //- search-select(:selectSty="'top: 90rpx'", :show="custmShow", :total="6", :list="custmList")
+        span(:class="selectShow==='custom' ? 'cuIcon-fold' : 'cuIcon-unfold'")
+      search-select(:selectSty="'top: 90rpx; height: '+ (contentHeight - 180) +'rpx'", valKey="name", :scrollHeight="400", :selectType="'custom'", @cb="selectCb($event, 'custom')", :show="selectShow==='custom'", :inputShow="true")    
     .row.justify-between.solid-bottom.item(:style="itemSty")
       .label 起始日期
       picker.col(@change="startDateCb", mode="date")

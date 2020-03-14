@@ -126,7 +126,7 @@ export default {
       this.filterArr = []
       const obj = {
         tstc_no: this.tempObject.no,
-        cust_id: this.tempObject.custom.id,
+        cust_name: this.tempObject.custom.name,
         dept_code: this.tempObject.dept.id,
         employee_code: this.tempObject.employee.id,
         deal_time_s: this.tempObject.startDate,
@@ -223,7 +223,6 @@ export default {
       }
       this.ironRequest(url, '', orderDelayList.method).then(resp => {
         if (resp.returncode === '0') {
-          debugger
           let arr = resp.data.resultlist
           if (arr.length === 0 && me.currentPage === 0) {
             me.listData = []
