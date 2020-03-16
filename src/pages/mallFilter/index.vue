@@ -144,7 +144,7 @@ export default {
       })
     },
     selectTag (idx) {
-      console.log('idx', idx)
+      this.statisticRequest({ event: 'click_app_mall_category_right' })
       this.searchIdx = idx
     }
   }
