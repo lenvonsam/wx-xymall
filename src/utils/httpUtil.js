@@ -12,7 +12,7 @@ function serializeformQuery (requestParams) {
   let query = ''
   for (let param in requestParams) {
     if (param !== undefined && param !== '') {
-      query += param + '=' + requestParams[param] + '&'
+      query += param + '=' + encodeURIComponent(requestParams[param]) + '&'
     }
   }
   if (query !== '') {
