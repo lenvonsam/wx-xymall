@@ -55,10 +55,10 @@ export default {
       })
     },
     searchClick (searchName) {
-      this.statisticRequest({ event: 'app_mall_search', search: searchName })
       if (typeof searchName === 'string') {
         this.configVal({ key: 'tempObject', val: { search: searchName, fromPage: 'search', noBack: true } })
       } else {
+        this.statisticRequest({ event: 'app_mall_search', search: this.searchWord || '' })
         this.configVal({ key: 'tempObject', val: { search: this.searchWord || '', fromPage: 'search', noBack: true } })
       }
       if (this.isLogin && typeof searchName !== 'string') {
