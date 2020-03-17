@@ -65,6 +65,7 @@ export default {
         '1': '已限制'
       },
       filterArr: [],
+      filterObj: {},
       delayMax: 2,
       checkRow: {},
       textVal: '',
@@ -98,19 +99,17 @@ export default {
       this.delayDate = Number(delayDateStr)
     }
   },
+  onUnload () {
+    this.filterObj = {}
+    this.hideZero = ''
+  },
   onShow () {
     if (this.tempObject.fromPage === 'balanceFilter') {
-      this.filterArr = []
-      const obj = {
+      this.filterObj = {
         buyer_id: this.tempObject.custom.id,
         dept_code: this.tempObject.dept.id
       }
       this.hideZero = this.tempObject.hideZero ? 'no' : ''
-      Object.keys(obj).forEach(key => {
-        if (obj[key]) {
-          this.filterArr.push(`${key}=${obj[key]}`)
-        }
-      })
       this.currentPage = 0
     }
     this.onRefresh()
@@ -140,13 +139,21 @@ export default {
       this.checkRow = item
       this.modalShow = true
     },
-    modalHandler ({type}) {
+    modalHandler ({ type }) {
       console.log('type', type)
       if (type === 'confirm') {
         this.balanceRestrict()
       }
     },
     openFilter () {
+      const tempObject = {
+        filter: [
+          { label: '客户名称', prop: 'customName', type: 'custom' },
+          { label: '业务部门', prop: 'deptName', type: 'dept' },
+          { label: '业务部门', prop: 'hideZero' }
+        ]
+      }
+      this.configVal({ key: 'tempObject', val: tempObject })
       this.jump('/pages/vendor/balanceFilter/main')
     },
     onRefresh (done) {
@@ -164,16 +171,21 @@ export default {
       this.loadFinish = 1
       const me = this
       const sellerBalance = this.apiList.xy.sellerBalance
-      let url = `${sellerBalance.url}?hide_zero=${this.hideZero}&current_page=${this.currentPage}&page_size=${this.pageSize}`
-      if (this.filterArr.length > 0) {
-        const filterStr = this.filterArr.toString().replace(/,/g, '&')
-        url += `&${filterStr}`
+      // let url = `${sellerBalance.url}?hide_zero=${this.hideZero}&current_page=${this.currentPage}&page_size=${this.pageSize}`
+      // if (this.filterArr.length > 0) {
+      //   const filterStr = this.filterArr.toString().replace(/,/g, '&')
+      //   url += `&${filterStr}`
+      // }
+      const params = {
+        hide_zero: this.hideZero,
+        current_page: this.currentPage,
+        page_size: this.pageSize
       }
+      Object.assign(params, this.filterObj)
       if (this.searchVal) {
-        url += `&search=${this.searchVal}`
+        params.search = this.searchVal
       }
-      this.ironRequest(url, '', sellerBalance.method).then(resp => {
-      // this.requestDecode('erp', url, '', 'get').then(resp => {
+      this.ironRequest(sellerBalance.url, params, sellerBalance.method).then(resp => {
         if (resp.returncode === '0') {
           let arr = resp.list
           if (arr.length === 0 && me.currentPage === 0) {
@@ -229,7 +241,7 @@ export default {
     overflow hidden
     .solid-top
       border-top 0.5px solid #eee
-.bill-btn, .bill-red-btn,.bill-gray-btn
+.bill-btn, .bill-red-btn, .bill-gray-btn
   padding 2px 8px
   text-align center
   font-size 13px
@@ -245,13 +257,12 @@ export default {
 .bill-content
   height 100%
 .filter-btn
-  padding 10px 0 10px 10px  
+  padding 10px 0 10px 10px
 .search-btn
   padding 10px
-.dingjin-icon {
-  width: 35px;
-  height: 20px;
-}
+.dingjin-icon
+  width 35px
+  height 20px
 .cuIcon-box
   width 160px
   margin 0 auto
@@ -271,5 +282,5 @@ export default {
   height 40px
   input
     height 40px
-    width 100%  
+    width 100%
 </style>

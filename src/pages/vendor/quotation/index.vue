@@ -1,8 +1,9 @@
 <template lang="pug">
   .s-layout
-    nav-bar(title="报价清单", isBack)
+    nav-bar(title="报价清单", :isBack="!pageType")
     .padding-left-sm.padding-right-sm.ft-12(style="background: #FEF7E7; line-height: 70rpx; height: 70rpx")
-      span.text-orange 报价单2小时内有效，超时自动失效
+      .text-orange 报价单2小时内有效，超时自动失效
+        span.padding-left-xs(v-if="pageType === 'share'") {{timeDown}}
     template(v-if="!isLoad")
       time-line(type="mallist")
     template(v-else)
@@ -14,7 +15,7 @@
           .text-center.margin-top-sm
             .cart-empty-btn(@click="tab('/pages/mall/main')") ^_^去商城逛逛吧
       .s-content-wrap(v-else)
-        .s-content
+        .s-content(ref="testRef")
           scroll-view.scroll-view(scroll-y, :style="{height: scrollHeight}")
             .cart-items(v-for="(cart, cartIdx) in carts", :key="cartIdx")
               .cart-item.padding-sm
@@ -23,22 +24,25 @@
                     img.choose-icon(src="/static/images/blue_check.png", v-if="cart.choosed")
                     img.choose-icon(src="/static/images/btn_ck_n.png", v-else)
                   .col(@click="cart.choosed = !cart.choosed")
-                    span {{cart.product_name}}
-                    span.padding-left-xs {{cart.product_standard}}
+                    span {{cart.name}}
+                    span.padding-left-xs {{cart.standard}}
                   div(:class="pageType === 'share' ? 'text-blue' : 'text-black'") ￥{{cart.price}}
                 .content.ft-13
                   .text-gray
                     div
-                      span {{cart.product_material}}
-                      span.ml-5 {{cart.product_length}}米
-                      span.ml-5 {{cart.wh_name}}
-                      span.sub-mark.ml-5 {{cart.product_supply}}
+                      span {{cart.material}}
+                      span.ml-5 {{cart.length}}米
+                      span.ml-5 {{cart.warehouse}}
+                      span.sub-mark.ml-5 {{cart.supply}}
                     .pt-5.row.justify-between
                       .col
-                        span {{cart.amount_left}}支 / {{cart.weight_left}}吨
-                        span.padding-left-xs 吊费:
-                        span.ml-10 {{cart.price === '--' ? '--' : cart.lift_charge > 0 ? '￥' + cart.lift_charge + '/吨' : cart.lift_charge == 0 ? '无' : '线下结算'}}
-                      span （理计）
+                        template(v-if="pageType !== 'share'")
+                          span {{cart.amount_left}}支 / {{cart.weight_left}}吨
+                          span.padding-left-xs 吊费:
+                        template(v-else)  
+                          span 吊费:
+                        span.ml-10 {{cart.price === '--' ? '--' : cart.lift > 0 ? '￥' + cart.lift + '/吨' : cart.lift == 0 ? '无' : '线下结算'}}
+                      span （{{cart.meteringWay}}）
                     .pt-5(v-if="cart.tolerance_range || cart.weight_range")
                       span(v-if="cart.tolerance_range") 公差范围:
                       span.ml-10.mr-10(v-if="cart.tolerance_range") {{cart.tolerance_range}}
@@ -46,9 +50,9 @@
                       span.ml-10(v-if="cart.weight_range") {{cart.weight_range}}
                     .pt-5(v-if="pageType==='share'")
                       span 数量：
-                      span.ml-10 10支
-                      span.ml-10 重量：
-                      span.ml-10 5.12
+                      span.ml-10 {{cart.amount}}支
+                      span.padding-left-xs 重量：
+                      span.ml-10 {{cart.weight}}
                       span 吨
                   .row.justify-between.pt-5(v-if="pageType !== 'share'")
                     .text-black.ft-16 当前报价：
@@ -70,15 +74,49 @@
               span 合计：
               b.text-red ￥{{totalPrice}}
           .text-right.ft-12(style="color:#999;") 共{{totalCount}}件 ，{{totalWeight}}吨，吊费: {{totalLiftCharge}}元
-        .cart-settle-btn.ft-18(v-if="pageType === 'share'") 生成合同
-        //- button.cart-settle-btn.ft-18(open-type="share", @click="modalShow = true" v-else) 分享
+        .cart-settle-btn.ft-18(v-if="pageType === 'share'", @click="goToSettle") 生成合同
         button.cart-settle-btn.ft-18(@click="modalShow = true" v-else) 分享
-    modal(title="是否进行锁货", :btns="btns", :value="modalShow", @cb="modalHandler")
+    modal(:title="modalTitle", :btns="previewShow ? previewBtns : btns", :value="modalShow", @cb="modalHandler", :width="modalWidth")
       div
-        .text-gray 2小时未生成合同，物资自动释放
-        .padding-top-sm.row.justify-center
-          .margin-right-sm.margin-left-sm(v-for="(r, rIdx) in radios", :key="rIdx")
-            z-radio(@checkHander="lockCheck(r)", :label="r.label", :checked="lockGoods === r.val")
+        template(v-if="previewShow")
+          .bg-gray
+            scroll-view.scroll-view(scroll-y, :style="{height: modalScrollHeight}")
+              .cart-items.text-left(v-for="(cart, cartIdx) in carts", :key="cartIdx")
+                .cart-item.padding-sm
+                  .flex.flex-center.align-center.ft-15.text-bold
+                    .col
+                      span {{cart.name}}
+                      span.padding-left-xs {{cart.standard}}
+                    div(:class="pageType === 'share' ? 'text-blue' : 'text-black'") ￥{{cart.price}}
+                  .content.ft-13
+                    .text-gray
+                      div
+                        span {{cart.material}}
+                        span.ml-5 {{cart.length}}米
+                        span.ml-5 {{cart.warehouse}}
+                        span.sub-mark.ml-5 {{cart.supply}}
+                      .pt-5.row.justify-between
+                        .col
+                          span 吊费:
+                          span.ml-10 {{cart.price === '--' ? '--' : cart.lift > 0 ? '￥' + cart.lift + '/吨' : cart.lift == 0 ? '无' : '线下结算'}}
+                        span （{{cart.meteringWay}}）
+                      .pt-5(v-if="cart.tolerance_range || cart.weight_range")
+                        span(v-if="cart.tolerance_range") 公差范围:
+                        span.ml-10.mr-10(v-if="cart.tolerance_range") {{cart.tolerance_range}}
+                        span.ml-10(v-if="cart.weight_range") 重量范围:
+                        span.ml-10(v-if="cart.weight_range") {{cart.weight_range}}
+                      .pt-5
+                        span 数量：
+                        span.ml-10 {{cart.amount}}支
+                        span.padding-left-xs 重量：
+                        span.ml-10 {{cart.weight}}
+                        span 吨
+        template(v-else)    
+          .text-gray 2小时未生成合同，物资自动释放          
+          .padding-top-sm.row.justify-center
+            .margin-right-sm.margin-left-sm(v-for="(r, rIdx) in radios", :key="rIdx")
+              z-radio(@checkHander="lockCheck(r)", :label="r.label", :checked="lockGoods === r.val")
+    
 </template>
 
 <script>
@@ -89,9 +127,12 @@ import modal from '@/components/Modal.vue'
 export default {
   data () {
     return {
+      previewShow: false,
+      modalWidth: '70%',
+      modalTitle: '是否进行锁货',
       radios: [
-        {label: '锁货', val: 1},
-        {label: '不锁', val: 0}
+        { label: '锁货', val: 1 },
+        { label: '不锁', val: 0 }
       ],
       lockGoods: 1,
       modalShow: false,
@@ -117,9 +158,15 @@ export default {
       pageType: '',
       qutId: '',
       btns: [
-        {label: '取消', flag: 'cancel', className: 'bg-gray'},
-        {label: '确定', flag: 'confirm', className: 'main-btn', type: 'share'}
-      ]
+        { label: '取消', flag: 'cancel', className: 'bg-gray' },
+        { label: '确定', flag: 'confirm', className: 'main-btn' }
+        // { label: '确定', flag: 'confirm', className: 'main-btn', type: 'share' }
+      ],
+      previewBtns: [
+        { label: '取消', flag: 'cancel', className: 'bg-gray' },
+        { label: '确定', flag: 'confirm', className: 'main-btn', type: 'share' }
+      ],
+      modalScrollHeight: 0
     }
   },
   components: {
@@ -136,6 +183,7 @@ export default {
   watch: {
     carts: {
       handler (newVal, oldVal) {
+        if (this.pageType === 'share') return false
         let filterArray = newVal.filter(item => {
           item.countWeight = this.$toFixed(Number(item.count * item.weight), 3)
           return item.choosed === true
@@ -168,49 +216,13 @@ export default {
     }
   },
   onShareAppMessage (res) {
-    console.log('onShareAppMessage', res)
+    console.log('qutId', this.qutId)
     this.modalShow = false
-    let orderIds = []
-    let dxPrices = []
-    let costPrices = []
-    let jlTypes = []
-    let amounts = []
-    let weights = []
-    let orderPrices = []
-    this.carts.map(itm => {
-      orderIds.push(itm.order_id)
-      dxPrices.push(itm.dx_prices)
-      costPrices.push(itm.cost_prices)
-      jlTypes.push(itm.measure_way_id)
-      amounts.push(itm.count)
-      weights.push(itm.countWeight)
-      orderPrices.push(itm.price)
-    })
-    const params = {
-      user_id: this.tempObject.user_id,
-      buyer_name: this.tempObject.buyer_name,
-      need_lift: this.tempObject.need_lift,
-      order_ids: orderIds.toString(),
-      amount_s: amounts.toString(),
-      weight_s: weights.toString(),
-      order_prices: orderPrices.toString(),
-      dx_prices: dxPrices.toString(),
-      cost_prices: costPrices.toString(),
-      jl_types: jlTypes.toString(),
-      total_money: this.tempObject.totalPrice,
-      total_amount: this.tempObject.totalCount,
-      total_weight: this.tempObject.totalWeight,
-      lift_money: this.tempObject.totalLiftCharge,
-      lock_goods: this.lockGoods
+    this.previewShow = false
+    return {
+      title: '报价清单',
+      path: '/pages/vendor/quotation/main?pageType=share&&qutId=' + this.qutId
     }
-    this.ironRequest(this.apiList.xy.quotation.url, params, this.apiList.xy.quotation.method).then(res => {
-      if (res.returncode === '0') {
-        return {
-          title: '报价清单',
-          path: '/pages/vendor/quotation/main?pageType=share&&qutId=' + res.qut_id
-        }
-      }
-    })
   },
   onHide () {
     this.carts = []
@@ -231,19 +243,81 @@ export default {
     if (this.$root.$mp.query.qutId) {
       this.pageType = 'share'
       this.qutId = this.$root.$mp.query.qutId
+      console.log('qutId', this.qutId)
+      this.quotationDetail()
     } else {
       this.loadData()
     }
     console.log('tempObject', this.tempObject)
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 170 + 'rpx'
+    this.modalScrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 400 + 'rpx'
+  },
+  onUnload () {
+    clearInterval(this.timeInterval)
+  },
+  mounted () {
+    this.$nextTick(() => {
+      const me = this
+      this.timeInterval = setInterval(() => {
+        me.countTime()
+        me.serverTime += 1000
+        console.log(me.timeDown)
+      }, 1000)
+    })
   },
   methods: {
     ...mapActions([
       'configVal'
     ]),
+    shareClick () {
+      console.log('----s')
+    },
     modalHandler (flag) {
+      console.log(this.$refs.testShare)
       if (flag === 'cancel') {
         this.modalShow = false
+      } else if (!this.previewShow) {
+        let orderIds = []
+        let dxPrices = []
+        let costPrices = []
+        let jlTypes = []
+        let amounts = []
+        let weights = []
+        let orderPrices = []
+        this.carts.map(itm => {
+          orderIds.push(itm.order_id)
+          dxPrices.push(itm.dx_prices)
+          costPrices.push(itm.cost_prices)
+          jlTypes.push(itm.measure_way_id)
+          amounts.push(itm.count)
+          weights.push(itm.countWeight)
+          orderPrices.push(itm.price)
+        })
+        const params = {
+          user_id: this.tempObject.user_id,
+          buyer_name: this.tempObject.buyer_name,
+          need_lift: this.tempObject.need_lift,
+          order_ids: orderIds.toString(),
+          amount_s: amounts.toString(),
+          weight_s: weights.toString(),
+          order_prices: orderPrices.toString(),
+          dx_prices: dxPrices.toString(),
+          cost_prices: costPrices.toString(),
+          jl_types: jlTypes.toString(),
+          total_money: this.tempObject.totalPrice,
+          total_amount: this.tempObject.totalCount,
+          total_weight: this.tempObject.totalWeight,
+          lift_money: this.tempObject.totalLiftCharge,
+          lock_goods: this.lockGoods
+        }
+        this.ironRequest(this.apiList.xy.quotation.url, params, this.apiList.xy.quotation.method).then(res => {
+          if (res.returncode === '0') {
+            this.modalTitle = '报价预览'
+            this.modalWidth = '98%'
+            this.qutId = res.qut_id
+            this.previewShow = true
+          }
+        })
       }
     },
     lockCheck (r) {
@@ -261,7 +335,6 @@ export default {
         h = Math.floor(leftTime / 1000 / 60 / 60 % 24)
         m = Math.floor(leftTime / 1000 / 60 % 60)
         s = Math.floor(leftTime / 1000 % 60)
-      } else {
         h = h < 10 ? '0' + h : h
         m = m < 10 ? '0' + m : m
         s = s < 10 ? '0' + s : s
@@ -363,18 +436,39 @@ export default {
           itm.price = itm.product_price
           itm.originPrice = itm.origin_price
         }
+        itm.name = itm.product_name
+        itm.standard = itm.product_standard
+        itm.price = itm.product_price
+        itm.material = itm.product_material
+        itm.length = itm.product_length
+        itm.warehouse = itm.wh_name
+        itm.amount = itm.amount_left
+        itm.supply = itm.product_supply
+        itm.weight = itm.weight_left
+        itm.lift = 25
+        itm.meteringWay = itm.metering_way_id === '1' ? '磅计' : '理计'
       })
       this.carts = arr
       this.isLoad = true
     },
     async quotationDetail () {
       try {
+        this.isLoad = false
         const quotationDetail = this.apiList.xy.quotationDetail
-        const params = {}
-        const data = await this.ironRequest(quotationDetail.url, params, quotationDetail.method)
-        console.log(data)
+        const url = `${this.apiList.xy.quotationDetail.url}?user_id=${this.currentUser.user_id}&qut_id=${this.qutId}`
+        const data = await this.ironRequest(url, '', quotationDetail.method)
+        console.log('quotationDetail', data)
+        this.serverTime = data.server_time
+        this.endTime = data.end_time
         if (data.returncode === '0') {
-          this.carts = data.list
+          const resData = data.list
+          resData.map(item => {
+            item.price = item.dx_price
+            item.lift = 25
+            item.meteringWay = item.metering_way === '磅计' ? '磅计' : '理计'
+          })
+          this.isLoad = true
+          this.carts = resData
           this.totalPrice = data.money
           this.totalWeight = data.weight
           this.totalLiftCharge = data.lift
@@ -383,96 +477,42 @@ export default {
       } catch (e) {
         console.log(e)
       }
-      // /seller/quotationDetail.shtml
     },
-    loadCartData () {
-      this.isLoad = false
+    goToSettle () {
+      const filterArray = this.carts
       const me = this
-      this.ironRequest('cartList.shtml?user_id=' + me.currentUser.user_id, {}, 'get').then(resp => {
-        this.isLoad = true
-        if (resp.returncode === '0') {
-          this.serverTime = resp.server_time
-          this.endTime = resp.end_time
-          let arr = resp.carts
-          this.soldCarts = resp.sold_out_carts
-          if (this.pageType !== 'share') {
-            arr.map(itm => {
-              itm.choosed = false
-              let allWeight = itm.one_weight
-              let wtArr = allWeight.split('/')
-              let prArr = itm.product_price.split('/')
-              let oldPrArr = itm.origin_price.split('/')
-              if (wtArr.length === 2) {
-                let weight1 = wtArr[0].substring(0, wtArr[0].indexOf('('))
-                let weight2 = wtArr[1].substring(0, wtArr[1].indexOf('('))
-                if (prArr[1] === '--') {
-                  itm.radios = [{
-                    label: '理计',
-                    m_way: 2,
-                    weight: weight1,
-                    originPrice: oldPrArr[0]
-                  }]
-                } else {
-                  itm.radios = [{
-                    label: '理计',
-                    m_way: 2,
-                    weight: weight1,
-                    price: prArr[0],
-                    originPrice: oldPrArr[0]
-                  }, {
-                    label: '磅计',
-                    m_way: 1,
-                    weight: weight2,
-                    price: prArr[1],
-                    originPrice: oldPrArr[1]
-                  }]
-                }
-                itm.weight = weight1
-                itm.price = prArr[0]
-                itm.originPrice = oldPrArr[0]
-                if (itm.measure_way_id === 1) {
-                  itm.weight = weight2
-                  itm.price = prArr[1]
-                  itm.originPrice = oldPrArr[1]
-                }
-                if (itm.measure_way_id === 0) {
-                  itm.measure_way_id = 2
-                }
-              } else {
-                let lbl = '理计'
-                if (itm.measure_way_id === 1) {
-                  lbl = '磅计'
-                }
-                let wt = itm.one_weight.substring(0, itm.one_weight.indexOf('('))
-                itm.radios = [{
-                  label: lbl,
-                  m_way: itm.measure_way_id,
-                  weight: wt
-                }]
-                itm.weight = wt
-                itm.price = itm.product_price
-                itm.originPrice = itm.origin_price
-              }
-              this.carts.push(itm)
-            })
-          } else {
-            this.carts = arr
-            this.totalLiftCharge = this.$toFixed(Number(resp.lift), 2)
-            this.totalPrice = this.$toFixed(Number(this.money), 2)
-            this.totalWeight = this.$toFixed(Number(this.weight), 3)
-            this.totalCount = resp.amount
-          }
-          const me = this
-          this.timeInterval = setInterval(() => {
-            me.countTime()
-            me.serverTime += 1000
-          }, 1000)
+      if (!this.btnDisable) {
+        let heFeiArray = filterArray.filter(itm => itm.warehouse.indexOf('合肥') >= 0)
+        let dongGangArray = filterArray.filter(itm => itm.warehouse.indexOf('常州东港') >= 0)
+        let msgs = ''
+        if (heFeiArray.length > 0 && dongGangArray.length > 0) {
+          msgs = '所选物资包含合肥仓库,常州东港库物资最快次日可提'
+        } else if (heFeiArray.length > 0) {
+          msgs = '所选物资包含合肥仓库'
+        } else if (dongGangArray.length > 0) {
+          msgs = '常州东港库物资最快次日可提'
         }
-      }).catch(err => {
-        this.isLoad = true
-        me.showMsg(err || '网络异常')
-        // if (done) done()
-      })
+        this.confirm({ content: msgs + '是否确认提交' }).then((res) => {
+          if (res === 'confirm') {
+            const params = {
+              user_id: this.currentUser.user_id,
+              qut_id: this.qutId
+            }
+            this.showLoading()
+            me.ironRequest(this.apiList.xy.quotationDx.url, params, this.apiList.xy.quotationDx.method).then(resp => {
+              this.hideLoading()
+              if (resp.returncode === '0') {
+                me.btnDisable = false
+                me.jump(`/pages/pay/main?orderNo=${resp.order_no}&price=${resp.deal_price}&pageType=offlinePay`)
+              }
+            }).catch(err => {
+              me.btnDisable = false
+              this.hideLoading()
+              me.showMsg(err || '网络异常')
+            })
+          }
+        })
+      }
     }
   }
 }
@@ -489,9 +529,10 @@ export default {
   border-radius 25px
   letter-spacing 1px
 .cart-items
+  padding-top 10px
   .cart-item
     background #fff
-    margin-top 10px
+    // margin-top 10px
     .sub-mark
       display inline-block
       padding 1px 5px

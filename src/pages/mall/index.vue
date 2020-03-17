@@ -191,6 +191,7 @@ export default {
     if (this.tempObject.fromPage === 'home') {
       // 首页
       this.mallTabVal = this.tempObject.name
+      this.queryObject.name = this.tempObject.name
     } else if (this.tempObject.fromPage === 'search' && this.tempObject.noBack) {
       // 搜索
       this.isRefresh = 'refresh'

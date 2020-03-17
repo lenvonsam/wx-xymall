@@ -5,12 +5,12 @@ div
     .row.justify-between.solid-bottom.item(:style="itemSty")
       .label 提单号
       input.col(type="text", v-model="form.no", placeholder="请输入合同号")
-    .row.justify-between.solid-bottom.item(@click="custmShow = !custmShow", :style="itemSty")
+    .row.justify-between.solid-bottom.item(@click.stop="openSelect('custom')", :style="itemSty")
       .label 客户名称
       .text-right.row.justify-end.col.select
         span {{customName || '请选择客户'}}
-        span.cuIcon-unfold
-      //- search-select(:selectSty="'top: 90rpx'", :show="custmShow", :total="6", :list="custmList")
+        span(:class="selectShow==='custom' ? 'cuIcon-fold' : 'cuIcon-unfold'")
+      search-select(:selectSty="'top: 90rpx; height: '+ (contentHeight - 180) +'rpx'", valKey="name", :scrollHeight="400", :selectType="'custom'", @cb="selectCb($event, 'custom')", :show="selectShow==='custom'", :inputShow="true")    
     .row.justify-between.solid-bottom.item(@click.stop="openSelect('dept')", :style="itemSty")
       .label 业务部门
       .text-right.row.justify-end.col.select(:class="{'text-blue': selectShow==='dept'}")
@@ -23,7 +23,7 @@ div
         span {{employeeName || '请选择业务员'}}
         span(:class="selectShow==='employee' ? 'cuIcon-fold' : 'cuIcon-unfold'")
       search-select(:selectSty="'top: 90rpx; height: '+ (contentHeight - 500) +'rpx'", :scrollHeight="300", :selectType="'employee'", @cb="selectCb($event,'employee')", :show="selectShow==='employee'", :inputShow="true")
-    .row.justify-between.solid-bottom.item(:style="itemSty")
+    .row.justify-between.solid-bottom.item(:style="itemSty", v-if="statusList.length > 0")
       .label 状态
       .text-right.row.justify-end.col.select
         picker.col(@change="statusCb", mode="selector", :range="statusList", range-key="label")
@@ -93,12 +93,14 @@ export default {
         this.form = {
           no: '',
           custom: '',
+          startDate: '',
+          endDate: '',
           dept: '',
           employee: '',
           status: ''
         }
       } else {
-        this.form.fromPage = 'billFilter'
+        this.form.fromPage = 'returnApplicationFilter'
         this.configVal({ key: 'tempObject', val: this.form })
         this.back()
       }

@@ -63,7 +63,9 @@ div
       .col.text-right.margin-right-xs.padding-left-sm
         picker.col(@change="returnReasonCb", :range="returnReasonList", range-key="name")
           .text-right.text-gray {{returnReason || '请选择退货原因'}}
-          //- input(type="text", v-model="returnReason")
+    .flex.justify-between.solid-bottom.padding-sm
+      div(style="width: 200rpx") 具体原因描述
+      textarea.text-gray.col.bg-gray.padding-xs(style="height: 250rpx", v-model="returnRemark")
   .s-footer
     .cart-footer.justify-between
       .col.cart-footer-col
@@ -82,7 +84,7 @@ div
         span 申请    
 </template>
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import CountStep from '@/components/CountStep.vue'
 export default {
   data () {
@@ -110,6 +112,7 @@ export default {
       status: '',
       invoiceStatus: '',
       invoiceStatusStr: '',
+      returnRemark: '',
       returnReasonList: []
     }
   },
@@ -153,6 +156,9 @@ export default {
     this.returnGoodsReason()
   },
   methods: {
+    ...mapActions([
+      'configVal'
+    ]),
     returnGoodsCheck (key) {
       this[key] = !this[key]
       this.listChange(this.listData)
@@ -203,7 +209,7 @@ export default {
         this.showMsg(err || '网络错误')
       }
     },
-    async returnGoods () {
+    returnGoods () {
       try {
         const list = this.listData
         const filterArray = list.filter(item => {
@@ -217,8 +223,6 @@ export default {
           this.showMsg('请选择退货原因')
           return false
         }
-        const returnGoods = this.apiList.xy.returnGoods
-
         const params = {
           user_id: this.currentUser.user_id,
           return_id: this.$root.$mp.query.id,
@@ -232,13 +236,22 @@ export default {
           subs_no: this.htNo,
           return_reason: this.returnReason,
           lift_money: this.isliftShow ? this.totalLiftCharge : 0,
-          invoice_status: this.invoiceStatus
+          invoice_status: this.invoiceStatus,
+          return_remark: this.returnRemark
         }
-        const data = await this.ironRequest(returnGoods.url, params, returnGoods.method)
-        console.log(data)
-        if (data.returncode === '0') {
-          this.jump(`/pages/vendor/returnApplicationDetail/main?subsNo=${this.htNo}&status=4`)
+        const detailRow = {
+          params: params,
+          list: filterArray,
+          totalGoodsWeight: this.totalGoodsWeight,
+          totalGoodsPrice: this.totalGoodsPrice,
+          totalPrice: this.totalPrice,
+          totalWeight: this.totalWeight,
+          totalLiftCharge: this.totalLiftCharge,
+          totalCount: this.totalCount
         }
+        debugger
+        this.configVal({ key: 'tempObject', val: detailRow })
+        this.jump(`/pages/vendor/returnApplicationDetail/main`)
       } catch (err) {
         console.log(err)
       }

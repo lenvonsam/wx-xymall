@@ -6,23 +6,33 @@ div
       .row.padding-bottom-xs.justify-between.text-black.text-bold
         span {{item.name}} {{item.standard}}
         .text-blue ¥ {{auditType === '定向' ? item.order_price : item.price}}
-      .row.padding-bottom-xs
-        .col.row
-          span {{item.material}}
-        span ({{item.metering_way_str}}) 
-      .padding-bottom-xs {{item.amount}}支/{{item.weight}}吨/{{item.money}}元
+      .text-gray
+        .row.padding-bottom-xs
+          .col.row
+            span {{item.material}}
+          span ({{item.metering_way_str}}) 
+        .padding-bottom-xs {{item.amount}}支/{{item.weight}}吨/{{item.money}}元
     .padding-sm.text-black(style="margin-bottom: 100rpx")
-      //- .row.justify-between.padding-bottom-xs
+      .row.justify-between.padding-bottom-xs
         span 合计
-        .text-gray {{detailData.amount}}支/{{detailData.weight}}吨/{{detailData.all_price_}}元
-      .row.justify-between
+        .text-gray {{totalCount}}支/{{totalWeight}}吨/{{totalGoodsPrice}}元
+      .row.justify-between.padding-bottom-xs(v-if="totalLiftCharge")
         span 吊费
-        .text-gray 80.88元
+        .text-gray {{totalLiftCharge}}元
+      .row.justify-between.padding-bottom-xs
+        span 总计
+        .text-gray {{totalPrice}}元  
+      .row.justify-between.padding-bottom-xs(v-if="tempObject.params.return_reason")
+        span 退货原因
+        .text-gray {{tempObject.params.return_reason}}
+      .row.justify-between.padding-bottom-xs(v-if="tempObject.params.return_remark")
+        span 具体原因描述
+        .text-gray {{tempObject.params.return_remark}}  
   .s-footer(style="height: 100rpx")  
     .cart-footer
       .col.cart-footer-col.text-right
-        span 总重量：88.8吨  总金额：¥6100
-      .cart-settle-btn.ft-18 确认   
+        span 总重量：{{totalGoodsWeight}}吨  总金额：¥{{totalPrice}}
+      .cart-settle-btn.ft-18(@click="returnGoods") 确认   
 </template>
 <script>
 import { mapState } from 'vuex'
@@ -40,7 +50,6 @@ export default {
       totalLiftCharge: 0,
       totalCount: 0,
       isTabDisabled: false,
-      tabName: '0,2',
       currentPage: 0,
       listData: [],
       isload: false,
@@ -64,10 +73,48 @@ export default {
     this.subsNo = this.$root.$mp.query.subsNo
     this.status = this.$root.$mp.query.status
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 205
-    if (this.$root.$mp.query.tabName) this.tabName = this.$root.$mp.query.tabName
-    this.returnGoodsDetail()
+    this.getGoodsDetail()
   },
   methods: {
+    getGoodsDetail () {
+      if (this.subsNo) {
+        this.returnGoodsDetail()
+        return false
+      }
+      const tempObject = this.tempObject
+      const resList = tempObject.list
+      this.totalCount = 0
+      resList.map(item => {
+        item.name = item.goods_name
+        item.standard = item.stander
+        item.metering_way_str = item.metering_way === 1 ? '磅计' : '理计'
+        item.amount = item.count
+        item.weight = item.countWeight
+        item.money = this.$toFixed(Number(item.countWeight * item.price), 2)
+        this.totalCount += Number(item.count)
+      })
+      this.listData = resList
+      this.totalGoodsWeight = tempObject.totalGoodsWeight
+      this.totalGoodsPrice = tempObject.totalGoodsPrice
+      this.totalPrice = tempObject.totalPrice
+      this.totalWeight = tempObject.totalWeight
+      this.totalLiftCharge = tempObject.totalLiftCharge
+    },
+    async returnGoods () {
+      try {
+        const returnGoods = this.apiList.xy.returnGoods
+        const data = await this.ironRequest(returnGoods.url, this.tempObject.params, returnGoods.method)
+        if (data.returncode === '0') {
+          this.showMsg(data.errormsg)
+          const me = this
+          setTimeout(() => {
+            me.back(2)
+          }, 1000)
+        }
+      } catch (err) {
+        console.log(err)
+      }
+    },
     async returnGoodsDetail () {
       try {
         const sellerReturnGoodsAudit = this.apiList.xy.sellerReturnGoodsAudit

@@ -76,48 +76,52 @@ export default {
       swiperCount: 0,
       openStatus: false,
       billTab: [
-        { title: '全部',
+        {
+          title: '全部',
           status: '6',
           data: [],
           isActive: true,
           statusList: [
-            {label: '全部', value: ''},
-            {label: '待支付', value: '14'},
-            {label: '待补款', value: '17'},
-            {label: '已付款', value: '15'},
-            {label: '待审核', value: '12,20'},
-            {label: '待确认', value: '16'},
-            {label: '修改中', value: '18,19'},
-            {label: '已完成', value: '-1'},
-            {label: '已违约', value: '13'}
+            { label: '全部', value: '' },
+            { label: '待支付', value: '14' },
+            { label: '待补款', value: '17' },
+            { label: '已付款', value: '15' },
+            { label: '待审核', value: '12,20' },
+            { label: '待确认', value: '16' },
+            { label: '修改中', value: '18,19' },
+            { label: '已完成', value: '-1' },
+            { label: '已违约', value: '13' }
           ]
-        }, { title: '待付款',
+        }, {
+          title: '待付款',
           status: '1',
           data: [],
           isActive: false,
           statusList: [
-            {label: '待支付', value: '14'},
-            {label: '待补款', value: '17'}
+            { label: '待支付', value: '14' },
+            { label: '待补款', value: '17' }
           ]
-        }, { title: '已支付待确认',
+        }, {
+          title: '已支付待确认',
           status: '12',
           data: [],
           isActive: false,
           statusList: [
-            {label: '待审核', value: '12,20'}
+            { label: '待审核', value: '12,20' }
           ]
-        }, { title: '待提货',
+        }, {
+          title: '待提货',
           status: '8',
           data: [],
           isActive: false,
           statusList: [
-            {label: '全部', value: ''},
-            {label: '已付款', value: '15'},
-            {label: '待确认', value: '16'}
+            { label: '全部', value: '' },
+            { label: '已付款', value: '15' },
+            { label: '待确认', value: '16' }
           ]
         },
-        { title: '修改中', status: '10', data: [], isActive: false, statusList: [{label: '修改中', value: '18,19'}] },
-        { title: '已完成', status: '4', data: [], isActive: false, statusList: [{label: '已违约', value: '13'}] }
+        { title: '修改中', status: '10', data: [], isActive: false, statusList: [{ label: '修改中', value: '18,19' }] },
+        { title: '已完成', status: '4', data: [], isActive: false, statusList: [{ label: '已违约', value: '13' }] }
       ],
       tabName: '6',
       currentPage: 0,
@@ -133,6 +137,7 @@ export default {
       pageSize: 10,
       status: '',
       filterArr: [],
+      filterObj: {},
       searchVal: '',
       statusList: []
     }
@@ -145,8 +150,7 @@ export default {
   onShow () {
     if (this.tempObject.fromPage === 'billFilter') {
       this.tabName = '6'
-      this.filterArr = []
-      const obj = {
+      this.filterObj = {
         tstc_no: this.tempObject.no,
         employee_code: this.tempObject.employee.id,
         dept_code: this.tempObject.dept.id,
@@ -155,13 +159,9 @@ export default {
         deal_time_e: this.tempObject.endDate,
         deal_time_s: this.tempObject.startDate
       }
-      Object.keys(obj).forEach(key => {
-        if (obj[key]) {
-          this.filterArr.push(`${key}=${obj[key]}`)
-        }
-      })
       this.currentPage = 0
       this.onRefresh()
+      // this.configVal({ key: 'tempObject', val: {} })
     } else if (this.$root.$mp.query.tabName) {
       this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 203
       this.tabName = this.$root.$mp.query.tabName
@@ -188,13 +188,15 @@ export default {
     })
   },
   onUnload () {
+    this.searchVal = ''
+    this.filterObj = {}
     clearInterval(this.timeInterval)
   },
   methods: {
     ...mapActions(['configVal']),
     openFilter () {
       const statusList = this.billTab[this.swiperCount].statusList
-      this.configVal({ key: 'tempObject', val: {statusList: statusList} })
+      this.configVal({ key: 'tempObject', val: { statusList: statusList } })
       this.jump('/pages/vendor/billFilter/main')
     },
     onRefresh (done) {
@@ -229,15 +231,23 @@ export default {
       this.loadFinish = 1
       const me = this
       const sellerOrderList = this.apiList.xy.sellerOrderList
-      let url = `${sellerOrderList.url}?current_page=${this.currentPage}&page_size=${this.pageSize}&tab_status=${this.tabName}&user_id=${this.currentUser.user_id}`
-      if (this.filterArr.length > 0) {
-        const filterStr = this.filterArr.toString().replace(/,/g, '&')
-        url += `&${filterStr}`
+      // let url = `${sellerOrderList.url}?current_page=${this.currentPage}&page_size=${this.pageSize}&tab_status=${this.tabName}&user_id=${this.currentUser.user_id}`
+      let params = {
+        current_page: this.currentPage,
+        page_size: this.pageSize,
+        tab_status: this.tabName,
+        user_id: this.currentUser.user_id
       }
+      Object.assign(params, this.filterObj)
+      // if (this.filterArr.length > 0) {
+      //   const filterStr = this.filterArr.toString().replace(/,/g, '&')
+      //   url += `&${filterStr}`
+      // }
       if (this.searchVal) {
-        url += `&search=${this.searchVal}`
+        // url += `&search=${this.searchVal}`
+        params.search = this.searchVal
       }
-      this.ironRequest(url, '', sellerOrderList.method).then(resp => {
+      this.ironRequest(sellerOrderList.url, params, sellerOrderList.method).then(resp => {
         const idx = me.swiperCount
         this.serverTime = resp.server_time
         if (resp.returncode === '0') {
@@ -385,7 +395,7 @@ export default {
     overflow hidden
     .solid-top
       border-top 0.5px solid #eee
-.bill-btn, .bill-red-btn,.bill-gray-btn
+.bill-btn, .bill-red-btn, .bill-gray-btn
   padding 2px 8px
   text-align center
   font-size 13px
@@ -401,23 +411,22 @@ export default {
 .bill-content
   height 100%
 .filter-btn
-  padding 10px 0 10px 10px  
+  padding 10px 0 10px 10px
 .search-btn
   padding 10px
-.dingjin-icon {
-  width: 35px;
-  height: 20px;
-}  
+.dingjin-icon
+  width 35px
+  height 20px
 .tab-content
   overflow hidden
 .tab-more
-  width 50px 
+  width 50px
 .status-box
   position absolute
   top 0
   left 0
   right 0
-  background rgba(0,0,0,0.5)
+  background rgba(0, 0, 0, 0.5)
   z-index 999
   .status-item
     width 30%

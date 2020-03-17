@@ -37,7 +37,7 @@ export default {
     dx: { url: '/seller/dx.shtml', method: 'post' },
     quotation: { url: '/seller/quotation.shtml', method: 'post' },
     quotationDetail: { url: '/seller/quotationDetail.shtml', method: 'get' },
-    sellerOrderList: { url: '/seller/orderList.shtml', method: 'get' },
+    sellerOrderList: { url: '/seller/orderList.shtml', method: 'post' },
     sellerNeedAudit: { url: '/seller/needAudit.shtml', method: 'get' },
     sellerDxAudit: { url: '/seller/dxAudit.shtml', method: 'get' },
     sellerReturnGoodsAudit: {
@@ -62,14 +62,14 @@ export default {
     quotationDx: { url: '/seller/quotationDx.shtml', method: 'post' },
     quotationLock: { url: '/seller/quotationLock.shtml', method: 'post' },
     copyQuotation: { url: '/seller/copyQuotation.shtml', method: 'post' },
-    sellerBalance: { url: '/seller/balance.shtml', method: 'get' },
+    sellerBalance: { url: '/seller/balance.shtml', method: 'post' },
     balanceRestrict: { url: '/seller/balanceRestrict.shtml', method: 'post' },
     gatherinsgBeforeWarning: {
       url: '/seller/gatherinsgBeforeWarning.shtml',
       method: 'get'
     },
-    returnGoodsList: { url: '/seller/returnGoods.shtml', method: 'get' },
-    returnGoods: { url: '/seller/returnGoods.shtml', method: 'post' },
+    returnGoodsList: { url: '/seller/returnGoodsList.shtml', method: 'post' },
+    returnGoods: { url: '/seller/returnGoodsApply.shtml', method: 'post' },
     returnGoodsDetail: {
       url: '/seller/returnGoodsDetail.shtml',
       method: 'get'
@@ -85,7 +85,12 @@ export default {
     bankWaterDelete: { url: '/seller/bankWaterDelete.shtml', method: 'post' },
     bankWaterDetail: { url: '/seller/bankWaterDetail.shtml', method: 'get' },
     orderCount: { url: '/seller/orderCount.shtml', method: 'get' },
-    auditHistory: { url: '/seller/auditHistory.shtml', method: 'get' }
+    auditHistory: { url: '/seller/auditHistory.shtml', method: 'get' },
+    // 现货物资列表
+    sumGoodsList: { url: '/seller/sumGoodsList.shtml', method: 'post' },
+    sumGoodsDetail: { url: '/seller/sumGoodsDetail.shtml', method: 'get' },
+    sumGoodsNameList: { url: '/seller/erp/goods.shtml', method: 'post' },
+    sumGoodsStandardList: { url: '/seller/erp/standard.shtml', method: 'post' }
   },
   erp: {
     // 手机验证码登录

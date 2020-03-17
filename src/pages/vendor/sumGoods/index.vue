@@ -2,15 +2,14 @@
 div
   nav-bar(title="ERP现货物资", isBack)
   div(style="height: 285rpx;")
-    mall-head(:mallTabVal="mallTabVal", @cleanSearch="cleanSearch", @getName="getName", @filter="multipleFilter", @selectMall="selectMall", @selectTab="selectTab", @searchChange="searchChange")
+    sum-goods-head(:mallTabVal="mallTabVal", @cleanSearch="cleanSearch", @getName="getName", @filter="multipleFilter", @selectMall="selectMall", @selectTab="selectTab", @searchChange="searchChange")
 
   swiper(v-if="goodsNameList.length > 0", @change="swiperChange", @transition="swiperTransition", :current="swiperCount", :style="{height: scrollHeight+'rpx'}")
     swiper-item(v-for="(tabItem, swiperIdx) in goodsNameList.length", :key="swiperIdx")
       .bg-gray.text-center.text-gray.pt-100(:style="{height: scrollHeight + 'rpx'}", v-if="swiperCount === swiperIdx && !isload && goodsNameList[swiperIdx].data.length === 0")
         empty-image(url="bill_empty.png", className="img-empty")
         .empty-content 
-          span 暂时没有相关商品
-          div 详情请联系400-8788-361
+          span 暂时没有物资
       template(v-else)
         div(:style="{height: scrollHeight + 'rpx'}")
           iron-scroll(:swiperIdx="swiperIdx", @scrolltolower="loadMore", heightUnit="rpx", :height="scrollHeight", :refresh="true", @onRefresh="onRefresh", :loadFinish="loadFinish")
@@ -19,36 +18,36 @@ div
                 template(v-if="mallFlag === 1")
                   .row
                     .col.text-bold.ft-15
-                      span {{item[mallTypeObject[itemType].name]}}
-                      span.ml-5 {{item[mallTypeObject[itemType].standard]}}
+                      span {{item.name}}
+                      span.ml-5 {{item.standard}}
                     .text-right.ft-16
-                      span.text-blue ￥{{item[mallTypeObject[itemType].price]}}
+                      span.text-blue ￥{{item.metering_way === '磅计' ? item.bjprice : item.ljprice}}
                   .row.pt-5.flex-center.ft-12
                     .col.c-gray
-                      span {{item[mallTypeObject[itemType].material]}}
-                      span.ml-8 {{item[mallTypeObject[itemType].length]}}米
-                      span.ml-8 {{item[mallTypeObject[itemType].wh_name]}}
-                      .sub-mark.ml-5 {{item[mallTypeObject[itemType].supply]}}
+                      span {{item.material}}
+                      span.ml-8 {{item.length}}米
+                      span.ml-8 {{item.wh_name}}
+                      .sub-mark.ml-5 {{item.supply}}
                     .text-right
-                      span ({{item.weightMark}})
-                  .pt-5.c-gray.ft-12(v-if="item[mallTypeObject[itemType].tolerance] || item[mallTypeObject[itemType].weightRange]")
-                    span(v-if="item[mallTypeObject[itemType].tolerance]") 公差范围: {{item[mallTypeObject[itemType].tolerance]}}
-                    span.ml-8(v-if="item[mallTypeObject[itemType].weightRange]") 重量范围: {{item[mallTypeObject[itemType].weightRange]}}
+                      span ({{item.metering_way}})
+                  .pt-5.c-gray.ft-12(v-if="item.weight_range || item.tolerance_range")
+                    span(v-if="item.tolerance_range") 公差范围: {{item.tolerance_range}}
+                    span.ml-8(v-if="item.weight_range") 重量范围: {{item.weight_range}}
                   .row.pt-5.flex-center.ft-13.text-gray
                     .col
-                      span(v-if="item[mallTypeObject[itemType].max_count] > 0") {{item[mallTypeObject[itemType].max_count]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
+                      span(v-if="item.max_count > 0") {{item.max_count}}支/{{item.max_weight}}吨
                     .flex-120.relative.text-right.ft-14.row.justify-end
                       .blue-buy(@click="mallItemCb(item, 'cart', $event)") 详情
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
-import mallHead from '@/components/MallHead'
+import SumGoodsHead from '@/components/SumGoodsHead'
 import mallItem from '@/components/MallItem'
 import modalIntro from '@/components/ModalIntro.vue'
 import cartBall from '@/components/ParabolicPic.vue'
 export default {
   components: {
-    mallHead,
+    SumGoodsHead,
     mallItem,
     modalIntro,
     cartBall
@@ -128,7 +127,7 @@ export default {
   // },
   onShow () {
     this.isload = true
-    this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 285
+    this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 285
     if (this.tempObject.fromPage === 'home') {
       // 首页
       this.mallTabVal = this.tempObject.name
@@ -167,15 +166,11 @@ export default {
         // delete this.queryObject.search
         this.mallTabVal = this.tempObject.name || ''
       }
-    } else {
-      this.onRefresh()
     }
+    //  else {
+    //   this.onRefresh()
+    // }
     // this.refresher()
-    if (this.isLogin) {
-      this.setCartCount(this.currentUser.user_id)
-    } else {
-      this.tabDot(0)
-    }
   },
   mounted () {
     this.$nextTick(() => {
@@ -220,6 +215,7 @@ export default {
       console.log('swiperChange---------')
       const idx = e.mp.detail.current
       this.mallTabVal = this.goodsNameList[idx].id
+      debugger
       if (this.goodsNameList[idx]) {
         this.showLoading()
         this.isload = true
@@ -240,6 +236,7 @@ export default {
       }
     },
     getName (list) {
+      debugger
       list.map(item => {
         item.data = []
       })
@@ -298,46 +295,7 @@ export default {
       console.log('evt', evt)
       const me = this
       me.ballValue = evt
-      if (obj.name === 'H型钢' && obj.price === '--') {
-        this.showMsg(`此商品会在${obj.show_time}后开售`)
-        return
-      }
-      if (this.isLogin) {
-        switch (type) {
-          case 'showPrice':
-            this.showMsg('请完善信息，耐心等待审批通过')
-            break
-          case 'notice':
-          case 'cart':
-            if (type === 'cart') this.statisticRequest({ event: 'click_app_mall_add_cart' })
-            if (!this.btnDisable) {
-              this.btnDisable = true
-              this.addCart(obj, type, this.currentUser.user_id).then(
-                rt => {
-                  // me.ballValue = evt
-                  me.showMsg(rt.msg, '', 1000)
-                  if (type === 'cart') me.setCartCount(me.currentUser.user_id)
-                  me.btnDisable = false
-                },
-                err => {
-                  me.showMsg(err === '该商品已经存在于购物车中' ? '该商品已加入购物车' : err)
-                  me.btnDisable = false
-                }
-              )
-            }
-            break
-          default:
-            break
-        }
-      } else {
-        let msg = '请您登录后购买，去登录'
-        if (type === 'showPrice') msg = '请登录后查看价格，去登录'
-        this.confirm({ content: msg }).then((res) => {
-          if (res === 'confirm') {
-            me.jump('/pages/account/login/main')
-          }
-        })
-      }
+      this.jump(`/pages/vendor/sumGoodsDetail/main?sumgoodsBatch=${obj.sumgoods_batch}`)
     },
     selectTab ({ id, idx }) {
       if (this.goodsNameList[idx]) {
@@ -353,29 +311,31 @@ export default {
         this.queryObject.current_page = this.currentPage
         this.queryObject.page_size = 20
         const data = await this.ironRequest(
-          this.apiList.xy.mallList.url,
+          this.apiList.xy.sumGoodsList.url,
           this.queryObject,
-          this.apiList.xy.mallList.method
+          this.apiList.xy.sumGoodsList.method
         )
         const res = data
+        const resList = data.list
         if (res.returncode === '0') {
+          debugger
           const idx = this.swiperCount
-          res.products.map(item => {
-            item.weightMark = item.price.split('/').length === 1 ? '理计' : '理计/磅计'
-          })
+          // resList.map(item => {
+          //   item.weightMark = item.metering_way
+          // })
           if (me.isRefresh === 'refresh') {
-            if (res.products.length > 0 && me.currentPage === 0) {
-              me.goodsNameList[idx].data = res.products
+            if (resList.length > 0 && me.currentPage === 0) {
+              me.goodsNameList[idx].data = resList
               me.isload = false
               if (me.goodsNameList[idx].data.length < 10) me.loadFinish = 2
-            } else if (res.products.length === 0 && me.currentPage === 0) {
+            } else if (resList.length === 0 && me.currentPage === 0) {
               me.goodsNameList[idx].data = []
               me.isload = false
             }
           } else {
-            if (res.products.length > 0) {
-              me.goodsNameList[idx].data.push(...res.products)
-              if (res.products.length < 10) me.loadFinish = 2
+            if (resList.length > 0) {
+              me.goodsNameList[idx].data.push(...resList)
+              if (resList.length < 10) me.loadFinish = 2
             } else {
               me.currentPage--
               if (me.currentPage > 0 && me.goodsNameList[idx].data.length > 10) me.loadFinish = 2
@@ -388,12 +348,6 @@ export default {
             me.prevIdx = null
           }
           if (me.goodsNameList[idx].data.length < 10) me.loadFinish = 0
-          // me.goodsNameList.mp((item, index) => {
-          //   if (Math.abs(index - idx) > 1) {
-          //     item.data = []
-          //   }
-          // })
-          // this.isload = true
         }
         console.log('loadfinish:>>', this.loadFinish)
         if (this.swiperFirst === 1) {

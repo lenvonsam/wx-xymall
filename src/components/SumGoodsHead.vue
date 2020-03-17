@@ -10,13 +10,10 @@
         input.full-width.pl-10(@click="jumpSearchInput", id="mallSearchInput", :disabled="true", type="text", placeholder="品名、材质、规格、产地(空格号隔开)", v-model="searchVal")
         .close-icon(@click="cleanSearch", v-if="searchVal")
           .cuIcon-roundclosefill.ft-18
-        //- input.full-width.pl-10(id="mallSearchInput", type="text", placeholder="品名、材质、规格、产地", v-model="searchVal")
   .relative
     .mt-15.text-center.flex.align-stretch
       .col.tab-content
-        //- scroll-view.nav(scroll-x, scroll-with-animation, :scroll-left="scrollLeft")
         scroll-view.nav(scroll-x, :scroll-into-view="scrollId")  
-          //- scroll-view.nav(scroll-x, scroll-with-animation, :scroll-into-view="searchCurId")
           .cu-item(:id="'idx_'+index", v-for="(item,index) in sortList[0].data", :class="item.id === tabVal?'text-blue cur':''", :key="index", @click="selectTab(item, index)")
             span {{item.name}}
       .tab-more.row.justify-center(@click="openName")
@@ -31,9 +28,9 @@
       .col.filter-list.bg-gray.flex(:class="{active: originStr}", @click.prevent="openSupply")
         .col.text-center.text-cut {{originStr || '产地'}}
         .cuIcon-unfold
-      .setting-list.flex.ft-25
-        .cuIcon-list(@click="selectMall(1)", :class="mallFlag ? 'text-blue' : 'text-gra'")
-        .cuIcon-cascades.ml-5(@click="selectMall(0)", :class="!mallFlag ? 'text-blue' : 'text-gra'")
+      .col.filter-list.bg-gray.flex(:class="{active: warehouseStr}", @click.prevent="openWarehouse")
+        .col.text-center.text-cut {{warehouseStr || '仓库'}}
+        .cuIcon-unfold
     //- 筛选 品名、材质、规格、产地
     .filter-box(:style="{height: filterHeight+'rpx'}", @click.prevent="sortClose(sortIdx)", @touchmove.stop="catchtouchmove", v-show="activeTab === sort.key", v-for="(sort, sortIdx) in sortList", :key="sortIdx")
       .bg-white.padding-sm.ft-11(@click.stop="")
@@ -90,46 +87,50 @@ export default {
         { label: '品名', key: 'name', data: [], selectSort: [], title: '品名展示' },
         { label: '规格', key: 'standard', data: [], selectSort: [], title: '规格展示' },
         { label: '材质', key: 'material', data: [], selectSort: [], title: '材质展示' },
-        { label: '产地', key: 'origin', data: [], selectSort: [], title: '产地展示' }
+        { label: '产地', key: 'origin', data: [], selectSort: [], title: '产地展示' },
+        { label: '仓库', key: 'warehouse', data: [], selectSort: [], title: '仓库展示' }
       ],
       sortQueryList: {
         'standard': {
-          reqUrl: 'standardList.shtml',
+          reqUrl: 'seller/erp/standard.shtml',
           chooseIdx: [0, 0],
-          respKey: 'standards'
+          respKey: 'list',
+          key: 'standard'
         },
         'name': {
-          reqUrl: 'goodsList.shtml',
+          reqUrl: 'seller/erp/goods.shtml',
           chooseIdx: [0, 0],
-          respKey: 'goods'
+          respKey: 'list',
+          key: 'name'
         },
         'material': {
-          reqUrl: 'materialList.shtml',
+          reqUrl: 'seller/erp/material.shtml',
           chooseIdx: [0, 0],
-          respKey: 'materials'
+          respKey: 'list',
+          key: 'material'
         },
         'origin': {
-          reqUrl: 'supplyList.shtml',
+          reqUrl: 'seller/erp/supply.shtml',
           chooseIdx: [0, 0],
-          respKey: 'supplies'
+          respKey: 'list',
+          key: 'origin'
         },
-        'more': {
-          reqUrl: 'toleranceAndWeightList.shtml',
-          chooseIdx: [0, 0]
+        'warehouse': {
+          reqUrl: 'seller/erp/warehouse.shtml',
+          chooseIdx: [0, 0],
+          respKey: 'list',
+          key: 'warehouse'
         }
       },
       isActive: true,
       searchVal: '',
       mallFlag: 1,
-      // standards: [],
-      // materials: [],
-      // supplys: [],
       standardStr: '',
       materialStr: '',
       originStr: '',
+      warehouseStr: '',
       filterStr: '',
       isMore: false,
-      // standardSearch: '',
       scrollId: 'idx_0',
       standardVal: '',
       isFilter: false,
@@ -154,11 +155,6 @@ export default {
     mallTabVal () {
       this.mallTabValChange()
     }
-    // searchVal (newVal) {
-    //   console.log('search', newVal)
-    //   console.log('---', this.searchVal)
-    //   this.throttle(this.searchChange, 300)
-    // }
   },
   beforeMount () {
     if (this.tempObject.fromPage === 'search' && this.tempObject.noBack) {
@@ -175,9 +171,11 @@ export default {
       this.standardStr = ''
       this.materialStr = ''
       this.originStr = ''
+      this.warehouseStr = ''
       this.sortList[1].data = []
       this.sortList[2].data = []
       this.sortList[3].data = []
+      this.sortList[4].data = []
     } else if (this.tempObject.fromPage === 'mallFilter' && this.tempObject.noBack) {
       const filters = {
         standard: [this.tempObject.standards]
@@ -201,23 +199,26 @@ export default {
       'configVal'
     ]),
     openStandard () {
-      this.statisticRequest({ event: 'click_app_mall_standard' })
+      // this.statisticRequest({ event: 'click_app_mall_standard' })
       this.sortCb('standard')
     },
     openMaterial () {
-      this.statisticRequest({ event: 'click_app_mall_material' })
+      // this.statisticRequest({ event: 'click_app_mall_material' })
       this.sortCb('material')
     },
     openSupply () {
-      this.statisticRequest({ event: 'click_app_mall_supply' })
+      // this.statisticRequest({ event: 'click_app_mall_supply' })
       this.sortCb('origin')
     },
+    openWarehouse () {
+      this.sortCb('warehouse')
+    },
     openName () {
-      this.statisticRequest({ event: 'click_app_mall_goods_drop_down' })
+      // this.statisticRequest({ event: 'click_app_mall_goods_drop_down' })
       this.activeTab = 'name'
     },
     jumpSearchInput () {
-      this.statisticRequest({ event: 'click_app_mall_search' })
+      // this.statisticRequest({ event: 'click_app_mall_search' })
       this.jump('/pages/search/main')
     },
     cleanStandard () {
@@ -235,7 +236,7 @@ export default {
       // this.sortCb('name')
     },
     classifyClick () {
-      this.statisticRequest({ event: 'click_app_mall_category' })
+      // this.statisticRequest({ event: 'click_app_mall_category' })
       const firstShare = mpvue.getStorageSync('firstShareMallClassify') || false
       if (!firstShare) {
         this.modalIntroShow = true
@@ -270,6 +271,10 @@ export default {
         this.originStr = ''
         this.selectSort(3, 0)
       }
+      if (this.warehouseStr) {
+        this.warehouseStr = ''
+        this.selectSort(4, 0)
+      }
       this.selectTab(this.sortList[0].data[idx], idx)
     },
     filterCancel (sortIdx) {
@@ -283,7 +288,7 @@ export default {
       }
     },
     searchHandler () {
-      const list = ['standard', 'material', 'origin']
+      const list = ['standard', 'material', 'origin', 'warehouse']
       const filters = {}
       this.sortList.map((item, idx) => {
         filters[item.key] = []
@@ -294,17 +299,15 @@ export default {
             }
           })
         }
-        // if (filters[item.key].length === 0 && this[`${item.key}Str`]) {
-        //   filters[item.key] = this[`${item.key}Str`].split(',')
-        // }
       })
       this.$emit('filter', filters)
 
       this.standardStr = filters['standard'].toString() === '全部' ? '' : filters['standard'].toString()
       this.materialStr = filters['material'].toString() === '全部' ? '' : filters['material'].toString()
       this.originStr = filters['origin'].toString() === '全部' ? '' : filters['origin'].toString()
+      this.warehouseStr = filters['warehouse'].toString() === '全部' ? '' : filters['warehouse'].toString()
       this.temporary = []
-      this.statisticRequest({ event: 'app_mall_filter', goods_name: this.tabVal, standard: this.standardStr, material: this.materialStr, supply: this.originStr })
+      // this.statisticRequest({ event: 'app_mall_filter', goods_name: this.tabVal, standard: this.standardStr, material: this.materialStr, supply: this.originStr })
       this.sortClose()
     },
     openFilter () {
@@ -315,14 +318,12 @@ export default {
       if (idx !== -1) {
         this.sortClose(idx)
       }
-      this.jump('/pages/mallFilter/main?name=' + this.tabVal)
+      this.jump('/pages/vendor/sumGoodsFilter/main?name=' + this.tabVal)
     },
     standardChange (e) {
       this.throttle(() => {
-        // this.sortList[1].data = []
-        this.statisticRequest({ event: 'click_app_mall_category_search' })
+        // this.statisticRequest({ event: 'click_app_mall_category_search' })
         this.queryObject.search = e.mp.detail.value
-        // this.standardSearch = e.mp.detail.value
         this.currentPage = 0
         this.sortCb('standard')
       }, 300)
@@ -361,7 +362,6 @@ export default {
       if (sortIdx) {
         this.filterCancel(sortIdx)
       }
-      // this.standardSearch = ''
       this.queryObject.search = ''
       this.standardVal = ''
       this.activeTab = ''
@@ -380,18 +380,12 @@ export default {
       this.configVal({ key: 'tempObject', val: { name: item.id } })
       this.$emit('selectTab', { id: item.id, idx: index })
     },
-    // loadMore () {
-    //   if (this.activeTab === 'standard') {
-    //     this.isMore = true
-    //     this.currentPage++
-    //     this.sortCb(this.activeTab)
-    //   }
-    // },
     sortCb (key, standard) {
       this.queryObject.name = this.tabVal
       this.queryObject.current_page = this.currentPage
       let queryObj = Object.assign({}, this.queryObject)
       this.showLoading()
+      debugger
       this.ironRequest(this.sortQueryList[key].reqUrl, queryObj, 'post').then(resp => {
         if (resp.returncode === '0') {
           let arr = resp[this.sortQueryList[key].respKey]
@@ -401,7 +395,6 @@ export default {
           })
           if (arr.length > 0) {
             if (standard) {
-              // const standardIdx = arr.findIndex(item => item.name === standard)
               arr.unshift({ name: '全部', id: '', isActive: false })
               arr[1].isActive = true
               this.sortList[1].data = arr
@@ -418,27 +411,19 @@ export default {
                 if (key === 'name') {
                   const obj = {
                     name: item.name,
-                    id: item.id
+                    id: item.name
                   }
                   tabList.push(obj)
                 }
               })
               arr.unshift({ name: '全部', id: '', isActive: false })
               this.sortList[idx].data = arr
-              // if ((this.currentPage === 0 || key !== 'standard') && !this.isMore) {
-              //   arr.unshift({ name: '全部', id: '', isActive: false })
-              //   this.sortList[idx].data = arr
-              // } else {
-              //   this.sortList[idx].data.push(...arr)
-              // }
             }
           } else {
             this.sortList[idx].data = arr
           }
-          // else if (this.currentPage !== 0) {
-          //   this.currentPage--
-          // }
           if (key === 'name') {
+            debugger
             tabList.unshift({ name: '全部', id: '', isActive: true })
             this.sortList[0].data = tabList
             this.mallTabValChange()
@@ -454,22 +439,6 @@ export default {
           this.hideLoading()
         }
       })
-    },
-    sortRest (key) {
-      const keyArray = ['area', 'name', 'material', 'origin', 'more']
-      const me = this
-      keyArray.map(item => {
-        if (key !== item) me[`sidebarList${item.substring(0, 1).toUpperCase()}${item.substring(1)}Show`] = false
-      })
-    },
-    selectMall (flag) {
-      if (flag) {
-        this.statisticRequest({ event: 'click_app_mall_view_list' })
-      } else {
-        this.statisticRequest({ event: 'click_app_mall_view_grid' })
-      }
-      this.mallFlag = flag
-      this.$emit('selectMall', flag)
     }
   }
 }

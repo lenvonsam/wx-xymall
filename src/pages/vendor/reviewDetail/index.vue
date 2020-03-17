@@ -9,7 +9,7 @@ div
           .text-red {{statusList[item.status] || '待审核'}}
         .row.justify-between.padding-bottom-xs
           .text-gray.col {{item.cust_name}}
-          .text-black ¥ 32940.60 少字段
+          .text-black ¥ {{item.price}}
         .row.justify-between.text-gray.padding-bottom-xs
           .col 共{{item.amount}}支，{{item.weight}}吨
           span 操作员：{{item.opt_name}}
@@ -96,6 +96,7 @@ export default {
     this.disabled = false
   },
   onShow () {
+    debugger
     this.auditType = this.tempObject.auditType
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 203
     this.showLoading()
@@ -128,13 +129,15 @@ export default {
           break
         case '延时':
           if (flag === 'cancel') {
-            this.back()
-            return false
+            params.status = '2'
+          } else {
+            params.status = '1'
           }
-          params = {
-            id: this.detailData.billNo,
-            status: '1'
-          }
+          const ids = []
+          this.detailData.list.map(item => {
+            ids.push(item.discussid)
+          })
+          params.id = ids.toString()
           this.confirmAudit(params, this.apiList.xy.orderDelayAudit)
           break
         default:

@@ -58,6 +58,8 @@
         "returnApplication/main",
         "returnApplicationFilter/main",
         "sumGoods/main",
+        "sumGoodsDetail/main",
+        "sumGoodsFilter/main",
         "receivables/main",
         "balance/main",
         "balanceFilter/main",

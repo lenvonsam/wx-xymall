@@ -43,9 +43,9 @@ div
                   span 申请时间：
                   span.padding-left-xs {{item.applyer_date}}  
               .solid-top.text-black.ft-15.margin-top-xs.padding-top-sm.row.justify-end
-                template(v-if="item.status === 4")
+                template(v-if="tabName === '-1'")
                   .bill-red-btn.round.margin-left-sm(@click="application(item)") 取消申请
-                  .bill-btn.round.margin-left-sm(@click="application(item)") 查看明细
+                  .bill-btn.round.margin-left-sm(@click="application(item, '查看明细')") 查看明细
                 template(v-else)  
                   .bill-btn.round.margin-left-sm(@click="application(item, '申请')") 申请
     .text-center.c-gray.pt-100(v-else)
@@ -75,7 +75,9 @@ export default {
         '3': '财务驳回',
         '4': '待确认',
         '7': '客户取消'
-      }
+      },
+      filterObj: {},
+      status: ''
     }
   },
   computed: {
@@ -87,15 +89,26 @@ export default {
     copyBtn
   },
   onUnload () {
-    this.tabName = '1'
+    this.tabName = '0,2'
     this.currentPage = 0
     this.listData = []
     this.finished = true
     this.isload = false
     this.scrollHeight = 0
+    this.filterObj = {}
     this.loadFinish = false
   },
   onShow () {
+    if (this.tempObject.fromPage === 'returnApplicationFilter') {
+      this.filterObj = {
+        subs_no: this.tempObject.no,
+        cust_id: this.tempObject.custom.id || '',
+        dept_code: this.tempObject.dept.id || '',
+        employee_code: this.tempObject.employee.id || ''
+      }
+      this.status = this.tempObject.status
+      this.currentPage = 0
+    }
     this.listData = []
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 205
     if (this.$root.$mp.query.tabName) this.tabName = this.$root.$mp.query.tabName
@@ -124,9 +137,22 @@ export default {
         this.isload = false
       }
       const returnGoodsList = this.apiList.xy.returnGoodsList
-      const url = returnGoodsList.url + '?status=' + this.tabName + '&search=' + this.searchVal + '&current_page=' + this.currentPage + '&page_size=' + this.pageSize
+      const params = {
+        current_page: this.currentPage,
+        page_size: this.pageSize
+      }
+      Object.assign(params, this.filterObj)
+      if (this.tabName === '-1' && this.status) {
+        params.status = this.status
+      } else {
+        params.status = this.tabName
+      }
+      if (this.searchVal) {
+        params.search = this.searchVal
+      }
+
       const me = this
-      this.ironRequest(url, '', returnGoodsList.method).then(resp => {
+      this.ironRequest(returnGoodsList.url, params, returnGoodsList.method).then(resp => {
         if (resp && resp.returncode === '0') {
           let arr = resp.list
           if (arr.length === 0 && me.currentPage === 0) {
@@ -158,12 +184,26 @@ export default {
       }, 300)
     },
     openFilter () {
+      if (this.tabName === '-1') {
+        const statusList = [
+          { label: '全部', value: '-1' },
+          { label: '完成', value: '26' },
+          { label: '财务驳回', value: '3' },
+          { label: '待确认', value: '4' },
+          { label: '待退款', value: '5' },
+          { label: '已取消', value: '7' }
+        ]
+        this.configVal({ key: 'tempObject', val: { statusList: statusList } })
+      }
       this.jump('/pages/vendor/returnApplicationFilter/main?tabName=' + this.tabName)
     },
     async application (item, flag) {
       try {
         if (flag === '申请') {
           this.jump(`/pages/vendor/returnApplication/main?subsNo=${item.lad_no}&status=${item.status}&id=${item.id}`)
+          return false
+        } else if (flag === '查看明细') {
+          this.jump('/pages/ladbillConfirmDetail/main?no=' + item.lad_no)
           return false
         }
         const returnGoods = this.apiList.xy.returnGoods

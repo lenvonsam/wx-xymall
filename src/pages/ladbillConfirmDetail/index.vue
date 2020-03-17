@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  nav-bar(title="确认提单", isBack)
+  nav-bar(:title="navTitle", isBack)
   div(style="margin-bottom: 60px")
     .bg-white.row.text-blue.padding-sm
       .col
@@ -8,7 +8,7 @@ div
         copy-btn(:copyUrl="ladObject.id_no")
       .text-blue(v-if="ladObject.status === '提单待确认'") {{ladObject.status}}
       .text-gray(v-else) {{ladObject.status}}
-    .tip.text-orange.padding-sm
+    .tip.text-orange.padding-sm(v-if="ladObject.status === '提单待确认'")
       span *请务必仔细确认物资提货人信息进行确认，如有疑问，请及时联系型云客服
     .bg-white.padding-sm
       .ft-16.text-bold 商品信息
@@ -64,6 +64,7 @@ import copyBtn from '@/components/CopyBtn.vue'
 export default {
   data () {
     return {
+      navTitle: '提单详情',
       totalCount: '',
       totalWeight: '',
       ladObject: {},
@@ -81,8 +82,7 @@ export default {
           me.totalWeight += item.weight
         })
         this.ladObject = resp
-      } else {
-        this.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
+        if (this.ladObject.status === '提单待确认') this.navTitle = '确认提单'
       }
     }).catch(err => {
       console.log(err)

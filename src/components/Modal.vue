@@ -1,6 +1,6 @@
 <template lang="pug">
 .cu-modal(:class="modalName")
-  .cu-dialog.bg-white(style="mix-height: 280rpx; width: 70%")
+  .cu-dialog.bg-white(:style="{'mix-height': '280rpx', width: width}")
     .padding.text-xl.text-black.text-center {{title}}
     slot
     .padding.row
@@ -23,9 +23,13 @@ export default {
     btns: {
       type: Array,
       default: [
-        {label: '取消', flag: 'cancel', className: 'bg-gray'},
-        {label: '确定', flag: 'confirm', className: 'main-btn'}
+        { label: '取消', flag: 'cancel', className: 'bg-gray' },
+        { label: '确定', flag: 'confirm', className: 'main-btn' }
       ]
+    },
+    width: {
+      type: String,
+      default: '70%'
     }
   },
   data () {
@@ -58,5 +62,5 @@ export default {
   border-radius 15px
   font-size 12px
 button::after
-  display none  
+  display none
 </style>
