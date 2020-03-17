@@ -76,11 +76,11 @@ export default {
       scrollTop: 3,
       tabVal: '',
       activeTab: '',
-      pageSize: 10000,
+      pageSize: 100,
       currentPage: 0,
       queryObject: {
         current_page: 0,
-        page_size: 10000
+        page_size: 100
       },
       temporary: [],
       sortList: [
@@ -380,6 +380,13 @@ export default {
       this.configVal({ key: 'tempObject', val: { name: item.id } })
       this.$emit('selectTab', { id: item.id, idx: index })
     },
+    loadMore () {
+      if (this.activeTab === 'standard') {
+        this.isMore = true
+        this.currentPage++
+        this.sortCb(this.activeTab)
+      }
+    },
     sortCb (key, standard) {
       this.queryObject.name = this.tabVal
       this.queryObject.current_page = this.currentPage
@@ -418,12 +425,17 @@ export default {
               })
               arr.unshift({ name: '全部', id: '', isActive: false })
               this.sortList[idx].data = arr
+              // if ((this.currentPage === 0 || key !== 'standard') && !this.isMore) {
+              //   arr.unshift({ name: '全部', id: '', isActive: false })
+              //   this.sortList[idx].data = arr
+              // } else {
+              //   this.sortList[idx].data.push(...arr)
+              // }
             }
           } else {
             this.sortList[idx].data = arr
           }
           if (key === 'name') {
-            debugger
             tabList.unshift({ name: '全部', id: '', isActive: true })
             this.sortList[0].data = tabList
             this.mallTabValChange()
