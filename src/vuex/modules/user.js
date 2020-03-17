@@ -10,9 +10,6 @@ export default {
     },
     autoUser ({ commit }) {
       commit('AUTOUSER')
-    },
-    refreshUser ({ commit }) {
-      commit('REFRESHUSER')
     }
   },
   state: {
@@ -136,25 +133,6 @@ export default {
         state.currentUser = {}
         state.isLogin = false
       }
-    },
-    REFRESHUSER (state) {
-      //   httpUtil
-      //     .requestDecode(
-      //       'erp',
-      //       httpUtil.proxy.erp + apiList.erp.driverInfo,
-      //       {
-      //         body: JSON.stringify({ driverCode: state.currentUser.driverCode })
-      //       },
-      //       'post'
-      //     )
-      //     .then(res => {
-      //       console.log('refresh user:>>', res)
-      //       state.currentUser = res[0]
-      //       mpvue.setStorageSync('currentUser', state.currentUser)
-      //     })
-      //     .catch(err => {
-      //       console.error('更新用户信息失败', err)
-      //     })
     }
   }
 }
