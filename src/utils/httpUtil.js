@@ -8,11 +8,17 @@ const BASICURL = 'https://mobileapp.xingyun361.com/quasarserverdev'
 const PROXYDCODEURL = BASICURL + '/common/proxyDecode'
 const COMMURL = BASICURL + '/common/proxy'
 
-function serializeformQuery (requestParams) {
+function serializeformQuery (requestParams, encodeUrl = false) {
   let query = ''
   for (let param in requestParams) {
     if (param !== undefined && param !== '') {
-      query += param + '=' + encodeURIComponent(requestParams[param]) + '&'
+      query +=
+        param +
+        '=' +
+        (encodeUrl
+          ? encodeURIComponent(requestParams[param])
+          : requestParams[param]) +
+        '&'
     }
   }
   if (query !== '') {

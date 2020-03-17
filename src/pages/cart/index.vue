@@ -41,7 +41,7 @@
                   .padding-xs(@click="clearCarts") 清空
           scroll-view.scroll-view(scroll-y, :style="{height: scrollHeight}")
             .padding-top-sm
-              cart-item(v-for="(cart, idx) in carts", :key="idx", :cart="cart")
+              cart-item(v-for="(cart, idx) in carts", :key="idx", :cart="cart", @rowCartStepCount="rowCartStep")
             .margin-top-sm.padding-bottom-sm(v-if="soldCarts.length > 0", :class="{'padding-top-sm': carts.length === 0}")
               .bg-white
                 .row.padding.flex-center.border-bottom-line
@@ -216,6 +216,7 @@ export default {
           this.totalPrice = this.$toFixed(Number(this.totalPrice), 2)
           this.totalWeight = this.$toFixed(Number(this.totalWeight), 3)
         }
+        this.$forceUpdate()
       },
       deep: true
     }
@@ -261,6 +262,10 @@ export default {
     ...mapActions([
       'configVal'
     ]),
+    rowCartStep (row, step) {
+      row.count = step
+      this.$forceUpdate()
+    },
     jumpMall () {
       this.statisticRequest({ event: 'click_app_cart_go_mall' })
       this.tab('/pages/mall/main')

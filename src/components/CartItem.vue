@@ -43,8 +43,8 @@
       .row.justify-end.align-end(:class="{'padding-sm': currentUser.type === 'seller', 'padding-xs': currentUser.type === 'buyer'}")
         .col
         .col(style="flex: 0 0 60px;")
-          count-step(v-model="cart.count", @click.native="rowCartCount(cart)", @blur="rowCartCount(cart)", :max="cart.amount_left")
-        .padding-left-xs {{cart.countWeight}}吨
+          count-step(v-model="localCount", :max="cart.amount_left")
+        .padding-left-xs {{countWeight}}吨
 </template>
 
 <script>
@@ -56,13 +56,29 @@ export default {
       default: false
     }
   },
+  data () {
+    return {
+      localCount: 1,
+      countWeight: 0
+    }
+  },
+  watch: {
+    localCount (newVal, oldVal) {
+      if (newVal <= this.cart.amount_left && newVal > 0) {
+        this.ironRequest(this.apiList.xy.cartUpdate.url, { cart_id: this.cart.cart_id, user_id: this.currentUser.user_id, measure_way: this.cart.measure_way_id, count: newVal }, this.apiList.xy.cartUpdate.method)
+        this.countWeight = Number(this.$toFixed(newVal * this.cart.weight, 3))
+        this.$emit('rowCartStepCount', this.cart, newVal)
+      }
+    }
+  },
   components: {
     CountStep
   },
+  beforeMount () {
+    this.localCount = this.cart.count || 1
+    this.countWeight = this.cart.countWeight
+  },
   methods: {
-    rowCartCount (obj) {
-      this.ironRequest(this.apiList.xy.cartUpdate.url, { cart_id: obj.cart_id, user_id: this.currentUser.user_id, measure_way: obj.measure_way_id, count: obj.count }, this.apiList.xy.cartUpdate.method)
-    },
     weightChoose (val, rowItem) {
       rowItem.measure_way_id = val
       if (val === 2) {
