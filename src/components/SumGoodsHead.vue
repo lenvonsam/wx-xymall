@@ -385,7 +385,6 @@ export default {
       this.queryObject.current_page = this.currentPage
       let queryObj = Object.assign({}, this.queryObject)
       this.showLoading()
-      debugger
       this.ironRequest(this.sortQueryList[key].reqUrl, queryObj, 'post').then(resp => {
         if (resp.returncode === '0') {
           let arr = resp[this.sortQueryList[key].respKey]
@@ -423,7 +422,6 @@ export default {
             this.sortList[idx].data = arr
           }
           if (key === 'name') {
-            debugger
             tabList.unshift({ name: '全部', id: '', isActive: true })
             this.sortList[0].data = tabList
             this.mallTabValChange()

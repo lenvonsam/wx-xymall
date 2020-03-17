@@ -249,7 +249,6 @@ export default {
           totalLiftCharge: this.totalLiftCharge,
           totalCount: this.totalCount
         }
-        debugger
         this.configVal({ key: 'tempObject', val: detailRow })
         this.jump(`/pages/vendor/returnApplicationDetail/main`)
       } catch (err) {
