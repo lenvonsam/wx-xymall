@@ -2,13 +2,13 @@
 div
   nav-bar(title="个人资料", isBack)
   .ft-16
-    .bg-white.row.padding
+    .bg-white.row.padding(v-if="currentUser.type === 'buyer'")
       .col 型云头像
       .col.text-right
         .profile-avatar(:style="{backgroundImage: 'url('+imgOuterUrl+currentUser.avatar+')'}", v-if="imgOuterUrl", @click="avatarUpload")
       .col.flex-25.text-gray.text-right
         icon.adjust.cuIcon-right
-    .bg-white.row.padding.margin-top-sm.border-bottom-line(@click="jump('/pages/account/companyInfo/main')")
+    .bg-white.row.padding.border-bottom-line(@click="jump('/pages/account/companyInfo/main')", :class="{'margin-top-sm': currentUser.type === 'buyer'}")
       .col 公司信息
       .col.text-right.text-gray.text-autohide {{currentUser.cust_name}}
       .col.flex-25.text-gray.text-right
@@ -21,8 +21,8 @@ div
       .col.text-right.text-gray {{currentUser.user_mark}}
     .bg-white.row.padding
       .col 姓名
-      .col.text-right.text-gray {{currentUser.linkman}}
-    .bg-white.row.ft-16.padding(v-for="(item,idx) in jumpArray", :key="idx", :class="{'margin-top-sm': idx === 0, 'border-bottom-line': (idx < (jumpArray.length - 1))}", @click="jump(item.url)")
+      .col.text-right.text-gray {{currentUser.type === 'buyer' ? currentUser.linkman : currentUser.nickname}}
+    .bg-white.row.ft-16.padding(v-for="(item,idx) in jumpArray", :key="idx", :class="{'margin-top-sm': idx === 0, 'border-bottom-line': (idx < (jumpArray.length - 1))}", @click="jump(item.url)", v-if="currentUser.type === 'buyer'")
       .col {{item.name}}
       .col.text-right.text-gray(v-if="idx == (jumpArray.length - 1)") {{currentUser.phone}}
       .col.flex-25.text-right.text-gray
@@ -50,11 +50,13 @@ export default {
   },
   onShow () {
     var me = this
-    this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(resp => {
-      let obj = me.currentUser
-      obj.cust_name = resp.cust_name
-      me.setUser(obj)
-    })
+    if (this.currentUser.type === 'buyer') {
+      this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(resp => {
+        let obj = me.currentUser
+        obj.cust_name = resp.cust_name
+        me.setUser(obj)
+      })
+    }
   },
   methods: {
     ...mapActions([

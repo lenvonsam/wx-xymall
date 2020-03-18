@@ -96,7 +96,6 @@ export default {
     this.disabled = false
   },
   onShow () {
-    debugger
     this.auditType = this.tempObject.auditType
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 203
     this.showLoading()

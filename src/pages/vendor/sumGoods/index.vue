@@ -215,7 +215,6 @@ export default {
       console.log('swiperChange---------')
       const idx = e.mp.detail.current
       this.mallTabVal = this.goodsNameList[idx].id
-      debugger
       if (this.goodsNameList[idx]) {
         this.showLoading()
         this.isload = true
@@ -236,7 +235,6 @@ export default {
       }
     },
     getName (list) {
-      debugger
       list.map(item => {
         item.data = []
       })
@@ -318,7 +316,6 @@ export default {
         const res = data
         const resList = data.list
         if (res.returncode === '0') {
-          debugger
           const idx = this.swiperCount
           // resList.map(item => {
           //   item.weightMark = item.metering_way

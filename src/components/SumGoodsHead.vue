@@ -391,7 +391,6 @@ export default {
       this.queryObject.current_page = this.currentPage
       let queryObj = Object.assign({}, this.queryObject)
       this.showLoading()
-      debugger
       this.ironRequest(this.sortQueryList[key].reqUrl, queryObj, 'post').then(resp => {
         if (resp.returncode === '0') {
           let arr = resp[this.sortQueryList[key].respKey]
