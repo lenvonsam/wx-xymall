@@ -264,6 +264,7 @@ export default {
     bottom 0
     left 50%
     margin-left -13px
+    z-index 99
 .search-input
   background #F6F6F6
   padding 5px 10px

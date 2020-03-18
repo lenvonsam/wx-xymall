@@ -21,14 +21,14 @@ div
         .text-gray {{totalLiftCharge}}元
       .row.justify-between.padding-bottom-xs
         span 总计
-        .text-gray {{totalPrice}}元  
-      .row.justify-between.padding-bottom-xs(v-if="tempObject.params.return_reason")
+        .text-gray {{totalPrice}}元
+      .row.justify-between.padding-bottom-xs(v-if="returnReason")
         span 退货原因
-        .text-gray {{tempObject.params.return_reason}}
-      .row.justify-between.padding-bottom-xs(v-if="tempObject.params.return_remark")
+        .text-gray {{returnReason}}
+      .row.justify-between.padding-bottom-xs(v-if="returnRemark")
         span 具体原因描述
-        .text-gray {{tempObject.params.return_remark}}  
-  .s-footer(style="height: 100rpx")  
+        .text-gray {{returnRemark}}  
+  .s-footer(style="height: 100rpx", v-if="!subsNo")  
     .cart-footer
       .col.cart-footer-col.text-right
         span 总重量：{{totalGoodsWeight}}吨  总金额：¥{{totalPrice}}
@@ -56,7 +56,9 @@ export default {
       scrollHeight: 0,
       subsNo: '',
       status: '',
-      detailData: {}
+      detailData: {},
+      returnReason: '',
+      returnRemark: ''
     }
   },
   computed: {
@@ -66,12 +68,20 @@ export default {
   },
   onUnload () {
     this.currentPage = 0
+    this.subsNo = ''
+    this.status = ''
     this.listData = []
+    this.detailData = {}
     this.scrollHeight = 0
+    this.returnReason = ''
+    this.returnRemark = ''
   },
   onShow () {
-    this.subsNo = this.$root.$mp.query.subsNo
-    this.status = this.$root.$mp.query.status
+    if (this.$root.$mp.query.subsNo) {
+      this.subsNo = this.$root.$mp.query.subsNo
+      this.subsNo.replace('TD', 'HT')
+      this.status = this.$root.$mp.query.status
+    }
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 205
     this.getGoodsDetail()
   },
@@ -94,6 +104,8 @@ export default {
         this.totalCount += Number(item.count)
       })
       this.listData = resList
+      this.returnReason = tempObject.return_reason
+      this.returnRemark = tempObject.return_remark
       this.totalGoodsWeight = tempObject.totalGoodsWeight
       this.totalGoodsPrice = tempObject.totalGoodsPrice
       this.totalPrice = tempObject.totalPrice
@@ -118,11 +130,28 @@ export default {
     async returnGoodsDetail () {
       try {
         const sellerReturnGoodsAudit = this.apiList.xy.sellerReturnGoodsAudit
-        const url = `${sellerReturnGoodsAudit.url}?subs_no=HT20030300010&status=4`
+        const url = `${sellerReturnGoodsAudit.url}?subs_no=${this.subsNo}&status=${this.status}`
         const data = await this.ironRequest(url, '', sellerReturnGoodsAudit.method)
         if (data.returncode === '0') {
-          this.listData = data.list
+          const resData = data.data
+          const resList = data.list
+          let totalCount = 0
+          let totalWeight = 0
+          let totalGoodsPrice = 0
+          resList.map(item => {
+            item.money = this.$toFixed(Number(item.countWeight * item.price), 2)
+            totalCount += Number(item.amount)
+            totalWeight += Number(item.weight)
+            totalGoodsPrice += Number(item.price)
+          })
+          this.listData = resList
+          this.returnReason = resData.return_reason
+          this.returnRemark = resData.return_remark
           this.detailData = data.data
+          this.totalCount = totalCount
+          this.totalWeight = this.$toFixed(totalWeight, 3)
+          this.totalGoodsPrice = this.$toFixed(totalGoodsPrice, 2)
+          this.totalPrice = this.detailData.all_price_
         }
       } catch (err) {
         console.log(err)
@@ -186,6 +215,7 @@ export default {
     bottom 0
     left 50%
     margin-left -13px
+    z-index 99
 .search-input
   background #F6F6F6
   padding 5px 10px

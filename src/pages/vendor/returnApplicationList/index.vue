@@ -22,7 +22,7 @@ div
   template(v-else) 
     template(v-if="listData.length > 0")
       iron-scroll(@scrolltolower="loadMore", :height="scrollHeight", heightUnit="rpx", :refresh="true", @onRefresh="onRefresh", :loadFinish="loadFinish")
-        .bill-list(v-for="(item, itemIdx) in listData", :key="itemIdx")
+        .bill-list(v-for="(item, itemIdx) in listData", :key="itemIdx", @click="jump('/pages/ladbillConfirmDetail/main?no=' + item.lad_no)")
           .bg-white.box
             .padding-sm
               .flex.justify-between.padding-bottom-sm
@@ -44,10 +44,11 @@ div
                   span.padding-left-xs {{item.applyer_date}}  
               .solid-top.text-black.ft-15.margin-top-xs.padding-top-sm.row.justify-end
                 template(v-if="tabName === '-1'")
-                  .bill-red-btn.round.margin-left-sm(@click="application(item)") 取消申请
-                  .bill-btn.round.margin-left-sm(@click="application(item, '查看明细')") 查看明细
+                  .bill-red-btn.round.margin-left-sm(@click.stop="application(item)", v-if="item.status === 4 || item.status === 5") 取消申请
+                  .bill-btn.round.margin-left-sm(@click.stop="application(item, '申请')" v-if="item.status === 7") 申请
+                  .bill-btn.round.margin-left-sm(@click.stop="application(item, '查看明细')", v-else) 查看明细                  
                 template(v-else)  
-                  .bill-btn.round.margin-left-sm(@click="application(item, '申请')") 申请
+                  .bill-btn.round.margin-left-sm(@click.stop="application(item, '申请')") 申请
     .text-center.c-gray.pt-100(v-else)
       empty-image(url="bill_empty.png", className="img-empty")      
 </template>
@@ -101,11 +102,12 @@ export default {
   onShow () {
     if (this.tempObject.fromPage === 'returnApplicationFilter') {
       this.filterObj = {
-        subs_no: this.tempObject.no,
-        cust_id: this.tempObject.custom.id || '',
+        // subs_no: this.tempObject.no,
+        cust_id: Number(this.tempObject.custom.xyCode) || '',
         dept_code: this.tempObject.dept.id || '',
         employee_code: this.tempObject.employee.id || ''
       }
+      this.search = this.tempObject.no
       this.status = this.tempObject.status
       this.currentPage = 0
     }
@@ -203,12 +205,19 @@ export default {
           this.jump(`/pages/vendor/returnApplication/main?subsNo=${item.lad_no}&status=${item.status}&id=${item.id}`)
           return false
         } else if (flag === '查看明细') {
-          this.jump('/pages/ladbillConfirmDetail/main?no=' + item.lad_no)
+          // this.jump('/pages/ladbillConfirmDetail/main?no=' + item.lad_no)
+          this.jump(`/pages/vendor/returnApplicationDetail/main?subsNo=${item.lad_no}&status=${item.status}`)
           return false
         }
-        const returnGoods = this.apiList.xy.returnGoods
-        const params = {}
-        const data = await this.ironRequest(returnGoods.url, params, returnGoods.method)
+        const returnGoodsCancel = this.apiList.xy.returnGoodsCancel
+        const params = {
+          uesr_id: this.currentUser.uesr_id,
+          return_id: item.id,
+          tostatus: 7
+        }
+        const data = await this.ironRequest(returnGoodsCancel.url, params, returnGoodsCancel.method)
+        this.showMsg(data.errormsg)
+        this.onRefresh()
         console.log(data)
       } catch (err) {
         console.log(err)
@@ -268,6 +277,7 @@ export default {
     height 2px
     background #0081ff
     position absolute
+    z-index 99
     bottom 0
     left 50%
     margin-left -13px

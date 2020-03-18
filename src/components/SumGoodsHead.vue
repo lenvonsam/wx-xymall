@@ -45,7 +45,7 @@
                 .cuIcon-roundclosefill.ft-16
           .row.padding-sm(@click="sortClose(sortIdx)")
             .cuIcon-fold.ft-16
-        scroll-view(scroll-y, style="max-height: 700rpx", :scroll-top="scrollTop")
+        scroll-view(scroll-y, style="max-height: 700rpx", :scroll-top="scrollTop", @scrolltolower="loadMore")
           .grid.col-3.padding-top-sm.sort-content
             .sort-list(v-if="sort.data.length > 0", v-for="(item, index) in sort.data", :key="index")
               .sort-item(:class="{active: item.isActive, 'big': sortIdx !== 1}", @click.stop="selectSort(sortIdx, index)") 
@@ -76,11 +76,11 @@ export default {
       scrollTop: 3,
       tabVal: '',
       activeTab: '',
-      pageSize: 100,
+      pageSize: 30,
       currentPage: 0,
       queryObject: {
         current_page: 0,
-        page_size: 100
+        page_size: 30
       },
       temporary: [],
       sortList: [
@@ -143,8 +143,7 @@ export default {
   computed: {
     ...mapState({
       tempObject: state => state.tempObject,
-      screenWidth: state => state.screenWidth,
-      bottomBarHeight: state => state.bottomBarHeight
+      screenWidth: state => state.screenWidth
     })
   },
   onHide () {
@@ -161,7 +160,7 @@ export default {
       this.searchVal = this.tempObject.search || ''
     }
     this.sortCb('name')
-    this.filterHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 95
+    this.filterHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 95
   },
   onShow () {
     this.isFilter = false
@@ -423,14 +422,14 @@ export default {
                   tabList.push(obj)
                 }
               })
-              arr.unshift({ name: '全部', id: '', isActive: false })
-              this.sortList[idx].data = arr
-              // if ((this.currentPage === 0 || key !== 'standard') && !this.isMore) {
-              //   arr.unshift({ name: '全部', id: '', isActive: false })
-              //   this.sortList[idx].data = arr
-              // } else {
-              //   this.sortList[idx].data.push(...arr)
-              // }
+              // arr.unshift({ name: '全部', id: '', isActive: false })
+              // this.sortList[idx].data = arr
+              if ((this.currentPage === 0 || key !== 'standard') && !this.isMore) {
+                arr.unshift({ name: '全部', id: '', isActive: false })
+                this.sortList[idx].data = arr
+              } else {
+                this.sortList[idx].data.push(...arr)
+              }
             }
           } else {
             this.sortList[idx].data = arr

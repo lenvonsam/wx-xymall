@@ -6,7 +6,7 @@ div
       .col.search-input.text-gray
         .flex.align-center
           .cuIcon-search
-          input.full-width.padding-left-sm(v-model="searchVal", type="text", placeholder="单号")
+          input.full-width.padding-left-sm(v-model="searchVal", type="text", placeholder="合同号/公司名称")
       .search-btn.text-blue(@click="searchOrder") 搜索
       .filter-btn.row(@click="openFilter")
         span 筛选
@@ -125,13 +125,14 @@ export default {
     if (this.tempObject.fromPage === 'billFilter') {
       this.filterArr = []
       const obj = {
-        tstc_no: this.tempObject.no,
-        cust_name: this.tempObject.custom.name,
-        dept_code: this.tempObject.dept.id,
-        employee_code: this.tempObject.employee.id,
+        // tstc_no: this.tempObject.no,
+        cust_no: Number(this.tempObject.custom.xyCode) || '',
+        dept_code: this.tempObject.dept.id || '',
+        employee_code: this.tempObject.employee.id || '',
         deal_time_s: this.tempObject.startDate,
         deal_time_e: this.tempObject.endDate
       }
+      this.searchVal = this.tempObject.no
       Object.keys(obj).forEach(key => {
         if (obj[key]) {
           this.filterArr.push(`${key}=${obj[key]}`)

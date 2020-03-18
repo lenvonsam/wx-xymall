@@ -44,10 +44,7 @@ export default {
     return {
       currentPage: 0,
       listData: [],
-      triggered: false,
       isload: false,
-      startDate: '',
-      endDate: '',
       searchVal: '',
       isTabDisabled: false,
       btnDisable: false,
@@ -70,6 +67,13 @@ export default {
     ...mapState({
       tempObject: state => state.tempObject
     })
+  },
+  onUnload () {
+    this.filterArr = []
+    this.loadFinish = 0
+    this.listData = []
+    this.searchVal = ''
+    this.currentPage = 0
   },
   onShow () {
     if (this.tempObject.fromPage === 'billFilter') {
@@ -112,8 +116,11 @@ export default {
       this.refresher(done)
     },
     searchOrder () {
-      this.startDate = ''
-      this.endDate = ''
+      const reg = /[\u4E00-\u9FA5]|[\uFE30-\uFFA0]/gi
+      if (reg.test(this.searchVal)) {
+        this.showMsg('请输入单号')
+        return false
+      }
       this.listData = []
       this.isTabDisabled = true
       this.isload = true
@@ -130,7 +137,7 @@ export default {
         url += `&${filterStr}`
       }
       if (this.searchVal) {
-        url += `&tstc_no=${this.searchVal}`
+        url += `&search=${this.searchVal}`
       }
       this.ironRequest(url, '', sellerNeedAudit.method).then(resp => {
         if (resp.returncode === '0') {

@@ -1,7 +1,7 @@
 <template lang="pug">
 div
   nav-bar(title="合同跟踪", isBack)
-  .head.bg-white(:style="{height: '203rpx'}")
+  .head.bg-white(:style="{height: '210rpx'}")
     .serach.flex.align-center.padding-sm
       .col.search-input.text-gray
         .flex.align-center
@@ -139,7 +139,8 @@ export default {
       filterArr: [],
       filterObj: {},
       searchVal: '',
-      statusList: []
+      statusList: [],
+      initTabName: '6'
     }
   },
   computed: {
@@ -148,28 +149,25 @@ export default {
     })
   },
   onShow () {
+    this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 210
     if (this.tempObject.fromPage === 'billFilter') {
       this.tabName = '6'
       this.filterObj = {
         tstc_no: this.tempObject.no,
-        employee_code: this.tempObject.employee.id,
-        dept_code: this.tempObject.dept.id,
-        other_id: this.tempObject.custom.id,
-        status: this.tempObject.status,
+        employee_code: this.tempObject.employee.id || '',
+        dept_code: this.tempObject.dept.id || '',
+        cust_id: Number(this.tempObject.custom.xyCode) || '',
+        status: this.tempObject.status || '',
         deal_time_e: this.tempObject.endDate,
         deal_time_s: this.tempObject.startDate
       }
       this.currentPage = 0
       this.onRefresh()
-      // this.configVal({ key: 'tempObject', val: {} })
-    } else if (this.$root.$mp.query.tabName) {
-      this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 203
+    } else if (this.$root.$mp.query.tabName && (this.$root.$mp.query.tabName !== this.initTabName)) {
       this.tabName = this.$root.$mp.query.tabName
+      this.initTabName = this.$root.$mp.query.tabName
       const idx = this.billTab.findIndex(item => item.status === this.tabName)
       this.swiperCount = idx
-    } else {
-      this.tabName = '6'
-      this.swiperCount = 0
     }
   },
   beforeMount () {
@@ -188,8 +186,63 @@ export default {
     })
   },
   onUnload () {
+    this.billTab = [
+      {
+        title: '全部',
+        status: '6',
+        data: [],
+        isActive: true,
+        statusList: [
+          { label: '全部', value: '' },
+          { label: '待支付', value: '14' },
+          { label: '待补款', value: '17' },
+          { label: '已付款', value: '15' },
+          { label: '待审核', value: '12,20' },
+          { label: '待确认', value: '16' },
+          { label: '修改中', value: '18,19' },
+          { label: '已完成', value: '-1' },
+          { label: '已违约', value: '13' }
+        ]
+      }, {
+        title: '待付款',
+        status: '1',
+        data: [],
+        isActive: false,
+        statusList: [
+          { label: '待支付', value: '14' },
+          { label: '待补款', value: '17' }
+        ]
+      }, {
+        title: '已支付待确认',
+        status: '12',
+        data: [],
+        isActive: false,
+        statusList: [
+          { label: '待审核', value: '12,20' }
+        ]
+      }, {
+        title: '待提货',
+        status: '8',
+        data: [],
+        isActive: false,
+        statusList: [
+          { label: '全部', value: '' },
+          { label: '已付款', value: '15' },
+          { label: '待确认', value: '16' }
+        ]
+      },
+      { title: '修改中', status: '10', data: [], isActive: false, statusList: [{ label: '修改中', value: '18,19' }] },
+      { title: '已完成', status: '4', data: [], isActive: false, statusList: [{ label: '已违约', value: '13' }] }
+    ]
+    this.openStatus = false
+    this.scrollId = 'idx_0'
+    this.initTabName = '6'
+    this.tabName = '6'
+    this.swiperCount = 0
+    this.currentPage = 0
     this.searchVal = ''
     this.filterObj = {}
+    this.configVal({ key: 'tempObject', val: {} })
     clearInterval(this.timeInterval)
   },
   methods: {
@@ -231,7 +284,6 @@ export default {
       this.loadFinish = 1
       const me = this
       const sellerOrderList = this.apiList.xy.sellerOrderList
-      // let url = `${sellerOrderList.url}?current_page=${this.currentPage}&page_size=${this.pageSize}&tab_status=${this.tabName}&user_id=${this.currentUser.user_id}`
       let params = {
         current_page: this.currentPage,
         page_size: this.pageSize,
@@ -239,12 +291,7 @@ export default {
         user_id: this.currentUser.user_id
       }
       Object.assign(params, this.filterObj)
-      // if (this.filterArr.length > 0) {
-      //   const filterStr = this.filterArr.toString().replace(/,/g, '&')
-      //   url += `&${filterStr}`
-      // }
       if (this.searchVal) {
-        // url += `&search=${this.searchVal}`
         params.search = this.searchVal
       }
       this.ironRequest(sellerOrderList.url, params, sellerOrderList.method).then(resp => {
@@ -271,6 +318,7 @@ export default {
         me.isTabDisabled = false
         if (me.billTab[idx].data.length < 10) me.loadFinish = 2
         me.hideLoading()
+        // me.$forceUpdate()
         if (done) done()
       })
     },
@@ -338,14 +386,14 @@ export default {
       this.jump(`/pages/billDetail/main?id=${item.tstc_no}`)
     },
     billCancel (item) {
-      if (this.tabName === '0') this.statisticRequest({ event: 'click_app_myorder_all_cancel' })
-      if (this.tabName === '1') this.statisticRequest({ event: 'click_app_myorder_needpay_cancel' })
+      // if (this.tabName === '0') this.statisticRequest({ event: 'click_app_myorder_all_cancel' })
+      // if (this.tabName === '1') this.statisticRequest({ event: 'click_app_myorder_needpay_cancel' })
       const me = this
       this.confirm({ content: '您确定要取消合同吗？' }).then((res) => {
         if (!me.btnDisable && res === 'confirm') {
           me.btnDisable = true
           // me.$ironLoad.show()
-          me.ironRequest('cancelOrder.shtml', { user_id: me.currentUser.user_id, discussid: item.id }, 'post').then(res => {
+          me.ironRequest('cancelOrder.shtml', { user_id: me.currentUser.user_id, discussid: item.discussid }, 'post').then(res => {
             // me.$ironLoad.hide()
             me.btnDisable = false
             if (res && res.returncode === '0') {
@@ -366,9 +414,9 @@ export default {
       })
     },
     payBill (item) {
-      if (this.tabName === '0') this.statisticRequest({ event: 'click_app_myorder_all_pay' })
-      if (this.tabName === '1') this.statisticRequest({ event: 'click_app_myorder_needpay_pay' })
-      this.jump(`/pages/pay/main?pageType=offlinePay&orderNo=${item.no}&price=${item.fact_price}`)
+      // if (this.tabName === '0') this.statisticRequest({ event: 'click_app_myorder_all_pay' })
+      // if (this.tabName === '1') this.statisticRequest({ event: 'click_app_myorder_needpay_pay' })
+      this.jump(`/pages/pay/main?pageType=offlinePay&orderNo=${item.tstc_no}&price=${item.fact_price}`)
     }
   }
 }

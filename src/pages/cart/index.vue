@@ -247,7 +247,7 @@ export default {
       } else {
         this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 200 + 'rpx'
       }
-      this.loadCartData()
+      this.refresher()
     }
     if (this.tempObject.type) {
       this.pickway = this.tempObject.type
@@ -676,7 +676,7 @@ export default {
         this.showMsg(data.errormsg)
         this.disabled = false
         this.modalShow = false
-        this.loadCartData()
+        this.refresher()
         this.dxFilterArray = []
       } catch (err) {
         this.showMsg(err)

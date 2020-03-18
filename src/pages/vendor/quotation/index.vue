@@ -75,7 +75,7 @@
               b.text-red ￥{{totalPrice}}
           .text-right.ft-12(style="color:#999;") 共{{totalCount}}件 ，{{totalWeight}}吨，吊费: {{totalLiftCharge}}元
         .cart-settle-btn.ft-18(v-if="pageType === 'share'", @click="goToSettle") 生成合同
-        button.cart-settle-btn.ft-18(@click="modalShow = true" v-else) 分享
+        button.cart-settle-btn.ft-18(@click="shareClick" v-else) 分享
     modal(:title="modalTitle", :btns="previewShow ? previewBtns : btns", :value="modalShow", @cb="modalHandler", :width="modalWidth")
       div
         template(v-if="previewShow")
@@ -134,7 +134,7 @@ export default {
         { label: '锁货', val: 1 },
         { label: '不锁', val: 0 }
       ],
-      lockGoods: 1,
+      lockGoods: 0,
       modalShow: false,
       totalPrice: 0,
       totalWeight: 0,
@@ -218,7 +218,7 @@ export default {
   onShareAppMessage (res) {
     console.log('qutId', this.qutId)
     this.modalShow = false
-    this.previewShow = false
+    // this.previewShow = false
     return {
       title: '报价清单',
       path: '/pages/vendor/quotation/main?pageType=share&&qutId=' + this.qutId
@@ -270,6 +270,8 @@ export default {
       'configVal'
     ]),
     shareClick () {
+      this.previewShow = false
+      this.modalShow = true
       console.log('----s')
     },
     modalHandler (flag) {

@@ -19,7 +19,7 @@ div
     template(v-if="listData.length > 0")
       div(:style="{height: scrollHeight+'rpx'}")
         iron-scroll(@scrolltolower="loadMore", heightUnit="rpx", :height="scrollHeight", :refresh="true", @onRefresh="onRefresh", :loadFinish="loadFinish")          
-          .bill-list(v-for="(item, itemIdx) in listData", :key="itemIdx")
+          .bill-list(v-for="(item, itemIdx) in listData", :key="itemIdx", @click="jump('/pages/account/balanceList/main?sellerId='+item.cust_id)")
             .bg-white.box
               .padding-sm
                 .flex.justify-between.padding-bottom-sm
@@ -106,8 +106,8 @@ export default {
   onShow () {
     if (this.tempObject.fromPage === 'balanceFilter') {
       this.filterObj = {
-        buyer_id: this.tempObject.custom.id,
-        dept_code: this.tempObject.dept.id
+        buyer_id: Number(this.tempObject.custom.xyCode) || '',
+        dept_code: this.tempObject.dept.id || ''
       }
       this.hideZero = this.tempObject.hideZero ? 'no' : ''
       this.currentPage = 0

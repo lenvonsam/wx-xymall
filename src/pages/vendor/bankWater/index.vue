@@ -44,8 +44,8 @@ div
                     .col {{item.bank_date}}
                     .row
                       template(v-if="tabName === '0'")
-                        .text-gray(v-if="item.match_status === 3") 不匹配
-                        .bill-btn.round.margin-left-sm(v-else-if="(item.match_status === 3)", @click="delBankWater(item.id)") 删除
+                        //- .text-gray(v-if="item.match_status === 3") 不匹配
+                        .bill-btn.round.margin-left-sm(v-if="item.match_status === 3", @click="delBankWater(item.id)") 删除
                         .bill-btn.round.margin-left-sm(v-else, @click.stop="jumpDetail(item, 'review')") 审核
                       .bill-btn.round.margin-left-sm(@click.stop="jumpDetail(item)", v-else) 详情
                       .bill-btn.round.margin-left-sm(v-if="tabName === '3'", @click.stop="jumpDetail(item, 'restore')") 恢复                      
@@ -148,6 +148,7 @@ export default {
         const data = await this.ironRequest(bankWaterDelete.url, params, bankWaterDelete.method)
         this.delBankWaterId = ''
         this.modalShow = false
+        this.onRefresh()
         this.showMsg(data.errormsg)
       } catch (err) {
         this.modalShow = false
@@ -191,15 +192,18 @@ export default {
       this.loadFinish = 1
       const me = this
       const bankWater = this.apiList.xy.bankWater
-      let url = `${bankWater.url}?current_page=${this.currentPage}&page_size=${this.pageSize}&status=${this.tabName}`
-      if (this.filterArr.length > 0) {
-        const filterStr = this.filterArr.toString().replace(/,/g, '&')
-        url += `&${filterStr}`
+      // let url = `${bankWater.url}?current_page=${this.currentPage}&page_size=${this.pageSize}&status=${this.tabName}`
+      // if (this.filterArr.length > 0) {
+      //   const filterStr = this.filterArr.toString().replace(/,/g, '&')
+      //   url += `&${filterStr}`
+      // }
+      const params = {
+        current_page: this.currentPage,
+        page_size: this.pageSize,
+        status: this.tabName
       }
-      if (this.searchVal) {
-        url += `&cust_name=${this.searchVal}`
-      }
-      this.ironRequest(url, '', bankWater.method).then(resp => {
+      if (this.searchVal) params.cust_name = this.searchVal
+      this.ironRequest(bankWater.url, params, bankWater.method).then(resp => {
         const idx = me.swiperCount
         if (resp.returncode === '0') {
           let arr = resp.data.resultlist

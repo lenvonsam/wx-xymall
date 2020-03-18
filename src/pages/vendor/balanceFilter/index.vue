@@ -2,18 +2,18 @@
 div
   nav-bar(title="条件筛选", isBack)
   .bg-white.text-right.text-gray(@click="closeSelect")
-    .row.justify-between.solid-bottom.item(@click="custmShow = !custmShow")
+    .row.justify-between.solid-bottom.item(@click.stop="openSelect('custom')", :style="itemSty")
       .label 客户名称
       .text-right.row.justify-end.col.select
         span {{customName || '请选择客户'}}
-        span.cuIcon-unfold
-      //- search-select(:selectSty="'top: 90rpx'", :show="custmShow", :total="6", :list="custmList")
+        span(:class="selectShow==='custom' ? 'cuIcon-fold' : 'cuIcon-unfold'")
+      search-select(:selectSty="'top: 90rpx; height: '+ (contentHeight - 180) +'rpx'", valKey="name", :scrollHeight="400", :selectType="'custom'", @cb="selectCb($event, 'custom')", :show="selectShow==='custom'", :inputShow="true")    
     .row.justify-between.solid-bottom.item(@click.stop="openSelect('dept')")
       .label 业务部门
       .text-right.row.justify-end.col.select(:class="{'text-blue': selectShow==='dept'}")
         span {{deptName || '请选择部门'}}
         span(:class="selectShow==='dept' ? 'cuIcon-fold' : 'cuIcon-unfold'")
-      search-select(:selectSty="'top: 90rpx; height:'+scrollHeight+'rpx'", :scrollHeight="300", :selectType="'dept'", @cb="selectCb($event, 'dept')", :show="selectShow==='dept'")  
+      search-select(:selectSty="'top: 90rpx; height: '+ (contentHeight - 450) +'rpx'", :scrollHeight="300", :selectType="'dept'", @cb="selectCb($event, 'dept')", :show="selectShow==='dept'")
     .row.justify-between.solid-bottom.item
       .label 隐藏余额为0的客户
       switch.blue.sm(:checked="form.hideZero", @change="switchChange")
@@ -30,7 +30,6 @@ export default {
   },
   data () {
     return {
-      custmList: ['江苏省安徽四暗有限公司', '江苏省安徽四暗有限公司'],
       selectShow: '',
       contentHeight: 0,
       scrollHeight: 0,

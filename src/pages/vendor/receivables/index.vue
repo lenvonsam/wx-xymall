@@ -80,11 +80,14 @@ export default {
       this.loadFinish = 1
       const me = this
       const gatherinsgBeforeWarning = this.apiList.xy.gatherinsgBeforeWarning
-      let url = `${gatherinsgBeforeWarning.url}?current_page=${this.currentPage}&page_size=${this.pageSize}`
-      if (this.searchVal) {
-        url += `&search=${this.searchVal}`
+      const params = {
+        current_page: this.currentPage,
+        page_size: this.pageSize
       }
-      this.ironRequest(url, '', gatherinsgBeforeWarning.method).then(resp => {
+      if (this.searchVal) {
+        params.search = this.searchVal
+      }
+      this.ironRequest(gatherinsgBeforeWarning.url, params, gatherinsgBeforeWarning.method).then(resp => {
         if (resp.returncode === '0') {
           let arr = resp.data
           if (arr.length === 0 && me.currentPage === 0) {

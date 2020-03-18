@@ -29,10 +29,9 @@ div
                   .text-red {{statusList[item.status] || '待审核'}}
                 .text-gray
                   .flex.justify-between.padding-bottom-xs 
-                    span {{item.oper_name}}
-                    .text-black(v-if="item.audit_type === 1") 截至时间：{{item.times}}
-                    .text-black(v-else) {{item.times}}
-                  .padding-bottom-xs {{item.emp_name}}
+                    span {{item.emp_name}}
+                    .text-black {{item.audit_time}}
+                  .padding-bottom-xs {{item.dept_name}}
     .text-center.c-gray.pt-100(v-else)
       empty-image(url="bill_empty.png", className="img-empty")
       .empty-content 您暂时没有相关合同        
@@ -71,14 +70,21 @@ export default {
       tempObject: state => state.tempObject
     })
   },
+  onUnload () {
+    this.filterArr = []
+    this.loadFinish = 0
+    this.listData = []
+    this.searchVal = ''
+    this.currentPage = 0
+  },
   onShow () {
     if (this.tempObject.fromPage === 'billFilter') {
       this.filterArr = []
       const obj = {
         // tstc_no: this.tempObject.no,
-        cust_id: this.tempObject.custom.id,
-        dept_code: this.tempObject.dept.id,
-        employee_code: this.tempObject.employee.id,
+        cust_id: Number(this.tempObject.custom.xyCode) || '',
+        dept_code: this.tempObject.dept.id || '',
+        employee_code: this.tempObject.employee.id || '',
         deal_time_s: this.tempObject.startDate,
         deal_time_e: this.tempObject.endDate
       }
@@ -112,48 +118,57 @@ export default {
       this.refresher(done)
     },
     searchOrder () {
-      this.startDate = ''
-      this.endDate = ''
+      const reg = /[\u4E00-\u9FA5]|[\uFE30-\uFFA0]/gi
+      if (reg.test(this.searchVal)) {
+        this.showMsg('请输入单号')
+        return false
+      }
       this.listData = []
       this.isTabDisabled = true
       this.isload = true
       this.refresher()
     },
     refresher (done) {
-      this.loadFinish = 1
-      const me = this
-      const auditHistory = this.apiList.xy.auditHistory
-      let url = `${auditHistory.url}?user_id=${this.currentUser.user_id}&current_page=${this.currentPage}&page_size=${this.pageSize}`
-      if (this.filterArr.length > 0) {
-        const filterStr = this.filterArr.toString().replace(/,/g, '&')
-        url += `&${filterStr}`
-      }
-      if (this.searchVal) {
-        url += `&tstc_no=${this.searchVal}`
-      }
-      this.ironRequest(url, '', auditHistory.method).then(resp => {
-        if (resp.returncode === '0') {
-          let arr = resp.resultlist
-          if (arr.length === 0 && me.currentPage === 0) {
-            me.listData = []
-            me.isload = false
-          } else if (arr.length > 0 && me.currentPage === 0) {
-            me.listData = arr
-            me.isload = false
-          } else if (arr.length > 0 && me.currentPage > 0) {
-            me.listData.push(...arr)
-            me.isload = false
-          } else {
-            me.isload = false
-            me.currentPage--
-            if (me.listData.length >= 10) me.loadFinish = 2
-          }
+      try {
+        this.loadFinish = 1
+        const me = this
+        const auditHistory = this.apiList.xy.auditHistory
+        let url = `${auditHistory.url}?user_id=${this.currentUser.user_id}&current_page=${this.currentPage}&page_size=${this.pageSize}`
+        if (this.filterArr.length > 0) {
+          const filterStr = this.filterArr.toString().replace(/,/g, '&')
+          url += `&${filterStr}`
         }
-        me.isTabDisabled = false
-        if (me.listData.length < 10) me.loadFinish = 2
-        me.hideLoading()
-        if (done) done()
-      })
+        if (this.searchVal) {
+          url += `&search=${this.searchVal}`
+        }
+        this.ironRequest(url, '', auditHistory.method).then(resp => {
+          if (resp.returncode === '0') {
+            let arr = resp.resultlist
+            if (arr.length === 0 && me.currentPage === 0) {
+              me.listData = []
+              me.isload = false
+            } else if (arr.length > 0 && me.currentPage === 0) {
+              me.listData = arr
+              me.isload = false
+            } else if (arr.length > 0 && me.currentPage > 0) {
+              me.listData.push(...arr)
+              me.isload = false
+            } else {
+              me.isload = false
+              me.currentPage--
+              if (me.listData.length >= 10) me.loadFinish = 2
+            }
+          }
+          me.isTabDisabled = false
+          if (me.listData.length < 10) me.loadFinish = 2
+          me.hideLoading()
+          if (done) done()
+        })
+      } catch (err) {
+        console.log('err', err)
+        this.isload = false
+        this.showMsg(err)
+      }
     },
     loadMore () {
       const me = this

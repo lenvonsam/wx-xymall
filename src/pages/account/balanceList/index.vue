@@ -3,7 +3,7 @@ div
   nav-bar(title="收支明细", isBack, bgClass="bg-blue text-white")
   .bg-blue.text-white.padding(style="height: 120px")
     div 账户余额
-    .margin-top.text-bold.margin-bottom(style="font-size:30px") {{currentUser.account_balance}}
+    .margin-top.text-bold.margin-bottom(style="font-size:30px") {{accountBalance}}
   .bg-white.relative.padding.padding-tb-sm(style="height: 50px")
     .row.text-gray
       .flex-80(@click="checkTab('type')")
@@ -64,7 +64,9 @@ export default {
       loading: false,
       month: 0,
       floatBarShow: false,
-      loadFinish: 0
+      loadFinish: 0,
+      sellerId: '',
+      accountBalance: ''
     }
   },
   computed: {
@@ -72,7 +74,16 @@ export default {
       customBar: state => state.customBar
     })
   },
+  onUnload () {
+    this.listData = []
+    this.activeName = ''
+    this.sellerId = ''
+    this.accountBalance = ''
+    this.month = 0
+    this.loadFinish = 0
+  },
   onShow () {
+    if (this.$root.$mp.query.sellerId) this.sellerId = this.$root.$mp.query.sellerId
     this.whiteStatusBar()
     this.getMonth()
     this.typeLabel = '全部'
@@ -156,7 +167,6 @@ export default {
     },
     async loadData (done) {
       try {
-        // this.isTabDisabled = true
         this.showLoading()
         this.loadFinish = 1
         if (this.currentPage === 0) {
@@ -164,13 +174,15 @@ export default {
         }
         if (this.currentPage > 0) this.loading = true
         const me = this
-        // this.$ironLoad.show()
-        const data = await this.ironRequest(this.apiList.xy.creditRecordList.url, {
-          current_page: this.currentPage,
-          page_size: this.pageSize,
-          type_status: this.typeStatus,
-          number: this.month
-        }, this.apiList.xy.creditRecordList.method)
+        let creditRecordList = this.apiList.xy.creditRecordList
+        let params = `current_page=${this.currentPage}&page_size=${this.pageSize}&type_status=${this.typeStatus}&number=${this.month}&user_id=${this.currentUser.user_id}`
+        if (this.sellerId) {
+          creditRecordList = this.apiList.xy.sellerCreditRecordList
+          params += `&cust_no=${this.sellerId}`
+        }
+        const url = `${creditRecordList.url}?${params}`
+        const data = await this.ironRequest(url, '', creditRecordList.method)
+        this.accountBalance = data.balance
         const arr = data.resultlist
         this.isLoad = true
         const list = []

@@ -204,6 +204,7 @@ export default {
     position absolute
     bottom 0
     left 50%
+    z-index 99
     margin-left -13px
 .search-input
   background #F6F6F6

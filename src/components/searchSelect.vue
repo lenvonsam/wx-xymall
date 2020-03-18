@@ -4,7 +4,7 @@
     .padding(v-if="inputShow")
       .select-search.bg-gray.round.row.padding-xs
         .cuIcon-search.padding-left-sm
-        input.col.padding-xs.margin-left-xs.text-left(type="text", v-model="searchVal")
+        input.col.margin-left-xs.text-left(type="text", v-model="searchVal")
         .close-icon(@click="searchVal = ''", v-if="searchVal")
           .cuIcon-roundclosefill.ft-18
     iron-scroll(:height="scrollHeight", heightUnit="rpx", @scrolltolower="loadMore", :loadFinish="loadFinish")
@@ -52,6 +52,9 @@ export default {
       currentPage: 0,
       pageSize: 10
     }
+  },
+  onUnload () {
+    this.checkItem = []
   },
   watch: {
     searchVal (newVal) {
@@ -144,7 +147,7 @@ export default {
             data = await this.ironRequest(api.url, params, api.method)
             break
           case 'custom':
-            let queryUrl = '?pageSize=' + this.pageSize + '&currentPage=' + this.currentPage
+            let queryUrl = '?pageSize=' + this.pageSize + '&currentPage=' + this.currentPage + '&type=1'
             if (this.searchVal) queryUrl += '&name=' + encodeURIComponent(this.searchVal)
             data = await this.request(this.crmProxy + this.apiList.crm.cstmList.url + queryUrl, {}, this.apiList.crm.cstmList.method)
             break
