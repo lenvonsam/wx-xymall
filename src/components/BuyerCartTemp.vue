@@ -1,5 +1,5 @@
 <template lang="pug">
-  .s-layout
+  .s-layout(@click="clearPicker")
     template(v-if="!isLoad")
       time-line(type="mallist")
     template(v-else)
@@ -12,33 +12,17 @@
             .cart-empty-btn(@click="jumpMall") ^_^去商城逛逛吧
       .s-content-wrap(v-else)
         .s-content
-          template(v-if="currentUser.type === 'seller'")
-            .solid-bottom.flex.padding-sm.bg-white.align-center.justify-between(style="height: 100rpx")
-              .quotation.text-blue.line-blue.solid(@click="auditDxCheck(2)") 生成报价单
-              .text-center
-                .padding-xs(v-show="isEdit", @click="openEdit") 完成
-                .flex(v-show="!isEdit")
-                  .padding-xs.mr-5(@click="openEdit") 编辑
-                  .padding-xs(@click="clearCarts") 清空
-            .row.text-gray.text-center.bg-white(style="height: 100rpx")
-              .row.col.tab-select(@click="openPickWay(1)", :class="{'text-blue': pickWayShow && tabActive === 1}")
-                .col {{customerName || '客户选择'}}
-                i(:class="pickWayShow && tabActive === 1 ? 'cuIcon-fold' : 'cuIcon-unfold'")
-              .row.col.tab-select(@click="openPickWay(2)", :class="{'text-blue': pickWayShow && tabActive === 2}")
-                .col {{liftSelect}}
-                i(:class="pickWayShow && tabActive === 2 ? 'cuIcon-fold' : 'cuIcon-unfold'")
-          template(v-else)
-            .flex.padding-sm.bg-white.align-center.justify-between(style="height: 100rpx")
-              //- .col(@click="openPickWay")
-              .flex.align-center(@click="openPickWay")
-                .cuIcon-location
-                .padding-left-xs 提货方式
-                .padding-left-xs.cuIcon-unfold
-              .text-center
-                .padding-xs(v-show="isEdit", @click="openEdit") 完成
-                .flex(v-show="!isEdit")
-                  .padding-xs.mr-5(@click="openEdit") 编辑
-                  .padding-xs(@click="clearCarts") 清空
+          .flex.padding-sm.bg-white.align-center.justify-between(style="height: 100rpx")
+            //- .col(@click="openPickWay")
+            .flex.align-center(@click.stop="openPickWay")
+              .cuIcon-location
+              .padding-left-xs 提货方式
+              .padding-left-xs.cuIcon-unfold
+            .text-center
+              .padding-xs(v-show="isEdit", @click="openEdit") 完成
+              .flex(v-show="!isEdit")
+                .padding-xs.mr-5(@click="openEdit") 编辑
+                .padding-xs(@click="clearCarts") 清空
           scroll-view.scroll-view(scroll-y, :style="{height: scrollHeight}")
             cart-item(v-for="(cart, idx) in carts", :key="idx", :cart="cart")
             //- .cart-items(v-for="(cart, cartIdx) in carts", :key="cartIdx")
@@ -114,28 +98,9 @@
               span 合计：
               b.text-red ￥{{totalPrice}}
           .text-right.ft-12(style="color:#999;", v-show="!isEdit") 共{{totalCount}}件 ，{{totalWeight}}吨，吊费: {{totalLiftCharge}}元
-        .cart-settle-btn.ft-18(@click="auditDxCheck(1)", v-if="currentUser.type === 'seller'")
-          span {{isEdit ? '删除' : '定向'}}
-        .cart-settle-btn.ft-18(@click="goToSettle", v-else)
+        .cart-settle-btn.ft-18(@click="goToSettle")
           span {{isEdit ? '删除' : '结算'}}
-    .tab-select-dialog.solid-top(:style="{top: customBar + 80 + 'px'}", v-show="pickWayShow && currentUser.type === 'seller'")
-      .bg-white
-        template(v-if="tabActive === 1")
-          .padding
-            .select-search.bg-gray.round.row.padding-xs
-              .cuIcon-search.padding-left-sm
-              input.col.padding-xs.margin-left-xs(type="text")
-          .solid-top.row.padding.justify-between(@click="tabSelect('custom', item)", v-for="(item, pickIdx) in 6", :key="pickIdx")
-            //- scroll-view(style="max-height: 500rpx")
-            .custom-item
-              span 江苏省安徽四暗有限公司
-                //- .cuIcon-check
-          .solid-top.text-right.padding.text-gray 共4条数据
-        template(v-else)
-          .solid-top.row.padding.justify-between(@click="tabSelect('lift', item)", :class="{'text-blue': liftSelect === item}", v-for="(item, liftIdx) in liftList", :key="liftIdx")
-            span {{item.label}}  
-            .cuIcon-check(v-show="liftSelect === item")
-    .address-dialog(@click="openPickWay", :style="{top: customBar + 40 + 'px'}", v-show="pickWayShow && currentUser.type === 'buyer'")
+    .address-dialog(@click.stop="openPickWay", :style="{top: customBar + 40 + 'px'}", v-show="pickWayShow")
       .bg-white
         .solid-top.padding(v-for="(item, pickIdx) in pickWayList", :key="pickIdx")
           .text-bold.ft-15 {{item.title}}
@@ -278,6 +243,9 @@ export default {
     ...mapActions([
       'configVal'
     ]),
+    clearPicker () {
+      this.pickWayShow = false
+    },
     jumpMall () {
       this.statisticRequest({ event: 'click_app_cart_go_mall' })
       this.tab('/pages/mall/main')
@@ -300,18 +268,8 @@ export default {
       }
     },
     openPickWay (type) {
-      if (this.currentUser.type === 'seller') {
-        if (this.tabActive === type) {
-          this.pickWayShow = !(this.tabActive === type)
-          this.tabActive = 0
-          return false
-        }
-        this.pickWayShow = true
-        this.tabActive = type
-      } else {
-        this.statisticRequest({ event: 'click_app_cart_address' })
-        this.pickWayShow = !this.pickWayShow
-      }
+      this.statisticRequest({ event: 'click_app_cart_address' })
+      this.pickWayShow = !this.pickWayShow
     },
     refresher (done) {
       const me = this
