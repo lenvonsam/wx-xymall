@@ -29,11 +29,13 @@
                   div(:class="pageType === 'share' ? 'text-blue' : 'text-black'") ￥{{cart.price}}
                 .content.ft-13
                   .text-gray
-                    div
-                      span {{cart.material}}
-                      span.ml-5 {{cart.length}}米
-                      span.ml-5 {{cart.warehouse}}
-                      span.sub-mark.ml-5 {{cart.supply}}
+                    .row.justify-between
+                      .col
+                        span {{cart.material}}
+                        span.ml-5 {{cart.length}}米
+                        span.ml-5 {{cart.warehouse}}
+                        span.sub-mark.ml-5 {{cart.supply}}
+                      span （{{cart.meteringWay}}）  
                     .pt-5.row.justify-between
                       .col
                         template(v-if="pageType !== 'share'")
@@ -42,7 +44,7 @@
                         template(v-else)  
                           span 吊费:
                         span.ml-10 {{cart.price === '--' ? '--' : cart.lift > 0 ? '￥' + cart.lift + '/吨' : cart.lift == 0 ? '无' : '线下结算'}}
-                      span （{{cart.meteringWay}}）
+                      //- span （{{cart.meteringWay}}）
                     .pt-5(v-if="cart.tolerance_range || cart.weight_range")
                       span(v-if="cart.tolerance_range") 公差范围:
                       span.ml-10.mr-10(v-if="cart.tolerance_range") {{cart.tolerance_range}}
