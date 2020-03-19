@@ -206,8 +206,12 @@ const wxMixins = {
     // 设置购物车数量
     async setCartCount (userId) {
       try {
+        let url = `${this.apiList.xy.cartListCount.url}?user_id=${userId}`
+        if (this.currentUser.type === 'seller') {
+          url += `&data_source=1`
+        }
         const data = await this.ironRequest(
-          this.apiList.xy.cartListCount.url + '?user_id=' + userId,
+          url,
           {},
           this.apiList.xy.cartListCount.method
         )
@@ -351,9 +355,9 @@ const wxMixins = {
         case 1:
           one = this.$toFixed(
             parseFloat(opt.att14) *
-              parseFloat(opt.att8) *
-              (1 - parseFloat(opt.att12)) *
-              1.05,
+            parseFloat(opt.att8) *
+            (1 - parseFloat(opt.att12)) *
+            1.05,
             6
           )
           // 当物资是【花纹板187】【普碳开平板185】【低合金开平板186】【碳钢板278】【普板253】【中板280】【低合金中板211】的时候计算公式：板材磅重计算公式=米重*长度*105%
