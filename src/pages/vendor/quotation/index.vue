@@ -73,7 +73,8 @@
             .text-right.flex.justify-end.col
               span 合计：
               b.text-red ￥{{totalPrice}}
-          .text-right.ft-12(style="color:#999;") 共{{totalCount}}件 ，{{totalWeight}}吨，吊费: {{totalLiftCharge}}元
+          .text-right.ft-12(style="color:#999;") 共{{totalCount}}件 ，{{totalWeight}}吨
+            span(v-if="tempObject.need_lift === 1") ，吊费: {{totalLiftCharge}}元
         .cart-settle-btn.ft-18(v-if="pageType === 'share'", @click="goToSettle") 生成合同
         button.cart-settle-btn.ft-18(@click="shareClick" v-else) 分享
     modal(:title="modalTitle", :btns="previewShow ? previewBtns : btns", :value="modalShow", @cb="modalHandler", :width="modalWidth")
@@ -196,11 +197,12 @@ export default {
         if (filterArray.length > 0) {
           filterArray.map(itm => {
             if (itm.price.indexOf('--') < 0) {
-              if (Number(itm.lift_charge) > 0) {
+              if (this.tempObject.need_lift === 1) {
                 const countWeight = Number(this.$toFixed(itm.count * itm.weight, 3))
+                // const countLiftWeight = this.tempObject.need_lift === 1 ? countWeight * itm.lift_charge : 0
                 const countLiftWeight = countWeight * itm.lift_charge
                 this.totalPrice += itm.price * countWeight + countLiftWeight
-                this.totalLiftCharge += countLiftWeight
+                this.totalLiftCharge += Number(countLiftWeight)
               } else {
                 this.totalPrice += itm.price * Number(this.$toFixed(itm.count * itm.weight, 3))
               }
@@ -270,9 +272,10 @@ export default {
       'configVal'
     ]),
     shareClick () {
+      this.modalTitle = '是否进行锁货'
+      this.modalWidth = '70%'
       this.previewShow = false
       this.modalShow = true
-      console.log('----s')
     },
     modalHandler (flag) {
       console.log(this.$refs.testShare)
@@ -344,20 +347,6 @@ export default {
       }
       this.$forceUpdate()
     },
-    // async quotation () {
-    //   const params = {}
-    //   const data = await this.ironRequest(this.apiList.xy.quotation.url, params, this.apiList.xy.quotation.method)
-    //   console.log(data)
-    // },
-
-    // refresher (done) {
-    //   const me = this
-    //   setTimeout(() => {
-    //     me.carts = []
-    //     me.allChoosed = false
-    //     me.loadCartData(done)
-    //   }, 300)
-    // },
     choosedAll () {
       this.allChoosed = !this.allChoosed
       if (this.allChoosed) {
@@ -383,72 +372,20 @@ export default {
       const arr = this.tempObject.list
       arr.map(itm => {
         itm.choosed = true
-        let allWeight = itm.one_weight
-        let wtArr = allWeight.split('/')
-        let prArr = itm.product_price.split('/')
-        let oldPrArr = itm.origin_price.split('/')
-        if (wtArr.length === 2) {
-          let weight1 = wtArr[0].substring(0, wtArr[0].indexOf('('))
-          let weight2 = wtArr[1].substring(0, wtArr[1].indexOf('('))
-          if (prArr[1] === '--') {
-            itm.radios = [{
-              label: '理计',
-              m_way: 2,
-              weight: weight1,
-              originPrice: oldPrArr[0]
-            }]
-          } else {
-            itm.radios = [{
-              label: '理计',
-              m_way: 2,
-              weight: weight1,
-              price: prArr[0],
-              originPrice: oldPrArr[0]
-            }, {
-              label: '磅计',
-              m_way: 1,
-              weight: weight2,
-              price: prArr[1],
-              originPrice: oldPrArr[1]
-            }]
-          }
-          itm.weight = weight1
-          itm.price = prArr[0]
-          itm.originPrice = oldPrArr[0]
-          if (itm.measure_way_id === 1) {
-            itm.weight = weight2
-            itm.price = prArr[1]
-            itm.originPrice = oldPrArr[1]
-          }
-          if (itm.measure_way_id === 0) {
-            itm.measure_way_id = 2
-          }
-        } else {
-          let lbl = '理计'
-          if (itm.measure_way_id === 1) {
-            lbl = '磅计'
-          }
-          let wt = itm.one_weight.substring(0, itm.one_weight.indexOf('('))
-          itm.radios = [{
-            label: lbl,
-            m_way: itm.measure_way_id,
-            weight: wt
-          }]
-          itm.weight = wt
-          itm.price = itm.product_price
-          itm.originPrice = itm.origin_price
-        }
+        const checkedRadio = itm.radios.filter(item => {
+          return item.m_way === itm.measure_way_id
+        })
         itm.name = itm.product_name
         itm.standard = itm.product_standard
-        itm.price = itm.product_price
+        itm.price = checkedRadio[0].originPrice
         itm.material = itm.product_material
         itm.length = itm.product_length
         itm.warehouse = itm.wh_name
         itm.amount = itm.amount_left
         itm.supply = itm.product_supply
-        itm.weight = itm.weight_left
-        itm.lift = 25
-        itm.meteringWay = itm.metering_way_id === '1' ? '磅计' : '理计'
+        // itm.weight = itm.weight_left
+        itm.lift = this.tempObject.need_lift === 1 ? 25 : 0
+        itm.meteringWay = checkedRadio[0].label
       })
       this.carts = arr
       this.isLoad = true
@@ -467,7 +404,7 @@ export default {
           resData.map(item => {
             item.price = item.dx_price
             item.lift = 25
-            item.meteringWay = item.metering_way === '磅计' ? '磅计' : '理计'
+            item.meteringWay = item.metering_way
           })
           this.isLoad = true
           this.carts = resData
