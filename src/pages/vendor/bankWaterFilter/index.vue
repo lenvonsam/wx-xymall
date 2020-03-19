@@ -2,6 +2,12 @@
 div
   nav-bar(title="条件筛选", isBack)
   .bg-white.text-right.text-gray
+    .row.justify-between.solid-bottom.item(@click.stop="openSelect('custom')", :style="itemSty")
+      .label 汇款抬头
+      .text-right.row.justify-end.col.select
+        span {{customName || '请选择汇款抬头'}}
+        span(:class="selectShow==='custom' ? 'cuIcon-fold' : 'cuIcon-unfold'")
+      search-select(:selectSty="'top: 90rpx; height: '+ (contentHeight - 90) +'rpx'", valKey="name", :scrollHeight="400", :selectType="'custom'", @cb="selectCb($event, 'custom')", :show="selectShow==='custom'", :inputShow="true")    
     .row.justify-between.solid-bottom.item(:style="itemSty")
       .label 起始日期
       picker.col(@change="startDateCb", mode="date")
@@ -16,11 +22,19 @@ div
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
+import searchSelect from '@/components/searchSelect.vue'
 export default {
+  components: {
+    searchSelect
+  },
   data () {
     return {
       itemSty: 'height: 90rpx',
+      contentHeight: 0,
+      selectShow: '',
+      customName: '',
       form: {
+        custom: '',
         startDate: '',
         endDate: ''
       }
@@ -31,11 +45,31 @@ export default {
       tempObject: state => state.tempObject
     })
   },
+  onUnload () {
+    this.selectShow = ''
+    this.customName = ''
+    this.form = {
+      custom: '',
+      startDate: '',
+      endDate: ''
+    }
+  },
+  onShow () {
+    this.contentHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar)
+  },
   methods: {
     ...mapActions(['configVal']),
+    closeSelect () {
+      this.selectShow = ''
+    },
+    openSelect (type) {
+      this.selectShow = this.selectShow === type ? '' : type
+    },
     confirm (flag) {
       if (flag === 'reset') {
+        this.customName = ''
         this.form = {
+          custom: '',
           startDate: '',
           endDate: ''
         }
@@ -50,6 +84,13 @@ export default {
     },
     endDateCb (e) {
       this.form.endDate = this.date2Str(new Date(e.mp.detail.value))
+    },
+    selectCb (res, type) {
+      this[`${type}Name`] = res.name
+      this.form[type] = res
+      this.selectShow = ''
+      this.$forceUpdate()
+      console.log(this.form)
     }
   }
 }

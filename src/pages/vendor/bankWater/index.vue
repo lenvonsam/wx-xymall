@@ -87,6 +87,7 @@ export default {
       pageSize: 10,
       status: '',
       filterArr: [],
+      filterObj: {},
       searchVal: '',
       statusList: [],
       delBankWaterId: ''
@@ -104,16 +105,17 @@ export default {
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 203
     if (this.tempObject.fromPage === 'bankWaterFilter') {
       this.tabName = '0'
-      this.filterArr = []
-      const obj = {
+      // this.filterArr = []
+      this.filterObj = {
         date_end: this.tempObject.endDate,
         date_start: this.tempObject.startDate
       }
-      Object.keys(obj).forEach(key => {
-        if (obj[key]) {
-          this.filterArr.push(`${key}=${obj[key]}`)
-        }
-      })
+      this.searchVal = this.tempObject.custom.name
+      // Object.keys(obj).forEach(key => {
+      //   if (obj[key]) {
+      //     this.filterArr.push(`${key}=${obj[key]}`)
+      //   }
+      // })
       this.currentPage = 0
       this.onRefresh()
     } else {
@@ -192,16 +194,12 @@ export default {
       this.loadFinish = 1
       const me = this
       const bankWater = this.apiList.xy.bankWater
-      // let url = `${bankWater.url}?current_page=${this.currentPage}&page_size=${this.pageSize}&status=${this.tabName}`
-      // if (this.filterArr.length > 0) {
-      //   const filterStr = this.filterArr.toString().replace(/,/g, '&')
-      //   url += `&${filterStr}`
-      // }
       const params = {
         current_page: this.currentPage,
         page_size: this.pageSize,
         status: this.tabName
       }
+      Object.assign(params, this.filterObj)
       if (this.searchVal) params.cust_name = this.searchVal
       this.ironRequest(bankWater.url, params, bankWater.method).then(resp => {
         const idx = me.swiperCount
