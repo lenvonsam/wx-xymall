@@ -178,8 +178,13 @@ export default {
       }, 300)
     },
     jumpDetail (item) {
+      if (item.tstc_no.indexOf('DD') !== -1) {
+        this.jump(`/pages/billDetail/main?id=${item.tstc_no}`)
+        return false
+      }
       item.auditType = this.auditType[item.audit_type]
       item.statusStr = this.statusList[item.status] || '待审核'
+      item.fromPage = 'reviewHistory'
       this.configVal({ key: 'tempObject', val: item })
       this.jump(`/pages/vendor/reviewDetail/main`)
     }

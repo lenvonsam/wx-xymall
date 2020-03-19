@@ -60,8 +60,8 @@ div
                         span.padding-left-xs.text-red {{item.timeDown}}
                     .flex
                       .bill-gray-btn.round(v-if="item.cancel_button == 1", @click.stop="billCancel(item)") 取消合同
-                      .bill-btn.round.margin-left-sm(v-if="item.edit_button", @click.stop="payBill(item)") 申请修改
-                      .bill-btn.round.margin-left-sm(v-if="item.delivery_button", @click.stop="payBill(item)") 制作提单
+                      .bill-btn.round.margin-left-sm(v-if="item.edit_button", @click.stop="jumpModifyDetail(item)") 申请修改
+                      //- .bill-btn.round.margin-left-sm(v-if="item.delivery_button", @click.stop="payBill(item)") 制作提单
                       .bill-btn.round.margin-left-sm(v-if="item.payButton", @click.stop="payBill(item)") 去补款
         .text-center.c-gray.pt-100(v-else)
           empty-image(url="bill_empty.png", className="img-empty")
@@ -412,6 +412,9 @@ export default {
           })
         }
       })
+    },
+    jumpModifyDetail (item) {
+      this.jump(`/pages/modifyDetail/main?id=${item.discussid}&type=${this.tabName}`)
     },
     payBill (item) {
       // if (this.tabName === '0') this.statisticRequest({ event: 'click_app_myorder_all_pay' })

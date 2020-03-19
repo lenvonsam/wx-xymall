@@ -145,6 +145,7 @@ export default {
     this.allChoosed = true
   },
   beforeMount () {
+    this.showLoading()
     this.getLift()
   },
   methods: {
@@ -429,9 +430,11 @@ export default {
           this.modifyList = []
           // if (done) done()
         }
+        this.hideLoading()
       }).catch(err => {
         this.isLoad = true
         this.showMsg(err || '网络错误')
+        this.hideLoading()
         // if (done) done()
       })
     }

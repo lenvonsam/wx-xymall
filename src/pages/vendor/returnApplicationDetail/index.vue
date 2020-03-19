@@ -2,7 +2,7 @@
 div
   nav-bar(title="退货明细", isBack)
   .margin-sm.bg-white.radius
-    .solid-bottom.padding-sm(v-for="(item, idx) in listData", :key="idx")
+    .solid-bottom.padding-sm(v-for="(item, idx) in listData", :key="idx", v-if="item.good_name !== '吊费'")
       .row.padding-bottom-xs.justify-between.text-black.text-bold
         span {{item.name}} {{item.standard}}
         .text-blue ¥ {{auditType === '定向' ? item.order_price : item.price}}

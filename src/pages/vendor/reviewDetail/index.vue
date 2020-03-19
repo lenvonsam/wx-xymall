@@ -38,12 +38,12 @@ div
             span.text-red.padding-left-xs {{detailData.endTime}}
           template(v-else)  
             span.text-black {{detailData.endTime}}
-      //- template(v-if="auditType !== '延时'")     
+      //- template(v-if="auditType !== '延时'")
       .ft-18.padding-top-sm.padding-bottom-sm 商品信息
       .bg-white.card(v-for="(item, idx) in detailData.list", :key="idx")
         .row.justify-between.padding-bottom-xs
           .text-black.col {{item.name}} {{item.standard}}
-          .text-blue ¥ {{auditType === '定向' ? item.order_price : item.money}}
+          .text-blue ¥ {{auditType === '定向' ? item.order_price : item.price}}
         .text-gray
           template(v-if="auditType === '定向'")  
             .row.justify-between.padding-bottom-xs
@@ -63,21 +63,33 @@ div
           template(v-else)    
             .row.justify-between.text-gray.padding-bottom-xs
               .col 
-                span {{item.good_material}}
-                span.padding-left-xs 退款支数：{{item.amount}}支
+                span.padding-right-xs {{item.material}}
+                span 退款支数：{{item.amount}}支
               span ({{item.metering_way_str}})
             .text-gray 
               span 退款重量：{{item.weight}}吨  
-              span.padding-left-xs 退款金额：{{item.good_price}}元
-  .footer.row.bg-white.text-center.text-white.padding-sm
+              span.padding-left-xs 退款金额：{{item.money}}元
+  .footer.row.bg-white.text-center.text-white.padding-sm(v-if="tempObject.fromPage !== 'reviewHistory'")
     .col.foot-cancel(@click="confirm('cancel')") {{auditType === '退货' ? '驳回' : '拒绝'}}
     .col.foot-confirm.margin-left-sm(@click="confirm") {{auditType === '退货' ? '退货' : '通过'}}
+  modal-input(v-model="modalShow", :title="modalInputTitle", confirmText="确定", type="customize", :cb="modalHandler")
+    .padding-sm
+      .bg-gray.input-box
+        input(:placeholder="'请填写'+modalInputTitle", v-model="modalVal", :disabled="modalInputTitle === '退款金额'")
+      .text-red.text-left.padding-top-sm(v-if="modalInputTitle === '驳回原因'") 注：一旦驳回，此单将被删除，必须重新申请，请与销售沟通，并告知客户！  
 </template>
 <script>
 import { mapState } from 'vuex'
+import modalInput from '@/components/ModalInput.vue'
 export default {
+  components: {
+    modalInput
+  },
   data () {
     return {
+      modalVal: '',
+      modalInputTitle: '退款金额',
+      modalShow: false,
       auditType: '',
       detailData: '',
       disabled: false,
@@ -102,22 +114,51 @@ export default {
     this.loadData()
   },
   methods: {
+    modalHandler ({ type }) {
+      console.log('type', type)
+      this.modalShow = false
+      if (type === 'confirm') {
+        const params = {
+          return_id: this.tempObject.discussid,
+          status: 1
+        }
+        if (this.modalInputTitle === '驳回原因') {
+          params.reject_cause = this.modalVal
+          params.status = 2
+          params.kp_flag = this.detailData.invoiceFlag
+        } else {
+          params.back_money = this.modalVal
+        }
+        this.confirmAudit(params, this.apiList.xy.returnGoodsAudit)
+        console.log('modalVal', this.modalVal)
+      }
+    },
     confirm (flag) {
       if (this.disabled) return false
       this.disabled = true
       let params = {}
       switch (this.auditType) {
         case '退货':
-          params = {
-            return_id: this.detailData.id,
-            status: 1
-          }
+          this.disabled = false
+          this.modalShow = true
           if (flag === 'cancel') {
-            params.status = 2
-            params.reject_cause = ''
-            params.kp_flag = this.detailData.invoiceFlag
+            this.modalInputTitle = '驳回原因'
+            this.modalVal = ''
+          } else {
+            this.modalInputTitle = '退款金额'
+            this.modalVal = this.detailData.totalMoeny
           }
-          this.confirmAudit(params, this.apiList.xy.returnGoodsAudit)
+
+          // params = {
+          //   return_id: this.tempObject.return_id,
+          //   status: 1
+          // }
+          // if (flag === 'cancel') {
+          //   params.status = 2
+          //   params.reject_cause = ''
+          //   params.kp_flag = this.detailData.invoiceFlag
+          // }
+          // this.confirmAudit(params, this.apiList.xy.returnGoodsAudit)
           break
         case '定向':
           params = {
@@ -132,11 +173,11 @@ export default {
           } else {
             params.status = '1'
           }
-          const ids = []
-          this.detailData.list.map(item => {
-            ids.push(item.discussid)
-          })
-          params.id = ids.toString()
+          // const ids = []
+          // this.detailData.list.map(item => {
+          //   ids.push(item.discussid)
+          // })
+          params.id = this.tempObject.return_id
           this.confirmAudit(params, this.apiList.xy.orderDelayAudit)
           break
         default:
@@ -169,7 +210,10 @@ export default {
             break
           case '退货':
             const sellerReturnGoodsAudit = this.apiList.xy.sellerReturnGoodsAudit
-            url = `${sellerReturnGoodsAudit.url}?subs_no=${this.tempObject.tstc_no}&status=5`
+            url = `${sellerReturnGoodsAudit.url}?subs_no=${this.tempObject.tstc_no}&return_id=${this.tempObject.discussid}`
+            if (this.tempObject.fromPage !== 'reviewHistory') {
+              url += `&status=5`
+            }
             break
           case '延时':
             const sellerOrderDelayAudit = this.apiList.xy.sellerOrderDelayAudit
@@ -212,14 +256,14 @@ export default {
               }
               break
             case '延时':
-              // const
               this.detailData = {
                 list: data.data.resultlist
               }
           }
-          this.hideLoading()
         }
+        this.hideLoading()
       } catch (e) {
+        this.hideLoading()
         console.log(e)
       }
     }
@@ -236,4 +280,11 @@ export default {
   bottom 0
   left 0
   right 0
+.input-box
+  border-radius 5px
+  width 100%
+  height 40px
+  input
+    height 40px
+    width 100%
 </style>
