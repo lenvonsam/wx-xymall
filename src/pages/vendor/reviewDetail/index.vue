@@ -40,7 +40,7 @@ div
             span.text-black {{detailData.endTime}}
       //- template(v-if="auditType !== '延时'")
       .ft-18.padding-top-sm.padding-bottom-sm 商品信息
-      .bg-white.card(v-for="(item, idx) in detailData.list", :key="idx")
+      .bg-white.card(v-for="(item, idx) in dataList", :key="idx")
         .row.justify-between.padding-bottom-xs
           .text-black.col {{item.name}} {{item.standard}}
           .text-blue ¥ {{auditType === '定向' ? item.order_price : item.price}}
@@ -102,7 +102,12 @@ export default {
   computed: {
     ...mapState({
       tempObject: state => state.tempObject
-    })
+    }),
+    dataList () {
+      return this.detailData.list.filter(item => {
+        return item.good_name !== '吊费'
+      })
+    }
   },
   onUnload () {
     this.disabled = false
@@ -115,14 +120,17 @@ export default {
   },
   methods: {
     modalHandler ({ type }) {
-      console.log('type', type)
       this.modalShow = false
       if (type === 'confirm') {
         const params = {
-          return_id: this.tempObject.discussid,
+          return_id: this.tempObject.return_id,
           status: 1
         }
         if (this.modalInputTitle === '驳回原因') {
+          if (!this.modalVal) {
+            this.showMsg('请输入驳回原因')
+            return false
+          }
           params.reject_cause = this.modalVal
           params.status = 2
           params.kp_flag = this.detailData.invoiceFlag
@@ -130,7 +138,6 @@ export default {
           params.back_money = this.modalVal
         }
         this.confirmAudit(params, this.apiList.xy.returnGoodsAudit)
-        console.log('modalVal', this.modalVal)
       }
     },
     confirm (flag) {
@@ -186,7 +193,9 @@ export default {
     },
     async confirmAudit (params, api) {
       try {
+        this.showLoading()
         const data = await this.ironRequest(api.url, params, api.method)
+        this.hideLoading()
         if (data.returncode === '0') {
           this.showMsg('操作成功')
           const me = this
@@ -196,6 +205,7 @@ export default {
         }
         this.disabled = false
       } catch (err) {
+        this.hideLoading()
         this.disabled = false
         this.showMsg(err || '网络错误')
       }
@@ -210,7 +220,7 @@ export default {
             break
           case '退货':
             const sellerReturnGoodsAudit = this.apiList.xy.sellerReturnGoodsAudit
-            url = `${sellerReturnGoodsAudit.url}?subs_no=${this.tempObject.tstc_no}&return_id=${this.tempObject.discussid}`
+            url = `${sellerReturnGoodsAudit.url}?subs_no=${this.tempObject.tstc_no}&return_id=${this.tempObject.return_id}`
             if (this.tempObject.fromPage !== 'reviewHistory') {
               url += `&status=5`
             }

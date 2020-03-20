@@ -307,7 +307,7 @@ export default {
           item.choosed = false
           item.countWeight = item.deal_weight
           item.count = item.deal_amount
-          item.singleWeight = Number(item[meteringWay[item.metering_way]])
+          item.singleWeight = Number(item[meteringWay[item.metering_way]]) * Number(item.lengths)
         })
         this.maxLift = resData.lift_money
         this.liftPlaceholder = `最大可退吊费金额${this.maxLift}`
