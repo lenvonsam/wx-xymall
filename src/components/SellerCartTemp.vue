@@ -253,14 +253,14 @@ export default {
         filterArray.map(itm => {
           if (itm.dx_prices.indexOf('--') < 0) {
             if (Number(itm.lift_charge) > 0 && this.liftSelectVal === 1) {
-              const countWeight = Number(this.$toFixed(itm.count * itm.weight, 3))
-              const countLiftWeight = countWeight * itm.lift_charge
-              this.totalPrice += itm.dx_prices * countWeight + countLiftWeight
+              // const countWeight = itm.count * itm.weight
+              const countLiftWeight = Number(itm.countWeight) * itm.lift_charge
+              this.totalPrice += itm.dx_prices * Number(itm.countWeight) + countLiftWeight
               this.totalLiftCharge += countLiftWeight
             } else {
               this.totalPrice += itm.dx_prices * Number(itm.count * itm.weight)
             }
-            this.totalWeight += Number(itm.weight * itm.count)
+            this.totalWeight += Number(itm.countWeight)
           }
         })
         this.totalLiftCharge = this.$toFixed(Number(this.totalLiftCharge), 2)
