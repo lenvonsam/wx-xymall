@@ -26,7 +26,7 @@ div
                       .ft-16.padding-right-sm {{item.tstc_no}}
                       img.ding-icon(src="/static/images/ding.png", v-if="item.contract_type === 12")
                       img.dingjin-icon(src="/static/images/dj_icon.png", v-if="item.pay_type === 2")
-                  div(:class="item.att54 ? 'text-red' : 'text-gray'") {{statusList[item.att54]}}
+                  div(:class="!item.att54 ? 'text-red' : 'text-gray'") {{statusList[item.att54]}}
                   //- .text-gray 1111{{item.att54}}
                 .text-gray
                   .flex.justify-between.padding-bottom-xs 
@@ -52,7 +52,7 @@ div
       .padding-top-xs.padding-bottom-xs.row.cuIcon-box
         .cuIcon-item(@click="delayHandler('reduce')")
           .cuIcon-move
-        input(type="number", v-model="delayDate", :min="0", :max="19")
+        input(type="number", v-model="delayDate")
         .cuIcon-item(@click="delayHandler('add')")
           .cuIcon-add
       template(v-if="checkRow.att54")
@@ -66,7 +66,7 @@ import modalInput from '@/components/ModalInput.vue'
 export default {
   data () {
     return {
-      delayDate: 0,
+      delayDate: 1,
       modalShow: false,
       currentPage: 0,
       listData: [],
@@ -108,8 +108,8 @@ export default {
       if (delayDate > maxDelayDate) {
         this.delayDate = maxDelayDate
         return false
-      } else if (delayDate < 0) {
-        this.delayDate = 0
+      } else if (delayDate < 1) {
+        this.delayDate = 1
         return false
       }
       let delayDateStr = this.delayDate.toString()
@@ -168,7 +168,9 @@ export default {
         }
         const data = await this.ironRequest(orderDelay.url, params, orderDelay.method)
         if (data.returncode === '0') {
-          this.onRefresh()
+          this.showMsg(data.errormsg)
+          this.currentPage = 0
+          this.refresher()
         }
       } catch (err) {
         this.showMsg(err || '网络错误')
@@ -182,6 +184,9 @@ export default {
       console.log('type', type)
       if (type === 'confirm') {
         this.orderDelay()
+      } else {
+        this.delayDate = ''
+        this.textVal = ''
       }
     },
     delayHandler (flag) {
@@ -243,6 +248,8 @@ export default {
         me.isTabDisabled = false
         if (me.listData.length < 10) me.loadFinish = 2
         me.hideLoading()
+        me.delayDate = 1
+        me.textVal = ''
         if (done) done()
       })
     },

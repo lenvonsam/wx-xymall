@@ -53,7 +53,7 @@ div
                       .flex.justify-between.padding-bottom-xs 
                         span 共{{item.total_left_qtt}}支，{{item.total_provided_qtt}}吨
                         span 吊费：¥{{item.lift_money}}
-                  .solid-top.text-black.ft-15.padding-sm.row(v-if="item.status === 15 || item.status === 14")
+                  .solid-top.text-black.ft-15.padding-sm.row(v-if="item.status === 15 || item.status === 14 || item.status === 12")
                     .col
                       template(v-if="item.status === 14")
                         span 倒计时：
