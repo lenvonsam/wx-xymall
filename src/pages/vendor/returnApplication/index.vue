@@ -23,25 +23,28 @@ div
           .padding-left-xs {{item.goods_name}} {{item.stander}}
           .sub-mark.ml-5 {{item.address}}
         .text-gray
-          .padding-bottom-xs
-            span {{item.material}}
-            span.padding-left-xs {{item.lengths}}米 
-            span.padding-left-xs {{item.warehouse_name}}  
+          .padding-bottom-xs.row
+            .col
+              span {{item.material}}
+              span.padding-left-xs {{item.lengths}}米 
+              span.padding-left-xs {{item.warehouse_name}}
+            span ({{meteringWay[item.metering_way]}})
           .padding-bottom-xs
             span 可提：{{item.deal_amount}}支/{{item.deal_weight}}吨
-          .padding-bottom-xs
-            span 公差范围：2-9
-            span.padding-left-xs 重量范围：10-20
+          .padding-bottom-xs(v-if="item.gcfw || item.zlfw")
+            span.padding-right-xs(v-if="item.gcfw") 公差范围：{{item.gcfw}}
+            span(v-if="item.zlfw") 重量范围：{{item.zlfw}}
         .row.padding-sm.justify-end.align-end
           .col(style="flex: 0 0 60px;")
             count-step(v-model="item.count", @click.native="rowCartCount(item)", @blur="rowCartCount(item)", :max="item.amount_real")
-          .padding-left-xs {{item.countWeight}}吨
-      //- .row.padding-top-sm
-        span.text-red *
-        span 重量
-        .col.text-right.margin-right-xs.padding-left-sm.row
-          input.col(type="text", :placeholder="liftPlaceholder", v-model="totalGoodsWeight")
-          span 元    
+          .padding-left-xs
+            template(v-if="item.metering_way === 1")
+              .row(style="width: 200rpx")
+                .input-weight.col.text-center
+                  input.col(type="number", v-model="item.countWeight")
+                .padding-left-xs 吨
+            template(v-else)
+              span {{item.countWeight}}吨
       .row.justify-between.padding-top-sm
         span 总重量/总金额
         span {{totalGoodsWeight}}吨/{{totalGoodsPrice}}元
@@ -119,7 +122,13 @@ export default {
       invoiceStatus: '',
       invoiceStatusStr: '',
       returnRemark: '',
-      returnReasonList: []
+      returnReasonList: [],
+      meteringWay: {
+        '1': '磅计',
+        '2': '理计',
+        '3': '16理计',
+        '4': '10理计'
+      }
     }
   },
   components: {
@@ -185,7 +194,11 @@ export default {
     },
     listChange (listData) {
       let filterArray = listData.filter(item => {
-        item.countWeight = this.$toFixed(Number(item.count * item.singleWeight), 3)
+        if (item.metering_way !== 1) {
+          item.countWeight = this.$toFixed(Number(item.count * item.singleWeight), 3)
+        }
+        if (Number(item.countWeight) > Number(item.deal_weight)) item.countWeight = item.deal_weight
+        if (!Number(item.countWeight)) item.countWeight = 0.001
         return item.choosed === true
       })
       this.totalCount = filterArray.length
@@ -194,12 +207,12 @@ export default {
       this.totalGoodsPrice = 0
       this.totalPrice = 0
       this.totalWeight = 0
-
+      // countWeight
       if (filterArray.length > 0) {
         filterArray.map(itm => {
-          const countWeight = itm.count * itm.singleWeight
-          this.totalGoodsWeight += countWeight
-          this.totalGoodsPrice += itm.price * countWeight
+          // const countWeight = itm.count * itm.singleWeight
+          this.totalGoodsWeight += Number(itm.countWeight)
+          this.totalGoodsPrice += itm.price * Number(itm.countWeight)
         })
         this.totalGoodsPrice = this.$toFixed(Number(this.totalGoodsPrice), 2)
         this.totalGoodsWeight = this.$toFixed(Number(this.totalGoodsWeight), 3)
@@ -418,4 +431,7 @@ export default {
     justify-content center
 .count-step .num input
   color #333 !important
+.input-weight
+  border 1px #ddd solid
+  border-radius 3px
 </style>

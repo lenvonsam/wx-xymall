@@ -175,7 +175,7 @@ export default {
         this.isTabDisabled = false
         if (this.listData.length < 10) this.loadFinish = 0
       })
-      if (done) done()
+      if (typeof (done) === 'function') done()
     },
     loadMore () {
       const me = this
