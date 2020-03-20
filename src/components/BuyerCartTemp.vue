@@ -24,44 +24,44 @@
                 .padding-xs.mr-5(@click="openEdit") 编辑
                 .padding-xs(@click="clearCarts") 清空
           scroll-view.scroll-view(scroll-y, :style="{height: scrollHeight}")
-            cart-item(v-for="(cart, idx) in carts", :key="idx", :cart="cart")
-            //- .cart-items(v-for="(cart, cartIdx) in carts", :key="cartIdx")
-            //-   .cart-item.padding-sm
-            //-     .flex.flex-center.align-center.ft-15.text-bold
-            //-       .col.flex-25(@click="cart.choosed = !cart.choosed", style="padding-top: 5px;")
-            //-         img.choose-icon(src="/static/images/blue_check.png", v-if="cart.choosed")
-            //-         img.choose-icon(src="/static/images/btn_ck_n.png", v-else)
-            //-       .col(@click="cart.choosed = !cart.choosed")
-            //-         span {{cart.product_name}}
-            //-         span.padding-left-xs {{cart.product_standard}}
-            //-       .text-blue ￥{{cart.price}}/吨
-            //-     .content.ft-13
-            //-       .flex.flex-center.justify-between
-            //-         div
-            //-           div
-            //-             span {{cart.product_material}}
-            //-             span.ml-5 {{cart.product_length}}米
-            //-             span.ml-5 {{cart.wh_name}}
-            //-             span.sub-mark.ml-5 {{cart.product_supply}}
-            //-           .pt-5
-            //-             span {{cart.amount_left}}支 / {{cart.weight_left}}吨
-            //-             span.padding-left-xs 吊费:
-            //-             span.ml-10 {{cart.price === '--' ? '--' : cart.lift_charge > 0 ? '￥' + cart.lift_charge + '/吨' : cart.lift_charge == 0 ? '无' : '线下结算'}}
-            //-           .pt-5(v-if="cart.tolerance_range || cart.weight_range")
-            //-             span(v-if="cart.tolerance_range") 公差范围:
-            //-             span.ml-10.mr-10(v-if="cart.tolerance_range") {{cart.tolerance_range}}
-            //-           .pt-5
-            //-             span(v-if="cart.weight_range") 重量范围:
-            //-             span.ml-10(v-if="cart.weight_range") {{cart.weight_range}} 
-            //-         .text-right
-            //-           .flex.flex-direction.justify-between
-            //-             z-radio(@checkHander="weightChoose(r.m_way, cart)", v-for="(r, rIdx) in cart.radios", :key="rIdx", :label="r.label", :checked="cart.measure_way_id === r.m_way")
+            //- cart-item(v-for="(cart, idx) in carts", :key="idx", :cart="cart")
+            .cart-items(v-for="(cart, cartIdx) in carts", :key="cartIdx")
+              .cart-item.padding-sm
+                .flex.flex-center.align-center.ft-15.text-bold
+                  .col.flex-25(@click="cart.choosed = !cart.choosed", style="padding-top: 5px;")
+                    img.choose-icon(src="/static/images/blue_check.png", v-if="cart.choosed")
+                    img.choose-icon(src="/static/images/btn_ck_n.png", v-else)
+                  .col(@click="cart.choosed = !cart.choosed")
+                    span {{cart.product_name}}
+                    span.padding-left-xs {{cart.product_standard}}
+                  .text-blue ￥{{cart.price}}/吨
+                .content.ft-13
+                  .flex.flex-center.justify-between
+                    div
+                      div
+                        span {{cart.product_material}}
+                        span.ml-5 {{cart.product_length}}米
+                        span.ml-5 {{cart.wh_name}}
+                        span.sub-mark.ml-5 {{cart.product_supply}}
+                      .pt-5
+                        span {{cart.amount_left}}支 / {{cart.weight_left}}吨
+                        span.padding-left-xs 吊费:
+                        span.ml-10 {{cart.price === '--' ? '--' : cart.lift_charge > 0 ? '￥' + cart.lift_charge + '/吨' : cart.lift_charge == 0 ? '无' : '线下结算'}}
+                      .pt-5(v-if="cart.tolerance_range || cart.weight_range")
+                        span(v-if="cart.tolerance_range") 公差范围:
+                        span.ml-10.mr-10(v-if="cart.tolerance_range") {{cart.tolerance_range}}
+                      .pt-5
+                        span(v-if="cart.weight_range") 重量范围:
+                        span.ml-10(v-if="cart.weight_range") {{cart.weight_range}} 
+                    .text-right
+                      .flex.flex-direction.justify-between
+                        z-radio(@checkHander="weightChoose(r.m_way, cart)", v-for="(r, rIdx) in cart.radios", :key="rIdx", :label="r.label", :checked="cart.measure_way_id === r.m_way")
                         
-            //-       .row.padding-xs.justify-end.align-end
-            //-         .col
-            //-         .col(style="flex: 0 0 60px;")
-            //-           count-step(v-model="cart.count", @click.native="rowCartCount(cart)", @blur="rowCartCount(cart)", :max="cart.amount_left")
-            //-         .padding-left-xs {{cart.countWeight}}吨
+                  .row.padding-xs.justify-end.align-end
+                    .col
+                    .col(style="flex: 0 0 60px;")
+                      count-step(v-model="cart.count", @click.native="rowCartCount(cart)", @blur="rowCartCount(cart)", :max="cart.amount_left")
+                    .padding-left-xs {{cart.countWeight}}吨
             .margin-top-sm.padding-bottom-sm(v-if="soldCarts.length > 0", :class="{'padding-top-sm': carts.length === 0}")
               .bg-white
                 .row.padding.flex-center.border-bottom-line
@@ -111,7 +111,7 @@
 
 <script>
 import CountStep from '@/components/CountStep.vue'
-import CartItem from '@/components/CartItem.vue'
+// import CartItem from '@/components/CartItem.vue'
 import { mapState, mapActions } from 'vuex'
 export default {
   data () {
@@ -158,8 +158,8 @@ export default {
     }
   },
   components: {
-    CountStep,
-    CartItem
+    CountStep
+    // CartItem
   },
   computed: {
     ...mapState({
