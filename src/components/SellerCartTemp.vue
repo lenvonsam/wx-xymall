@@ -56,7 +56,7 @@
                           span.ml-5(v-if="cart.weight_range") 重量范围:
                           span.ml-10(v-if="cart.weight_range") {{cart.weight_range}} 
                       .text-right
-                        .text-gray (可让10元)
+                        .text-gray (可让{{cart.allowedPrice}}元)
                         .flex.flex-direction.justify-between.pt-5
                           z-radio(@checkHander="weightChoose(r.m_way, cart)", v-for="(r, rIdx) in cart.radios", :key="rIdx", :label="r.label", :checked="cart.measure_way_id === r.m_way")
                 .margin-top-xs.padding-sm.solid-top.solid-bottom.padding-top-sm.padding-bottom-sm.row.text-gray
@@ -88,12 +88,12 @@
         .cart-settle-btn.ft-18(@click="auditDxCheck(1)")
           span {{isEdit ? '删除' : '定向'}}
     .tab-select-dialog.solid-top(:style="{top: selectDialogTop + 'rpx'}", v-show="pickWayShow")
-      .bg-white
+      .bg-white(@click.stop="")
         template(v-if="tabActive === 1")
           .padding
             .select-search.bg-gray.round.row.padding-sm
               .cuIcon-search.padding-left-sm
-              input.col.margin-left-xs(type="text", v-model="customSearchVal", @input="customChange")
+              input.col.margin-left-xs(type="text", v-model="customSearchVal")
               .close-icon(@click="customSearchVal = ''", v-if="customSearchVal")
                 .cuIcon-roundclosefill.ft-18
           template(v-if="customList.length > 0")    
@@ -180,9 +180,16 @@ export default {
   watch: {
     carts: {
       handler (newVal, oldVal) {
-        this.cartCalculation()
+        this.cartCalculation(newVal)
       },
       deep: true
+    },
+    customSearchVal (newVal) {
+      const me = this
+      this.throttle(function () {
+        me.cstmCurrentPage = 0
+        me.loadCstmList()
+      }, 300)
     }
   },
   onHide () {
@@ -231,8 +238,8 @@ export default {
       this.pickWayShow = false
       this.tabActive = 0
     },
-    cartCalculation () {
-      const newVal = this.carts
+    cartCalculation (newVal) {
+      newVal = newVal || this.carts
       let filterArray = newVal.filter(item => {
         item.countWeight = this.$toFixed(Number(item.count * item.weight), 3)
         return item.choosed === true
@@ -278,14 +285,12 @@ export default {
     },
     async loadCstmList () {
       try {
-        debugger
         let queryUrl = '?pageSize=' + this.pageSize + '&currentPage=' + this.cstmCurrentPage
         if (this.customSearchVal) queryUrl += '&name=' + encodeURIComponent(this.customSearchVal)
         let data = await this.request(this.crmProxy + this.apiList.crm.cstmList.url + queryUrl, {}, this.apiList.crm.cstmList.method)
         this.customTotal = data.total
         let arr = data.list
         const me = this
-        debugger
         if (arr.length === 0 && me.cstmCurrentPage === 0) {
           me.customList = []
           me.isload = false
@@ -462,18 +467,19 @@ export default {
       }
     },
     weightChoose (val, rowItem) {
-      debugger
       rowItem.measure_way_id = val
-      if (val === 2) {
+      if (val === 2 || val === 3) {
         rowItem.weight = rowItem.radios[0].weight
         rowItem.price = rowItem.radios[0].price
         rowItem.originPrice = rowItem.radios[0].originPrice
         rowItem.dx_prices = rowItem.radios[0].originPrice
+        rowItem.allowedPrice = rowItem.radios[0].allowedPrice
       } else {
         rowItem.weight = rowItem.radios[1].weight
         rowItem.price = rowItem.radios[1].price
-        rowItem.originPrice = rowItem.radios[1].price
-        rowItem.dx_prices = rowItem.radios[1].price
+        rowItem.originPrice = rowItem.radios[1].originPrice
+        rowItem.dx_prices = rowItem.radios[1].originPrice
+        rowItem.allowedPrice = rowItem.radios[1].allowedPrice
       }
       this.ironRequest('cartUpdate.shtml', { cart_id: rowItem.cart_id, user_id: this.currentUser.user_id, measure_way: val, count: rowItem.count, data_source: 1 }, 'post').then(res => {
       })
@@ -509,7 +515,6 @@ export default {
       }
     },
     loadCartData () {
-      debugger
       this.isLoad = false
       const me = this
       const url = `${this.apiList.xy.cartList.url}?user_id=${me.currentUser.user_id}&data_source=1`
@@ -518,67 +523,59 @@ export default {
         if (resp.returncode === '0') {
           let arr = resp.carts
           this.soldCarts = resp.sold_out_carts
-          debugger
           arr.map(itm => {
             itm.choosed = false
             let allWeight = itm.one_weight
             let wtArr = allWeight.split('/')
-            let prArr = itm.product_price.split('/')
+            // let prArr = itm.product_price.split('/')
             let oldPrArr = itm.origin_price.split('/')
-            if (wtArr.length === 2) {
-              let weight1 = wtArr[0].substring(0, wtArr[0].indexOf('('))
-              let weight2 = wtArr[1].substring(0, wtArr[1].indexOf('('))
-              if (prArr[1] === '--') {
-                itm.radios = [{
-                  label: '理计',
-                  m_way: 2,
-                  weight: weight1,
-                  originPrice: oldPrArr[0]
-                }]
-              } else {
-                itm.radios = [{
-                  label: '理计',
-                  m_way: 2,
-                  weight: weight1,
-                  price: prArr[0],
-                  originPrice: oldPrArr[0]
-                }, {
-                  label: '磅计',
-                  m_way: 1,
-                  weight: weight2,
-                  price: prArr[1],
-                  originPrice: oldPrArr[1]
-                }]
-              }
-              itm.weight = weight1
-              itm.price = prArr[0]
-              itm.originPrice = oldPrArr[0]
-              itm.dx_prices = oldPrArr[0]
-              if (itm.measure_way_id === 1) {
-                itm.weight = weight2
-                itm.price = prArr[1]
-                itm.originPrice = oldPrArr[1]
-                itm.dx_prices = oldPrArr[1]
-              }
-              if (itm.measure_way_id === 0) {
-                itm.measure_way_id = 2
-              }
-            } else {
-              let lbl = '理计'
-              if (itm.measure_way_id === 1) {
-                lbl = '磅计'
-              }
-              let wt = itm.one_weight.substring(0, itm.one_weight.indexOf('('))
+            const newWeight = []
+            wtArr.map(item => {
+              newWeight.push(item.substring(0, item.indexOf('(')))
+            })
+            if (itm.trade_type === 1) {
               itm.radios = [{
-                label: lbl,
-                m_way: itm.measure_way_id,
-                weight: wt,
-                originPrice: oldPrArr[0]
+                label: '理计',
+                m_way: 2,
+                weight: newWeight[0],
+                price: oldPrArr[0],
+                originPrice: oldPrArr[0],
+                allowedPrice: itm.lj_allowed_price
+              }, {
+                label: '磅计',
+                m_way: 1,
+                weight: newWeight[1],
+                price: oldPrArr[1],
+                originPrice: oldPrArr[1],
+                allowedPrice: itm.bj_allowed_price
               }]
-              itm.weight = wt
-              itm.price = itm.product_price
-              itm.originPrice = itm.origin_price
-              itm.dx_prices = itm.origin_price
+            } else {
+              itm.radios = [{
+                label: '16理计',
+                m_way: 3,
+                weight: newWeight[0],
+                price: oldPrArr[0],
+                originPrice: oldPrArr[0],
+                allowedPrice: itm.lj_allowed_price
+              }, {
+                label: '10理计',
+                m_way: 4,
+                weight: newWeight[0],
+                price: oldPrArr[1],
+                originPrice: oldPrArr[1],
+                allowedPrice: itm.lj_allowed_price
+              }]
+            }
+            itm.weight = newWeight[0]
+            itm.price = oldPrArr[0]
+            itm.originPrice = oldPrArr[0]
+            itm.dx_prices = oldPrArr[0]
+            itm.allowedPrice = itm.measure_way_id === 1 ? itm.bj_allowed_price : itm.lj_allowed_price
+            if (itm.measure_way_id === 1 || itm.measure_way_id === 4) {
+              itm.weight = itm.measure_way_id === 4 ? newWeight[0] : newWeight[1]
+              itm.price = oldPrArr[1]
+              itm.originPrice = oldPrArr[1]
+              itm.dx_prices = oldPrArr[1]
             }
             itm.cost_prices = 0
             this.carts.push(itm)
