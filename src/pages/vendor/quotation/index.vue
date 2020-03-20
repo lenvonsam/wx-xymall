@@ -90,7 +90,7 @@
                     .col
                       span {{cart.name}}
                       span.padding-left-xs {{cart.standard}}
-                    div(:class="pageType === 'share' ? 'text-blue' : 'text-black'") ￥{{cart.price}}
+                    .text-blue ￥{{cart.dx_prices}}
                   .content.ft-13
                     .text-gray
                       div
@@ -110,12 +110,12 @@
                         span.ml-10(v-if="cart.weight_range") {{cart.weight_range}}
                       .pt-5
                         span 数量：
-                        span.ml-10 {{cart.amount}}支
+                        span.ml-10 {{cart.count}}支
                         span.padding-left-xs 重量：
-                        span.ml-10 {{cart.weight}}
+                        span.ml-10 {{cart.countWeight}}
                         span 吨
         template(v-else)    
-          .text-gray 2小时未生成合同，物资自动释放          
+          .text-gray 2小时未生成合同，物资自动释放
           .padding-top-sm.row.justify-center
             .margin-right-sm.margin-left-sm(v-for="(r, rIdx) in radios", :key="rIdx")
               z-radio(@checkHander="lockCheck(r)", :label="r.label", :checked="lockGoods === r.val")
