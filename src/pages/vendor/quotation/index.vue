@@ -7,7 +7,7 @@
     template(v-if="!isLoad")
       time-line(type="mallist")
     template(v-else)
-      .s-empty-content(v-if="(carts.length + soldCarts.length) == 0")
+      .s-empty-content(v-if="carts.length == 0")
         div(style="padding-top: 20%")
           .text-center
             empty-image(url="cart_empty.png", className="img-empty")
@@ -84,7 +84,7 @@
         template(v-if="previewShow")
           .bg-gray
             scroll-view.scroll-view(scroll-y, :style="{height: modalScrollHeight}")
-              .cart-items.text-left(v-for="(cart, cartIdx) in carts", :key="cartIdx")
+              .cart-items.text-left(v-for="(cart, cartIdx) in checkGoods", :key="cartIdx")
                 .cart-item.padding-sm
                   .flex.flex-center.align-center.ft-15.text-bold
                     .col
@@ -143,13 +143,8 @@ export default {
       totalWeight: 0,
       totalLiftCharge: 0,
       totalCount: 0,
-      pickway: 0,
-      pwPhone: '',
-      pwAddr: '',
-      pwAddrDetail: '',
       allChoosed: true,
       carts: [],
-      soldCarts: [],
       btnDisable: false,
       isLoad: false,
       scrollHeight: 0,
@@ -163,13 +158,13 @@ export default {
       btns: [
         { label: '取消', flag: 'cancel', className: 'bg-gray' },
         { label: '确定', flag: 'confirm', className: 'main-btn' }
-        // { label: '确定', flag: 'confirm', className: 'main-btn', type: 'share' }
       ],
       previewBtns: [
         { label: '取消', flag: 'cancel', className: 'bg-gray' },
         { label: '确定', flag: 'confirm', className: 'main-btn', type: 'share' }
       ],
-      modalScrollHeight: 0
+      modalScrollHeight: 0,
+      checkGoods: []
     }
   },
   components: {
@@ -257,6 +252,8 @@ export default {
     this.modalScrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 400 + 'rpx'
   },
   onUnload () {
+    this.pageType = ''
+    this.qutId = ''
     clearInterval(this.timeInterval)
   },
   mounted () {
@@ -281,6 +278,7 @@ export default {
         this.showMsg('请选择分享物资')
         return false
       }
+      this.checkGoods = filterArray
       this.modalTitle = '是否进行锁货'
       this.modalWidth = '70%'
       this.previewShow = false
@@ -298,7 +296,7 @@ export default {
         let amounts = []
         let weights = []
         let orderPrices = []
-        this.carts.map(itm => {
+        this.checkGoods.map(itm => {
           orderIds.push(itm.order_id)
           dxPrices.push(itm.dx_prices)
           costPrices.push(itm.cost_prices)
@@ -368,10 +366,6 @@ export default {
         })
       }
     },
-    jumpToPickway () {
-      this.configVal({ key: 'tempObject', val: { type: this.pickway, phone: this.pwPhone, addr: this.pwAddr, detail: this.pwAddrDetail } })
-      this.jump({ path: '/pickway?type=' + this.pickway })
-    },
     rowCartCount (obj) {
       console.log(obj.count)
       this.ironRequest('cartUpdate.shtml', { cart_id: obj.cart_id, user_id: this.currentUser.user_id, measure_way: obj.measure_way_id, count: obj.count }, 'post').then(res => {
@@ -427,6 +421,10 @@ export default {
       }
     },
     goToSettle () {
+      if (this.currentUser.type === 'seller') {
+        this.showMsg('卖家账号不能生成合同')
+        return false
+      }
       const filterArray = this.carts
       const me = this
       if (!this.btnDisable) {
