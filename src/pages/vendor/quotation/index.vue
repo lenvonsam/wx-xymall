@@ -271,6 +271,10 @@ export default {
       'configVal'
     ]),
     shareClick () {
+      if (this.qutId) {
+        this.showMsg('当前报价单已生成')
+        return false
+      }
       const filterArray = this.carts.filter(item => {
         return item.choosed === true
       })
