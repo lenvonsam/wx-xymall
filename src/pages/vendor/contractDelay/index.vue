@@ -123,6 +123,11 @@ export default {
       this.delayDate = Number(delayDateStr)
     }
   },
+  onUnload () {
+    this.searchVal = ''
+    this.currentPage = 0
+    this.configVal({ key: 'tempObject', val: {} })
+  },
   onShow () {
     if (this.tempObject.fromPage === 'billFilter') {
       this.filterArr = []

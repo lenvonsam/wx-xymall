@@ -10,7 +10,7 @@ div
       .text-right.row.justify-end.col.select
         span {{customName || '请选择客户'}}
         span(:class="selectShow==='custom' ? 'cuIcon-fold' : 'cuIcon-unfold'")
-      search-select(:selectSty="'top: 90rpx; height: '+ (contentHeight - 180) +'rpx'", valKey="name", :scrollHeight="400", :selectType="'custom'", @cb="selectCb($event, 'custom')", :show="selectShow==='custom'", :inputShow="true")    
+      search-select(:selectSty="'top: 90rpx; height: '+ (contentHeight - 180) +'rpx'", valKey="name", :clearVal="isReset", :scrollHeight="400", :selectType="'custom'", @cb="selectCb($event, 'custom')", :show="selectShow==='custom'", :inputShow="true")    
     .row.justify-between.solid-bottom.item(:style="itemSty")
       .label 起始日期
       picker.col(@change="startDateCb", mode="date")
@@ -24,15 +24,15 @@ div
       .text-right.row.justify-end.col.select(:class="{'text-blue': selectShow==='dept'}")
         span {{deptName || '请选择部门'}}
         span(:class="selectShow==='dept' ? 'cuIcon-fold' : 'cuIcon-unfold'")
-      search-select(:selectSty="'top: 90rpx; height: '+ (contentHeight - 450) +'rpx'", :scrollHeight="300", :selectType="'dept'", @cb="selectCb($event, 'dept')", :show="selectShow==='dept'")  
+      search-select(:selectSty="'top: 90rpx; height: '+ (contentHeight - 450) +'rpx'", :scrollHeight="300", :clearVal="isReset", :selectType="'dept'", @cb="selectCb($event, 'dept')", :show="selectShow==='dept'")  
     .row.justify-between.solid-bottom.item(@click.stop="openSelect('employee')", :style="itemSty")
       .label 业务人员
       .text-right.row.justify-end.col.select(:class="{'text-blue': selectShow==='employee'}")
         span {{employeeName || '请选择业务员'}}
         span(:class="selectShow==='employee' ? 'cuIcon-fold' : 'cuIcon-unfold'")
-      search-select(:selectSty="'top: 90rpx; height: '+ (contentHeight - 500) +'rpx'", :scrollHeight="300", :selectType="'employee'", @cb="selectCb($event,'employee')", :show="selectShow==='employee'", :inputShow="true")
+      search-select(:selectSty="'top: 90rpx; height: '+ (contentHeight - 500) +'rpx'", :scrollHeight="300", :clearVal="isReset", :selectType="'employee'", @cb="selectCb($event,'employee')", :show="selectShow==='employee'", :inputShow="true")
     .row.justify-between.solid-bottom.item(:style="itemSty", v-if="statusList.length > 0")
-      .label 状态
+      .label {{tempObject.fromPage === 'pendingReview' ? '单据类型' : '状态'}}
       .text-right.row.justify-end.col.select
         picker.col(@change="statusCb", mode="selector", :range="statusList", range-key="label")
           .text-right.text-gray {{statusStr || '请选择状态'}}
@@ -50,8 +50,8 @@ export default {
   },
   data () {
     return {
+      isReset: false,
       itemSty: 'height: 90rpx',
-      custmList: ['江苏省安徽四暗有限公司', '江苏省安徽四暗有限公司'],
       contentHeight: 0,
       selectShow: '',
       statusList: [],
@@ -82,19 +82,19 @@ export default {
   onUnload () {
     this.selectShow = ''
     this.statusList = []
-    this.deptName = ''
-    this.employeeName = ''
-    this.customName = ''
-    this.statusStr = ''
-    this.form = {
-      no: '',
-      custom: '',
-      startDate: '',
-      endDate: '',
-      dept: '',
-      employee: '',
-      status: ''
-    }
+    // this.deptName = ''
+    // this.employeeName = ''
+    // this.customName = ''
+    // this.statusStr = ''
+    // this.form = {
+    //   no: '',
+    //   custom: '',
+    //   startDate: '',
+    //   endDate: '',
+    //   dept: '',
+    //   employee: '',
+    //   status: ''
+    // }
   },
   methods: {
     ...mapActions(['configVal']),
@@ -112,6 +112,7 @@ export default {
     },
     confirm (flag) {
       if (flag === 'reset') {
+        this.isReset = !this.isReset
         this.employeeName = ''
         this.deptName = ''
         this.customName = ''

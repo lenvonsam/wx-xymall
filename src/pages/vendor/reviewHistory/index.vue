@@ -76,6 +76,7 @@ export default {
     this.listData = []
     this.searchVal = ''
     this.currentPage = 0
+    this.configVal({ key: 'tempObject', val: {} })
   },
   onShow () {
     if (this.tempObject.fromPage === 'billFilter') {

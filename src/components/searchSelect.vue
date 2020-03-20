@@ -39,7 +39,8 @@ export default {
     scrollHeight: {
       type: Number,
       default: 0
-    }
+    },
+    clearVal: ['Boolean']
   },
   data () {
     return {
@@ -53,10 +54,13 @@ export default {
       pageSize: 10
     }
   },
-  onUnload () {
-    this.checkItem = []
-  },
+  // onUnload () {
+  //   this.checkItem = []
+  // },
   watch: {
+    clearVal () {
+      this.checkItem = {}
+    },
     searchVal (newVal) {
       // this.customSearchVal = e.mp.detail.value
       const me = this

@@ -102,6 +102,9 @@ export default {
   onUnload () {
     this.filterObj = {}
     this.hideZero = ''
+    this.searchVal = ''
+    this.currentPage = 0
+    this.configVal({ key: 'tempObject', val: {} })
   },
   onShow () {
     if (this.tempObject.fromPage === 'balanceFilter') {

@@ -7,7 +7,7 @@ div
       .text-right.row.justify-end.col.select
         span {{customName || '请选择汇款抬头'}}
         span(:class="selectShow==='custom' ? 'cuIcon-fold' : 'cuIcon-unfold'")
-      search-select(:selectSty="'top: 90rpx; height: '+ (contentHeight - 90) +'rpx'", valKey="name", :scrollHeight="400", :selectType="'custom'", @cb="selectCb($event, 'custom')", :show="selectShow==='custom'", :inputShow="true")    
+      search-select(:selectSty="'top: 90rpx; height: '+ (contentHeight - 90) +'rpx'", valKey="name", :clearVal="isReset", :scrollHeight="400", :selectType="'custom'", @cb="selectCb($event, 'custom')", :show="selectShow==='custom'", :inputShow="true")    
     .row.justify-between.solid-bottom.item(:style="itemSty")
       .label 起始日期
       picker.col(@change="startDateCb", mode="date")
@@ -29,6 +29,7 @@ export default {
   },
   data () {
     return {
+      isReset: false,
       itemSty: 'height: 90rpx',
       contentHeight: 0,
       selectShow: '',
@@ -47,12 +48,12 @@ export default {
   },
   onUnload () {
     this.selectShow = ''
-    this.customName = ''
-    this.form = {
-      custom: '',
-      startDate: '',
-      endDate: ''
-    }
+    // this.customName = ''
+    // this.form = {
+    //   custom: '',
+    //   startDate: '',
+    //   endDate: ''
+    // }
   },
   onShow () {
     this.contentHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar)
@@ -67,6 +68,7 @@ export default {
     },
     confirm (flag) {
       if (flag === 'reset') {
+        this.isReset = !this.isReset
         this.customName = ''
         this.form = {
           custom: '',

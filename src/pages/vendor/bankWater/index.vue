@@ -110,7 +110,7 @@ export default {
         date_end: this.tempObject.endDate,
         date_start: this.tempObject.startDate
       }
-      this.searchVal = this.tempObject.custom.name
+      this.searchVal = this.tempObject.custom.name === '全部' ? '' : this.tempObject.custom.name
       // Object.keys(obj).forEach(key => {
       //   if (obj[key]) {
       //     this.filterArr.push(`${key}=${obj[key]}`)
@@ -125,6 +125,11 @@ export default {
   onUnload () {
     this.tabName = '0'
     this.swiperCount = 0
+    this.scrollId = 'idx_0'
+    this.filterObj = {}
+    this.searchVal = ''
+    this.currentPage = 0
+    this.configVal({ key: 'tempObject', val: {} })
   },
   methods: {
     ...mapActions(['configVal']),

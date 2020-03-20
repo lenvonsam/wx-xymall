@@ -36,6 +36,12 @@ div
           .col(style="flex: 0 0 60px;")
             count-step(v-model="item.count", @click.native="rowCartCount(item)", @blur="rowCartCount(item)", :max="item.amount_real")
           .padding-left-xs {{item.countWeight}}吨
+      //- .row.padding-top-sm
+        span.text-red *
+        span 重量
+        .col.text-right.margin-right-xs.padding-left-sm.row
+          input.col(type="text", :placeholder="liftPlaceholder", v-model="totalGoodsWeight")
+          span 元    
       .row.justify-between.padding-top-sm
         span 总重量/总金额
         span {{totalGoodsWeight}}吨/{{totalGoodsPrice}}元

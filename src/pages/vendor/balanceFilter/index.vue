@@ -7,13 +7,13 @@ div
       .text-right.row.justify-end.col.select
         span {{customName || '请选择客户'}}
         span(:class="selectShow==='custom' ? 'cuIcon-fold' : 'cuIcon-unfold'")
-      search-select(:selectSty="'top: 90rpx; height: '+ (contentHeight - 180) +'rpx'", valKey="name", :scrollHeight="400", :selectType="'custom'", @cb="selectCb($event, 'custom')", :show="selectShow==='custom'", :inputShow="true")    
+      search-select(:selectSty="'top: 90rpx; height: '+ (contentHeight - 180) +'rpx'", valKey="name", :clearVal="isReset", :scrollHeight="400", :selectType="'custom'", @cb="selectCb($event, 'custom')", :show="selectShow==='custom'", :inputShow="true")    
     .row.justify-between.solid-bottom.item(@click.stop="openSelect('dept')")
       .label 业务部门
       .text-right.row.justify-end.col.select(:class="{'text-blue': selectShow==='dept'}")
         span {{deptName || '请选择部门'}}
         span(:class="selectShow==='dept' ? 'cuIcon-fold' : 'cuIcon-unfold'")
-      search-select(:selectSty="'top: 90rpx; height: '+ (contentHeight - 450) +'rpx'", :scrollHeight="300", :selectType="'dept'", @cb="selectCb($event, 'dept')", :show="selectShow==='dept'")
+      search-select(:selectSty="'top: 90rpx; height: '+ (contentHeight - 450) +'rpx'", :scrollHeight="300", :clearVal="isReset", :selectType="'dept'", @cb="selectCb($event, 'dept')", :show="selectShow==='dept'")
     .row.justify-between.solid-bottom.item
       .label 隐藏余额为0的客户
       switch.blue.sm(:checked="form.hideZero", @change="switchChange")
@@ -30,6 +30,7 @@ export default {
   },
   data () {
     return {
+      isReset: false,
       selectShow: '',
       contentHeight: 0,
       scrollHeight: 0,
