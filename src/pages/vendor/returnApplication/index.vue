@@ -102,7 +102,7 @@ export default {
       totalLiftCharge: 0,
       totalCount: 0,
       isTabDisabled: false,
-      tabName: '0,2',
+      // tabName: '0,2',
       currentPage: 0,
       listData: [],
       isload: false,
@@ -142,17 +142,31 @@ export default {
     this.subsNo = ''
     this.htNo = ''
     this.status = ''
+    this.returnReason = ''
+    this.returnRemark = ''
+    this.totalGoodsWeight = 0
+    this.totalGoodsPrice = 0
+    this.totalPrice = 0
+    this.totalWeight = 0
+    this.totalLiftCharge = 0
+    this.totalCount = 0
   },
-  onShow () {
+  // onShow () {
+  //   this.subsNo = this.$root.$mp.query.subsNo
+  //   this.status = this.$root.$mp.query.status
+  //   this.htNo = this.subsNo.replace('TD', 'HT')
+  //   this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 205
+  //   if (this.$root.$mp.query.tabName) this.tabName = this.$root.$mp.query.tabName
+  //   this.returnGoodsDetail()
+  //   // this.returnGoodsReason()
+  // },
+  beforeMount () {
     this.subsNo = this.$root.$mp.query.subsNo
     this.status = this.$root.$mp.query.status
     this.htNo = this.subsNo.replace('TD', 'HT')
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 205
-    if (this.$root.$mp.query.tabName) this.tabName = this.$root.$mp.query.tabName
+    // if (this.$root.$mp.query.tabName) this.tabName = this.$root.$mp.query.tabName
     this.returnGoodsDetail()
-    // this.returnGoodsReason()
-  },
-  beforeMount () {
     this.returnGoodsReason()
   },
   methods: {
@@ -246,7 +260,7 @@ export default {
           totalGoodsPrice: this.totalGoodsPrice,
           totalPrice: this.totalPrice,
           totalWeight: this.totalWeight,
-          totalLiftCharge: this.totalLiftCharge,
+          totalLiftCharge: this.isliftShow ? this.totalLiftCharge : 0,
           totalCount: this.totalCount
         }
         this.configVal({ key: 'tempObject', val: detailRow })

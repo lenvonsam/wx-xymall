@@ -75,6 +75,12 @@ export default {
     this.scrollHeight = 0
     this.returnReason = ''
     this.returnRemark = ''
+    this.totalGoodsWeight = 0
+    this.totalGoodsPrice = 0
+    this.totalPrice = 0
+    this.totalWeight = 0
+    this.totalLiftCharge = 0
+    this.totalCount = 0
   },
   onShow () {
     if (this.$root.$mp.query.subsNo) {
