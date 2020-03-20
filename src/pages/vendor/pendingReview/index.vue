@@ -26,7 +26,7 @@ div
                   .col
                     .flex.align-center
                       .ft-16.padding-right-sm {{auditType[item.audit_type]}} - {{item.tstc_no}}
-                  .text-red {{statusList[item.status] || '待审核'}}
+                  .text-red {{statusList[item.status] && item.audit_type === 1 ? statusList[item.status] : '待审核'}}
                 .text-gray
                   .flex.justify-between.padding-bottom-xs 
                     span {{item.oper_name}}

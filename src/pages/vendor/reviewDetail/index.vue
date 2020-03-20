@@ -91,7 +91,9 @@ export default {
       modalInputTitle: '退款金额',
       modalShow: false,
       auditType: '',
-      detailData: '',
+      detailData: {
+        list: []
+      },
       disabled: false,
       statusList: {
         '5': '定向初审',
