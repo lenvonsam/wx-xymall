@@ -447,7 +447,7 @@ export default {
           dx_prices: dxPrices.toString(),
           cost_prices: costPrices.toString(),
           jl_types: jlTypes.toString(),
-          needLift: this.liftSelectVal
+          need_lift: this.liftSelectVal
         }
         const data = await this.ironRequest(this.apiList.xy.auditDxCheck.url, params, this.apiList.xy.auditDxCheck.method)
         console.log(data)

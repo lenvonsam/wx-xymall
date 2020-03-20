@@ -6,7 +6,7 @@ div
       .col.search-input.text-gray
         .flex.align-center
           .cuIcon-search
-          input.full-width.padding-left-sm(v-model="searchVal", type="text", placeholder="提单号/客户/业务员/业务部门")
+          input.full-width.padding-left-sm(v-model="searchVal", type="text", placeholder="提单号/客户/业务员/业务部门", @confirm="onRefresh")
           .close-icon(@click="searchVal = ''", v-if="searchVal")
             .cuIcon-roundclosefill.ft-18
       .search-btn.text-blue(@click="onRefresh") 搜索
