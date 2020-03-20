@@ -14,7 +14,7 @@ div
               img(:src="imgOuterUrl + (currentUser.avatar == undefined ? '/webpage/zhd/images/img.png' : currentUser.avatar)", v-if="imgOuterUrl")
             .col.padding-left-sm
               .ft-15.padding-bottom-sm {{currentUser.user_mark}}
-              .ft-12 {{currentUser.phone}}
+              .ft-12 {{currentUser.type === 'seller' ? currentUser.nickname : currentUser.phone}}
         .cuIcon-right.ft-25   
       .account.vendor.bg-white.contract(@click="jumpBalance")
         .row

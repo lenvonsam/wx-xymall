@@ -274,6 +274,13 @@ export default {
       'configVal'
     ]),
     shareClick () {
+      const filterArray = this.carts.filter(item => {
+        return item.choosed === true
+      })
+      if (filterArray.length === 0) {
+        this.showMsg('请选择分享物资')
+        return false
+      }
       this.modalTitle = '是否进行锁货'
       this.modalWidth = '70%'
       this.previewShow = false
