@@ -39,7 +39,7 @@ div
                     span 失效：
                     span.padding-left-xs.text-red {{item.timeDown}}  
                 .row
-                  button.share-btn.bill-btn.round.margin-left-sm(open-type="share", :data-item="item") 分享
+                  button.share-btn.bill-btn.round.margin-left-sm(open-type="share", v-if="tabName === '1,2'", :data-item="item") 分享
                   .bill-btn.round.margin-left-sm(@click="copyQuotation(item)", v-if="tabName === '3,4'") 复制到购物车
                   .bill-btn.round.margin-left-sm(@click="jumpDetail(item)") 查看详情
     .text-center.c-gray.pt-100(v-else)
