@@ -168,6 +168,8 @@ export default {
       this.initTabName = this.$root.$mp.query.tabName
       const idx = this.billTab.findIndex(item => item.status === this.tabName)
       this.swiperCount = idx
+    } else {
+      this.onRefresh()
     }
   },
   beforeMount () {
