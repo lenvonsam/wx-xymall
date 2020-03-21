@@ -81,6 +81,7 @@ export default {
           me.totalCount += item.product_count
           me.totalWeight += item.weight
         })
+        me.totalWeight = me.$toFixed(me.totalWeight, 3)
         this.ladObject = resp
         if (this.ladObject.status === '提单待确认') this.navTitle = '确认提单'
       }
