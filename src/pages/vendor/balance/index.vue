@@ -69,7 +69,7 @@ export default {
       delayMax: 2,
       checkRow: {},
       textVal: '',
-      hideZero: 'no'
+      hideZero: 'on'
     }
   },
   computed: {
@@ -112,7 +112,7 @@ export default {
         buyer_id: Number(this.tempObject.custom.xyCode) || '',
         dept_code: this.tempObject.dept.id || ''
       }
-      this.hideZero = this.tempObject.hideZero ? 'no' : ''
+      this.hideZero = this.tempObject.hideZero ? 'on' : ''
       this.currentPage = 0
     }
     this.onRefresh()
