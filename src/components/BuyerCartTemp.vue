@@ -208,6 +208,7 @@ export default {
   onHide () {
     this.carts = []
     this.soldCarts = []
+    this.alertShow = false
   },
   onReady () {
     if (this.isLogin) {
@@ -217,17 +218,6 @@ export default {
   },
   onShow () {
     this.alertShow = false
-    if (!this.isLogin) {
-      const me = this
-      this.confirm({ title: '友情提示', content: '您未登录,请先登录' }).then(res => {
-        if (res === 'confirm') {
-          me.jump('/pages/account/login/main')
-        } else {
-          me.tab('/pages/index/main')
-        }
-      })
-      return
-    }
     if (this.tempObject.type) {
       this.pickway = this.tempObject.type
       if (this.pickway === 1) {

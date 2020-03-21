@@ -108,7 +108,6 @@
           .solid-top.row.padding.justify-between(@click="tabSelect('lift', item)", :class="{'text-blue': liftSelectVal === item.val}", v-for="(item, liftIdx) in liftList", :key="liftIdx")
             span {{item.label}}  
             .cuIcon-check(v-show="liftSelectVal === item.val")
-    alert(msg="您还未登录，请先登录", v-model="alertShow", :cb="alertCb")
     modal(v-model="modalShow", @cb="modalCb")
       .padding-sm {{modalMsg}}
 </template>
@@ -128,7 +127,6 @@ export default {
       customSearchVal: '',
       liftSelectVal: 1,
       tabActive: 0,
-      alertShow: false,
       totalPrice: 0,
       totalWeight: 0,
       totalLiftCharge: 0,
@@ -197,18 +195,6 @@ export default {
     this.pickWayShow = false
   },
   onShow () {
-    this.alertShow = false
-    if (!this.isLogin) {
-      const me = this
-      this.confirm({ title: '友情提示', content: '您未登录,请先登录' }).then(res => {
-        if (res === 'confirm') {
-          me.jump('/pages/account/login/main')
-        } else {
-          me.tab('/pages/index/main')
-        }
-      })
-      return
-    }
     // this.loadCstmList()
     if (this.tempObject.type) {
       this.pickway = this.tempObject.type
@@ -317,9 +303,6 @@ export default {
       } else {
         this.modalShow = false
       }
-    },
-    alertCb () {
-      this.jump('/pages/account/login/main')
     },
     openEdit () {
       this.pickWayShow = false

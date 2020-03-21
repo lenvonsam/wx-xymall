@@ -33,7 +33,7 @@ div
       .bg-white.features
         .ft-18.text-bold.padding-sm.padding-top.padding-bottom 功能列表
         .grid.col-3.text-center
-          .features-card(v-for="(ficon, fIdx) in featuresIcons", :key="fIdx", @click="jump(ficon.url.path)")
+          .features-card(v-for="(ficon, fIdx) in featuresModules", :key="fIdx", @click="jump(ficon.url.path)")
             .relative.contract-img(v-if="ficon.icon")
               img(:src="ficon.icon", mode="widthFix")
               .dot(v-if="rowCountObj[ficon.dotKey] > 0", :class="{'max': rowCountObj[ficon.dotKey] > 9}") 
@@ -89,7 +89,6 @@ div
               img(src="/static/images/customer_icon.png", mode="widthFix")
               .padding-left-sm 在线客服
           .cuIcon-right.text-gray
-  
   alert(:msg="alertText", v-model="alertShow", :cb="alertCb")
 </template>
 <script>
@@ -112,7 +111,8 @@ export default {
       rowCountObj: {},
       showNoticeIcon: false,
       alertShow: false,
-      alertText: ''
+      alertText: '',
+      featuresModules: []
     }
   },
   computed: {
@@ -128,21 +128,46 @@ export default {
   onTabItemTap (item) {
     this.statisticRequest({ event: 'click_app_nav_me' })
   },
+  onHide () {
+    this.alertShow = false
+    this.rowCountObj = {}
+    console.log('onhide---------me')
+  },
   onShow () {
     this.whiteStatusBar()
     this.showNoticeIcon = false
-    this.rowCountObj = {}
+    // this.rowCountObj = {}
     if (this.isLogin) {
       this.setCartCount(this.currentUser.user_id)
       this.alertShow = false
       this.showNoticeIcon = this.currentUser.message_switch === '1'
       if (this.currentUser.type === 'seller') {
         // TODO 卖家相关接口
+        this.featuresModules = this.featuresIcons // 暂时
+        // this.ironRequest(this.apiList.xy.modules.url, { user_id: this.currentUser.user_id }, this.apiList.xy.modules.method).then(res => {
+        //   const resData = res.list
+        //   this.rowCountObj.waitAudit = 0
+        //   const modules = {}
+        //   resData.map(item => {
+        //     modules[item.memu_name] = item.flag
+        //     if (item.flag) {
+        //       this.rowCountObj[item.memu_name] = item.count
+        //       if (item.memu_name === 'audit' || item.memu_name === 're_audit' || item.memu_name === 'return_audit') {
+        //         this.rowCountObj.waitAudit += Number(item.count)
+        //       }
+        //     }
+        //   })
+        //   this.featuresModules = this.featuresIcons.filter(item => {
+        //     return !item.dotKey || (item.dotKey && this.rowCountObj.hasOwnProperty(item.dotKey)) || item.dotKey === 'waitAudit'
+        //   })
+        //   this.configVal({ key: 'modules', val: modules })
+        // })
         const orderCount = this.apiList.xy.orderCount
         this.ironRequest(orderCount.url, '', orderCount.method).then(resp => {
           console.log('resp', resp)
-          if (resp && resp.returncode === '0') {
-            this.rowCountObj = resp.data
+          if (resp.returncode === '0') {
+            // this.rowCountObj = resp.data
+            Object.assign(this.rowCountObj, resp.data)
             this.$forceUpdate()
           }
         })
@@ -166,14 +191,8 @@ export default {
       }
     } else {
       this.tabDot(0)
-      const me = this
-      this.confirm({ title: '友情提示', content: '您未登录,请先登录' }).then(res => {
-        if (res === 'confirm') {
-          me.jump('/pages/account/login/main')
-        } else {
-          me.tab('/pages/index/main')
-        }
-      })
+      this.alertText = '您未登录,请先登录'
+      this.alertShow = true
     }
   },
   methods: {
