@@ -6,7 +6,7 @@ div
       .col.search-input.text-gray
         .flex.align-center
           .cuIcon-search
-          input.full-width.padding-left-sm(v-model="searchVal", type="text", placeholder="单号", @confirm="searchOrder")
+          input.full-width.padding-left-sm(v-model="searchVal", type="text", placeholder="单号", confirm-type="search", @confirm="searchOrder")
           .close-icon(@click="searchVal = ''", v-if="searchVal")
             .cuIcon-roundclosefill.ft-18
       .search-btn.text-blue(@click="searchOrder") 搜索

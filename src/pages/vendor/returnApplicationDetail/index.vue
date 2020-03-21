@@ -145,10 +145,10 @@ export default {
           let totalWeight = 0
           let totalGoodsPrice = 0
           resList.map(item => {
-            item.money = this.$toFixed(Number(item.countWeight * item.price), 2)
+            item.money = this.$toFixed(Number(item.price) * Number(item.weight), 2)
             totalCount += Number(item.amount)
             totalWeight += Number(item.weight)
-            totalGoodsPrice += Number(item.price)
+            totalGoodsPrice += Number(item.money)
           })
           this.listData = resList
           this.returnReason = resData.return_reason

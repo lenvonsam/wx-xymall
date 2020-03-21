@@ -54,7 +54,7 @@ div
       span.text-red *
       span 吊费金额
       .col.text-right.margin-right-xs.padding-left-sm.row
-        input.col(type="text", :placeholder="liftPlaceholder", v-model="totalLiftCharge", @input="liftInput")
+        input.col(type="text", :placeholder="liftPlaceholder", v-model="totalLiftCharge", @blur="liftInput")
         span 元
   .margin-sm.bg-white.radius(style="margin-bottom: 120rpx")
     .solid-bottom.text-black.ft-16.padding-sm 上传退货协议
@@ -90,7 +90,7 @@ div
         .text-right.ft-12 共{{totalCount}}件 ，{{totalWeight}}吨
           span(v-if="isliftShow") ，吊费: {{totalLiftCharge}}元
       .cart-settle-btn.ft-18.bg-blue(@click="returnGoods")
-        span 申请    
+        span 申请
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
@@ -227,6 +227,8 @@ export default {
         this.totalLiftCharge = this.maxLift
       } else if (val < 0) {
         this.totalLiftCharge = 0
+      } else {
+        this.totalLiftCharge = this.$toFixed(val, 2)
       }
     },
     returnReasonCb (e) {

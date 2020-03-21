@@ -6,7 +6,7 @@ div
       .col.search-input.text-gray
         .flex.align-center
           .cuIcon-search
-          input.full-width.padding-left-sm(v-model="searchVal", type="text", placeholder="提单号/客户/业务员/业务部门", @confirm="onRefresh")
+          input.full-width.padding-left-sm(v-model="searchVal", type="text", placeholder="提单号/客户/业务员/业务部门", confirm-type="search", @confirm="onRefresh")
           .close-icon(@click="searchVal = ''", v-if="searchVal")
             .cuIcon-roundclosefill.ft-18
       .search-btn.text-blue(@click="onRefresh") 搜索
@@ -22,7 +22,7 @@ div
   template(v-else) 
     template(v-if="listData.length > 0")
       iron-scroll(@scrolltolower="loadMore", :height="scrollHeight", heightUnit="rpx", :refresh="true", @onRefresh="onRefresh", :loadFinish="loadFinish")
-        .bill-list(v-for="(item, itemIdx) in listData", :key="itemIdx", @click="jump('/pages/ladbillConfirmDetail/main?no=' + item.lad_no)")
+        .bill-list(v-for="(item, itemIdx) in listData", :key="itemIdx")
           .bg-white.box
             .padding-sm
               .flex.justify-between.padding-bottom-sm
@@ -31,17 +31,18 @@ div
                     span {{item.lad_no}}
                     copy-btn(:copyUrl="item.lad_no")
                 div(:class="item.status === 4 ? 'text-red' : 'text-black'") {{statusObj[item.status]}}
-              .text-black.padding-bottom-xs 
-                span {{item.name}}
-              .text-gray
-                .padding-bottom-xs 
-                  span 共{{item.amount}}支，{{item.weight}}吨
-                .padding-bottom-xs
-                  span 收货时间：
-                  span.padding-left-xs {{item.receive_time}}
-                div(v-if="tabName === '-1'")
-                  span 申请时间：
-                  span.padding-left-xs {{item.applyer_date}}  
+              div(@click="jump('/pages/ladbillConfirmDetail/main?no=' + item.lad_no)")  
+                .text-black.padding-bottom-xs
+                  span {{item.name}}
+                .text-gray
+                  .padding-bottom-xs 
+                    span 共{{item.amount}}支，{{item.weight}}吨
+                  .padding-bottom-xs
+                    span 收货时间：
+                    span.padding-left-xs {{item.receive_time}}
+                  div(v-if="tabName === '-1'")
+                    span 申请时间：
+                    span.padding-left-xs {{item.applyer_date}}  
               .solid-top.text-black.ft-15.margin-top-xs.padding-top-sm.row.justify-end
                 template(v-if="tabName === '-1'")
                   .bill-red-btn.round.margin-left-sm(@click.stop="application(item)", v-if="item.status === 4 || item.status === 5") 取消申请
