@@ -16,10 +16,10 @@ div
               .ft-15.padding-bottom-sm {{currentUser.user_mark}}
               .ft-12 {{currentUser.type === 'seller' ? currentUser.nickname : currentUser.phone}}
         .cuIcon-right.ft-25   
-      .account.vendor.bg-white.contract(@click="jumpBalance")
+      .account.vendor.bg-white.contract
         .row
           .ft-16.text-bold 合同跟踪
-          .col.ft-16.text-right
+          .col.ft-16.text-right(@click="jumpBalance")
             span 查看全部
             span.text-gray.cuIcon-right
         .flex.text-center.justify-between.padding-top-lg
