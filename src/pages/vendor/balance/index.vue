@@ -32,12 +32,12 @@ div
                   .padding-bottom-xs 可用：￥{{item.avlb_fund}}
                   .padding-bottom-xs.row.justify-between
                     .col 冻结：￥{{item.frz_fund}}
-                    .round.margin-left-sm(:class="item.restrict ? 'bill-red-btn' : 'bill-btn'", @click.stop="openModal(item)") {{item.restrict ? '解除限制' : '限制提现'}} 
+                    .round.margin-left-sm(:class="item.restrict ? 'bill-red-btn' : 'bill-btn'", @click.stop="item.restrict ? openModal(item) : balanceRestrict(item)") {{item.restrict ? '解除限制' : '限制提现'}} 
     .text-center.c-gray.pt-100(v-else)
       empty-image(url="bill_empty.png", className="img-empty")
   modal-input(v-model="modalShow", title="解除限制提现", confirmText="确定", type="customize", :cb="modalHandler")
     .text-center
-      .padding-bottom-xs.ft-15 是否确认解除限制体现
+      .padding-bottom-xs.ft-15 是否确认解除限制提现
       .padding-bottom-xs.text-black.ft-16 {{checkRow.cust_name}}
 </template>
 <script>
@@ -122,12 +122,13 @@ export default {
     ...mapActions([
       'configVal'
     ]),
-    async balanceRestrict () {
+    async balanceRestrict (item) {
       try {
+        const checkRow = item || this.checkRow
         let params = {
-          id: this.checkRow.cust_id,
+          id: checkRow.cust_id,
           user_id: this.currentUser.user_id,
-          restrict: this.checkRow.restrict
+          restrict: checkRow.restrict
         }
         const balanceRestrict = this.apiList.xy.balanceRestrict
         const data = await this.ironRequest(balanceRestrict.url, params, balanceRestrict.method)
