@@ -87,7 +87,8 @@ export default {
         dept_code: this.tempObject.dept.id || '',
         employee_code: this.tempObject.employee.id || '',
         deal_time_s: this.tempObject.startDate,
-        deal_time_e: this.tempObject.endDate
+        deal_time_e: this.tempObject.endDate,
+        audit_type: this.tempObject.status
       }
       if (this.tempObject.no) this.searchVal = this.tempObject.no
       Object.keys(obj).forEach(key => {
@@ -105,12 +106,12 @@ export default {
       'configVal'
     ]),
     openFilter () {
-      const statusList = []
+      const statusList = [{ label: '全部', value: '' }]
       Object.keys(this.auditType).forEach(key => {
         const obj = { label: this.auditType[key], value: key }
         statusList.push(obj)
       })
-      this.configVal({ key: 'tempObject', val: { statusList: statusList } })
+      this.configVal({ key: 'tempObject', val: { fromPage: 'pendingReview', statusList: statusList } })
       this.jump('/pages/vendor/billFilter/main')
     },
     onRefresh (done) {
