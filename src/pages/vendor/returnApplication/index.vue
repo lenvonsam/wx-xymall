@@ -30,7 +30,7 @@ div
               span.padding-left-xs {{item.warehouse_name}}
             span ({{meteringWay[item.metering_way]}})
           .padding-bottom-xs
-            span 可提：{{item.deal_amount}}支/{{item.deal_weight}}吨
+            span 可提：{{item.deal_amount}}支/{{item.weight_real}}吨
           .padding-bottom-xs(v-if="item.gcfw || item.zlfw")
             span.padding-right-xs(v-if="item.gcfw") 公差范围：{{item.gcfw}}
             span(v-if="item.zlfw") 重量范围：{{item.zlfw}}
@@ -197,7 +197,7 @@ export default {
         if (item.metering_way !== 1) {
           item.countWeight = this.$toFixed(Number(item.count * item.singleWeight), 3)
         }
-        if (Number(item.countWeight) > Number(item.deal_weight)) item.countWeight = item.deal_weight
+        if (Number(item.countWeight) > Number(item.weight_real)) item.countWeight = item.weight_real
         if (!Number(item.countWeight)) item.countWeight = 0.001
         return item.choosed === true
       })
@@ -326,7 +326,7 @@ export default {
         }
         list.map(item => {
           item.choosed = false
-          item.countWeight = item.deal_weight
+          item.countWeight = item.weight_real
           item.count = item.deal_amount
           item.singleWeight = Number(item[meteringWay[item.metering_way]]) * Number(item.lengths)
         })
