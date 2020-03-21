@@ -7,9 +7,10 @@
     .search.col
       .row
         .cuIcon-search.text-gray.ft-18
-        input.full-width.pl-10(@click="jumpSearchInput", id="mallSearchInput", :disabled="true", type="text", placeholder="品名、材质、规格、产地(空格号隔开)", v-model="searchVal")
+        input.full-width.pl-10(type="text", placeholder="品名、材质、规格、产地(空格号隔开)", v-model="searchVal")
         .close-icon(@click="cleanSearch", v-if="searchVal")
           .cuIcon-roundclosefill.ft-18
+    .padding-left-xs.text-blue(@click="searchChange") 搜索
   .relative
     .mt-15.text-center.flex.align-stretch
       .col.tab-content
@@ -156,9 +157,9 @@ export default {
     }
   },
   beforeMount () {
-    if (this.tempObject.fromPage === 'search' && this.tempObject.noBack) {
-      this.searchVal = this.tempObject.search || ''
-    }
+    // if (this.tempObject.fromPage === 'search' && this.tempObject.noBack) {
+    //   this.searchVal = this.tempObject.search || ''
+    // }
     this.sortCb('name')
     this.filterHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 95
   },
@@ -215,10 +216,6 @@ export default {
     openName () {
       // this.statisticRequest({ event: 'click_app_mall_goods_drop_down' })
       this.activeTab = 'name'
-    },
-    jumpSearchInput () {
-      // this.statisticRequest({ event: 'click_app_mall_search' })
-      this.jump('/pages/search/main')
     },
     cleanStandard () {
       this.standardVal = ''

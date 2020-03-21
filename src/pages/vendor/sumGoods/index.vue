@@ -126,25 +126,12 @@ export default {
   //   this.queryObject.search = ''
   // },
   onShow () {
+    this.showLoading()
     this.isload = true
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 285
     if (this.tempObject.fromPage === 'home') {
       // 首页
       this.mallTabVal = this.tempObject.name
-    } else if (this.tempObject.fromPage === 'search' && this.tempObject.noBack) {
-      // 搜索
-      this.isRefresh = 'refresh'
-      this.currentPage = 0
-      this.swiperCount = 0
-      this.swiperFirst = 1
-      this.queryObject.current_page = this.currentPage
-      this.queryObject.name = this.mallTabVal
-      this.queryObject.search = this.tempObject.search
-      delete this.queryObject.standards
-      delete this.queryObject.materials
-      delete this.queryObject.supplys
-      delete this.queryObject.fromPage
-      if (!this.tempObject.name) this.refresher()
     } else if (this.tempObject.fromPage === 'mallFilter' && this.tempObject.noBack) {
       // 分类
       this.swiperFirst = 1
@@ -216,7 +203,7 @@ export default {
       const idx = e.mp.detail.current
       this.mallTabVal = this.goodsNameList[idx].id
       if (this.goodsNameList[idx]) {
-        this.showLoading()
+        // this.showLoading()
         this.isload = true
         this.isRefresh = 'refresh'
         this.queryObject.current_page = this.currentPage
@@ -277,17 +264,17 @@ export default {
       this.$forceUpdate()
     },
     searchChange (val) {
-      // this.mallItems = []
-      this.goodsNameList[this.swiperCount].data = []
-      this.currentPage = 0
       this.isRefresh = 'refresh'
-      this.queryObject = {
-        current_page: this.currentPage,
-        page_size: this.pageSize,
-        search: val,
-        only_available: 1
-      }
-      this.refresher()
+      this.currentPage = 0
+      this.swiperCount = 0
+      this.swiperFirst = 1
+      this.queryObject.current_page = this.currentPage
+      this.queryObject.name = this.mallTabVal
+      this.queryObject.search = val
+      delete this.queryObject.standards
+      delete this.queryObject.materials
+      delete this.queryObject.supplys
+      if (!this.tempObject.name) this.refresher()
     },
     mallItemCb (obj, type, evt) {
       console.log('evt', evt)
@@ -304,6 +291,7 @@ export default {
     },
     async refresher (done) {
       try {
+        this.showLoading()
         this.loadFinish = 1
         const me = this
         this.queryObject.current_page = this.currentPage
@@ -317,9 +305,6 @@ export default {
         const resList = data.list
         if (res.returncode === '0') {
           const idx = this.swiperCount
-          // resList.map(item => {
-          //   item.weightMark = item.metering_way
-          // })
           if (me.isRefresh === 'refresh') {
             if (resList.length > 0 && me.currentPage === 0) {
               me.goodsNameList[idx].data = resList
@@ -339,12 +324,14 @@ export default {
             }
           }
           me.$forceUpdate()
-          me.hideLoading()
           if (me.prevIdx !== null && me.prevIdx !== -1) {
             me.goodsNameList[me.prevIdx].data = []
             me.prevIdx = null
           }
           if (me.goodsNameList[idx].data.length < 10) me.loadFinish = 0
+          me.$nextTick(() => {
+            me.hideLoading()
+          })
         }
         console.log('loadfinish:>>', this.loadFinish)
         if (this.swiperFirst === 1) {
