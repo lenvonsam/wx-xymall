@@ -183,31 +183,31 @@ export default {
       handler (newVal, oldVal) {
         if (this.pageType === 'share') return false
         let filterArray = newVal.filter(item => {
-          item.countWeight = this.$toFixed(Number(item.count * item.weight), 3)
+          item.countWeight = Number(this.$toFixed(Number(item.count * item.weight), 3))
           return item.choosed === true
         })
         this.totalCount = filterArray.length
         this.allChoosed = this.totalCount === newVal.length
-        this.totalPrice = 0
+        // this.totalPrice = 0
+        let totalPrice = 0
         this.totalWeight = 0
         this.totalLiftCharge = 0
         if (filterArray.length > 0) {
           filterArray.map(itm => {
-            if (itm.price.indexOf('--') < 0) {
-              if (this.tempObject.need_lift === 1) {
-                const countWeight = Number(this.$toFixed(itm.count * itm.weight, 3))
-                // const countLiftWeight = this.tempObject.need_lift === 1 ? countWeight * itm.lift_charge : 0
-                const countLiftWeight = countWeight * itm.lift_charge
-                this.totalPrice += itm.price * countWeight + countLiftWeight
-                this.totalLiftCharge += Number(countLiftWeight)
-              } else {
-                this.totalPrice += itm.price * Number(this.$toFixed(itm.count * itm.weight, 3))
-              }
-              this.totalWeight += Number(this.$toFixed(itm.weight * itm.count, 3))
+            const dxPrice = Number(itm.dx_prices)
+            if (this.tempObject.need_lift === 1) {
+              // const countWeight = Number(this.$toFixed(itm.count * itm.weight, 3))
+              // const countLiftWeight = this.tempObject.need_lift === 1 ? countWeight * itm.lift_charge : 0
+              const countLiftWeight = itm.countWeight * itm.lift_charge
+              totalPrice += dxPrice * itm.countWeight + countLiftWeight
+              this.totalLiftCharge += countLiftWeight
+            } else {
+              totalPrice += dxPrice * itm.countWeight
             }
+            this.totalWeight += itm.countWeight
           })
           this.totalLiftCharge = this.$toFixed(Number(this.totalLiftCharge), 2)
-          this.totalPrice = this.$toFixed(Number(this.totalPrice), 2)
+          this.totalPrice = this.$toFixed(Number(totalPrice), 2)
           this.totalWeight = this.$toFixed(Number(this.totalWeight), 3)
         }
       },
@@ -333,6 +333,7 @@ export default {
             this.qutId = res.qut_id
             this.previewShow = true
           }
+          this.showMsg(res.errormsg)
         })
       }
     },
