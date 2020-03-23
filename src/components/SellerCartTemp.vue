@@ -96,12 +96,12 @@
               input.col.margin-left-xs(type="text", v-model="customSearchVal")
               .close-icon(@click="customSearchVal = ''", v-if="customSearchVal")
                 .cuIcon-roundclosefill.ft-18
-          template(v-if="customList.length > 0")    
+          template(v-if="customList.length > 0")
             iron-scroll(:height="400", heightUnit="rpx", @scrolltolower="customloadMore", :loadFinish="customLoadFinish")    
               .bg-white.solid-top.row.padding.justify-between(@click="tabSelect('custom', item)", :class="{'text-blue': customerName === item.name}", v-for="(item, customPickIdx) in customList", :key="customPickIdx")
                 .col {{item.name}}
                 .cuIcon-check(v-if="customerName === item.name")
-          template(v-else)         
+          template(v-else)
             .text-center 暂无数据
           .solid-top.text-right.padding.text-gray 共{{customTotal}}条数据
         template(v-else)
@@ -533,7 +533,8 @@ export default {
             wtArr.map(item => {
               newWeight.push(item.substring(0, item.indexOf('(')))
             })
-            if (itm.trade_type === 1) {
+
+            if (itm.trade_type === 1 && itm.produce_type === 1) {
               itm.radios = [{
                 label: '理计',
                 m_way: 2,
@@ -549,7 +550,25 @@ export default {
                 originPrice: oldPrArr[1],
                 allowedPrice: itm.bj_allowed_price
               }]
-            } else {
+            } else if (itm.trade_type === 1 && itm.produce_type === 0) {
+              itm.radios = [{
+                label: '理计',
+                m_way: 2,
+                weight: newWeight[0],
+                price: prArr[0],
+                originPrice: oldPrArr[0],
+                allowedPrice: itm.lj_allowed_price
+              }]
+            } else if (itm.trade_type === 1 && itm.produce_type === 2) {
+              itm.radios = [{
+                label: '磅计',
+                m_way: 1,
+                weight: newWeight[0],
+                price: prArr[0],
+                originPrice: oldPrArr[0],
+                allowedPrice: itm.bj_allowed_price
+              }]
+            } else if (itm.trade_type === 2) {
               if (itm.measure_way_id === 2) {
                 itm.measure_way_id = 3
                 itm.measure_way = '16理计'
@@ -576,10 +595,10 @@ export default {
             itm.dx_prices = prArr[0]
             itm.allowedPrice = itm.measure_way_id === 1 ? itm.bj_allowed_price : itm.lj_allowed_price
             if (itm.measure_way_id === 1 || itm.measure_way_id === 4) {
-              itm.weight = itm.measure_way_id === 4 ? newWeight[0] : newWeight[1]
-              itm.price = prArr[1]
-              itm.originPrice = oldPrArr[1]
-              itm.dx_prices = prArr[1]
+              itm.weight = itm.measure_way_id === 4 ? newWeight[0] : newWeight[1] || newWeight[0]
+              itm.price = prArr[1] || prArr[0]
+              itm.originPrice = oldPrArr[1] || oldPrArr[0]
+              itm.dx_prices = prArr[1] || prArr[0]
             }
             itm.cost_prices = 0
             this.carts.push(itm)
