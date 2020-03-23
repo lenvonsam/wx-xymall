@@ -231,6 +231,7 @@ export default {
   },
   onHide () {
     this.carts = []
+    this.status = ''
     // this.pageType = ''
   },
   onShow () {
@@ -402,6 +403,7 @@ export default {
       })
     },
     loadData () {
+      this.status = ''
       const arr = this.tempObject.list
       arr.map(itm => {
         itm.choosed = true
