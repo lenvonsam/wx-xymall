@@ -62,11 +62,11 @@
                 .margin-top-xs.padding-sm.solid-top.solid-bottom.padding-top-sm.padding-bottom-sm.row.text-gray
                   .text-black 定向价格：
                   .col.ml-5.padding-xs.solid.line-gray
-                    input(type="number", v-model="cart.dx_prices")
+                    input(type="digit", v-model="cart.dx_prices")
                   .padding-left-xs 元
                   .padding-left-xs.text-black 费用：
                   .col.ml-5.padding-xs.solid.line-gray
-                    input(type="number", v-model="cart.cost_prices")
+                    input(type="digit", v-model="cart.cost_prices")
                   .padding-left-xs 元
                 .row.padding-sm.justify-end.align-end
                   .col(style="flex: 0 0 60px;")
@@ -159,7 +159,6 @@ export default {
       customList: [],
       customTotal: 0,
       customLoadFinish: 0,
-      disabled: false,
       dxFilterArray: []
     }
   },
@@ -192,7 +191,9 @@ export default {
   },
   onHide () {
     this.carts = []
+    this.btnDisable = false
     this.pickWayShow = false
+    this.modalShow = false
   },
   onShow () {
     // this.loadCstmList()
@@ -405,6 +406,8 @@ export default {
           this.delCartRow(filterArray)
           return false
         }
+        if (this.btnDisable) return false
+        this.btnDisable = true
         if (filterArray.length === 0) {
           this.showMsg('请选择需要操作的物资')
           return false
@@ -440,12 +443,14 @@ export default {
             this.modalMsg = data.errormsg
             this.modalShow = true
             this.dxFilterArray = filterArray
+            this.btnDisable = false
           } else {
             // 生成报价单
             this.generateQuotation(filterArray)
           }
         }
       } catch (e) {
+        this.btnDisable = false
         this.showMsg(e)
       }
     },
@@ -533,6 +538,10 @@ export default {
                 allowedPrice: itm.bj_allowed_price
               }]
             } else {
+              if (itm.measure_way_id === 2) {
+                itm.measure_way_id = 3
+                itm.measure_way = '16理计'
+              }
               itm.radios = [{
                 label: '16理计',
                 m_way: 3,
@@ -581,8 +590,8 @@ export default {
     // 卖家方法
     async dx () {
       try {
-        if (this.disabled) return false
-        this.disabled = true
+        if (this.btnDisable) return false
+        this.btnDisable = true
         const filterArray = this.dxFilterArray
         let orderIds = []
         let dxPrices = []
@@ -622,14 +631,14 @@ export default {
           this.apiList.xy.dx.method
         )
         this.showMsg(data.errormsg)
-        this.disabled = false
+        this.btnDisable = false
         this.modalShow = false
         this.refresher()
         this.dxFilterArray = []
       } catch (err) {
         this.showMsg(err)
         this.modalShow = false
-        this.disabled = false
+        this.btnDisable = false
         this.dxFilterArray = []
       }
     },
@@ -649,6 +658,7 @@ export default {
       }
       this.configVal({ key: 'tempObject', val: tempObject })
       this.jump('/pages/vendor/quotation/main')
+      // this.btnDisable = false
     }
   }
 }
