@@ -147,19 +147,11 @@ export default {
         this.refresher()
       } else if (this.tempObject.standards) {
         delete this.queryObject.noBack
-        // delete this.queryObject.materials
-        // delete this.queryObject.supplys
-        // delete this.queryObject.fromPage
-        // delete this.queryObject.search
         this.mallTabVal = this.tempObject.name || ''
       }
     } else {
       this.hideLoading()
     }
-    //  else {
-    //   this.onRefresh()
-    // }
-    // this.refresher()
   },
   mounted () {
     this.$nextTick(() => {
@@ -215,6 +207,7 @@ export default {
         }
         delete this.queryObject.materials
         delete this.queryObject.supplys
+        delete this.queryObject.warehouses
         console.log('swiperFirst', this.swiperFirst)
         const me = this
         setTimeout(() => {

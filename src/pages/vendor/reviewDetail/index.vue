@@ -48,9 +48,9 @@ div
           template(v-if="auditType === '定向'")  
             .row.justify-between.padding-bottom-xs
               .col
-                span {{item.material}}
-                span {{item.length}}
-                span {{item.warehouse}}
+                span.padding-right-xs {{item.material}}
+                span.padding-right-xs {{item.length}}
+                span.padding-right-xs {{item.warehouse}}
                 span.sub-mark.ml-5 {{item.supply}}
               span ({{item.metering_way}})
             .padding-bottom-xs {{item.amount}}支/{{item.weight}}吨
@@ -124,7 +124,6 @@ export default {
     this.disabled = false
   },
   onShow () {
-    debugger
     console.log('modules', this.modules)
     this.auditType = this.tempObject.auditType
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 203
