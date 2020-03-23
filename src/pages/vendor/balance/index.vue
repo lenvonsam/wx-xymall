@@ -32,12 +32,12 @@ div
                   .padding-bottom-xs 可用：￥{{item.avlb_fund}}
                   .padding-bottom-xs.row.justify-between
                     .col 冻结：￥{{item.frz_fund}}
-                    .round.margin-left-sm(:class="item.restrict ? 'bill-red-btn' : 'bill-btn'", @click.stop="item.restrict ? openModal(item) : balanceRestrict(item)") {{item.restrict ? '解除限制' : '限制提现'}} 
+                    .round.margin-left-sm(:class="item.restrict ? 'bill-red-btn' : 'bill-btn'", @click.stop="openModal(item)") {{item.restrict ? '解除限制' : '限制提现'}} 
     .text-center.c-gray.pt-100(v-else)
       empty-image(url="bill_empty.png", className="img-empty")
-  modal-input(v-model="modalShow", title="解除限制提现", confirmText="确定", type="customize", :cb="modalHandler")
+  modal-input(v-model="modalShow", :title="modalTitle", confirmText="确定", type="customize", :cb="modalHandler")
     .text-center
-      .padding-bottom-xs.ft-15 是否确认解除限制提现
+      .padding-bottom-xs.ft-15 {{modalMsg}}
       .padding-bottom-xs.text-black.ft-16 {{checkRow.cust_name}}
 </template>
 <script>
@@ -46,6 +46,8 @@ import modalInput from '@/components/ModalInput.vue'
 export default {
   data () {
     return {
+      modalTitle: '解除限制提现',
+      modalMsg: '是否确认解除限制提现',
       delayDate: 0,
       modalShow: false,
       currentPage: 0,
@@ -140,6 +142,14 @@ export default {
       }
     },
     openModal (item) {
+      if (item.restrict) {
+        this.modalTitle = '解除限制提现'
+        this.modalMsg = '是否确认解除限制提现'
+      } else {
+        this.modalTitle = '限制提现'
+        this.modalMsg = `是否确认限制提现`
+        // this.modalMsg = `是否确认将客户[${item.cust_name}]设为限制提现`
+      }
       this.checkRow = item
       this.modalShow = true
     },
