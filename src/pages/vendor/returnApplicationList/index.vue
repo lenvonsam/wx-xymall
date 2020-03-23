@@ -98,6 +98,7 @@ export default {
     this.isload = false
     this.scrollHeight = 0
     this.filterObj = {}
+    this.searchVal = ''
     this.loadFinish = false
   },
   onShow () {

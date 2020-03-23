@@ -41,7 +41,7 @@ div
             template(v-if="item.metering_way === 1")
               .row(style="width: 200rpx")
                 .input-weight.col.text-center
-                  input.col(type="number", v-model="item.countWeight")
+                  input.col(type="digit", v-model="item.countWeight", @focus="countWeightFocus = true", @blur="listChange(listData)")
                 .padding-left-xs 吨
             template(v-else)
               span {{item.countWeight}}吨
@@ -98,6 +98,7 @@ import CountStep from '@/components/CountStep.vue'
 export default {
   data () {
     return {
+      countWeightFocus: false,
       maxLift: '',
       returnReason: '',
       liftPlaceholder: '',
@@ -142,6 +143,7 @@ export default {
   watch: {
     listData: {
       handler (newVal, oldVal) {
+        if (this.countWeightFocus) return false
         this.listChange(newVal)
       },
       deep: true
@@ -193,6 +195,7 @@ export default {
       this.listChange(this.listData)
     },
     listChange (listData) {
+      this.countWeightFocus = false
       let filterArray = listData.filter(item => {
         if (item.metering_way !== 1) {
           item.countWeight = this.$toFixed(Number(item.count * item.singleWeight), 3)

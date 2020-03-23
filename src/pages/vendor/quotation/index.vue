@@ -271,6 +271,8 @@ export default {
       'configVal'
     ]),
     shareClick () {
+      if (this.btnDisable) return false
+      this.btnDisable = true
       if (this.qutId) {
         this.showMsg('当前报价单已生成')
         return false
@@ -280,8 +282,10 @@ export default {
       })
       if (filterArray.length === 0) {
         this.showMsg('请选择分享物资')
+        this.btnDisable = false
         return false
       }
+      this.btnDisable = false
       this.checkGoods = filterArray
       this.modalTitle = '是否进行锁货'
       this.modalWidth = '70%'
@@ -300,6 +304,9 @@ export default {
         let amounts = []
         let weights = []
         let orderPrices = []
+        let totalPrice = 0
+        let totalWeight = 0
+        let totalLiftCharge = 0
         this.checkGoods.map(itm => {
           orderIds.push(itm.order_id)
           dxPrices.push(itm.dx_prices)
@@ -308,6 +315,12 @@ export default {
           amounts.push(itm.count)
           weights.push(itm.countWeight)
           orderPrices.push(itm.price)
+          totalPrice += Number(itm.dx_prices) * Number(itm.countWeight)
+          totalWeight += Number(itm.countWeight)
+          if (Number(itm.lift_charge) > 0 && this.tempObject.need_lift === 1) {
+            totalLiftCharge += Number(itm.countWeight) * Number(itm.lift_charge)
+          }
+          // totalLiftCharge +=
         })
         const params = {
           user_id: this.tempObject.user_id,
@@ -320,10 +333,10 @@ export default {
           dx_prices: dxPrices.toString(),
           cost_prices: costPrices.toString(),
           jl_types: jlTypes.toString(),
-          total_money: this.tempObject.totalPrice,
+          total_money: this.$toFixed((totalPrice + totalLiftCharge), 2),
           total_amount: this.tempObject.totalCount,
-          total_weight: this.tempObject.totalWeight,
-          lift_money: this.tempObject.totalLiftCharge,
+          total_weight: this.$toFixed(totalWeight, 3),
+          lift_money: totalLiftCharge,
           lock_goods: this.lockGoods
         }
         this.ironRequest(this.apiList.xy.quotation.url, params, this.apiList.xy.quotation.method).then(res => {
