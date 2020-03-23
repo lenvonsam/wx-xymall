@@ -122,9 +122,10 @@ export default {
       })
     }
   },
-  // onHide () {
-  //   this.queryObject.search = ''
-  // },
+  onHide () {
+    this.btnDisable = false
+    // this.queryObject.search = ''
+  },
   onShow () {
     this.showLoading()
     this.isload = true
@@ -272,6 +273,8 @@ export default {
       if (!this.tempObject.name) this.refresher()
     },
     mallItemCb (obj, type, evt) {
+      if (this.btnDisable) return false
+      this.btnDisable = true
       console.log('evt', evt)
       const me = this
       me.ballValue = evt

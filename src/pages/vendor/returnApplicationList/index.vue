@@ -79,7 +79,8 @@ export default {
         '7': '客户取消'
       },
       filterObj: {},
-      status: ''
+      status: '',
+      btnDisabled: false
     }
   },
   computed: {
@@ -100,6 +101,9 @@ export default {
     this.filterObj = {}
     this.searchVal = ''
     this.loadFinish = false
+  },
+  onHide () {
+    this.btnDisabled = false
   },
   onShow () {
     if (this.tempObject.fromPage === 'returnApplicationFilter') {
@@ -203,11 +207,12 @@ export default {
     },
     async application (item, flag) {
       try {
+        if (this.btnDisabled) return false
+        this.btnDisabled = true
         if (flag === '申请') {
           this.jump(`/pages/vendor/returnApplication/main?subsNo=${item.lad_no}&status=${item.status}&id=${item.id}`)
           return false
         } else if (flag === '查看明细') {
-          // this.jump('/pages/ladbillConfirmDetail/main?no=' + item.lad_no)
           this.jump(`/pages/vendor/returnApplicationDetail/main?subsNo=${item.lad_no}&status=${item.status}`)
           return false
         }
@@ -219,6 +224,7 @@ export default {
         }
         const data = await this.ironRequest(returnGoodsCancel.url, params, returnGoodsCancel.method)
         this.showMsg(data.errormsg)
+        this.btnDisabled = false
         this.onRefresh()
         console.log(data)
       } catch (err) {

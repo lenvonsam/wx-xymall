@@ -53,7 +53,8 @@ export default {
     return {
       scrollHeight: 0,
       resData: {},
-      qutId: ''
+      qutId: '',
+      btnDisabled: false
     }
   },
   computed: {
@@ -63,6 +64,7 @@ export default {
   },
   onUnload () {
     this.qutId = ''
+    this.btnDisabled = false
   },
   onShow () {
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 205
@@ -89,6 +91,8 @@ export default {
     },
     async quotationHandler (flag) {
       try {
+        if (this.btnDisabled) return false
+        this.btnDisabled = true
         this.showLoading()
         let quotation = ''
         switch (flag) {
@@ -122,36 +126,11 @@ export default {
           setTimeout(() => {
             me.back()
           }, 1000)
+        } else {
+          this.btnDisabled = false
         }
       } catch (e) {
-        console.log(e)
-      }
-    },
-    async quotationRelease () {
-      try {
-        const quotationRelease = this.apiList.xy.quotationRelease
-        const params = {}
-        const data = await this.ironRequest(quotationRelease.url, params, quotationRelease.method)
-        console.log(data)
-        if (data.returncode === '0') {
-          this.resData = data
-          this.resFixed()
-        }
-      } catch (e) {
-        console.log(e)
-      }
-    },
-    async quotationDx () {
-      try {
-        const quotationDx = this.apiList.xy.quotationDx
-        const params = {}
-        const data = await this.ironRequest(quotationDx.url, params, quotationDx.method)
-        console.log(data)
-        if (data.returncode === '0') {
-          this.resData = data
-          this.resFixed()
-        }
-      } catch (e) {
+        this.btnDisabled = false
         console.log(e)
       }
     }

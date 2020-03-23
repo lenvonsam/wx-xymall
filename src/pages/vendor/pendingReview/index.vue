@@ -76,6 +76,9 @@ export default {
     this.currentPage = 0
     this.configVal({ key: 'tempObject', val: {} })
   },
+  onHide () {
+    this.btnDisable = false
+  },
   onShow () {
     if (this.tempObject.fromPage === 'billFilter') {
       this.filterArr = []
@@ -173,6 +176,8 @@ export default {
       }, 300)
     },
     jumpDetail (item) {
+      if (this.btnDisable) return false
+      this.btnDisable = true
       item.auditType = this.auditType[item.audit_type]
       item.statusStr = this.statusList[item.status] || '待审核'
       this.configVal({ key: 'tempObject', val: item })

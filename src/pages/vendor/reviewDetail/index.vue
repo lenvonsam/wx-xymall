@@ -213,9 +213,11 @@ export default {
           const me = this
           setTimeout(() => {
             me.back()
+            this.disabled = false
           }, 1000)
+        } else {
+          this.disabled = false
         }
-        this.disabled = false
       } catch (err) {
         this.hideLoading()
         this.disabled = false

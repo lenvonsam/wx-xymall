@@ -168,6 +168,9 @@ export default {
     this.totalLiftCharge = 0
     this.totalCount = 0
   },
+  onHide () {
+    this.btnDisabled = false
+  },
   // onShow () {
   //   this.subsNo = this.$root.$mp.query.subsNo
   //   this.status = this.$root.$mp.query.status
@@ -249,6 +252,8 @@ export default {
     },
     returnGoods () {
       try {
+        if (this.btnDisabled) return false
+        this.btnDisabled = true
         const list = this.listData
         let amountTotal = 0
         const filterArray = list.filter(item => {
@@ -257,10 +262,12 @@ export default {
         })
         if (filterArray.length === 0 && (!this.isliftShow || !this.totalLiftCharge)) {
           this.showMsg('请正确填写退货物资数量')
+          this.btnDisabled = false
           return false
         }
         if (!this.returnReason) {
           this.showMsg('请选择退货原因')
+          this.btnDisabled = false
           return false
         }
         const params = {

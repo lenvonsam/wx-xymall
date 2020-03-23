@@ -19,7 +19,7 @@ div
     template(v-if="listData.length > 0")
       div(:style="{height: scrollHeight+'rpx'}")
         iron-scroll(@scrolltolower="loadMore", heightUnit="rpx", :height="scrollHeight", :refresh="true", @onRefresh="onRefresh", :loadFinish="loadFinish")          
-          .bill-list(v-for="(item, itemIdx) in listData", :key="itemIdx", @click="jump('/pages/account/balanceList/main?sellerId='+item.cust_id)")
+          .bill-list(v-for="(item, itemIdx) in listData", :key="itemIdx", @click="jumpDetail(item)")
             .bg-white.box
               .padding-sm
                 .flex.justify-between.padding-bottom-sm
@@ -108,6 +108,9 @@ export default {
     this.currentPage = 0
     this.configVal({ key: 'tempObject', val: {} })
   },
+  onHide () {
+    this.btnDisable = false
+  },
   onShow () {
     if (this.tempObject.fromPage === 'balanceFilter') {
       this.filterObj = {
@@ -124,6 +127,11 @@ export default {
     ...mapActions([
       'configVal'
     ]),
+    jumpDetail (item) {
+      if (this.btnDisable) return false
+      this.btnDisable = true
+      this.jump('/pages/account/balanceList/main?sellerId=' + item.cust_id)
+    },
     async balanceRestrict (item) {
       try {
         const checkRow = item || this.checkRow

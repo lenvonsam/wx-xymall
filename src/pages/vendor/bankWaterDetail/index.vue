@@ -19,7 +19,7 @@ export default {
         { label: '汇款抬头', content: '', prop: 'bank_cust_name' },
         { label: '汇款银行', content: '', prop: 'bank_name' },
         { label: '汇款账号', content: '', prop: 'bank_no' },
-        { label: '入金账户', content: '', prop: 'bank_cust_name' },
+        { label: '入金账户', content: '', prop: 'match_customer_name' },
         { label: '汇款金额', content: '元', prop: 'bank_money' },
         { label: '汇款时间', content: '', prop: 'bank_date' }
       ],
@@ -41,7 +41,7 @@ export default {
       { label: '汇款抬头', content: '', prop: 'bank_cust_name' },
       { label: '汇款银行', content: '', prop: 'bank_name' },
       { label: '汇款账号', content: '', prop: 'bank_no' },
-      { label: '入金账户', content: '', prop: 'bank_cust_name' },
+      { label: '入金账户', content: '', prop: 'match_customer_name' },
       { label: '汇款金额', content: '元', prop: 'bank_money' },
       { label: '汇款时间', content: '', prop: 'bank_date' }
     ]
@@ -81,7 +81,7 @@ export default {
         }
         if (data.returncode === '0') {
           this.bankWater.map(item => {
-            item.content = resData[item.prop] + item.content
+            item.content = resData[item.prop] ? resData[item.prop] + item.content : ''
           })
         }
       } catch (err) {
