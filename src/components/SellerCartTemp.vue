@@ -187,6 +187,19 @@ export default {
         me.cstmCurrentPage = 0
         me.loadCstmList()
       }, 300)
+    },
+    liftSelectVal (newVal, oldVal) {
+      const cartList = JSON.parse(JSON.stringify(this.carts))
+      if (newVal === 2) {
+        cartList.map(item => {
+          item.dx_prices = Number(item.dx_prices) + 30
+        })
+      } else if (oldVal === 2) {
+        cartList.map(item => {
+          item.dx_prices = Number(item.dx_prices) - 30
+        })
+      }
+      this.carts = cartList
     }
   },
   onHide () {
@@ -238,17 +251,14 @@ export default {
       this.totalLiftCharge = 0
       if (filterArray.length > 0) {
         filterArray.map(itm => {
-          if (itm.dx_prices.indexOf('--') < 0) {
-            if (Number(itm.lift_charge) > 0 && this.liftSelectVal === 1) {
-              // const countWeight = itm.count * itm.weight
-              const countLiftWeight = Number(itm.countWeight) * itm.lift_charge
-              this.totalPrice += itm.dx_prices * Number(itm.countWeight) + countLiftWeight
-              this.totalLiftCharge += countLiftWeight
-            } else {
-              this.totalPrice += itm.dx_prices * Number(itm.count * itm.weight)
-            }
-            this.totalWeight += Number(itm.countWeight)
+          if (Number(itm.lift_charge) > 0 && this.liftSelectVal === 1) {
+            const countLiftWeight = Number(itm.countWeight) * itm.lift_charge
+            this.totalPrice += Number(itm.dx_prices) * Number(itm.countWeight) + countLiftWeight
+            this.totalLiftCharge += countLiftWeight
+          } else {
+            this.totalPrice += Number(itm.dx_prices) * Number(itm.count * itm.weight)
           }
+          this.totalWeight += Number(itm.countWeight)
         })
         this.totalLiftCharge = this.$toFixed(Number(this.totalLiftCharge), 2)
         this.totalPrice = this.$toFixed(Number(this.totalPrice), 2)
@@ -313,7 +323,6 @@ export default {
       if (type === 'lift') {
         this.liftSelect = item.label
         this.liftSelectVal = item.val
-        // this.totalLiftCharge = item.val !== 1 ? 0
         this.cartCalculation()
         this.pickWayShow = false
       } else {
@@ -518,7 +527,7 @@ export default {
             itm.choosed = false
             let allWeight = itm.one_weight
             let wtArr = allWeight.split('/')
-            // let prArr = itm.product_price.split('/')
+            let prArr = itm.product_price.split('/')
             let oldPrArr = itm.origin_price.split('/')
             const newWeight = []
             wtArr.map(item => {
@@ -529,14 +538,14 @@ export default {
                 label: '理计',
                 m_way: 2,
                 weight: newWeight[0],
-                price: oldPrArr[0],
+                price: prArr[0],
                 originPrice: oldPrArr[0],
                 allowedPrice: itm.lj_allowed_price
               }, {
                 label: '磅计',
                 m_way: 1,
                 weight: newWeight[1],
-                price: oldPrArr[1],
+                price: prArr[1],
                 originPrice: oldPrArr[1],
                 allowedPrice: itm.bj_allowed_price
               }]
@@ -549,28 +558,28 @@ export default {
                 label: '16理计',
                 m_way: 3,
                 weight: newWeight[0],
-                price: oldPrArr[0],
+                price: prArr[0],
                 originPrice: oldPrArr[0],
                 allowedPrice: itm.lj_allowed_price
               }, {
                 label: '10理计',
                 m_way: 4,
                 weight: newWeight[0],
-                price: oldPrArr[1],
+                price: prArr[1],
                 originPrice: oldPrArr[1],
                 allowedPrice: itm.lj_allowed_price
               }]
             }
             itm.weight = newWeight[0]
-            itm.price = oldPrArr[0]
+            itm.price = prArr[0]
             itm.originPrice = oldPrArr[0]
-            itm.dx_prices = oldPrArr[0]
+            itm.dx_prices = prArr[0]
             itm.allowedPrice = itm.measure_way_id === 1 ? itm.bj_allowed_price : itm.lj_allowed_price
             if (itm.measure_way_id === 1 || itm.measure_way_id === 4) {
               itm.weight = itm.measure_way_id === 4 ? newWeight[0] : newWeight[1]
-              itm.price = oldPrArr[1]
+              itm.price = prArr[1]
               itm.originPrice = oldPrArr[1]
-              itm.dx_prices = oldPrArr[1]
+              itm.dx_prices = prArr[1]
             }
             itm.cost_prices = 0
             this.carts.push(itm)

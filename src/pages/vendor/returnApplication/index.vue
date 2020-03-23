@@ -250,7 +250,9 @@ export default {
     returnGoods () {
       try {
         const list = this.listData
+        let amountTotal = 0
         const filterArray = list.filter(item => {
+          amountTotal += item.count
           return item.choosed === true
         })
         if (filterArray.length === 0 && (!this.isliftShow || !this.totalLiftCharge)) {
@@ -265,7 +267,7 @@ export default {
           user_id: this.currentUser.user_id,
           return_id: this.$root.$mp.query.id,
           seq_d_more: filterArray[0].seq_d,
-          amount_more: this.totalCount,
+          amount_more: amountTotal,
           weight_more: this.totalGoodsWeight,
           price_more: this.totalGoodsPrice,
           status: this.status,

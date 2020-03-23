@@ -153,6 +153,8 @@ export default {
         // delete this.queryObject.search
         this.mallTabVal = this.tempObject.name || ''
       }
+    } else {
+      this.hideLoading()
     }
     //  else {
     //   this.onRefresh()

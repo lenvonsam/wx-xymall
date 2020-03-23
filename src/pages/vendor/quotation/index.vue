@@ -2,8 +2,15 @@
   .s-layout
     nav-bar(title="报价清单", :isBack="!pageType")
     .padding-left-sm.padding-right-sm.ft-12(style="background: #FEF7E7; line-height: 70rpx; height: 70rpx")
-      .text-orange 报价单2小时内有效，超时自动失效
-        span.padding-left-xs(v-if="pageType === 'share'") {{timeDown}}
+      .text-orange 
+        template(v-if="status === '已完成' || status === '已失效'")
+          .row.justify-between
+            .col 报价单
+              span.padding-left-xs.text-bold {{status}}
+            .go-mall.bg-blue.text-white(@click="jumpMall") 去商城逛逛
+        template(v-else)
+          span 报价单2小时内有效，超时自动失效
+          span.padding-left-xs(v-if="pageType === 'share'") {{timeDown}}
     template(v-if="!isLoad")
       time-line(type="mallist")
     template(v-else)
@@ -77,8 +84,8 @@
               b.text-red ￥{{totalPrice}}
           .text-right.ft-12(style="color:#999;") 共{{totalCount}}件 ，{{totalWeight}}吨
             span(v-if="tempObject.need_lift === 1") ，吊费: {{totalLiftCharge}}元
-        .cart-settle-btn.ft-18(v-if="pageType === 'share'", @click="goToSettle") 生成合同
-        button.cart-settle-btn.ft-18(@click="shareClick" v-else) 分享
+        .cart-settle-btn.ft-18(:class="status === '已完成' || status === '已失效' ? 'bg-gray' : 'bg-red'", v-if="pageType === 'share'", @click="goToSettle") 生成合同
+        button.cart-settle-btn.bg-red.ft-18(@click="shareClick" v-else) 分享
     modal(:title="modalTitle", :btns="previewShow ? previewBtns : btns", :value="modalShow", @cb="modalHandler", :width="modalWidth")
       div
         template(v-if="previewShow")
@@ -164,7 +171,8 @@ export default {
         { label: '确定', flag: 'confirm', className: 'main-btn', type: 'share' }
       ],
       modalScrollHeight: 0,
-      checkGoods: []
+      checkGoods: [],
+      status: ''
     }
   },
   components: {
@@ -256,17 +264,24 @@ export default {
   mounted () {
     this.$nextTick(() => {
       const me = this
-      this.timeInterval = setInterval(() => {
-        me.countTime()
-        me.serverTime += 1000
-        console.log(me.timeDown)
-      }, 1000)
+      if (this.status !== '已完成' && this.status !== '已失效' && this.currentUser.type === 'buyer') {
+        this.timeInterval = setInterval(() => {
+          me.countTime()
+          me.serverTime += 1000
+          console.log(me.timeDown)
+        }, 1000)
+      }
     })
   },
   methods: {
     ...mapActions([
       'configVal'
     ]),
+    jumpMall () {
+      if (this.btnDisable) return false
+      this.tab('/pages/mall/main')
+      this.btnDisable = false
+    },
     shareClick () {
       if (this.btnDisable) return false
       this.btnDisable = true
@@ -417,6 +432,7 @@ export default {
         console.log('quotationDetail', data)
         this.serverTime = data.server_time
         this.endTime = data.end_time
+        this.status = data.status
         if (data.returncode === '0') {
           const resData = data.list
           resData.map(item => {
@@ -436,24 +452,26 @@ export default {
       }
     },
     goToSettle () {
+      if (this.status === '已完成' || this.status === '已失效') return false
       if (this.currentUser.type === 'seller') {
         this.showMsg('卖家账号不能生成合同')
         return false
       }
-      const filterArray = this.carts
+
+      // const filterArray = this.carts
       const me = this
       if (!this.btnDisable) {
-        let heFeiArray = filterArray.filter(itm => itm.warehouse.indexOf('合肥') >= 0)
-        let dongGangArray = filterArray.filter(itm => itm.warehouse.indexOf('常州东港') >= 0)
-        let msgs = ''
-        if (heFeiArray.length > 0 && dongGangArray.length > 0) {
-          msgs = '所选物资包含合肥仓库,常州东港库物资最快次日可提'
-        } else if (heFeiArray.length > 0) {
-          msgs = '所选物资包含合肥仓库'
-        } else if (dongGangArray.length > 0) {
-          msgs = '常州东港库物资最快次日可提'
-        }
-        this.confirm({ content: msgs + '是否确认提交' }).then((res) => {
+        // let heFeiArray = filterArray.filter(itm => itm.warehouse.indexOf('合肥') >= 0)
+        // let dongGangArray = filterArray.filter(itm => itm.warehouse.indexOf('常州东港') >= 0)
+        // let msgs = ''
+        // if (heFeiArray.length > 0 && dongGangArray.length > 0) {
+        //   msgs = '所选物资包含合肥仓库,常州东港库物资最快次日可提'
+        // } else if (heFeiArray.length > 0) {
+        //   msgs = '所选物资包含合肥仓库'
+        // } else if (dongGangArray.length > 0) {
+        //   msgs = '常州东港库物资最快次日可提'
+        // }
+        this.confirm({ content: '是否确认提交' }).then((res) => {
           if (res === 'confirm') {
             const params = {
               user_id: this.currentUser.user_id,
@@ -530,11 +548,14 @@ export default {
   .cart-settle-btn
     display flex
     width 200rpx
-    background #F95353
     letter-spacing 2px
     align-items center
     color #fff
     justify-content center
+    &.bg-red
+      background #F95353
+    &.bg-gray
+      background #aaa
 .count-step .num input
   color #333 !important
 .choose-icon
@@ -577,4 +598,10 @@ radio.radio[checked]::after
   bottom 0
 button
   border-radius 0px
+.go-mall
+  width 90px
+  height 25px
+  line-height 25px
+  text-align center
+  border-radius 20px
 </style>

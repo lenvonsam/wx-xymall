@@ -58,7 +58,8 @@ export default {
       status: '',
       detailData: {},
       returnReason: '',
-      returnRemark: ''
+      returnRemark: '',
+      btnDisabled: false
     }
   },
   computed: {
@@ -81,6 +82,7 @@ export default {
     this.totalWeight = 0
     this.totalLiftCharge = 0
     this.totalCount = 0
+    this.btnDisabled = false
   },
   onShow () {
     if (this.$root.$mp.query.subsNo) {
@@ -120,6 +122,8 @@ export default {
     },
     async returnGoods () {
       try {
+        if (this.btnDisabled) return false
+        this.btnDisabled = true
         const returnGoods = this.apiList.xy.returnGoods
         const data = await this.ironRequest(returnGoods.url, this.tempObject.params, returnGoods.method)
         if (data.returncode === '0') {
@@ -127,9 +131,11 @@ export default {
           const me = this
           setTimeout(() => {
             me.back(2)
+            this.btnDisabled = false
           }, 1000)
         }
       } catch (err) {
+        this.btnDisabled = false
         console.log(err)
       }
     },
