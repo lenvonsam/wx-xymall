@@ -5,7 +5,7 @@ div
     .bg-white.row.text-blue.padding-sm
       .col
         span.ft-15.text-blue.text-bold {{ladObject.td_no}}
-        copy-btn(:copyUrl="ladObject.id_no")
+        copy-btn(:copyUrl="ladObject.td_no")
       .text-blue(v-if="ladObject.status === '提单待确认'") {{ladObject.status}}
       .text-gray(v-else) {{ladObject.status}}
     .tip.text-orange.padding-sm(v-if="ladObject.status === '提单待确认'")
