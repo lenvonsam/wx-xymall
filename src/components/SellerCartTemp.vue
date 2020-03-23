@@ -396,8 +396,11 @@ export default {
     },
     async auditDxCheck (flag) {
       try {
+        if (this.btnDisable) return false
+        this.btnDisable = true
         let filterArray = this.carts.filter(itm => itm.choosed === true)
         if (this.isEdit) {
+          this.btnDisable = false
           if (filterArray.length === 0) {
             this.showMsg('请选择所需删除的商品')
             return false
@@ -406,14 +409,14 @@ export default {
           this.delCartRow(filterArray)
           return false
         }
-        if (this.btnDisable) return false
-        this.btnDisable = true
         if (filterArray.length === 0) {
           this.showMsg('请选择需要操作的物资')
+          this.btnDisable = false
           return false
         }
         if (this.customerName === '') {
           this.showMsg('请选择客户')
+          this.btnDisable = false
           return false
         }
         let orderIds = []
