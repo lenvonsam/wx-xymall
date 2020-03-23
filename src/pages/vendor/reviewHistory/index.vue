@@ -26,7 +26,7 @@ div
                   .col
                     .flex.align-center
                       .ft-16.padding-right-sm {{auditType[item.audit_type]}} - {{item.tstc_no}}
-                  .text-red {{statusList[item.status] || '待审核'}}
+                  .text-gray {{statusList[item.status]}}
                 .text-gray
                   .flex.justify-between.padding-bottom-xs 
                     span {{item.emp_name}}
@@ -59,8 +59,8 @@ export default {
         '3': '退货'
       },
       statusList: {
-        '5': '定向初审',
-        '3': '定向复审'
+        '0': '已拒绝',
+        '1': '已审核'
       },
       filterArr: []
     }
