@@ -143,25 +143,26 @@ export default {
       this.showNoticeIcon = this.currentUser.message_switch === '1'
       if (this.currentUser.type === 'seller') {
         // TODO 卖家相关接口
-        this.featuresModules = this.featuresIcons // 暂时
-        // this.ironRequest(this.apiList.xy.modules.url, { user_id: this.currentUser.user_id }, this.apiList.xy.modules.method).then(res => {
-        //   const resData = res.list
-        //   this.rowCountObj.waitAudit = 0
-        //   const modules = {}
-        //   resData.map(item => {
-        //     modules[item.memu_name] = item.flag
-        //     if (item.flag) {
-        //       this.rowCountObj[item.memu_name] = item.count
-        //       if (item.memu_name === 'audit' || item.memu_name === 're_audit' || item.memu_name === 'return_audit') {
-        //         this.rowCountObj.waitAudit += Number(item.count)
-        //       }
-        //     }
-        //   })
-        //   this.featuresModules = this.featuresIcons.filter(item => {
-        //     return !item.dotKey || (item.dotKey && this.rowCountObj.hasOwnProperty(item.dotKey)) || item.dotKey === 'waitAudit'
-        //   })
-        //   this.configVal({ key: 'modules', val: modules })
-        // })
+        // this.featuresModules = this.featuresIcons // 暂时
+        this.ironRequest(this.apiList.xy.modules.url, { user_id: this.currentUser.user_id }, this.apiList.xy.modules.method).then(res => {
+          const resData = res.list
+          this.rowCountObj.waitAudit = 0
+          const modules = {}
+          const auditName = ['audit', 're_audit', 'return_audit', 'delay_audit']
+          resData.map(item => {
+            modules[item.memu_name] = item.flag
+            if (item.flag) {
+              this.rowCountObj[item.memu_name] = item.count
+              if (auditName.indexOf(item.memu_name) !== -1) {
+                this.rowCountObj.waitAudit += Number(item.count)
+              }
+            }
+          })
+          this.featuresModules = this.featuresIcons.filter(item => {
+            return !item.dotKey || (item.dotKey && this.rowCountObj.hasOwnProperty(item.dotKey)) || item.dotKey === 'waitAudit'
+          })
+          this.configVal({ key: 'modules', val: modules })
+        })
         const orderCount = this.apiList.xy.orderCount
         this.ironRequest(orderCount.url, '', orderCount.method).then(resp => {
           console.log('resp', resp)

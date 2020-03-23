@@ -39,7 +39,7 @@ export default {
       {
         icon: '/static/images/audit_record_icon.png',
         name: '待审核',
-        dotKey: '',
+        dotKey: 'waitAudit',
         url: {
           path: '/pages/vendor/pendingReview/main'
         }
@@ -55,7 +55,7 @@ export default {
       {
         icon: '/static/images/review_icon.png',
         name: '合同延时',
-        dotKey: '',
+        dotKey: 'delay_list',
         url: {
           path: '/pages/vendor/contractDelay/main'
         }
@@ -71,7 +71,7 @@ export default {
       {
         icon: '/static/images/balance_icon.png',
         name: '账户余额',
-        dotKey: '',
+        dotKey: 'balance',
         url: {
           path: '/pages/vendor/balance/main'
         }
@@ -79,7 +79,7 @@ export default {
       {
         icon: '/static/images/early_warning_icon.png',
         name: '应收款预警',
-        dotKey: '',
+        dotKey: 'receivables',
         url: {
           path: '/pages/vendor/receivables/main'
         }
@@ -87,23 +87,23 @@ export default {
       {
         icon: '/static/images/save_icon.png',
         name: '现货物资',
-        dotKey: '',
+        dotKey: 'spot_goods',
         url: {
           path: '/pages/vendor/sumGoods/main'
         }
       },
-      {
-        icon: '/static/images/custom_icon.png',
-        name: '客户管理',
-        dotKey: '',
-        url: {
-          path: ''
-        }
-      },
+      // {
+      //   icon: '/static/images/custom_icon.png',
+      //   name: '客户管理',
+      //   dotKey: '',
+      //   url: {
+      //     path: ''
+      //   }
+      // },
       {
         icon: '/static/images/card_package_icon.png',
         name: '银企直联',
-        dotKey: '',
+        dotKey: 'bank',
         url: {
           path: '/pages/vendor/bankWater/main'
         }
@@ -115,9 +115,7 @@ export default {
         url: {
           path: '/pages/vendor/returnApplicationList/main'
         }
-      },
-      {},
-      {}
+      }
     ]
   },
   mutations: {}

@@ -54,7 +54,7 @@ export default {
     orderDelayAudit: { url: 'seller/orderDelayAudit.shtml', method: 'post' },
     deptList: { url: 'deptList.shtml', method: 'post' },
     employeeList: { url: 'employeeList.shtml', method: 'post' },
-    orderDelayList: { url: 'seller/orderDelay.shtml', method: 'get' },
+    orderDelayList: { url: 'seller/orderDelayList.shtml', method: 'post' },
     orderDelay: { url: ' seller/orderDelay.shtml', method: 'post' },
     orderDelayAgain: { url: ' seller/orderDelayAgain.shtml', method: 'post' },
     quotationList: { url: 'seller/quotationList.shtml', method: 'post' },

@@ -69,7 +69,7 @@ div
             .text-gray 
               span 退款重量：{{item.weight}}吨  
               span.padding-left-xs 退款金额：{{item.money}}元
-  .footer.row.bg-white.text-center.text-white.padding-sm(v-if="tempObject.fromPage !== 'reviewHistory'")
+  .footer.row.bg-white.text-center.text-white.padding-sm(v-if="btnShow && tempObject.fromPage !== 'reviewHistory'")
     .col.foot-cancel(@click="confirm('cancel')") {{auditType === '退货' ? '驳回' : '拒绝'}}
     .col.foot-confirm.margin-left-sm(@click="confirm") {{auditType === '退货' ? '退货' : '通过'}}
   modal-input(v-model="modalShow", :title="modalInputTitle", confirmText="确定", type="customize", :cb="modalHandler")
@@ -98,23 +98,34 @@ export default {
       statusList: {
         '5': '定向初审',
         '3': '定向复审'
-      }
+      },
+      btnShow: false
     }
   },
   computed: {
     ...mapState({
-      tempObject: state => state.tempObject
+      tempObject: state => state.tempObject,
+      modules: state => state.modules
     }),
     dataList () {
       return this.detailData.list.filter(item => {
         return item.good_name !== '吊费'
       })
     }
+    // btnShow () {
+    //   return () => {
+    //     switch () {}
+    //     this.modules
+    //     detailData.status
+    //   }
+    // }
   },
   onUnload () {
     this.disabled = false
   },
   onShow () {
+    debugger
+    console.log('modules', this.modules)
     this.auditType = this.tempObject.auditType
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 203
     this.showLoading()
@@ -215,12 +226,14 @@ export default {
     async loadData () {
       try {
         let url = ''
+        const modules = this.modules
         switch (this.auditType) {
           case '定向':
             const sellerDxAudit = this.apiList.xy.sellerDxAudit
             url = `${sellerDxAudit.url}?user_id=${this.currentUser.user_id}&deal_no=${this.tempObject.tstc_no}`
             break
           case '退货':
+            this.btnShow = modules.return_audit
             const sellerReturnGoodsAudit = this.apiList.xy.sellerReturnGoodsAudit
             url = `${sellerReturnGoodsAudit.url}?subs_no=${this.tempObject.tstc_no}&return_id=${this.tempObject.return_id}`
             if (this.tempObject.fromPage !== 'reviewHistory') {
@@ -228,6 +241,7 @@ export default {
             }
             break
           case '延时':
+            this.btnShow = modules.delay_audit
             const sellerOrderDelayAudit = this.apiList.xy.sellerOrderDelayAudit
             url = `${sellerOrderDelayAudit.url}?tstc_no=${this.tempObject.tstc_no}`
             break
@@ -249,6 +263,7 @@ export default {
                 operName: data.oper_name,
                 list: data.list
               }
+              this.btnShow = (data.status === '待初审' && modules.audit) || (data.status === '待复审' && modules.re_audit)
               break
             case '退货':
               const datas = data.data

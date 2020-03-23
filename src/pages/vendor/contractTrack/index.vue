@@ -107,7 +107,7 @@ export default {
           data: [],
           isActive: false,
           statusList: [
-            { label: '待审核', value: '12,20' }
+            { label: '审核中', value: '12,20' }
           ]
         }, {
           title: '待提货',

@@ -77,10 +77,15 @@ export default {
         const data = await this.ironRequest(url, '', quotationDetail.method)
         if (data.returncode === '0') {
           this.resData = data
+          this.resFixed()
         }
       } catch (e) {
         console.log(e)
       }
+    },
+    resFixed () {
+      this.resData.money = this.$toFixed(this.resData.money, 2)
+      this.resData.lift = this.$toFixed(this.resData.lift, 2)
     },
     async quotationHandler (flag) {
       try {
@@ -130,6 +135,7 @@ export default {
         console.log(data)
         if (data.returncode === '0') {
           this.resData = data
+          this.resFixed()
         }
       } catch (e) {
         console.log(e)
@@ -143,6 +149,7 @@ export default {
         console.log(data)
         if (data.returncode === '0') {
           this.resData = data
+          this.resFixed()
         }
       } catch (e) {
         console.log(e)

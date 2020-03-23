@@ -6,7 +6,7 @@ div
       .col.search-input.text-gray
         .flex.align-center
           .cuIcon-search
-          input.full-width.padding-left-sm(v-model="searchVal", type="text", placeholder="合同号/公司名称", @confirm="searchOrder")
+          input.full-width.padding-left-sm(v-model="searchVal", type="text", placeholder="合同号/公司名称", confirm-type="search", @confirm="searchOrder")
           .close-icon(@click="searchVal = ''", v-if="searchVal")
             .cuIcon-roundclosefill.ft-18
       .search-btn.text-blue(@click="searchOrder") 搜索
@@ -87,6 +87,7 @@ export default {
         '1': '已延迟'
       },
       filterArr: [],
+      filterObj: {},
       delayMax: 2,
       checkRow: {},
       textVal: ''
@@ -126,13 +127,12 @@ export default {
   onUnload () {
     this.searchVal = ''
     this.currentPage = 0
+    this.filterObj = {}
     this.configVal({ key: 'tempObject', val: {} })
   },
   onShow () {
     if (this.tempObject.fromPage === 'billFilter') {
-      this.filterArr = []
-      const obj = {
-        // tstc_no: this.tempObject.no,
+      this.filterObj = {
         cust_no: Number(this.tempObject.custom.xyCode) || '',
         dept_code: this.tempObject.dept.id || '',
         employee_code: this.tempObject.employee.id || '',
@@ -140,11 +140,6 @@ export default {
         deal_time_e: this.tempObject.endDate
       }
       this.searchVal = this.tempObject.no
-      Object.keys(obj).forEach(key => {
-        if (obj[key]) {
-          this.filterArr.push(`${key}=${obj[key]}`)
-        }
-      })
       this.currentPage = 0
     }
     this.onRefresh()
@@ -226,15 +221,24 @@ export default {
       this.loadFinish = 1
       const me = this
       const orderDelayList = this.apiList.xy.orderDelayList
-      let url = `${orderDelayList.url}?user_id=${this.currentUser.user_id}&current_page=${this.currentPage}&page_size=${this.pageSize}&status=1&is_confirm=0`
-      if (this.filterArr.length > 0) {
-        const filterStr = this.filterArr.toString().replace(/,/g, '&')
-        url += `&${filterStr}`
+      // let url = `${orderDelayList.url}?user_id=${this.currentUser.user_id}&current_page=${this.currentPage}&page_size=${this.pageSize}&status=1&is_confirm=0`
+      // if (this.filterArr.length > 0) {
+      //   const filterStr = this.filterArr.toString().replace(/,/g, '&')
+      //   url += `&${filterStr}`
+      // }
+      //  等待接口修改
+      const params = {
+        current_page: this.currentPage,
+        page_size: this.pageSize,
+        status: 1,
+        is_confirm: 0
       }
+      Object.assign(params, this.filterObj)
       if (this.searchVal) {
-        url += `&search=${this.searchVal}`
+        // url += `&search=${this.searchVal}`
+        params.search = this.searchVal
       }
-      this.ironRequest(url, '', orderDelayList.method).then(resp => {
+      this.ironRequest(orderDelayList.url, params, orderDelayList.method).then(resp => {
         if (resp.returncode === '0') {
           let arr = resp.data.resultlist
           if (arr.length === 0 && me.currentPage === 0) {

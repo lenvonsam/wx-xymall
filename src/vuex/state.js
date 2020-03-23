@@ -3,6 +3,8 @@ export default {
   currentVersion: '2.0.4',
   // 临时存储对象
   tempObject: {},
+  // 权限
+  modules: {},
   // 屏幕宽度
   screenWidth: 375,
   // 屏幕高度
