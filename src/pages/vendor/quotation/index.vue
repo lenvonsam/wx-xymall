@@ -195,10 +195,8 @@ export default {
         if (filterArray.length > 0) {
           filterArray.map(itm => {
             const dxPrice = Number(itm.dx_prices)
-            if (this.tempObject.need_lift === 1) {
-              // const countWeight = Number(this.$toFixed(itm.count * itm.weight, 3))
-              // const countLiftWeight = this.tempObject.need_lift === 1 ? countWeight * itm.lift_charge : 0
-              const countLiftWeight = itm.countWeight * itm.lift_charge
+            if (this.tempObject.need_lift === 1 && Number(itm.lift_charge) > 0) {
+              const countLiftWeight = itm.countWeight * Number(itm.lift_charge)
               totalPrice += dxPrice * itm.countWeight + countLiftWeight
               this.totalLiftCharge += countLiftWeight
             } else {
@@ -242,7 +240,6 @@ export default {
     if (this.$root.$mp.query.qutId) {
       this.pageType = 'share'
       this.qutId = this.$root.$mp.query.qutId
-      console.log('qutId', this.qutId)
       this.quotationDetail()
     } else {
       this.loadData()
