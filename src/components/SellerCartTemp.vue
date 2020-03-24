@@ -478,13 +478,13 @@ export default {
         rowItem.weight = rowItem.radios[0].weight
         rowItem.price = rowItem.radios[0].price
         rowItem.originPrice = rowItem.radios[0].originPrice
-        rowItem.dx_prices = rowItem.radios[0].originPrice
+        rowItem.dx_prices = rowItem.radios[0].price
         rowItem.allowedPrice = rowItem.radios[0].allowedPrice
       } else {
         rowItem.weight = rowItem.radios[1].weight
         rowItem.price = rowItem.radios[1].price
         rowItem.originPrice = rowItem.radios[1].originPrice
-        rowItem.dx_prices = rowItem.radios[1].originPrice
+        rowItem.dx_prices = rowItem.radios[1].price
         rowItem.allowedPrice = rowItem.radios[1].allowedPrice
       }
       this.ironRequest('cartUpdate.shtml', { cart_id: rowItem.cart_id, user_id: this.currentUser.user_id, measure_way: val, count: rowItem.count, data_source: 1 }, 'post').then(res => {
