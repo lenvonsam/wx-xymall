@@ -77,11 +77,11 @@ export default {
       scrollTop: 3,
       tabVal: '',
       activeTab: '',
-      pageSize: 30,
+      pageSize: 50,
       currentPage: 0,
       queryObject: {
         current_page: 0,
-        page_size: 30
+        page_size: 50
       },
       temporary: [],
       sortList: [
@@ -200,21 +200,26 @@ export default {
     ]),
     openStandard () {
       // this.statisticRequest({ event: 'click_app_mall_standard' })
+      this.currentPage = 0
       this.sortCb('standard')
     },
     openMaterial () {
       // this.statisticRequest({ event: 'click_app_mall_material' })
+      this.currentPage = 0
       this.sortCb('material')
     },
     openSupply () {
       // this.statisticRequest({ event: 'click_app_mall_supply' })
+      this.currentPage = 0
       this.sortCb('origin')
     },
     openWarehouse () {
+      this.currentPage = 0
       this.sortCb('warehouse')
     },
     openName () {
       // this.statisticRequest({ event: 'click_app_mall_goods_drop_down' })
+      this.currentPage = 0
       this.activeTab = 'name'
     },
     cleanStandard () {
@@ -341,7 +346,6 @@ export default {
       if (this.sortList[sortIdx].data.length > 0) {
         this.sortList[sortIdx].data[idx].isActive = !this.sortList[sortIdx].data[idx].isActive
       }
-
       if (sortIdx === 0) {
         this.selectTab(this.sortList[sortIdx].data[idx], idx)
         this.sortClose()
@@ -428,7 +432,7 @@ export default {
               }
             }
           } else {
-            this.sortList[idx].data = arr
+            if (this.currentPage > 0) this.currentPage--
           }
           if (key === 'name') {
             tabList.unshift({ name: '全部', id: '', isActive: true })

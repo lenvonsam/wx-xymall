@@ -111,7 +111,7 @@ export default {
       {
         icon: '/static/images/returns_icon.png',
         name: '退货管理',
-        dotKey: '',
+        dotKey: 'return_apply',
         url: {
           path: '/pages/vendor/returnApplicationList/main'
         }

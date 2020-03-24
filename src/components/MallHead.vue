@@ -201,18 +201,22 @@ export default {
       'configVal'
     ]),
     openStandard () {
+      this.currentPage = 0
       this.statisticRequest({ event: 'click_app_mall_standard' })
       this.sortCb('standard')
     },
     openMaterial () {
+      this.currentPage = 0
       this.statisticRequest({ event: 'click_app_mall_material' })
       this.sortCb('material')
     },
     openSupply () {
+      this.currentPage = 0
       this.statisticRequest({ event: 'click_app_mall_supply' })
       this.sortCb('origin')
     },
     openName () {
+      this.currentPage = 0
       this.statisticRequest({ event: 'click_app_mall_goods_drop_down' })
       this.activeTab = 'name'
     },

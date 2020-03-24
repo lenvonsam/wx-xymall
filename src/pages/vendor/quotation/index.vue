@@ -232,6 +232,7 @@ export default {
   onHide () {
     this.carts = []
     this.status = ''
+    this.btnDisable = false
     // this.pageType = ''
   },
   onShow () {
@@ -260,6 +261,7 @@ export default {
   onUnload () {
     this.pageType = ''
     this.qutId = ''
+    this.btnDisable = false
     clearInterval(this.timeInterval)
   },
   mounted () {
@@ -288,6 +290,7 @@ export default {
       this.btnDisable = true
       if (this.qutId) {
         this.showMsg('当前报价单已生成')
+        this.btnDisable = false
         return false
       }
       const filterArray = this.carts.filter(item => {
@@ -455,45 +458,48 @@ export default {
     },
     goToSettle () {
       if (this.status === '已完成' || this.status === '已失效') return false
+      if (this.btnDisable) return false
+      this.btnDisable = true
       if (this.currentUser.type === 'seller') {
         this.showMsg('卖家账号不能生成合同')
+        this.btnDisable = false
         return false
       }
 
       // const filterArray = this.carts
       const me = this
-      if (!this.btnDisable) {
-        // let heFeiArray = filterArray.filter(itm => itm.warehouse.indexOf('合肥') >= 0)
-        // let dongGangArray = filterArray.filter(itm => itm.warehouse.indexOf('常州东港') >= 0)
-        // let msgs = ''
-        // if (heFeiArray.length > 0 && dongGangArray.length > 0) {
-        //   msgs = '所选物资包含合肥仓库,常州东港库物资最快次日可提'
-        // } else if (heFeiArray.length > 0) {
-        //   msgs = '所选物资包含合肥仓库'
-        // } else if (dongGangArray.length > 0) {
-        //   msgs = '常州东港库物资最快次日可提'
-        // }
-        this.confirm({ content: '是否确认提交' }).then((res) => {
-          if (res === 'confirm') {
-            const params = {
-              user_id: this.currentUser.user_id,
-              qut_id: this.qutId
-            }
-            this.showLoading()
-            me.ironRequest(this.apiList.xy.quotationDx.url, params, this.apiList.xy.quotationDx.method).then(resp => {
-              this.hideLoading()
-              if (resp.returncode === '0') {
-                me.btnDisable = false
-                me.jump(`/pages/pay/main?orderNo=${resp.order_no}&price=${resp.deal_price}&pageType=offlinePay`)
-              }
-            }).catch(err => {
-              me.btnDisable = false
-              this.hideLoading()
-              me.showMsg(err || '网络异常')
-            })
+      // let heFeiArray = filterArray.filter(itm => itm.warehouse.indexOf('合肥') >= 0)
+      // let dongGangArray = filterArray.filter(itm => itm.warehouse.indexOf('常州东港') >= 0)
+      // let msgs = ''
+      // if (heFeiArray.length > 0 && dongGangArray.length > 0) {
+      //   msgs = '所选物资包含合肥仓库,常州东港库物资最快次日可提'
+      // } else if (heFeiArray.length > 0) {
+      //   msgs = '所选物资包含合肥仓库'
+      // } else if (dongGangArray.length > 0) {
+      //   msgs = '常州东港库物资最快次日可提'
+      // }
+      this.confirm({ content: '是否确认提交' }).then((res) => {
+        if (res === 'confirm') {
+          const params = {
+            user_id: this.currentUser.user_id,
+            qut_id: this.qutId
           }
-        })
-      }
+          this.showLoading()
+          me.ironRequest(this.apiList.xy.quotationDx.url, params, this.apiList.xy.quotationDx.method).then(resp => {
+            this.hideLoading()
+            if (resp.returncode === '0') {
+              // me.btnDisable = false
+              me.jump(`/pages/pay/main?orderNo=${resp.order_no}&price=${resp.deal_price}&pageType=offlinePay`)
+            }
+          }).catch(err => {
+            me.btnDisable = false
+            this.hideLoading()
+            me.showMsg(err || '网络异常')
+          })
+        } else {
+          this.btnDisable = false
+        }
+      })
     }
   }
 }

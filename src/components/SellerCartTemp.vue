@@ -208,6 +208,8 @@ export default {
     this.btnDisable = false
     this.pickWayShow = false
     this.modalShow = false
+    this.liftSelectVal = 1
+    this.liftSelect = '收吊费'
   },
   onShow () {
     // this.loadCstmList()
