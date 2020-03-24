@@ -9,8 +9,8 @@ div
     .text-right(@click="openEdit()", v-else-if="contractDetail.status === 14") {{isEdit ? '完成' : '编辑'}} 
   
   template(v-if="isload")
-    time-line(type="mallist")  
-  template(v-else) 
+    time-line(type="mallist")
+  template(v-else)
     template(v-if="modifyList.length > 0")   
       .scroll-view
         .bill-items.bg-white.solid-bottom.padding-bottom-sm(v-for="(bill, billIdx) in modifyList", :key="billIdx")
@@ -119,7 +119,8 @@ export default {
       delIdx: null,
       billStatus: '',
       newBillPrice: 0,
-      allChoosed: true
+      allChoosed: true,
+      btnDisabled: false
     }
   },
   components: {
@@ -143,6 +144,7 @@ export default {
     this.billStatus = ''
     this.newBillPrice = 0
     this.allChoosed = true
+    this.btnDisabled = false
   },
   beforeMount () {
     this.showLoading()
@@ -193,7 +195,10 @@ export default {
       })
     },
     applyEdit () {
+      if (this.btnDisabled) return false
+      this.btnDisabled = true
       this.confirm({ content: '请确认修改合同' }).then((res) => {
+        this.btnDisabled = false
         if (res !== 'confirm') return false
         const seqList = []
         const orderList = []
@@ -233,6 +238,8 @@ export default {
       })
     },
     agreeEdit () {
+      if (this.btnDisabled) return false
+      this.btnDisabled = true
       const params = {
         id: this.contractDetail.id,
         contract_id: this.contractDetail.contract_id
@@ -241,6 +248,7 @@ export default {
       // this.$ironLoad.show()
       this.ironRequest('confirm_contract_app.shtml', params, 'post').then(res => {
         // this.$ironLoad.hide()
+
         if (res.returncode === '0') {
           me.showMsg(res.msg ? res.msg : '修改成功', 'positive')
           setTimeout(() => {
@@ -248,12 +256,16 @@ export default {
           }, 3000)
         } else {
           me.showMsg(res.msg ? res.msg : '操作失败')
+          this.btnDisabled = false
         }
       }).catch(err => {
+        this.btnDisabled = false
         this.showMsg(err || '网络错误')
       })
     },
     overrule () {
+      if (this.btnDisabled) return false
+      this.btnDisabled = true
       const params = {
         id: this.contractDetail.id,
         contract_id: this.contractDetail.contract_id
@@ -267,8 +279,10 @@ export default {
           }, 3000)
         } else {
           me.showMsg(res.data.msg)
+          me.btnDisabled = false
         }
       }).catch(err => {
+        me.btnDisabled = false
         this.showMsg(err || '网络错误')
         // if (done) done()
       })

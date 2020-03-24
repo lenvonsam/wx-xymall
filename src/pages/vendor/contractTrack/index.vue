@@ -247,6 +247,9 @@ export default {
     this.configVal({ key: 'tempObject', val: {} })
     clearInterval(this.timeInterval)
   },
+  onHide () {
+    this.btnDisable = false
+  },
   methods: {
     ...mapActions(['configVal']),
     openFilter () {
@@ -416,9 +419,13 @@ export default {
       })
     },
     jumpModifyDetail (item) {
+      if (this.btnDisable) return false
+      this.btnDisable = true
       this.jump(`/pages/modifyDetail/main?id=${item.discussid}&type=${this.tabName}`)
     },
     payBill (item) {
+      if (this.btnDisable) return false
+      this.btnDisable = true
       // if (this.tabName === '0') this.statisticRequest({ event: 'click_app_myorder_all_pay' })
       // if (this.tabName === '1') this.statisticRequest({ event: 'click_app_myorder_needpay_pay' })
       this.jump(`/pages/pay/main?pageType=offlinePay&orderNo=${item.tstc_no}&price=${item.fact_price}`)
