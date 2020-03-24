@@ -159,7 +159,8 @@ export default {
       customList: [],
       customTotal: 0,
       customLoadFinish: 0,
-      dxFilterArray: []
+      dxFilterArray: [],
+      flag: 1
     }
   },
   components: {
@@ -310,7 +311,11 @@ export default {
     },
     modalCb (flag) {
       if (flag === 'confirm' && this.dxFilterArray.length > 0) {
-        this.dx()
+        if (this.flag === 1) {
+          this.dx()
+        } else {
+          this.generateQuotation()
+        }
       } else {
         this.modalShow = false
       }
@@ -450,16 +455,15 @@ export default {
         const data = await this.ironRequest(this.apiList.xy.auditDxCheck.url, params, this.apiList.xy.auditDxCheck.method)
         console.log(data)
         if (data.returncode === '0') {
-          if (flag === 1) {
-            // 定向
-            this.modalMsg = data.errormsg
-            this.modalShow = true
-            this.dxFilterArray = filterArray
-            this.btnDisable = false
-          } else {
-            // 生成报价单
-            this.generateQuotation(filterArray)
+          this.modalMsg = data.errormsg
+          this.modalShow = true
+          this.flag = flag
+          this.dxFilterArray = filterArray
+          if (data.errormsg === '是否生成合同？ ' && flag !== 1) {
+            this.modalShow = false
+            this.generateQuotation()
           }
+          this.btnDisable = false
         }
       } catch (e) {
         this.btnDisable = false
