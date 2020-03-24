@@ -213,7 +213,7 @@ export default {
   onReady () {
     if (this.isLogin) {
       this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 200 + 'rpx'
-      if (this.carts.length === 0) this.loadCartData()
+      this.loadCartData()
     }
   },
   onShow () {
@@ -227,7 +227,7 @@ export default {
       }
     }
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 200 + 'rpx'
-    this.loadCartData()
+    if (this.carts.length === 0) this.loadCartData()
   },
   methods: {
     ...mapActions([
