@@ -198,8 +198,10 @@ export default {
       if (this.btnDisabled) return false
       this.btnDisabled = true
       this.confirm({ content: '请确认修改合同' }).then((res) => {
-        this.btnDisabled = false
-        if (res !== 'confirm') return false
+        if (res !== 'confirm') {
+          this.btnDisabled = false
+          return false
+        }
         const seqList = []
         const orderList = []
         const countList = []
@@ -219,9 +221,7 @@ export default {
           order_id: orderList.toString(),
           amount: countList.toString()
         }
-        // this.$ironLoad.show()
         this.ironRequest('buy_edit_contract_app.shtml', params, 'post').then(res => {
-          // this.$ironLoad.hide()
           if (res.returncode === '0') {
             this.showMsg(res.msg ? res.msg : '提交成功')
             const me = this
@@ -232,7 +232,6 @@ export default {
             this.showMsg(res.msg ? res.msg : '操作失败')
           }
         }).catch(err => {
-          // console.log('err', err.message)
           this.showMsg(err)
         })
       })
