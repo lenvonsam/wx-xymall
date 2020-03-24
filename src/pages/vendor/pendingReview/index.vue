@@ -33,6 +33,7 @@ div
                     .text-black(v-if="item.audit_type === 1") 截至时间：{{item.times}}
                     .text-black(v-else) {{item.times}}
                   .padding-bottom-xs {{item.emp_name}}
+                  .padding-bottom-xs(v-if="item.reason") 延时理由：{{item.reason}}
     .text-center.c-gray.pt-100(v-else)
       empty-image(url="bill_empty.png", className="img-empty")
       .empty-content 您暂时没有相关合同        

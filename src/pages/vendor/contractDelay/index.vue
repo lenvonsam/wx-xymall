@@ -60,7 +60,7 @@ div
       template(v-if="checkRow.att54")
         .padding-sm
           .bg-gray.input-box
-            input(placeholder="请填写延时备注（必填）", v-model="textVal")
+            input(placeholder="请填写延时备注（必填）", v-model="textVal", maxlength="20")
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'

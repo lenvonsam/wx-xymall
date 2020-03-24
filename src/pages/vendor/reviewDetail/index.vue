@@ -13,6 +13,8 @@ div
         .row.justify-between.text-gray.padding-bottom-xs
           .col 共{{item.amount}}支，{{item.weight}}吨
           span 操作员：{{item.opt_name}}
+        .text-gray.padding-bottom-xs(v-if="item.delay_text")
+          span 延时理由：{{item.delay_text}}
         .solid-top.padding-top-xs.padding-bottom-xs
           span 付款截至时间：
           span.text-red.padding-left-xs {{item.order_end_time}}
