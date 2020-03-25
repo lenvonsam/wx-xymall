@@ -22,7 +22,7 @@ div
         span {{item.material}}支
         span.padding-left-xs.padding-right-xs /
         span {{item.weight}}吨
-        span.ml-5 吊费：{{item.lift}} 元/吨
+        span.ml-5(v-if="resData.need_lift") 吊费：25 元/吨
       .padding-bottom-xs(v-if="item.tolerance_range || item.weight_range")
         span.padding-right-xs(v-if="item.tolerance_range") 公差范围：{{item.tolerance_range}}
         span(v-if="item.weight_range") 重量范围：{{item.weight_range}}
@@ -34,7 +34,7 @@ div
       span.text-black 合计：
       span.text-red ￥{{resData.money}}
     .padding-top-xs
-      span 共{{resData.amount}}件
+      span 共{{resData.amount}}支
       span.padding-left-xs {{resData.weight}}吨，
       span 吊费：{{resData.lift}}元
   .footer.row.bg-white.text-center.text-white.padding-sm

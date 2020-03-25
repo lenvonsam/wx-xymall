@@ -84,7 +84,7 @@
             .text-right.flex.justify-end(v-show="!isEdit")
               span 合计：
               b.text-red ￥{{totalPrice}}
-          .text-right.ft-12(style="color:#999;", v-show="!isEdit") 共{{totalCount}}件 ，{{totalWeight}}吨，吊费: {{totalLiftCharge}}元
+          .text-right.ft-12(style="color:#999;", v-show="!isEdit") 共{{totalCount}}支 ，{{totalWeight}}吨，吊费: {{totalLiftCharge}}元
         .cart-settle-btn.ft-18(@click="auditDxCheck(1)")
           span {{isEdit ? '删除' : '定向'}}
     .tab-select-dialog.solid-top(:style="{top: selectDialogTop + 'rpx'}", v-show="pickWayShow")
@@ -243,17 +243,20 @@ export default {
     },
     cartCalculation (newVal) {
       newVal = newVal || this.carts
+
       let filterArray = newVal.filter(item => {
         item.countWeight = this.$toFixed(Number(item.count * item.weight), 3)
         return item.choosed === true
       })
-      this.totalCount = filterArray.length
-      this.allChoosed = this.totalCount === newVal.length
+
+      this.allChoosed = filterArray.length === newVal.length
       this.totalPrice = 0
       this.totalWeight = 0
       this.totalLiftCharge = 0
+      let totalCount = 0
       if (filterArray.length > 0) {
         filterArray.map(itm => {
+          totalCount += itm.count
           if (Number(itm.lift_charge) > 0 && this.liftSelectVal === 1) {
             const countLiftWeight = Number(itm.countWeight) * itm.lift_charge
             this.totalPrice += Number(itm.dx_prices) * Number(itm.countWeight) + countLiftWeight
@@ -267,6 +270,7 @@ export default {
         this.totalPrice = this.$toFixed(Number(this.totalPrice), 2)
         this.totalWeight = this.$toFixed(Number(this.totalWeight), 3)
       }
+      this.totalCount = totalCount
     },
     customChange (e) {
       this.customSearchVal = e.mp.detail.value
