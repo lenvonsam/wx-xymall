@@ -126,7 +126,7 @@
           .padding-top-sm.row.justify-center
             .margin-right-sm.margin-left-sm(v-for="(r, rIdx) in radios", :key="rIdx")
               z-radio(@checkHander="lockCheck(r)", :label="r.label", :checked="lockGoods === r.val")
-    modal(v-model="modalDefaultShow", :btns="btns", @cb="modalDefaultHandler")
+    modal(v-model="modalDefaultShow", :btns="modalBtns === 'mall' ? mallBtns : btns", @cb="modalDefaultHandler")
       .padding-sm {{modalDefaultMsg}}
 </template>
 
@@ -165,6 +165,9 @@ export default {
       timeDown: '',
       pageType: '',
       qutId: '',
+      mallBtns: [
+        { label: '去商城', flag: 'mall', className: 'main-btn' }
+      ],
       btns: [
         { label: '取消', flag: 'cancel', className: 'bg-gray' },
         { label: '确定', flag: 'confirm', className: 'main-btn' }
@@ -173,6 +176,7 @@ export default {
         { label: '取消', flag: 'cancel', className: 'bg-gray' },
         { label: '确定', flag: 'confirm', className: 'main-btn', type: 'share' }
       ],
+      modalBtns: '',
       modalScrollHeight: 0,
       checkGoods: [],
       status: '',
@@ -278,6 +282,7 @@ export default {
     this.btnDisable = false
     this.modalDefaultMsg = ''
     this.modalDefaultShow = false
+    this.modalBtns = ''
     clearInterval(this.timeInterval)
   },
   mounted () {
@@ -325,6 +330,10 @@ export default {
       this.modalShow = true
     },
     modalDefaultHandler (flag) {
+      if (flag === 'mall') {
+        this.tab('/pages/mall/main')
+        return false
+      }
       if (flag === 'cancel') {
         this.enforce = 0
         this.modalDefaultShow = false
@@ -374,7 +383,7 @@ export default {
           cost_prices: costPrices.toString(),
           jl_types: jlTypes.toString(),
           total_money: this.$toFixed((totalPrice + totalLiftCharge), 2),
-          total_amount: this.tempObject.totalCount,
+          total_amount: this.totalCount,
           total_weight: this.$toFixed(totalWeight, 3),
           lift_money: totalLiftCharge,
           lock_goods: this.lockGoods
@@ -545,7 +554,13 @@ export default {
           me.hideLoading()
           me.modalDefaultShow = true
           me.modalDefaultMsg = err
-          me.enforce = 1
+          if (err === '该报价单中所有物资的可卖数量都不足！') {
+            this.modalBtns = 'mall'
+          } else {
+            this.modalBtns = ''
+            me.enforce = 1
+          }
+          // me.$forceUpdate()
         })
         //   } else {
         //     this.btnDisable = false

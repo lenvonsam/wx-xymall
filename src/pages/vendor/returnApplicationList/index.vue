@@ -101,8 +101,18 @@ export default {
     this.filterObj = {}
     this.searchVal = ''
     this.loadFinish = false
+    this.btnDisabled = false
   },
   onHide () {
+    this.tabName = '0,2'
+    this.currentPage = 0
+    this.listData = []
+    this.finished = true
+    this.isload = false
+    this.scrollHeight = 0
+    this.filterObj = {}
+    this.searchVal = ''
+    this.loadFinish = false
     this.btnDisabled = false
   },
   onShow () {
@@ -113,7 +123,7 @@ export default {
         dept_code: this.tempObject.dept.id || '',
         employee_code: this.tempObject.employee.id || ''
       }
-      this.search = this.tempObject.no
+      this.searchVal = this.tempObject.no
       this.status = this.tempObject.status
       this.currentPage = 0
     }

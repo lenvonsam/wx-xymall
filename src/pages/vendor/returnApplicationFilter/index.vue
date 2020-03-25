@@ -4,7 +4,7 @@ div
   .bg-white.text-right.text-gray(@click="closeSelect")
     .row.justify-between.solid-bottom.item(:style="itemSty")
       .label 提单号
-      input.col(type="text", v-model="form.no", placeholder="请输入合同号")
+      input.col(type="text", v-model="form.no", placeholder="请输入提单号")
     .row.justify-between.solid-bottom.item(@click.stop="openSelect('custom')", :style="itemSty")
       .label 客户名称
       .text-right.row.justify-end.col.select
