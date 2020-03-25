@@ -160,7 +160,8 @@ export default {
       customTotal: 0,
       customLoadFinish: 0,
       dxFilterArray: [],
-      flag: 1
+      flag: 1,
+      firstLoad: false
     }
   },
   components: {
@@ -210,6 +211,7 @@ export default {
     this.modalShow = false
     this.liftSelectVal = 1
     this.liftSelect = '收吊费'
+    this.firstLoad = false
   },
   onShow () {
     // this.loadCstmList()
@@ -223,14 +225,20 @@ export default {
     }
     this.selectDialogTop = this.getRpx(this.customBar) + 200
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 300 + 'rpx'
-    if (this.carts.length === 0) this.loadCartData()
+    if (this.carts.length === 0 && !this.firstLoad) {
+      this.firstLoad = true
+      this.loadCartData()
+    }
   },
   onReady () {
     if (this.isLogin) {
       this.loadCstmList()
       this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 300 + 'rpx'
       this.selectDialogTop = this.getRpx(this.customBar) + 200
-      this.loadCartData()
+      if (this.carts.length === 0 && !this.firstLoad) {
+        this.firstLoad = true
+        this.loadCartData()
+      }
     }
   },
   methods: {
