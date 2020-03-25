@@ -489,6 +489,7 @@ export default {
           this.totalWeight = data.weight
           this.totalLiftCharge = data.lift
           this.totalCount = data.amount
+          this.needLift = data.need_lift
         }
       } catch (e) {
         console.log(e)
@@ -515,7 +516,7 @@ export default {
           dx_prices: dxPrices.toString(),
           cost_prices: costPrices.toString(),
           jl_types: jlTypes.toString(),
-          need_lift: this.liftSelectVal,
+          need_lift: this.needLift,
           data_source: 0
         }
         const data = await this.ironRequest(this.apiList.xy.auditDxCheck.url, params, this.apiList.xy.auditDxCheck.method)
