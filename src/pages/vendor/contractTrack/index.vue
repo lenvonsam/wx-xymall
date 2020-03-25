@@ -42,8 +42,8 @@ div
                       .col
                         .flex.align-center
                           .ft-16.padding-right-sm {{item.tstc_no}}
-                          img.ding-icon(src="/static/images/ding.png", v-if="item.contract_type === 12")
-                          img.dingjin-icon(src="/static/images/dj_icon.png", v-if="item.pay_type === 2")
+                          img.ding-icon(src="/static/images/ding.png", v-if="item.contract_type == 12")
+                          img.dingjin-icon(src="/static/images/dj_icon.png", v-if="item.pay_type == 2")
                       .text-red(v-if="item.status == 14") {{item.status_desc}}
                       .text-gray(v-else) {{item.status_desc}}
                     .text-gray

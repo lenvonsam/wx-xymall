@@ -26,7 +26,7 @@ div
                       //- span.ml-5.ft-12(style="color:#666") ({{weightMark}})
                     .text-right.ft-16
                       span.text-red.ft-13(v-if="item.price === '--'") 开售时间:{{item.show_time}}
-                      span.text-blue(v-else-if="item.show_price === true") ￥{{item[mallTypeObject[itemType].price]}}
+                      span.text-blue(v-else-if="item.show_price === true") ￥{{item.price}}
                       .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)") 查看价格
                   .row.pt-5.flex-center.ft-12
                     .col.c-gray
@@ -418,24 +418,54 @@ export default {
           this.apiList.xy.mallList.method
         )
         const res = data
+        const resData = data.products
+        const userType = this.currentUser.type
         if (res.returncode === '0') {
           const idx = this.swiperCount
-          res.products.map(item => {
-            item.weightMark = item.price.split('/').length === 1 ? '理计' : '理计/磅计'
+          resData.map(item => {
+            const weightMark = []
+            const price = []
+            if (Number(item.bj_price) > 0) {
+              weightMark.push('磅计')
+              item.wayId = 1
+              price.push(item.bj_price)
+            }
+            if (Number(item.lj_price) > 0) {
+              item.wayId = 2
+              weightMark.push('理计')
+              price.push(item.lj_price)
+            }
+            if (Number(item.lj_price16) > 0) {
+              price.push(item.lj_price16)
+              item.wayId = 3
+              weightMark.push(userType === 'seller' ? '16理计' : '理计')
+            }
+            if (Number(item.lj_price10) > 0 && userType === 'seller') {
+              // item.wayId = 4
+              price.push(item.lj_price10)
+              weightMark.push('10理计')
+            }
+            if (price.length === 0) {
+              price.push('--')
+              item.wayId = 2
+              weightMark.push('理计')
+            }
+            item.weightMark = weightMark.toString().replace(/,/g, '/')
+            item.price = price.toString().replace(/,/g, '/')
           })
           if (me.isRefresh === 'refresh') {
-            if (res.products.length > 0 && me.currentPage === 0) {
-              me.goodsNameList[idx].data = res.products
+            if (resData.length > 0 && me.currentPage === 0) {
+              me.goodsNameList[idx].data = resData
               me.isload = false
               if (me.goodsNameList[idx].data.length < 10) me.loadFinish = 2
-            } else if (res.products.length === 0 && me.currentPage === 0) {
+            } else if (resData.length === 0 && me.currentPage === 0) {
               me.goodsNameList[idx].data = []
               me.isload = false
             }
           } else {
-            if (res.products.length > 0) {
-              me.goodsNameList[idx].data.push(...res.products)
-              if (res.products.length < 10) me.loadFinish = 2
+            if (resData.length > 0) {
+              me.goodsNameList[idx].data.push(...resData)
+              if (resData.length < 10) me.loadFinish = 2
             } else {
               me.currentPage--
               if (me.currentPage > 0 && me.goodsNameList[idx].data.length > 10) me.loadFinish = 2

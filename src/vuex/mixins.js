@@ -258,14 +258,14 @@ const wxMixins = {
             }
           )
         } else {
-          let mwId = 2
-          if (val.weight.split('/').length === 1) {
-            if (val.weight.indexOf('16理') > 0) {
-              mwId = 3
-            } else if (val.weight.indexOf('磅') > 0) {
-              mwId = 1
-            }
-          }
+          // let mwId = 2
+          // if (val.weight.split('/').length === 1) {
+          //   if (val.weight.indexOf('16理') > 0) {
+          //     mwId = 3
+          //   } else if (val.weight.indexOf('磅') > 0) {
+          //     mwId = 1
+          //   }
+          // }
           let url = this.apiList.xy.addCart.url
           if (this.currentUser.type === 'seller') {
             // 卖家
@@ -277,7 +277,7 @@ const wxMixins = {
               user_id: userId,
               product_id: val.id,
               count: 1,
-              measure_way: mwId
+              measure_way: val.wayId
             },
             'post'
           ).then(
@@ -286,7 +286,7 @@ const wxMixins = {
                 resolve({
                   type,
                   msg: '加入购物车成功',
-                  mway: mwId
+                  mway: val.wayId
                 })
               } else {
                 reject(new Error(resp.errormsg))

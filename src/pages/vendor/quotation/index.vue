@@ -84,7 +84,7 @@
               b.text-red ￥{{totalPrice}}
           .text-right.ft-12(style="color:#999;") 共{{totalCount}}件 ，{{totalWeight}}吨
             span(v-if="tempObject.need_lift === 1") ，吊费: {{totalLiftCharge}}元
-        .cart-settle-btn.ft-18(:class="status === '已完成' || status === '已失效' ? 'bg-gray' : 'bg-red'", v-if="pageType === 'share'", @click="goToSettle") 生成合同
+        .cart-settle-btn.ft-18(:class="status === '已完成' || status === '已失效' ? 'bg-gray' : 'bg-red'", v-if="pageType === 'share'", @click="auditDxCheck") 生成合同
         button.cart-settle-btn.bg-red.ft-18(@click="shareClick" v-else) 分享
     modal(:title="modalTitle", :btns="previewShow ? previewBtns : btns", :value="modalShow", @cb="modalHandler", :width="modalWidth")
       div
@@ -126,7 +126,8 @@
           .padding-top-sm.row.justify-center
             .margin-right-sm.margin-left-sm(v-for="(r, rIdx) in radios", :key="rIdx")
               z-radio(@checkHander="lockCheck(r)", :label="r.label", :checked="lockGoods === r.val")
-    
+    modal(v-model="modalDefaultShow", :btns="btns", @cb="modalDefaultHandler")
+      .padding-sm {{modalDefaultMsg}}
 </template>
 
 <script>
@@ -137,6 +138,8 @@ import modal from '@/components/Modal.vue'
 export default {
   data () {
     return {
+      modalDefaultShow: false,
+      modalDefaultMsg: '',
       previewShow: false,
       modalWidth: '70%',
       modalTitle: '是否进行锁货',
@@ -172,7 +175,8 @@ export default {
       ],
       modalScrollHeight: 0,
       checkGoods: [],
-      status: ''
+      status: '',
+      isAudit: false
     }
   },
   components: {
@@ -232,7 +236,11 @@ export default {
   onHide () {
     this.carts = []
     this.status = ''
+    this.pageType = ''
+    this.qutId = ''
     this.btnDisable = false
+    this.modalDefaultMsg = ''
+    this.modalDefaultShow = false
     // this.pageType = ''
   },
   onShow () {
@@ -262,6 +270,8 @@ export default {
     this.pageType = ''
     this.qutId = ''
     this.btnDisable = false
+    this.modalDefaultMsg = ''
+    this.modalDefaultShow = false
     clearInterval(this.timeInterval)
   },
   mounted () {
@@ -307,6 +317,13 @@ export default {
       this.modalWidth = '70%'
       this.previewShow = false
       this.modalShow = true
+    },
+    modalDefaultHandler (flag) {
+      if (flag === 'cancel') {
+        this.modalDefaultShow = false
+      } else {
+        this.goToSettle()
+      }
     },
     modalHandler (flag) {
       console.log(this.$refs.testShare)
@@ -456,6 +473,39 @@ export default {
         console.log(e)
       }
     },
+    async auditDxCheck () {
+      try {
+        if (this.btnDisable) return false
+        this.btnDisable = true
+        let orderIds = []
+        let dxPrices = []
+        let costPrices = []
+        let jlTypes = []
+        this.carts.map(itm => {
+          orderIds.push(itm.order_id)
+          dxPrices.push(itm.dx_price)
+          costPrices.push(itm.cost_price)
+          jlTypes.push(itm.metering_way_id)
+        })
+        const params = {
+          user_id: this.currentUser.user_id,
+          order_ids: orderIds.toString(),
+          dx_prices: dxPrices.toString(),
+          cost_prices: costPrices.toString(),
+          jl_types: jlTypes.toString(),
+          need_lift: this.liftSelectVal
+        }
+        const data = await this.ironRequest(this.apiList.xy.auditDxCheck.url, params, this.apiList.xy.auditDxCheck.method)
+        this.isAudit = data.errormsg !== '是否生成合同？ '
+        this.modalDefaultMsg = data.errormsg
+        this.modalDefaultShow = true
+        this.btnDisable = false
+        console.log(data)
+      } catch (error) {
+        this.btnDisable = false
+        this.showMsg(error)
+      }
+    },
     goToSettle () {
       if (this.status === '已完成' || this.status === '已失效') return false
       if (this.btnDisable) return false
@@ -465,19 +515,8 @@ export default {
         this.btnDisable = false
         return false
       }
-
-      // const filterArray = this.carts
+      this.modalDefaultShow = false
       const me = this
-      // let heFeiArray = filterArray.filter(itm => itm.warehouse.indexOf('合肥') >= 0)
-      // let dongGangArray = filterArray.filter(itm => itm.warehouse.indexOf('常州东港') >= 0)
-      // let msgs = ''
-      // if (heFeiArray.length > 0 && dongGangArray.length > 0) {
-      //   msgs = '所选物资包含合肥仓库,常州东港库物资最快次日可提'
-      // } else if (heFeiArray.length > 0) {
-      //   msgs = '所选物资包含合肥仓库'
-      // } else if (dongGangArray.length > 0) {
-      //   msgs = '常州东港库物资最快次日可提'
-      // }
       this.confirm({ content: '是否确认提交' }).then((res) => {
         if (res === 'confirm') {
           const params = {
@@ -487,8 +526,9 @@ export default {
           this.showLoading()
           me.ironRequest(this.apiList.xy.quotationDx.url, params, this.apiList.xy.quotationDx.method).then(resp => {
             this.hideLoading()
-            if (resp.returncode === '0') {
-              // me.btnDisable = false
+            if (this.isAudit) {
+              me.tab(`/pages/mall/main`)
+            } else {
               me.jump(`/pages/pay/main?orderNo=${resp.order_no}&price=${resp.deal_price}&pageType=offlinePay`)
             }
           }).catch(err => {

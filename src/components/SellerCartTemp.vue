@@ -531,27 +531,50 @@ export default {
           this.soldCarts = resp.sold_out_carts
           arr.map(itm => {
             itm.choosed = false
-            let allWeight = itm.one_weight
-            let wtArr = allWeight.split('/')
-            let prArr = itm.product_price.split('/')
-            let oldPrArr = itm.origin_price.split('/')
-            const newWeight = []
-            wtArr.map(item => {
-              newWeight.push(item.substring(0, item.indexOf('(')))
-            })
-
+            // let allWeight = itm.one_weight
+            // let wtArr = allWeight.split('/')
+            // let prArr = itm.product_price.split('/')
+            // let oldPrArr = itm.origin_price.split('/')
+            const prArr = []
+            const wtArr = []
+            const oldPrArr = []
+            if (Number(itm.bj_price) > 0) {
+              prArr.push(itm.bj_price)
+              wtArr.push(itm.bj_weight)
+              oldPrArr.push(itm.bj_origin_price)
+            }
+            if (Number(itm.lj_price) > 0) {
+              prArr.push(itm.lj_price)
+              wtArr.push(itm.lj_weight)
+              oldPrArr.push(itm.lj_origin_price)
+            }
+            if (Number(itm.lj_price16) > 0) {
+              prArr.push(itm.lj_price16)
+              wtArr.push(itm.lj_weight16)
+              oldPrArr.push(itm.lj_origin_price16)
+            }
+            if (Number(itm.lj_price10) > 0) {
+              prArr.push(itm.lj_price10)
+              wtArr.push(itm.lj_price10)
+              oldPrArr.push(itm.lj_price10)
+            }
+            if (prArr.length === 0) {
+              prArr.push('--')
+              wtArr.push(itm.lj_weight16)
+              oldPrArr.push(itm.lj_origin_price16)
+            }
             if (itm.trade_type === 1 && itm.produce_type === 1) {
               itm.radios = [{
                 label: '理计',
                 m_way: 2,
-                weight: newWeight[0],
+                weight: wtArr[0],
                 price: prArr[0],
                 originPrice: oldPrArr[0],
                 allowedPrice: itm.lj_allowed_price
               }, {
                 label: '磅计',
                 m_way: 1,
-                weight: newWeight[1],
+                weight: wtArr[1],
                 price: prArr[1],
                 originPrice: oldPrArr[1],
                 allowedPrice: itm.bj_allowed_price
@@ -560,7 +583,7 @@ export default {
               itm.radios = [{
                 label: '理计',
                 m_way: 2,
-                weight: newWeight[0],
+                weight: wtArr[0],
                 price: prArr[0],
                 originPrice: oldPrArr[0],
                 allowedPrice: itm.lj_allowed_price
@@ -569,7 +592,7 @@ export default {
               itm.radios = [{
                 label: '磅计',
                 m_way: 1,
-                weight: newWeight[0],
+                weight: wtArr[0],
                 price: prArr[0],
                 originPrice: oldPrArr[0],
                 allowedPrice: itm.bj_allowed_price
@@ -582,26 +605,26 @@ export default {
               itm.radios = [{
                 label: '16理计',
                 m_way: 3,
-                weight: newWeight[0],
+                weight: wtArr[0],
                 price: prArr[0],
                 originPrice: oldPrArr[0],
                 allowedPrice: itm.lj_allowed_price
               }, {
                 label: '10理计',
                 m_way: 4,
-                weight: newWeight[0],
+                weight: wtArr[0],
                 price: prArr[1],
                 originPrice: oldPrArr[1],
                 allowedPrice: itm.lj_allowed_price
               }]
             }
-            itm.weight = newWeight[0]
+            itm.weight = wtArr[0]
             itm.price = prArr[0]
             itm.originPrice = oldPrArr[0]
             itm.dx_prices = prArr[0]
             itm.allowedPrice = itm.measure_way_id === 1 ? itm.bj_allowed_price : itm.lj_allowed_price
             if (itm.measure_way_id === 1 || itm.measure_way_id === 4) {
-              itm.weight = itm.measure_way_id === 4 ? newWeight[0] : newWeight[1] || newWeight[0]
+              itm.weight = itm.measure_way_id === 4 ? wtArr[0] : wtArr[1] || wtArr[0]
               itm.price = prArr[1] || prArr[0]
               itm.originPrice = oldPrArr[1] || oldPrArr[0]
               itm.dx_prices = prArr[1] || prArr[0]
