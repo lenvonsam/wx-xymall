@@ -176,7 +176,8 @@ export default {
       modalScrollHeight: 0,
       checkGoods: [],
       status: '',
-      isAudit: false
+      isAudit: false,
+      enforce: 0
     }
   },
   components: {
@@ -237,6 +238,7 @@ export default {
     }
   },
   onHide () {
+    this.enforce = 0
     this.carts = []
     this.status = ''
     this.pageType = ''
@@ -270,6 +272,7 @@ export default {
     this.modalScrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 400 + 'rpx'
   },
   onUnload () {
+    this.enforce = 0
     this.pageType = ''
     this.qutId = ''
     this.btnDisable = false
@@ -323,6 +326,7 @@ export default {
     },
     modalDefaultHandler (flag) {
       if (flag === 'cancel') {
+        this.enforce = 0
         this.modalDefaultShow = false
       } else {
         this.goToSettle()
@@ -510,39 +514,49 @@ export default {
       }
     },
     goToSettle () {
-      if (this.status === '已完成' || this.status === '已失效') return false
-      if (this.btnDisable) return false
-      this.btnDisable = true
-      if (this.currentUser.type === 'seller') {
-        this.showMsg('卖家账号不能生成合同')
-        this.btnDisable = false
-        return false
-      }
-      this.modalDefaultShow = false
-      const me = this
-      this.confirm({ content: '是否确认提交' }).then((res) => {
-        if (res === 'confirm') {
-          const params = {
-            user_id: this.currentUser.user_id,
-            qut_id: this.qutId
-          }
-          this.showLoading()
-          me.ironRequest(this.apiList.xy.quotationDx.url, params, this.apiList.xy.quotationDx.method).then(resp => {
-            this.hideLoading()
-            if (this.isAudit) {
-              me.tab(`/pages/mall/main`)
-            } else {
-              me.jump(`/pages/pay/main?orderNo=${resp.order_no}&price=${resp.deal_price}&pageType=offlinePay`)
-            }
-          }).catch(err => {
-            me.btnDisable = false
-            this.hideLoading()
-            me.showMsg(err || '网络异常')
-          })
-        } else {
+      try {
+        if (this.status === '已完成' || this.status === '已失效') return false
+        if (this.btnDisable) return false
+        this.btnDisable = true
+        if (this.currentUser.type === 'seller') {
+          this.showMsg('卖家账号不能生成合同')
           this.btnDisable = false
+          return false
         }
-      })
+        this.modalDefaultShow = false
+        const me = this
+        // this.confirm({ content: '是否确认提交' }).then((res) => {
+        //   if (res === 'confirm') {
+        const params = {
+          user_id: this.currentUser.user_id,
+          qut_id: this.qutId,
+          enforce: this.enforce
+        }
+        this.showLoading()
+        me.ironRequest(this.apiList.xy.quotationDx.url, params, this.apiList.xy.quotationDx.method).then(resp => {
+          this.hideLoading()
+          if (this.isAudit) {
+            me.tab(`/pages/mall/main`)
+          } else {
+            me.jump(`/pages/pay/main?orderNo=${resp.order_no}&price=${resp.deal_price}&pageType=offlinePay`)
+          }
+        }).catch(err => {
+          me.btnDisable = false
+          me.hideLoading()
+          me.modalDefaultShow = true
+          me.modalDefaultMsg = err
+          me.enforce = 1
+        })
+        //   } else {
+        //     this.btnDisable = false
+        //   }
+        // })
+      } catch (err) {
+        this.showMsg(err || '网络异常')
+        // this.modalDefaultShow = true
+        // this.modalDefaultMsg = e
+        this.enforce = 1
+      }
     }
   }
 }

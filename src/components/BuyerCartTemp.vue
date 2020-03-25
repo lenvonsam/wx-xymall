@@ -528,15 +528,15 @@ export default {
             const wtArr = []
             const oldPrArr = []
             if (itm.trade_type === 1) {
-              if (Number(itm.bj_price) > 0) {
-                prArr.push(itm.bj_price)
-                wtArr.push(itm.bj_weight)
-                oldPrArr.push(itm.bj_origin_price)
-              }
               if (Number(itm.lj_price) > 0) {
                 prArr.push(itm.lj_price)
                 wtArr.push(itm.lj_weight)
                 oldPrArr.push(itm.lj_origin_price)
+              }
+              if (Number(itm.bj_price) > 0) {
+                prArr.push(itm.bj_price)
+                wtArr.push(itm.bj_weight)
+                oldPrArr.push(itm.bj_origin_price)
               }
             } else {
               if (Number(itm.lj_price16) > 0) {
