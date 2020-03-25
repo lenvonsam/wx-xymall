@@ -154,7 +154,8 @@ export default {
         { title: '自提点2-合肥徽商库', content: '合肥市庐阳区徽商钢材市场' },
         { title: '自提点3-合肥东港库', content: '合肥市大兴镇南淝河旁，合肥东港码头w' }
       ],
-      scrollHeight: 0
+      scrollHeight: 0,
+      firstLoad: false
     }
   },
   components: {
@@ -209,11 +210,21 @@ export default {
     this.carts = []
     this.soldCarts = []
     this.alertShow = false
+    this.firstLoad = false
+  },
+  onUnload () {
+    this.carts = []
+    this.soldCarts = []
+    this.alertShow = false
+    this.firstLoad = false
   },
   onReady () {
     if (this.isLogin) {
       this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 200 + 'rpx'
-      this.loadCartData()
+      if (this.carts.length === 0 && !this.firstLoad) {
+        this.firstLoad = true
+        this.loadCartData()
+      }
     }
   },
   onShow () {
@@ -227,7 +238,10 @@ export default {
       }
     }
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 200 + 'rpx'
-    if (this.carts.length === 0) this.loadCartData()
+    if (this.carts.length === 0 && !this.firstLoad) {
+      this.firstLoad = true
+      this.loadCartData()
+    }
   },
   methods: {
     ...mapActions([
