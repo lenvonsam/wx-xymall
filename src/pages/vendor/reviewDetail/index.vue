@@ -56,6 +56,9 @@ div
                 span.sub-mark.ml-5 {{item.supply}}
               span ({{item.metering_way}})
             .padding-bottom-xs {{item.amount}}支/{{item.weight}}吨
+            .padding-bottom-xs
+              span.padding-right-xs(v-if="item.tolerance_range") 公差范围 {{item.tolerance_range}}
+              span(v-if="item.weight_range") 重量范围 {{item.weight_range}}
             .solid-top.padding-top-xs.padding-bottom-xs.text-black
               span 定向价：
               span.text-blue ￥{{item.dx_price}}
