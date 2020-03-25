@@ -72,6 +72,27 @@
                   .col(style="flex: 0 0 60px;")
                     count-step(v-model="cart.count", @click.native="rowCartCount(cart)", @blur="rowCartCount(cart)", :max="cart.amount_left")
                   .padding-left-xs {{cart.countWeight}}吨
+            .margin-top-sm.padding-bottom-sm(v-if="soldCarts.length > 0", :class="{'padding-top-sm': carts.length === 0}")
+              .bg-white
+                .row.padding.flex-center.border-bottom-line
+                  .col 失效物资{{soldCarts.length}}件
+                  .ocl.text-right
+                    span.c-blue(@click="emptySoldItems") 清空失效物资
+                .solid-bottom.ft-12.text-gray(v-for="(itm, itmIdx) in soldCarts", :key="itmIdx")
+                  .padding
+                    span {{itm.product_name}}
+                    span.ml-5 {{itm.product_supply}}
+                  .padding.pt-0
+                    span 仓库：{{itm.wh_name}}
+                  .padding.pt-0
+                    span 规格：{{itm.product_standard}}
+                    q-btn.pull-right.no-shadow(color="grey-6", rounded, small) 失效
+                  .padding.pt-0
+                    span 材质：{{itm.product_material}}
+                  //- .row.padding.pt-0
+                    .col
+                      span 吊费：{{itm.price === '--' ? '--' : itm.lift_charge > 0 ? '￥' + itm.lift_charge + '/吨' : itm.lift_charge == 0 ? '无' : '线下结算'}}
+                    .col.text-right.c-black 物资不能购买，请联系客服
     .s-footer(v-if="carts.length > 0", style="height: 100rpx")
       .cart-footer.justify-between
         .col.cart-footer-col
