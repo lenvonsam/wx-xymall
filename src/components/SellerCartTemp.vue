@@ -555,7 +555,7 @@ export default {
             }
             if (Number(itm.lj_price10) > 0) {
               prArr.push(itm.lj_price10)
-              wtArr.push(itm.lj_price10)
+              wtArr.push(itm.lj_weight10)
               oldPrArr.push(itm.lj_price10)
             }
             if (prArr.length === 0) {
@@ -612,23 +612,31 @@ export default {
               }, {
                 label: '10理计',
                 m_way: 4,
-                weight: wtArr[0],
+                weight: wtArr[1],
                 price: prArr[1],
                 originPrice: oldPrArr[1],
                 allowedPrice: itm.lj_allowed_price
               }]
             }
-            itm.weight = wtArr[0]
-            itm.price = prArr[0]
-            itm.originPrice = oldPrArr[0]
-            itm.dx_prices = prArr[0]
-            itm.allowedPrice = itm.measure_way_id === 1 ? itm.bj_allowed_price : itm.lj_allowed_price
-            if (itm.measure_way_id === 1 || itm.measure_way_id === 4) {
-              itm.weight = itm.measure_way_id === 4 ? wtArr[0] : wtArr[1] || wtArr[0]
-              itm.price = prArr[1] || prArr[0]
-              itm.originPrice = oldPrArr[1] || oldPrArr[0]
-              itm.dx_prices = prArr[1] || prArr[0]
-            }
+            const idx = itm.radios.findIndex(item => {
+              return item.m_way === itm.measure_way_id
+            })
+            // itm.weight = wtArr[0] itm.radios[idx].weight
+            // itm.price = prArr[0]
+            // itm.originPrice = oldPrArr[0]
+            // itm.dx_prices = prArr[0]
+            itm.weight = itm.radios[idx].weight
+            itm.price = itm.radios[idx].price
+            itm.originPrice = itm.radios[idx].originPrice
+            itm.dx_prices = itm.radios[idx].price
+            itm.allowedPrice = itm.radios[idx].allowedPrice
+            // itm.allowedPrice = itm.measure_way_id === 1 ? itm.bj_allowed_price : itm.lj_allowed_price
+            // if (itm.measure_way_id === 1 || itm.measure_way_id === 4) {
+            //   itm.weight = itm.measure_way_id === 4 ? wtArr[0] : wtArr[1] || wtArr[0]
+            //   itm.price = prArr[1] || prArr[0]
+            //   itm.originPrice = oldPrArr[1] || oldPrArr[0]
+            //   itm.dx_prices = prArr[1] || prArr[0]
+            // }
             itm.cost_prices = 0
             this.carts.push(itm)
           })
