@@ -108,6 +108,7 @@ export default {
       const minDate = new Date(this.date2Str(new Date()) + ' 15:00').getTime()
       const nowDate = new Date().getTime()
       if (nowDate > minDate) maxDelayDate = 19
+      if (this.checkRow.att54) maxDelayDate = 99
       if (delayDate > maxDelayDate) {
         this.delayDate = maxDelayDate
         return false
