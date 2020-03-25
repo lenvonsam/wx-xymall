@@ -131,6 +131,8 @@ export default {
         }
       } catch (e) {
         this.btnDisabled = false
+        this.hideLoading()
+        this.showMsg(e)
         console.log(e)
       }
     }
