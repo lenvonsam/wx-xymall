@@ -19,9 +19,9 @@ div
           span.sub-mark.ml-5 {{item.supply}}
         span ({{item.metering_way}})  
       .padding-bottom-xs
-        span {{item.material}}支
+        span {{item.amount_left}}支
         span.padding-left-xs.padding-right-xs /
-        span {{item.weight}}吨
+        span {{item.amount_weight}}吨
         span.ml-5(v-if="resData.need_lift") 吊费：25 元/吨
       .padding-bottom-xs(v-if="item.tolerance_range || item.weight_range")
         span.padding-right-xs(v-if="item.tolerance_range") 公差范围：{{item.tolerance_range}}
