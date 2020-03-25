@@ -236,6 +236,7 @@ export default {
       } else {
         this.totalLiftCharge = this.$toFixed(val, 2)
       }
+      this.listChange(this.listData)
     },
     returnReasonCb (e) {
       this.returnReason = this.returnReasonList[e.mp.detail.value].name
