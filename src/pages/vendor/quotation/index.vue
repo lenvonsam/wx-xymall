@@ -496,6 +496,7 @@ export default {
     },
     async auditDxCheck () {
       try {
+        if (this.status === '已完成' || this.status === '已失效') return false
         if (this.btnDisable) return false
         this.btnDisable = true
         let orderIds = []
@@ -530,7 +531,6 @@ export default {
     },
     goToSettle () {
       try {
-        if (this.status === '已完成' || this.status === '已失效') return false
         if (this.btnDisable) return false
         this.btnDisable = true
         if (this.currentUser.type === 'seller') {

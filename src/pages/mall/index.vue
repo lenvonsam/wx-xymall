@@ -425,15 +425,16 @@ export default {
           resData.map(item => {
             const weightMark = []
             const price = []
-            if (Number(item.bj_price) > 0) {
-              weightMark.push('磅计')
-              item.wayId = 1
-              price.push(item.bj_price)
-            }
+
             if (Number(item.lj_price) > 0) {
               item.wayId = 2
               weightMark.push('理计')
               price.push(item.lj_price)
+            }
+            if (Number(item.bj_price) > 0) {
+              weightMark.push('磅计')
+              item.wayId = 1
+              price.push(item.bj_price)
             }
             if (Number(item.lj_price16) > 0) {
               price.push(item.lj_price16)
