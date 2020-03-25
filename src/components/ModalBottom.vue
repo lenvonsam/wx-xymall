@@ -1,7 +1,6 @@
 <template lang="pug">
-.cu-modal(:class="modalName")
-  .cu-dialog.bg-white(:style="{'mix-height': '280rpx', width: width}")
-    .padding.text-xl.text-black.text-center {{title}}
+.cu-modal.bottom-modal(:class="modalName", @click="btnClick('cancel')")
+  .cu-dialog.bg-white(:style="{'mix-height': '140rpx', width: '100%'}", @click.stop="")
     slot
     .padding.row.justify-center
       button.confirm-btn(
@@ -10,7 +9,7 @@
         :open-type="item.type",
         hover-class="hover-gray",
         :class="item.className",
-        @click="btnClick(item.flag)") {{item.label}}
+        @click.stop="btnClick(item.flag)") {{item.label}}
 </template>
 <script>
 export default {
@@ -26,10 +25,6 @@ export default {
         { label: '取消', flag: 'cancel', className: 'bg-gray' },
         { label: '确定', flag: 'confirm', className: 'main-btn' }
       ]
-    },
-    width: {
-      type: String,
-      default: '75%'
     }
   },
   data () {
@@ -60,6 +55,12 @@ export default {
   height 40px
   border-radius 5px
   font-size 14px
+.cu-dialog
+  overflow hidden
+  border-radius inherit !important
+  border-top-right-radius 10px !important
+  border-top-left-radius 10px !important
+  // max-height 300px
 // .confirm-btn
 // margin 0 auto
 // width 100px

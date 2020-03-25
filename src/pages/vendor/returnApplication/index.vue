@@ -255,9 +255,17 @@ export default {
         if (this.btnDisabled) return false
         this.btnDisabled = true
         const list = this.listData
-        let amountTotal = 0
+        // let amountTotal = 0
+        const seqIds = []
+        const amounts = []
+        const weights = []
+        const prices = []
         const filterArray = list.filter(item => {
-          amountTotal += item.count
+          // amountTotal += item.count
+          weights.push(item.countWeight)
+          amounts.push(item.count)
+          seqIds.push(item.seq_d)
+          prices.push(item.price)
           return item.choosed === true
         })
         if (filterArray.length === 0 && (!this.isliftShow || !this.totalLiftCharge)) {
@@ -270,13 +278,14 @@ export default {
           this.btnDisabled = false
           return false
         }
+        debugger
         const params = {
           user_id: this.currentUser.user_id,
           return_id: this.$root.$mp.query.id,
-          seq_d_more: filterArray[0].seq_d,
-          amount_more: amountTotal,
-          weight_more: this.totalGoodsWeight,
-          price_more: this.totalGoodsPrice,
+          seq_d_more: seqIds.toString(),
+          amount_more: amounts.toString(),
+          weight_more: weights.toString(),
+          price_more: prices.toString(),
           status: this.status,
           tostatus: 4,
           payment_real: this.totalPrice,

@@ -86,48 +86,47 @@
             span(v-if="tempObject.need_lift === 1") ，吊费: {{totalLiftCharge}}元
         .cart-settle-btn.ft-18(:class="status === '已完成' || status === '已失效' ? 'bg-gray' : 'bg-red'", v-if="pageType === 'share'", @click="auditDxCheck") 生成合同
         button.cart-settle-btn.bg-red.ft-18(@click="shareClick" v-else) 分享
-    modal(:title="modalTitle", :btns="previewShow ? previewBtns : btns", :value="modalShow", @cb="modalHandler", :width="modalWidth")
+    modal(:title="modalTitle", :btns="btns", :value="modalShow", @cb="modalHandler", :width="modalWidth")
       div
-        template(v-if="previewShow")
-          .bg-gray
-            scroll-view.scroll-view(scroll-y, :style="{height: modalScrollHeight}")
-              .cart-items.text-left(v-for="(cart, cartIdx) in checkGoods", :key="cartIdx")
-                .cart-item.padding-sm
-                  .flex.flex-center.align-center.ft-15.text-bold
-                    .col
-                      span {{cart.name}}
-                      span.padding-left-xs {{cart.standard}}
-                    .text-blue ￥{{cart.dx_prices}}
-                  .content.ft-13
-                    .text-gray
-                      div
-                        span {{cart.material}}
-                        span.ml-5 {{cart.length}}米
-                        span.ml-5 {{cart.warehouse}}
-                        span.sub-mark.ml-5 {{cart.supply}}
-                      .pt-5.row.justify-between
-                        .col
-                          span 吊费:
-                          span.ml-10 {{cart.price === '--' ? '--' : cart.lift > 0 ? '￥' + cart.lift + '/吨' : cart.lift == 0 ? '无' : '线下结算'}}
-                        span （{{cart.meteringWay}}）
-                      .pt-5(v-if="cart.tolerance_range || cart.weight_range")
-                        span(v-if="cart.tolerance_range") 公差范围:
-                        span.ml-10.mr-10(v-if="cart.tolerance_range") {{cart.tolerance_range}}
-                        span.ml-10(v-if="cart.weight_range") 重量范围:
-                        span.ml-10(v-if="cart.weight_range") {{cart.weight_range}}
-                      .pt-5
-                        span 数量：
-                        span.ml-10 {{cart.count}}支
-                        span.padding-left-xs 重量：
-                        span.ml-10 {{cart.countWeight}}
-                        span 吨
-        template(v-else)    
-          .text-gray 2小时未生成合同，物资自动释放
-          .padding-top-sm.row.justify-center
-            .margin-right-sm.margin-left-sm(v-for="(r, rIdx) in radios", :key="rIdx")
+        .text-gray 2小时未生成合同，物资自动释放
+        .padding-top-sm.row.justify-center
+          .margin-right-sm.margin-left-sm(v-for="(r, rIdx) in radios", :key="rIdx")
               z-radio(@checkHander="lockCheck(r)", :label="r.label", :checked="lockGoods === r.val")
     modal(v-model="modalDefaultShow", :btns="modalBtns === 'mall' ? mallBtns : btns", @cb="modalDefaultHandler")
       .padding-sm {{modalDefaultMsg}}
+    modal-bottom(:btns="previewBtns", :value="previewShow", @cb="modalHandler")
+      .bg-gray
+        scroll-view.scroll-view(scroll-y, :style="{'max-height': '800rpx', 'min-height': '400rpx'}")
+          .cart-items.text-left(v-for="(cart, cartIdx) in checkGoods", :key="cartIdx", style="margin-bottom: 20rpx; padding-top: 0rpx;")
+            .cart-item.padding-sm
+              .flex.flex-center.align-center.ft-15.text-bold
+                .col
+                  span {{cart.name}}
+                  span.padding-left-xs {{cart.standard}}
+                .text-blue ￥{{cart.dx_prices}}
+              .content.ft-13
+                .text-gray
+                  div
+                    span {{cart.material}}
+                    span.ml-5 {{cart.length}}米
+                    span.ml-5 {{cart.warehouse}}
+                    span.sub-mark.ml-5 {{cart.supply}}
+                  .pt-5.row.justify-between
+                    .col
+                      span 吊费:
+                      span.ml-10 {{cart.price === '--' ? '--' : cart.lift > 0 ? '￥' + cart.lift + '/吨' : cart.lift == 0 ? '无' : '线下结算'}}
+                    span （{{cart.meteringWay}}）
+                  .pt-5(v-if="cart.tolerance_range || cart.weight_range")
+                    span(v-if="cart.tolerance_range") 公差范围:
+                    span.ml-10.mr-10(v-if="cart.tolerance_range") {{cart.tolerance_range}}
+                    span.ml-10(v-if="cart.weight_range") 重量范围:
+                    span.ml-10(v-if="cart.weight_range") {{cart.weight_range}}
+                  .pt-5
+                    span 数量：
+                    span.ml-10 {{cart.count}}支
+                    span.padding-left-xs 重量：
+                    span.ml-10 {{cart.countWeight}}
+                    span 吨
 </template>
 
 <script>
@@ -135,6 +134,8 @@ import CountStep from '@/components/CountStep.vue'
 import { mapState, mapActions } from 'vuex'
 import timeLine from '@/components/TimeLine.vue'
 import modal from '@/components/Modal.vue'
+import modalBottom from '@/components/ModalBottom.vue'
+
 export default {
   data () {
     return {
@@ -165,16 +166,16 @@ export default {
       timeDown: '',
       pageType: '',
       qutId: '',
-      mallBtns: [
-        { label: '去商城', flag: 'mall', className: 'main-btn' }
-      ],
       btns: [
         { label: '取消', flag: 'cancel', className: 'bg-gray' },
         { label: '确定', flag: 'confirm', className: 'main-btn' }
       ],
+      mallBtns: [
+        { label: '去商城', flag: 'mall', className: 'main-btn' }
+      ],
       previewBtns: [
         { label: '取消', flag: 'cancel', className: 'bg-gray' },
-        { label: '确定', flag: 'confirm', className: 'main-btn', type: 'share' }
+        { label: '分享', flag: 'confirm', className: 'main-btn', type: 'share' }
       ],
       modalBtns: '',
       modalScrollHeight: 0,
@@ -187,7 +188,8 @@ export default {
   components: {
     CountStep,
     timeLine,
-    modal
+    modal,
+    modalBottom
   },
   computed: {
     ...mapState({
@@ -235,7 +237,7 @@ export default {
   onShareAppMessage (res) {
     console.log('qutId', this.qutId)
     this.modalShow = false
-    // this.previewShow = false
+    this.previewShow = false
     return {
       title: '报价清单',
       path: '/pages/vendor/quotation/main?pageType=share&&qutId=' + this.qutId
@@ -253,6 +255,7 @@ export default {
     // this.pageType = ''
   },
   onShow () {
+    // this.previewShow = true
     if (!this.isLogin) {
       const me = this
       this.confirm({ title: '友情提示', content: '您未登录,请先登录' }).then(res => {
@@ -344,6 +347,7 @@ export default {
     modalHandler (flag) {
       console.log(this.$refs.testShare)
       if (flag === 'cancel') {
+        this.previewShow = false
         this.modalShow = false
       } else if (!this.previewShow) {
         let orderIds = []
@@ -393,6 +397,7 @@ export default {
             this.modalTitle = '报价预览'
             this.modalWidth = '98%'
             this.qutId = res.qut_id
+            this.modalShow = false
             this.previewShow = true
           }
           this.showMsg(res.errormsg)
@@ -509,7 +514,8 @@ export default {
           dx_prices: dxPrices.toString(),
           cost_prices: costPrices.toString(),
           jl_types: jlTypes.toString(),
-          need_lift: this.liftSelectVal
+          need_lift: this.liftSelectVal,
+          data_source: 0
         }
         const data = await this.ironRequest(this.apiList.xy.auditDxCheck.url, params, this.apiList.xy.auditDxCheck.method)
         this.isAudit = data.errormsg !== '是否生成合同？ '

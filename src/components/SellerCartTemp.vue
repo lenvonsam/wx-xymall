@@ -59,14 +59,14 @@
                         .text-gray (可让{{cart.allowedPrice}}元)
                         .flex.flex-direction.justify-between.pt-5
                           z-radio(@checkHander="weightChoose(r.m_way, cart)", v-for="(r, rIdx) in cart.radios", :key="rIdx", :label="r.label", :checked="cart.measure_way_id === r.m_way")
-                .margin-top-xs.padding-sm.solid-top.solid-bottom.padding-top-sm.padding-bottom-sm.row.text-gray
+                .margin-top-xs.padding-sm.solid-top.solid-bottom.padding-top-sm.padding-bottom-sm.row.text-gray.price
                   .text-black 定向价格：
                   .col.ml-5.padding-xs.solid.line-gray
-                    input(type="digit", v-model="cart.dx_prices")
+                    input(type="digit", v-model="cart.dx_prices", maxlength="8", @blur="dxPriceChange(cart)")
                   .padding-left-xs 元
                   .padding-left-xs.text-black 费用：
                   .col.ml-5.padding-xs.solid.line-gray
-                    input(type="digit", v-model="cart.cost_prices")
+                    input(type="digit", v-model="cart.cost_prices", maxlength="8", @blur="costPriceChange(cart)")
                   .padding-left-xs 元
                 .row.padding-sm.justify-end.align-end
                   .col(style="flex: 0 0 60px;")
@@ -270,10 +270,17 @@ export default {
       this.pickWayShow = false
       this.tabActive = 0
     },
+    dxPriceChange (cart) {
+      if (!cart.dx_prices) cart.dx_prices = cart.price
+    },
+    costPriceChange (cart) {
+      if (!cart.cost_prices) cart.cost_prices = 0
+    },
     cartCalculation (newVal) {
       newVal = newVal || this.carts
 
       let filterArray = newVal.filter(item => {
+        // if (!item.dx_prices) item.dx_prices = item.price
         item.countWeight = this.$toFixed(Number(item.count * item.weight), 3)
         return item.choosed === true
       })
@@ -488,15 +495,18 @@ export default {
           need_lift: this.liftSelectVal
         }
         const data = await this.ironRequest(this.apiList.xy.auditDxCheck.url, params, this.apiList.xy.auditDxCheck.method)
-        console.log(data)
         if (data.returncode === '0') {
-          this.modalMsg = data.errormsg
-          this.modalShow = true
           this.flag = flag
           this.dxFilterArray = filterArray
-          if (data.errormsg === '是否生成合同？ ' && flag !== 1) {
+          this.modalMsg = data.errormsg
+          if (data.errormsg === '是否生成合同？ ' && flag === 2) {
             this.modalShow = false
             this.generateQuotation()
+          } else if (flag === 2) {
+            this.modalMsg += '注：客户如从报价单中生成合同，则需要定向审核'
+            this.modalShow = true
+          } else {
+            this.modalShow = true
           }
           this.btnDisable = false
         }
@@ -880,4 +890,9 @@ radio.radio[checked]::after
   &:last-child
     &:after
       display none
+.price
+  input
+    color #333
+    font-size 30rpx
+    font-weight bold
 </style>

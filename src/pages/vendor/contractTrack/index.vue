@@ -1,5 +1,5 @@
 <template lang="pug">
-div
+div(@click="openStatus=false")
   nav-bar(title="合同跟踪", isBack)
   .head.bg-white(:style="{height: '210rpx'}")
     .serach.flex.align-center.padding-sm
@@ -19,13 +19,13 @@ div
           .flex.text-center
             .cu-item.flex-sub(:id="'idx_'+index", v-for="(item,index) in billTab", :class="item.status === tabName ? 'text-blue cur':''", :key="index", @click="selectTabs(item, index)")
               span {{item.title}}
-      .tab-more.row.justify-center(@click="openStatus = !openStatus", :class="{'text-blue': openStatus}")
+      .tab-more.row.justify-center(@click.stop="openStatus = !openStatus", :class="{'text-blue': openStatus}")
         .cuIcon-fold.text-xl(v-if="openStatus")
         .cuIcon-unfold.text-xl(v-else)
     .relative(v-if="openStatus")
       .status-box.solid-top(:style="{height: scrollHeight + 'rpx'}")
         .bg-white.padding-sm.row.flex-wrap.text-center.justify-between
-          .status-item(:class="item.status === tabName ? 'text-white bg-blue':''", v-for="(item,index) in billTab", :key="index", @click="selectTabs(item, index)")
+          .status-item(:class="item.status === tabName ? 'text-white bg-blue':''", v-for="(item,index) in billTab", :key="index", @click.stop="selectTabs(item, index)")
             span {{item.title}}
   swiper.bill-content(@change="swiperChange", :current="swiperCount", :style="{height: scrollHeight+'rpx'}")
     swiper-item(v-for="(tabItem, swiperIdx) in billTab.length", :key="swiperIdx")

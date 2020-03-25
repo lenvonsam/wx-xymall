@@ -7,10 +7,21 @@ div
         span {{item.name}} {{item.standard}}
         .text-blue ¥ {{auditType === '定向' ? item.order_price : item.price}}
       .text-gray
-        .row.padding-bottom-xs
-          .col.row
-            span {{item.material}}
-          span ({{item.metering_way_str}}) 
+        template(v-if="subsNo")
+          .row.padding-bottom-xs
+            .col.row
+              span {{item.material}}
+            span ({{item.metering_way_str}})
+        template(v-else)  
+          .padding-bottom-xs.row
+            .col
+              span {{item.material}}
+              span.padding-left-xs {{item.lengths}}米 
+              span.padding-left-xs {{item.warehouse_name}}
+            span ({{item.metering_way_str}})  
+          .padding-bottom-xs(v-if="item.gcfw || item.zlfw")
+            span.padding-right-xs(v-if="item.gcfw") 公差范围：{{item.gcfw}}
+            span(v-if="item.zlfw") 重量范围：{{item.zlfw}}    
         .padding-bottom-xs {{item.amount}}支/{{item.weight}}吨/{{item.money}}元
     .padding-sm.text-black(style="margin-bottom: 100rpx")
       .row.justify-between.padding-bottom-xs
@@ -112,8 +123,8 @@ export default {
         this.totalCount += Number(item.count)
       })
       this.listData = resList
-      this.returnReason = tempObject.return_reason
-      this.returnRemark = tempObject.return_remark
+      this.returnReason = tempObject.params.return_reason
+      this.returnRemark = tempObject.params.return_remark
       this.totalGoodsWeight = tempObject.totalGoodsWeight
       this.totalGoodsPrice = tempObject.totalGoodsPrice
       this.totalPrice = tempObject.totalPrice

@@ -419,7 +419,7 @@ export default {
         )
         const res = data
         const resData = data.products
-        const userType = this.currentUser.type
+        // const userType = this.currentUser.type
         if (res.returncode === '0') {
           const idx = this.swiperCount
           resData.map(item => {
@@ -438,13 +438,14 @@ export default {
             if (Number(item.lj_price16) > 0) {
               price.push(item.lj_price16)
               item.wayId = 3
-              weightMark.push(userType === 'seller' ? '16理计' : '理计')
+              weightMark.push('理计')
+              // weightMark.push(userType === 'seller' ? '16理计' : '理计')
             }
-            if (Number(item.lj_price10) > 0 && userType === 'seller') {
-              // item.wayId = 4
-              price.push(item.lj_price10)
-              weightMark.push('10理计')
-            }
+            // if (Number(item.lj_price10) > 0 && userType === 'seller') {
+            //   // item.wayId = 4
+            //   price.push(item.lj_price10)
+            //   weightMark.push('10理计')
+            // }
             if (price.length === 0) {
               price.push('--')
               item.wayId = 2
