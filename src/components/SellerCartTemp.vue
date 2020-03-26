@@ -278,7 +278,6 @@ export default {
     },
     cartCalculation (newVal) {
       newVal = newVal || this.carts
-
       let filterArray = newVal.filter(item => {
         // if (!item.dx_prices) item.dx_prices = item.price
         item.countWeight = this.$toFixed(Number(item.count * item.weight), 3)
@@ -298,7 +297,7 @@ export default {
             this.totalPrice += Number(itm.dx_prices) * Number(itm.countWeight) + countLiftWeight
             this.totalLiftCharge += countLiftWeight
           } else {
-            this.totalPrice += Number(itm.dx_prices) * Number(itm.count * itm.weight)
+            this.totalPrice += Number(itm.dx_prices) * Number(itm.countWeight)
           }
           this.totalWeight += Number(itm.countWeight)
         })

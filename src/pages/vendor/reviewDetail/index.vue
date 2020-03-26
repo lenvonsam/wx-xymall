@@ -34,10 +34,12 @@ div
           .row.justify-between.text-gray.padding-bottom-xs
             .col 共{{detailData.totalAmount}}支，{{detailData.totalWeight}}吨
             span 操作员：{{detailData.operName}}
-        .solid-top.padding-top-xs.padding-bottom-xs
+        .solid-top.padding-top-xs.padding-bottom-xs.row.justify-between
           template(v-if="auditType !== '退货'")
-            span {{auditType==='定向' ? '' : '付款'}}截至时间：
-            span.text-red.padding-left-xs {{detailData.endTime}}
+            .col
+              span {{auditType==='定向' ? '' : '付款'}}截至时间：
+              span.text-red.padding-left-xs {{detailData.endTime}}
+            span(v-if="auditType==='定向'") {{detailData.needLift ? '收吊费' : '免吊费'}}  
           template(v-else)  
             span.text-black {{detailData.endTime}}
       //- template(v-if="auditType !== '延时'")
@@ -259,6 +261,7 @@ export default {
           switch (this.auditType) {
             case '定向':
               this.detailData = {
+                needLift: data.order_lift,
                 billNo: data.deal_no,
                 custName: data.cust_name,
                 totalAmount: data.amount,
