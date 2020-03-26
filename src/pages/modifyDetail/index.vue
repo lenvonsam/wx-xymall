@@ -229,10 +229,14 @@ export default {
               me.back()
             }, 3000)
           } else {
+            this.btnDisabled = false
             this.showMsg(res.msg ? res.msg : '操作失败')
+            return false
           }
         }).catch(err => {
+          this.btnDisabled = false
           this.showMsg(err)
+          return false
         })
       })
     },

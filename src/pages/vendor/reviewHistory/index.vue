@@ -184,9 +184,15 @@ export default {
         this.jump(`/pages/billDetail/main?id=${item.tstc_no}`)
         return false
       }
+      // debugger
+      // if (item.audit_type === 3) {
+      //   this.jump(`/pages/vendor/returnApplicationDetail/main?subsNo=HT20031900002&status=${item.status}`)
+      //   return false
+      // }
       item.auditType = this.auditType[item.audit_type]
       item.statusStr = this.statusList[item.status] || '待审核'
       item.fromPage = 'reviewHistory'
+      item.return_id = item.discussid
       this.configVal({ key: 'tempObject', val: item })
       this.jump(`/pages/vendor/reviewDetail/main`)
     }
