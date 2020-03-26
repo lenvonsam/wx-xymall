@@ -530,6 +530,7 @@ export default {
         rowItem.dx_prices = rowItem.radios[1].price
         rowItem.allowedPrice = rowItem.radios[1].allowedPrice
       }
+      if (this.liftSelectVal === 2) rowItem.dx_prices = Number(rowItem.dx_prices) + 30
       this.ironRequest('cartUpdate.shtml', { cart_id: rowItem.cart_id, user_id: this.currentUser.user_id, measure_way: val, count: rowItem.count, data_source: 1 }, 'post').then(res => {
       })
       this.$forceUpdate()
