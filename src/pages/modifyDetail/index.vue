@@ -6,7 +6,7 @@ div
       span {{contractDetail.deal_no}}
       span.padding-left-sm(v-if="contractDetail.status != 18 && contractDetail.status != 19") {{billStatus}}
     .text-red(v-if="contractDetail.status == 18 || contractDetail.status == 19") {{billStatus}}
-    .text-right(@click="openEdit()", v-else-if="contractDetail.status === 14") {{isEdit ? '完成' : '编辑'}} 
+    .text-right(@click="openEdit()", v-else-if="contractDetail.status === 14 || contractDetail.status === 15") {{isEdit ? '完成' : '编辑'}} 
   
   template(v-if="isload")
     time-line(type="mallist")
@@ -85,11 +85,12 @@ div
           button.text-white.bg-blue(@click="agreeEdit()") 同意修改
       .solid-top.solid-top-sm(v-else-if="contractDetail.status === 18")
         button.bg-gray 修改审核中
-      .solid-top.solid-top-sm.row(v-else-if="contractDetail.status === 12 || contractDetail.status === 14 || contractDetail.status === 15")
+      //- .solid-top.solid-top-sm.row(v-else-if="((contractDetail.status === 12 || contractDetail.status === 14) && currentUser.user_id === 'buyer') || ((contractDetail.status === 15 || contractDetail.status === 16) && currentUser.user_id === 'seller')")
+      .solid-top.solid-top-sm.row(v-else-if="editStatus.indexOf(contractDetail.status) !== -1")
         .col.padding-right-xs
           button.bg-gray(@click="back") 放弃修改
         .col.padding-left-xs
-          button.text-white.bg-blue(@click="applyEdit") 申请修改  
+          button.text-white.bg-blue(@click="applyEdit") 申请修改
     //- .bill-foot.bg-white.padding-sm
       .flex
         .text-black 旧单金额
@@ -120,7 +121,8 @@ export default {
       billStatus: '',
       newBillPrice: 0,
       allChoosed: true,
-      btnDisabled: false
+      btnDisabled: false,
+      editStatus: [12, 14, 15, 16]
     }
   },
   components: {
@@ -371,7 +373,7 @@ export default {
             if (me.contractDetail.is_lift !== 1) {
               isLift = 2
             }
-            me.newPrice = Number(this.$toFixed(me.newPrice - res.price, 2))
+            me.newPrice = me.newPrice - res.price
             // me.newLift -= Number(oldLift)
             // me.newLift = Number(this.$toFixed(me.newLift, 2))
             res.count = 0
@@ -383,6 +385,7 @@ export default {
           me.newLift = Number(this.$toFixed(me.newLift, 2))
           me.modifyList = list
         })
+        me.newPrice = Number(this.$toFixed(me.newPrice, 2))
         this.getNewBillPrice()
       })
     },

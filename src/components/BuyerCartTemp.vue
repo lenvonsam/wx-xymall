@@ -584,12 +584,14 @@ export default {
             const idx = itm.radios.findIndex(item => {
               return item.m_way === itm.measure_way_id
             })
-            itm.weight = itm.radios[idx].weight
-            itm.price = itm.radios[idx].price
-            itm.originPrice = itm.radios[idx].originPrice
-            itm.dx_prices = itm.radios[idx].price
-            itm.allowedPrice = itm.radios[idx].allowedPrice
-            this.carts.push(itm)
+            if (idx !== -1) {
+              itm.weight = itm.radios[idx].weight
+              itm.price = itm.radios[idx].price
+              itm.originPrice = itm.radios[idx].originPrice
+              itm.dx_prices = itm.radios[idx].price
+              itm.allowedPrice = itm.radios[idx].allowedPrice
+              this.carts.push(itm)
+            }
           })
           this.tabDot(this.carts.length + this.soldCarts.length)
         } else {

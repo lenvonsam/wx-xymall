@@ -279,7 +279,6 @@ export default {
           this.btnDisabled = false
           return false
         }
-        debugger
         const params = {
           user_id: this.currentUser.user_id,
           return_id: this.$root.$mp.query.id,

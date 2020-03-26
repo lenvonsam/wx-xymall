@@ -184,7 +184,6 @@ export default {
         this.jump(`/pages/billDetail/main?id=${item.tstc_no}`)
         return false
       }
-      // debugger
       if (item.audit_type === 3) {
         this.jump(`/pages/vendor/returnApplicationDetail/main?subsNo=${item.tstc_no}`)
         return false
