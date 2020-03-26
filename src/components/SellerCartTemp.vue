@@ -582,10 +582,10 @@ export default {
                 itm.radios.push({
                   label: '理计',
                   m_way: 2,
-                  weight: itm.lj_price,
+                  weight: itm.lj_weight,
                   price: itm.lj_price,
                   originPrice: itm.lj_origin_price,
-                  allowedPrice: itm.lj_origin_price
+                  allowedPrice: itm.lj_allowed_price
                 })
               }
               if (Number(itm.bj_price) > 0) {
