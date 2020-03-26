@@ -6,7 +6,7 @@ div
       span {{contractDetail.deal_no}}
       span.padding-left-sm(v-if="contractDetail.status != 18 && contractDetail.status != 19") {{billStatus}}
     .text-red(v-if="contractDetail.status == 18 || contractDetail.status == 19") {{billStatus}}
-    .text-right(@click="openEdit()", v-else-if="contractDetail.status === 14 || contractDetail.status === 15") {{isEdit ? '完成' : '编辑'}} 
+    .text-right(@click="openEdit()", v-else-if="contractDetail.status === 14 || currentUser.type === 'seller'") {{isEdit ? '完成' : '编辑'}} 
   
   template(v-if="isload")
     time-line(type="mallist")
@@ -85,7 +85,7 @@ div
           button.text-white.bg-blue(@click="agreeEdit()") 同意修改
       .solid-top.solid-top-sm(v-else-if="contractDetail.status === 18")
         button.bg-gray 修改审核中
-      //- .solid-top.solid-top-sm.row(v-else-if="((contractDetail.status === 12 || contractDetail.status === 14) && currentUser.user_id === 'buyer') || ((contractDetail.status === 15 || contractDetail.status === 16) && currentUser.user_id === 'seller')")
+      //- .solid-top.solid-top-sm.row(v-else-if="((contractDetail.status === 12 || contractDetail.status === 14) && currentUser.type === 'buyer') || ((contractDetail.status === 15 || contractDetail.status === 16) && currentUser.type === 'seller')")
       .solid-top.solid-top-sm.row(v-else-if="editStatus.indexOf(contractDetail.status) !== -1")
         .col.padding-right-xs
           button.bg-gray(@click="back") 放弃修改
@@ -365,27 +365,25 @@ export default {
         const list = []
         const lift = me.wh_lift.lift
         let delWeight = 0
+        let delPrice = 0
         modifyList.find((res, index) => {
           if (res.choosed) {
             let isLift = me.wh_lift[res.wh_name]
-            // const oldLift = isLift === '1' ? this.$toFixed(Number(res.weight) * lift, 2) : 0
             delWeight += isLift === '1' ? Number(res.weight) : 0
             if (me.contractDetail.is_lift !== 1) {
               isLift = 2
             }
-            me.newPrice = me.newPrice - res.price
-            // me.newLift -= Number(oldLift)
-            // me.newLift = Number(this.$toFixed(me.newLift, 2))
+            delPrice += res.price
             res.count = 0
             me.delModifyList.push(res)
           } else {
             list.push(res)
           }
-          me.newLift -= delWeight * lift
-          me.newLift = Number(this.$toFixed(me.newLift, 2))
-          me.modifyList = list
         })
-        me.newPrice = Number(this.$toFixed(me.newPrice, 2))
+        me.newLift = me.newLift - Number(this.$toFixed(delWeight * lift, 2))
+        me.newLift = Number(this.$toFixed(me.newLift, 2))
+        me.modifyList = list
+        me.newPrice = Number(this.$toFixed(Number(me.newPrice) - delPrice))
         this.getNewBillPrice()
       })
     },

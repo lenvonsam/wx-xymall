@@ -37,7 +37,7 @@ div
                   .flex.justify-between.padding-bottom-xs 
                     span 共{{item.amount}}支，{{item.weight}}吨
                     span 延时：{{item.delay_times}}
-                .solid-top.text-black.ft-15.margin-top-xs.padding-top-sm.row(v-if="item.status === 15 || item.status === 14")
+                .solid-top.text-black.ft-15.margin-top-xs.padding-top-sm.row
                   .col
                     span 付款倒计时：
                     span.padding-left-xs.text-black {{item.end_pay_time}}
