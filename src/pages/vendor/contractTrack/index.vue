@@ -42,8 +42,8 @@ div(@click="openStatus=false")
                       .col
                         .flex.align-center
                           .ft-16.padding-right-sm {{item.tstc_no}}
-                          img.ding-icon(src="/static/images/ding.png", v-if="item.contract_type == 12")
-                          img.dingjin-icon(src="/static/images/dj_icon.png", v-if="item.pay_type == 2")
+                          img.ding-icon.margin-right-xs(src="/static/images/ding.png", v-if="item.contract_type == 12")
+                          img.dingjin-icon.margin-right-xs(src="/static/images/dj_icon.png", v-if="item.pay_type == 2")
                           img.dingjin-icon(src="/static/images/baitiao_icon.png", v-if="item.pay_type == 3")
                       .text-red(v-if="item.status == 14") {{item.status_desc}}
                       .text-gray(v-else) {{item.status_desc}}
@@ -54,7 +54,7 @@ div(@click="openStatus=false")
                       .flex.justify-between.padding-bottom-xs 
                         span 共{{item.total_left_qtt}}支，{{item.total_provided_qtt}}吨
                         span 吊费：¥{{item.lift_money}}
-                  .solid-top.text-black.ft-15.padding-sm.row(v-if="item.status === 15 || item.status === 14 || item.status === 12")
+                  .solid-top.text-black.ft-15.padding-sm.row
                     .col
                       template(v-if="item.status === 14")
                         span 倒计时：
