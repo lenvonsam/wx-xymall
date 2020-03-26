@@ -106,12 +106,12 @@ export default {
     this.btnDisabled = false
   },
   onHide () {
-    this.tabName = '0,2'
+    // this.tabName = '0,2'
     this.currentPage = 0
     this.listData = []
     this.finished = true
     this.isload = false
-    this.scrollHeight = 0
+    // this.scrollHeight = 0
     this.filterObj = {}
     this.searchVal = ''
     this.loadFinish = false
