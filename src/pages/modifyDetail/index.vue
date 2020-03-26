@@ -381,9 +381,9 @@ export default {
           }
         })
         me.newLift = me.newLift - Number(this.$toFixed(delWeight * lift, 2))
-        me.newLift = Number(this.$toFixed(me.newLift, 2))
+        me.newLift = list.length ? Number(this.$toFixed(me.newLift, 2)) : 0
         me.modifyList = list
-        me.newPrice = Number(this.$toFixed(Number(me.newPrice) - delPrice))
+        me.newPrice = list.length ? Number(this.$toFixed(Number(me.newPrice) - delPrice)) : 0
         this.getNewBillPrice()
       })
     },

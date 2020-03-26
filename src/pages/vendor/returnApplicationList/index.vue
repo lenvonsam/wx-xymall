@@ -30,7 +30,7 @@ div
                   .ft-16.padding-right-sm.text-blue 
                     span {{item.lad_no}}
                     copy-btn(:copyUrl="item.lad_no")
-                div(:class="item.status === 4 ? 'text-red' : 'text-black'") {{statusObj[item.status]}}
+                div(:class="item.status === 4 ? 'text-red' : 'text-black'") {{item.canceler_no === '597' && item.status === 7 ? '卖家取消' : statusObj[item.status]}}
               div(@click="jump('/pages/ladbillConfirmDetail/main?no=' + item.lad_no)")  
                 .text-black.padding-bottom-xs
                   span {{item.name}}
@@ -45,8 +45,8 @@ div
                     span.padding-left-xs {{item.applyer_date}}  
               .solid-top.text-black.ft-15.margin-top-xs.padding-top-sm.row.justify-end
                 template(v-if="tabName === '-1'")
-                  .bill-red-btn.round.margin-left-sm(@click.stop="application(item)", v-if="item.status === 4 || item.status === 5") 取消申请
-                  .bill-btn.round.margin-left-sm(@click.stop="application(item, '申请')" v-if="item.status === 7") 申请
+                  .bill-red-btn.round.margin-left-sm(@click.stop="application(item)", v-if="item.status === 4") 取消申请
+                  .bill-btn.round.margin-left-sm(@click.stop="application(item, '申请')" v-if="item.status === 7 || item.status === 3") 申请
                   .bill-btn.round.margin-left-sm(@click.stop="application(item, '查看明细')", v-else) 查看明细                  
                 template(v-else)  
                   .bill-btn.round.margin-left-sm(@click.stop="application(item, '申请')") 申请
@@ -73,7 +73,7 @@ export default {
       searchVal: '',
       statusObj: {
         '0': '待申请',
-        '5': '待审核',
+        '5': '待退款',
         '3': '财务驳回',
         '4': '待确认',
         '7': '客户取消',

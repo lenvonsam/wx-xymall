@@ -39,7 +39,7 @@ div
                     span 延时：{{item.delay_times}}
                 .solid-top.text-black.ft-15.margin-top-xs.padding-top-sm.row
                   .col
-                    span 付款倒计时：
+                    span 付款截止时间：
                     span.padding-left-xs.text-black {{item.end_pay_time}}
                   .flex
                     .bill-btn.round.margin-left-sm(@click.stop="delayOpenModal(item)") {{item.att54 == 1 ? '再次延迟' : '延时'}} 
