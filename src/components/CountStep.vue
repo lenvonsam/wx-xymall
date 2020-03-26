@@ -36,17 +36,9 @@ export default {
     }
   },
   watch: {
-    num (newVal, oldVal) {
-      if ((this.num > this.max && this.max > 0) || this.max === 0) {
-        this.num = this.max
-      } else {
-        this.num = Number(newVal)
-      }
-      this.$emit('input', Number(newVal))
-    },
     value (newVal, oldVal) {
       this.num = Number(newVal)
-      this.$emit('input', this.num)
+      // this.$emit('input', this.num)
     }
   },
   methods: {
@@ -57,6 +49,7 @@ export default {
         this.showMsg('购买量不能高于库存' + this.max + '支')
       }
       this.$emit('input', this.num)
+      this.$emit('change', this.num)
     },
     minus () {
       this.num--
@@ -65,6 +58,7 @@ export default {
         this.showMsg('购买量不能小于1支')
       }
       this.$emit('input', this.num)
+      this.$emit('change', this.num)
     },
     inputBlur () {
       if (this.num.toString().trim().length === 0 || Number(this.num) === 0) {
@@ -73,7 +67,7 @@ export default {
       if (this.num > this.max) {
         this.num = this.max
       }
-      this.$emit('blur', this.num)
+      this.$emit('change', this.num)
       this.$emit('input', this.num)
     }
   }

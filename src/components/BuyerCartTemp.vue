@@ -60,7 +60,7 @@
                   .row.padding-xs.justify-end.align-end
                     .col
                     .col(style="flex: 0 0 60px;")
-                      count-step(v-model="cart.count", @click.native="rowCartCount(cart)", @blur="rowCartCount(cart)", :max="cart.amount_left")
+                      count-step(v-model="cart.count", @change="rowCartCount(cart)", :max="cart.amount_left")
                     .padding-left-xs {{cart.countWeight}}吨
             .margin-top-sm.padding-bottom-sm(v-if="soldCarts.length > 0", :class="{'padding-top-sm': carts.length === 0}")
               .bg-white
@@ -542,104 +542,65 @@ export default {
             const wtArr = []
             const oldPrArr = []
             if (itm.trade_type === 1) {
+              // 非H型钢
+              itm.radios = []
               if (Number(itm.lj_price) > 0) {
+                itm.radios.push({
+                  label: '理计',
+                  m_way: 2,
+                  weight: itm.lj_weight,
+                  price: itm.lj_price,
+                  originPrice: itm.lj_origin_price
+                })
                 prArr.push(itm.lj_price)
                 wtArr.push(itm.lj_weight)
                 oldPrArr.push(itm.lj_origin_price)
               }
               if (Number(itm.bj_price) > 0) {
+                itm.radios.push({
+                  label: '磅计',
+                  m_way: 1,
+                  weight: itm.bj_weight,
+                  price: itm.bj_price,
+                  originPrice: itm.bj_origin_price
+                })
                 prArr.push(itm.bj_price)
                 wtArr.push(itm.bj_weight)
                 oldPrArr.push(itm.bj_origin_price)
               }
-            } else {
-              if (Number(itm.lj_price16) > 0) {
-                prArr.push(itm.lj_price16)
-                wtArr.push(itm.lj_weight16)
-                oldPrArr.push(itm.lj_origin_price16)
-              } else {
-                prArr.push('--')
-                wtArr.push(itm.lj_weight16)
-                oldPrArr.push(itm.lj_origin_price16)
-              }
-            }
-            // itm.price = price.toString().replace(/,/g, '/')
-
-            itm.choosed = false
-            // let allWeight = itm.one_weight
-            // let wtArr = allWeight.split('/')
-            // let prArr = itm.product_price.split('/')
-            // let oldPrArr = itm.origin_price.split('/')
-            if (wtArr.length === 2) {
-              // let weight1 = wtArr[0].substring(0, wtArr[0].indexOf('('))
-              // let weight2 = wtArr[1].substring(0, wtArr[1].indexOf('('))
-              if (prArr[1] === '--') {
-                itm.radios = [{
-                  label: '理计',
-                  m_way: 2,
-                  weight: wtArr[0],
-                  originPrice: oldPrArr[0]
-                }]
-              } else {
-                itm.radios = [{
-                  label: '理计',
-                  m_way: 2,
-                  weight: wtArr[0],
-                  price: prArr[0],
-                  originPrice: oldPrArr[0]
-                }, {
-                  label: '磅计',
-                  m_way: 1,
-                  weight: wtArr[1],
-                  price: prArr[1],
-                  originPrice: oldPrArr[1]
-                }]
-              }
-              itm.weight = wtArr[0]
-              itm.price = prArr[0]
-              itm.originPrice = oldPrArr[0]
-              // if (this.currentUser.type === 'seller') itm.dx_prices = oldPrArr[0]
-              if (itm.measure_way_id === 1) {
-                itm.weight = wtArr[1]
-                itm.price = prArr[1]
-                itm.originPrice = oldPrArr[1]
-                // if (this.currentUser.type === 'seller') itm.dx_prices = oldPrArr[1]
-              }
-              if (itm.measure_way_id === 0) {
-                itm.measure_way_id = 2
-              }
-            } else {
-              let lbl = '理计'
-              if (itm.measure_way_id === 1) {
-                lbl = '磅计'
-              }
-              // let wt = itm.one_weight.substring(0, itm.one_weight.indexOf('('))
+              if (!itm.measure_way_id) itm.measure_way_id = 2
+            } else if (itm.trade_type === 2) {
+              // H型钢
               itm.radios = [{
-                label: lbl,
+                label: '理计',
                 m_way: itm.measure_way_id,
-                weight: wtArr[0]
+                weight: itm.lj_weight16,
+                price: '--',
+                originPrice: itm.lj_origin_price16
               }]
-              itm.weight = wtArr[0]
-              itm.price = prArr[0]
-              itm.originPrice = oldPrArr[0]
-              // if (this.currentUser.type === 'seller') itm.dx_prices = itm.origin_price
+              if (Number(itm.lj_price16) > 0) itm.radios[0].price = itm.lj_price16
             }
-            // if (this.currentUser.type === 'seller') itm.cost_prices = 0
+            itm.choosed = false
+            const idx = itm.radios.findIndex(item => {
+              return item.m_way === itm.measure_way_id
+            })
+            itm.weight = itm.radios[idx].weight
+            itm.price = itm.radios[idx].price
+            itm.originPrice = itm.radios[idx].originPrice
+            itm.dx_prices = itm.radios[idx].price
+            itm.allowedPrice = itm.radios[idx].allowedPrice
             this.carts.push(itm)
           })
           this.tabDot(this.carts.length + this.soldCarts.length)
-          // if (done) done()
         } else {
           this.showMsg(resp ? '网络异常' : resp.errormsg)
           this.carts = []
           this.soldCarts = []
           this.tabDot(0)
-          // if (done) done()
         }
       }).catch(err => {
         this.isLoad = true
         me.showMsg(err || '网络异常')
-        // if (done) done()
       })
     },
     // 卖家方法

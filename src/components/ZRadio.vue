@@ -1,5 +1,5 @@
 <template lang="pug">
-.flex(@click="checkedHandler")
+.flex.justify-end(@click="checkedHandler")
   div
     img.choose-icon(src="/static/images/radio_check.png", v-if="checked")
     img.choose-icon(src="/static/images/radio_check_no.png", v-else)
