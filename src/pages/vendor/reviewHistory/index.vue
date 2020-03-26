@@ -185,10 +185,10 @@ export default {
         return false
       }
       // debugger
-      // if (item.audit_type === 3) {
-      //   this.jump(`/pages/vendor/returnApplicationDetail/main?subsNo=HT20031900002&status=${item.status}`)
-      //   return false
-      // }
+      if (item.audit_type === 3) {
+        this.jump(`/pages/vendor/returnApplicationDetail/main?subsNo=${item.tstc_no}`)
+        return false
+      }
       item.auditType = this.auditType[item.audit_type]
       item.statusStr = this.statusList[item.status] || '待审核'
       item.fromPage = 'reviewHistory'

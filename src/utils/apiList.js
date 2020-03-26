@@ -71,10 +71,8 @@ export default {
     },
     returnGoodsList: { url: 'seller/returnGoodsList.shtml', method: 'post' },
     returnGoods: { url: 'seller/returnGoodsApply.shtml', method: 'post' },
-    returnGoodsDetail: {
-      url: 'seller/returnGoodsDetail.shtml',
-      method: 'get'
-    },
+    returnGoodsApplyDetail: { url: 'seller/returnGoodsApply.shtml', method: 'get' },
+    returnGoodsDetail: { url: 'seller/returnGoodsDetail.shtml', method: 'get' },
     modules: { url: 'seller/modules.shtml', method: 'post' },
     returnGoodsReason: {
       url: 'seller/returnGoodsReason.shtml',

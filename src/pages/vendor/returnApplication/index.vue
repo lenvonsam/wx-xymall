@@ -332,7 +332,7 @@ export default {
     async returnGoodsDetail () {
       try {
         this.showLoading()
-        const returnGoodsDetail = this.apiList.xy.returnGoodsDetail
+        const returnGoodsDetail = this.apiList.xy.returnGoodsApplyDetail
         const url = `${returnGoodsDetail.url}?subs_no=${this.htNo}&status=${this.status}`
         const data = await this.ironRequest(url, '', returnGoodsDetail.method)
         const resData = data.data

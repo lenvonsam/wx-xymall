@@ -152,8 +152,9 @@ export default {
     },
     async returnGoodsDetail () {
       try {
-        const sellerReturnGoodsAudit = this.apiList.xy.sellerReturnGoodsAudit
-        const url = `${sellerReturnGoodsAudit.url}?subs_no=${this.subsNo}&status=${this.status}`
+        const sellerReturnGoodsAudit = this.apiList.xy.returnGoodsDetail
+        let url = `${sellerReturnGoodsAudit.url}?subs_no=${this.subsNo}`
+        if (this.status) url += `&status=${this.status}`
         const data = await this.ironRequest(url, '', sellerReturnGoodsAudit.method)
         if (data.returncode === '0') {
           const resData = data.data

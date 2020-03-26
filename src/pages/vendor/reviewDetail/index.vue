@@ -240,7 +240,7 @@ export default {
             break
           case '退货':
             this.btnShow = modules.return_audit
-            const sellerReturnGoodsAudit = this.apiList.xy.sellerReturnGoodsAudit
+            const sellerReturnGoodsAudit = this.apiList.xy.returnGoodsDetail
             url = `${sellerReturnGoodsAudit.url}?subs_no=${this.tempObject.tstc_no}&return_id=${this.tempObject.return_id}`
             if (this.tempObject.fromPage !== 'reviewHistory') {
               url += `&status=5`
