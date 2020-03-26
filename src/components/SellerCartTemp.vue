@@ -215,11 +215,11 @@ export default {
       const cartList = JSON.parse(JSON.stringify(this.carts))
       if (newVal === 2) {
         cartList.map(item => {
-          item.dx_prices = Number(item.dx_prices) + 30
+          if (Number(item.lift_charge) > 0) item.dx_prices = Number(item.dx_prices) + 30
         })
       } else if (oldVal === 2) {
         cartList.map(item => {
-          item.dx_prices = Number(item.dx_prices) - 30
+          if (Number(item.lift_charge) > 0) item.dx_prices = Number(item.dx_prices) - 30
         })
       }
       this.carts = cartList
@@ -530,7 +530,7 @@ export default {
         rowItem.dx_prices = rowItem.radios[1].price
         rowItem.allowedPrice = rowItem.radios[1].allowedPrice
       }
-      if (this.liftSelectVal === 2) rowItem.dx_prices = Number(rowItem.dx_prices) + 30
+      if (this.liftSelectVal === 2 && Number(rowItem.lift_charge) > 0) rowItem.dx_prices = Number(rowItem.dx_prices) + 30
       this.ironRequest('cartUpdate.shtml', { cart_id: rowItem.cart_id, user_id: this.currentUser.user_id, measure_way: val, count: rowItem.count, data_source: 1 }, 'post').then(res => {
       })
       this.$forceUpdate()
