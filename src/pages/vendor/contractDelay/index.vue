@@ -54,7 +54,7 @@ div
       .padding-top-xs.padding-bottom-xs.row.cuIcon-box
         .cuIcon-item(@click="delayHandler('reduce')")
           .cuIcon-move
-        input(type="number", v-model="delayDate")
+        input(type="number", v-model="delayDate", @blur="delayBlur", @focus="delayFocus")
         .cuIcon-item(@click="delayHandler('add')")
           .cuIcon-add
       template(v-if="checkRow.att54")
@@ -90,7 +90,8 @@ export default {
       filterObj: {},
       delayMax: 2,
       checkRow: {},
-      textVal: ''
+      textVal: '',
+      delayInputFlag: ''
     }
   },
   computed: {
@@ -135,8 +136,16 @@ export default {
     ...mapActions([
       'configVal'
     ]),
-    delayDateFocus () { },
+    delayFocus () {
+      this.delayInputFlag = 'focus'
+    },
+    delayBlur () {
+      this.delayInputFlag = 'blur'
+      this.delayDateChange()
+    },
     delayDateChange () {
+      debugger
+      if (this.delayInputFlag === 'focus') return false
       let maxDelayDate = 2
       const delayDate = Number(this.delayDate)
       const minDate = new Date(this.date2Str(new Date()) + ' 15:00').getTime()
@@ -201,6 +210,7 @@ export default {
       }
     },
     delayHandler (flag) {
+      this.delayInputFlag = flag
       switch (flag) {
         case 'reduce':
           if (this.delayDate > 0) {
