@@ -364,26 +364,27 @@ export default {
         const modifyList = JSON.parse(JSON.stringify(me.modifyList))
         const list = []
         const lift = me.wh_lift.lift
-        let delWeight = 0
-        let delPrice = 0
+        let newWeight = 0
+        let newPrice = 0
         modifyList.find((res, index) => {
           if (res.choosed) {
-            let isLift = me.wh_lift[res.wh_name]
-            delWeight += isLift === '1' ? Number(res.weight) : 0
-            if (me.contractDetail.is_lift !== 1) {
-              isLift = 2
-            }
-            delPrice += res.price
+            // delPrice += res.price
             res.count = 0
             me.delModifyList.push(res)
           } else {
+            let isLift = me.wh_lift[res.wh_name]
+            newWeight += isLift === '1' ? Number(res.weight) : 0
+            if (me.contractDetail.is_lift !== 1) {
+              isLift = 2
+            }
+            newPrice += res.price
             list.push(res)
           }
         })
-        me.newLift = me.newLift - Number(this.$toFixed(delWeight * lift, 2))
-        me.newLift = list.length ? Number(this.$toFixed(me.newLift, 2)) : 0
+        // me.newLift = Number(this.$toFixed(newWeight * lift, 2))
+        me.newLift = list.length ? Number(this.$toFixed(newWeight * lift, 2)) : 0
         me.modifyList = list
-        me.newPrice = list.length ? Number(this.$toFixed(Number(me.newPrice) - delPrice)) : 0
+        me.newPrice = list.length ? Number(this.$toFixed(newPrice, 2)) : 0
         this.getNewBillPrice()
       })
     },
