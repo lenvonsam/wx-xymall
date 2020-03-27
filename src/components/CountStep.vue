@@ -30,7 +30,7 @@ export default {
       return
     }
     if (this.value) {
-      this.num = this.value
+      this.num = Number(this.value)
     } else {
       this.num = 1
     }
@@ -48,8 +48,8 @@ export default {
         this.num = this.max
         this.showMsg('购买量不能高于库存' + this.max + '支')
       }
-      this.$emit('input', this.num)
-      this.$emit('change', this.num)
+      this.$emit('input', Number(this.num))
+      this.$emit('change', Number(this.num))
     },
     minus () {
       this.num--
@@ -57,18 +57,18 @@ export default {
         this.num = 1
         this.showMsg('购买量不能小于1支')
       }
-      this.$emit('input', this.num)
-      this.$emit('change', this.num)
+      this.$emit('input', Number(this.num))
+      this.$emit('change', Number(this.num))
     },
     inputBlur () {
       if (this.num.toString().trim().length === 0 || Number(this.num) === 0) {
         this.num = 1
       }
       if (this.num > this.max) {
-        this.num = this.max
+        this.num = Number(this.max)
       }
-      this.$emit('change', this.num)
-      this.$emit('input', this.num)
+      this.$emit('change', Number(this.num))
+      this.$emit('input', Number(this.num))
     }
   }
 }
