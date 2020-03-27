@@ -111,7 +111,6 @@ export default {
     this.listData = []
     this.finished = true
     this.isload = false
-    // this.scrollHeight = 0
     this.filterObj = {}
     this.searchVal = ''
     this.loadFinish = false

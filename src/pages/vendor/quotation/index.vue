@@ -239,7 +239,7 @@ export default {
     this.modalShow = false
     this.previewShow = false
     return {
-      title: '报价清单',
+      title: `您收到一份报价清单，共${this.totalCount}支, ${this.totalWeight}吨，点击查看详情`,
       path: '/pages/vendor/quotation/main?pageType=share&&qutId=' + this.qutId
     }
   },
