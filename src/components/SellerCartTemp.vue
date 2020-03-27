@@ -285,7 +285,8 @@ export default {
       })
 
       this.allChoosed = filterArray.length === newVal.length
-      this.totalPrice = 0
+      // this.totalPrice = 0
+      let totalPrice = 0
       this.totalWeight = 0
       this.totalLiftCharge = 0
       let totalCount = 0
@@ -294,15 +295,15 @@ export default {
           totalCount += itm.count
           if (Number(itm.lift_charge) > 0 && this.liftSelectVal === 1) {
             const countLiftWeight = Number(itm.countWeight) * itm.lift_charge
-            this.totalPrice += Number(itm.dx_prices) * Number(itm.countWeight) + countLiftWeight
+            // totalPrice += Number(itm.dx_prices) * Number(itm.countWeight) + countLiftWeight
             this.totalLiftCharge += countLiftWeight
-          } else {
-            this.totalPrice += Number(itm.dx_prices) * Number(itm.countWeight)
           }
+          totalPrice += Number(this.$toFixed(Number(itm.dx_prices) * Number(itm.countWeight), 2))
           this.totalWeight += Number(itm.countWeight)
         })
         this.totalLiftCharge = this.$toFixed(Number(this.totalLiftCharge), 2)
-        this.totalPrice = this.$toFixed(Number(this.totalPrice), 2)
+        // this.totalPrice = this.$toFixed(Number(this.totalPrice), 2)
+        this.totalPrice = this.$toFixed(Number(totalPrice) + Number(this.totalLiftCharge), 2)
         this.totalWeight = this.$toFixed(Number(this.totalWeight), 3)
       }
       this.totalCount = totalCount
