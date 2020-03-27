@@ -54,7 +54,7 @@ div
       .padding-top-xs.padding-bottom-xs.row.cuIcon-box
         .cuIcon-item(@click="delayHandler('reduce')")
           .cuIcon-move
-        input(type="number", v-model="delayDate", @blur="delayBlur", @focus="delayFocus")
+        input(type="number", v-model="delayDate", @blur="delayBlur", @focus="delayFocus", :focus="false")
         .cuIcon-item(@click="delayHandler('add')")
           .cuIcon-add
       template(v-if="checkRow.att54")
@@ -116,6 +116,7 @@ export default {
   },
   onHide () {
     this.modalShow = false
+    wx.hideKeyboard()
   },
   onShow () {
     if (this.tempObject.fromPage === 'billFilter') {
@@ -144,7 +145,6 @@ export default {
       this.delayDateChange()
     },
     delayDateChange () {
-      debugger
       if (this.delayInputFlag === 'focus') return false
       let maxDelayDate = 2
       const delayDate = Number(this.delayDate)

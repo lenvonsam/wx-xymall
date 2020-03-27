@@ -354,7 +354,7 @@ export default {
         let amounts = []
         let weights = []
         let orderPrices = []
-        let totalPrice = 0
+        // let totalPrice = 0
         let totalWeight = 0
         let totalLiftCharge = 0
         this.checkGoods.map(itm => {
@@ -365,7 +365,7 @@ export default {
           amounts.push(itm.count)
           weights.push(itm.countWeight)
           orderPrices.push(itm.price)
-          totalPrice += Number(itm.dx_prices) * Number(itm.countWeight)
+          // totalPrice += Number(itm.dx_prices) * Number(itm.countWeight)
           totalWeight += Number(itm.countWeight)
           if (Number(itm.lift_charge) > 0 && this.tempObject.need_lift === 1) {
             totalLiftCharge += Number(itm.countWeight) * Number(itm.lift_charge)
@@ -383,7 +383,7 @@ export default {
           dx_prices: dxPrices.toString(),
           cost_prices: costPrices.toString(),
           jl_types: jlTypes.toString(),
-          total_money: this.$toFixed((totalPrice + totalLiftCharge), 2),
+          total_money: this.totalPrice,
           total_amount: this.totalCount,
           total_weight: this.$toFixed(totalWeight, 3),
           lift_money: totalLiftCharge,
