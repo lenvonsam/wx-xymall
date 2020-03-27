@@ -5,7 +5,7 @@ div
     template(v-if="auditType === '延时'")
       .bg-white.card(v-for="(item, idx) in detailData.list", :key="idx")
         .row.justify-between.padding-bottom-xs
-          .col.text-blue {{item.deal_no}}
+          .col.text-blue(@click="jumpBillDetail(item)") {{item.deal_no}}
           .text-red {{statusList[item.status] || '待审核'}}
         .row.justify-between.padding-bottom-xs
           .text-gray.col {{item.cust_name}}
@@ -39,7 +39,7 @@ div
             .col
               span {{auditType==='定向' ? '' : '付款'}}截至时间：
               span.text-red.padding-left-xs {{detailData.endTime}}
-            span(v-if="auditType==='定向'") {{detailData.needLift ? '收吊费' : '免吊费'}}  
+            span(v-if="auditType==='定向'") {{liftStatus[detailData.liftStatus]}}
           template(v-else)  
             span.text-black {{detailData.endTime}}
       //- template(v-if="auditType !== '延时'")
@@ -106,6 +106,11 @@ export default {
         '5': '定向初审',
         '3': '定向复审'
       },
+      liftStatus: {
+        '1': '收吊费',
+        '2': '免吊费',
+        '3': '开平免吊费'
+      },
       btnShow: false
     }
   },
@@ -138,6 +143,11 @@ export default {
     this.loadData()
   },
   methods: {
+    jumpBillDetail (item) {
+      if (this.disabled) return false
+      this.disabled = true
+      this.jump(`/pages/billDetail/main?id=${item.deal_no}`)
+    },
     modalHandler ({ type }) {
       this.modalShow = false
       if (type === 'confirm') {
@@ -261,7 +271,7 @@ export default {
           switch (this.auditType) {
             case '定向':
               this.detailData = {
-                needLift: data.order_lift,
+                liftStatus: data.att56,
                 billNo: data.deal_no,
                 custName: data.cust_name,
                 totalAmount: data.amount,

@@ -90,12 +90,20 @@ div
               .padding-left-sm 在线客服
           .cuIcon-right.text-gray
   alert(:msg="alertText", v-model="alertShow", :cb="alertCb")
+  modal(v-model="modalShow", @cb="modalCb")
+    .padding-sm {{modalMsg}}
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
+import modal from '@/components/Modal.vue'
 export default {
+  components: {
+    modal
+  },
   data () {
     return {
+      modalShow: false,
+      modalMsg: '',
       cardList: [
         [
           { title: '合同回收站', imgPath: '/static/images/recycle_icon.png', url: '/pages/billRecycle/main', event: 'click_app_me_recycle' },
@@ -131,6 +139,8 @@ export default {
   onHide () {
     this.alertShow = false
     this.rowCountObj = {}
+    this.modalShow = false
+    this.modalMsg = ''
     console.log('onhide---------me')
   },
   onShow () {
@@ -192,8 +202,10 @@ export default {
       }
     } else {
       this.tabDot(0)
-      this.alertText = '您未登录,请先登录'
-      this.alertShow = true
+      this.modalMsg = '您未登录,请先登录'
+      this.modalShow = true
+      // this.alertText = '您未登录,请先登录'
+      // this.alertShow = true
     }
   },
   methods: {
@@ -204,6 +216,14 @@ export default {
     jumpNoticeList () {
       this.statisticRequest({ event: 'click_app_me_message' })
       this.jump('/pages/cardList/main?title=消息中心&type=noticeList')
+    },
+    modalCb (flag) {
+      this.modalShow = false
+      if (flag === 'confirm') {
+        this.jump('/pages/account/login/main')
+      } else {
+        this.tab('/pages/index/main')
+      }
     },
     alertCb () {
       if (this.isLogin) {
