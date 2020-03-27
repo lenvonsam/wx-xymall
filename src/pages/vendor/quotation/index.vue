@@ -175,7 +175,7 @@ export default {
       ],
       previewBtns: [
         { label: '取消', flag: 'cancel', className: 'bg-gray' },
-        { label: '分享', flag: 'confirm', className: 'main-btn', type: 'share' }
+        { label: '分享', flag: 'share', className: 'main-btn', type: 'share' }
       ],
       modalBtns: '',
       modalScrollHeight: 0,
@@ -255,7 +255,6 @@ export default {
     // this.pageType = ''
   },
   onShow () {
-    // this.previewShow = true
     if (!this.isLogin) {
       const me = this
       this.confirm({ title: '友情提示', content: '您未登录,请先登录' }).then(res => {
@@ -349,7 +348,7 @@ export default {
       if (flag === 'cancel') {
         this.previewShow = false
         this.modalShow = false
-      } else if (!this.previewShow) {
+      } else if (flag !== 'share') {
         let orderIds = []
         let dxPrices = []
         let costPrices = []
