@@ -30,7 +30,7 @@ div
               span.padding-left-xs {{item.warehouse_name}}
             span ({{meteringWay[item.metering_way]}})
           .padding-bottom-xs
-            span 可提：{{item.deal_amount}}支/{{item.weight_real}}吨
+            span 可提：{{item.amount_real}}支/{{item.weight_real}}吨
           .padding-bottom-xs(v-if="item.gcfw || item.zlfw")
             span.padding-right-xs(v-if="item.gcfw") 公差范围：{{item.gcfw}}
             span(v-if="item.zlfw") 重量范围：{{item.zlfw}}
@@ -348,7 +348,7 @@ export default {
         list.map(item => {
           item.choosed = false
           item.countWeight = item.weight_real
-          item.count = item.deal_amount
+          item.count = item.amount_real
           item.singleWeight = Number(item[meteringWay[item.metering_way]]) * Number(item.lengths)
         })
         this.maxLift = resData.lift_money
