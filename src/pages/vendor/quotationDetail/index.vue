@@ -45,17 +45,26 @@ div
       .col.foot-confirm.margin-left-sm(@click="quotationHandler('dx')") 直接定向
     template(v-else)
       .col.foot-confirm.margin-left-sm(@click="quotationHandler('copy')") 复制到购物车
+  modal(:value="modalShow", @cb="modalCb", :btns="modalBtns")
+    .padding-sm.text-left {{modalMsg}}  
 </template>
 <script>
 import { mapState } from 'vuex'
+import modal from '@/components/Modal.vue'
 export default {
   data () {
     return {
       scrollHeight: 0,
       resData: {},
       qutId: '',
-      btnDisabled: false
+      btnDisabled: false,
+      modalShow: false,
+      modalMsg: '',
+      modalBtns: [{ label: '确定', flag: 'confirm', className: 'main-btn' }]
     }
+  },
+  components: {
+    modal
   },
   computed: {
     ...mapState({
@@ -65,6 +74,7 @@ export default {
   onUnload () {
     this.qutId = ''
     this.btnDisabled = false
+    this.modalShow = false
   },
   onShow () {
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 205
@@ -72,6 +82,9 @@ export default {
     this.quotationDetail()
   },
   methods: {
+    modalCb () {
+      this.modalShow = false
+    },
     async quotationDetail () {
       try {
         const quotationDetail = this.apiList.xy.quotationDetail
@@ -130,9 +143,11 @@ export default {
           this.btnDisabled = false
         }
       } catch (e) {
+        this.modalMsg = e
+        this.modalShow = true
         this.btnDisabled = false
         this.hideLoading()
-        this.showMsg(e)
+        // this.showMsg(e)
         console.log(e)
       }
     }
