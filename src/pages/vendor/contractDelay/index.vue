@@ -103,33 +103,18 @@ export default {
   },
   watch: {
     delayDate () {
-      let maxDelayDate = 2
-      const delayDate = Number(this.delayDate)
-      const minDate = new Date(this.date2Str(new Date()) + ' 15:00').getTime()
-      const nowDate = new Date().getTime()
-      if (nowDate > minDate) maxDelayDate = 19
-      if (this.checkRow.att54) maxDelayDate = 99
-      if (delayDate > maxDelayDate) {
-        this.delayDate = maxDelayDate
-        return false
-      } else if (delayDate < 1) {
-        this.delayDate = 1
-        return false
-      }
-      let delayDateStr = this.delayDate.toString()
-      if (delayDateStr.length === 1) {
-        delayDateStr = delayDateStr.replace(/[^1-9]/g, '')
-      } else {
-        delayDateStr = delayDateStr.replace(/\D/g, '')
-      }
-      this.delayDate = Number(delayDateStr)
+      this.delayDateChange()
     }
   },
   onUnload () {
+    this.modalShow = false
     this.searchVal = ''
     this.currentPage = 0
     this.filterObj = {}
     this.configVal({ key: 'tempObject', val: {} })
+  },
+  onHide () {
+    this.modalShow = false
   },
   onShow () {
     if (this.tempObject.fromPage === 'billFilter') {
@@ -150,6 +135,29 @@ export default {
     ...mapActions([
       'configVal'
     ]),
+    delayDateFocus () { },
+    delayDateChange () {
+      let maxDelayDate = 2
+      const delayDate = Number(this.delayDate)
+      const minDate = new Date(this.date2Str(new Date()) + ' 15:00').getTime()
+      const nowDate = new Date().getTime()
+      if (nowDate > minDate) maxDelayDate = 19
+      if (this.checkRow.att54) maxDelayDate = 99
+      if (delayDate > maxDelayDate) {
+        this.delayDate = maxDelayDate
+        return false
+      } else if (delayDate < 1) {
+        this.delayDate = 1
+        return false
+      }
+      let delayDateStr = this.delayDate.toString()
+      if (delayDateStr.length === 1) {
+        delayDateStr = delayDateStr.replace(/[^1-9]/g, '')
+      } else {
+        delayDateStr = delayDateStr.replace(/\D/g, '')
+      }
+      this.delayDate = Number(delayDateStr)
+    },
     async orderDelay () {
       try {
         let orderDelay = ''
@@ -241,7 +249,7 @@ export default {
       }
       this.ironRequest(orderDelayList.url, params, orderDelayList.method).then(resp => {
         if (resp.returncode === '0') {
-          let arr = resp.data.resultlist
+          let arr = resp.resultlist
           if (arr.length === 0 && me.currentPage === 0) {
             me.listData = []
             me.isload = false

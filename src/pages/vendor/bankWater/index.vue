@@ -209,7 +209,7 @@ export default {
       this.ironRequest(bankWater.url, params, bankWater.method).then(resp => {
         const idx = me.swiperCount
         if (resp.returncode === '0') {
-          let arr = resp.data.resultlist
+          let arr = resp.resultlist
           if (arr.length === 0 && me.currentPage === 0) {
             me.listData = []
             me.billTab[idx].data = []
