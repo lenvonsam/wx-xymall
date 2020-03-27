@@ -201,7 +201,7 @@ export default {
       this.countWeightFocus = false
       let filterArray = listData.filter(item => {
         if (item.metering_way !== 1) {
-          item.countWeight = this.$toFixed(Number(item.count * item.singleWeight), 3)
+          item.countWeight = this.numberFormat(this.$toFixed(Number(item.count * item.singleWeight), 3))
         }
         if (Number(item.countWeight) > Number(item.weight_real)) item.countWeight = item.weight_real
         if (!Number(item.countWeight)) item.countWeight = 0.001

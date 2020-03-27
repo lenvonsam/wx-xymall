@@ -235,7 +235,6 @@ export default {
     this.firstLoad = false
   },
   onShow () {
-    // this.loadCstmList()
     if (this.tempObject.type) {
       this.pickway = this.tempObject.type
       if (this.pickway === 1) {
@@ -271,21 +270,21 @@ export default {
       this.tabActive = 0
     },
     dxPriceChange (cart) {
+      cart.dx_prices = this.numberFormat(cart.dx_prices)
       if (!cart.dx_prices) cart.dx_prices = cart.price
     },
     costPriceChange (cart) {
+      cart.cost_prices = this.numberFormat(cart.cost_prices)
       if (!cart.cost_prices) cart.cost_prices = 0
     },
     cartCalculation (newVal) {
       newVal = newVal || this.carts
       let filterArray = newVal.filter(item => {
-        // if (!item.dx_prices) item.dx_prices = item.price
         item.countWeight = this.$toFixed(Number(item.count * item.weight), 3)
         return item.choosed === true
       })
 
       this.allChoosed = filterArray.length === newVal.length
-      // this.totalPrice = 0
       let totalPrice = 0
       this.totalWeight = 0
       this.totalLiftCharge = 0
@@ -295,14 +294,12 @@ export default {
           totalCount += itm.count
           if (Number(itm.lift_charge) > 0 && this.liftSelectVal === 1) {
             const countLiftWeight = Number(itm.countWeight) * itm.lift_charge
-            // totalPrice += Number(itm.dx_prices) * Number(itm.countWeight) + countLiftWeight
             this.totalLiftCharge += countLiftWeight
           }
           totalPrice += Number(this.$toFixed(Number(itm.dx_prices) * Number(itm.countWeight), 2))
           this.totalWeight += Number(itm.countWeight)
         })
         this.totalLiftCharge = this.$toFixed(Number(this.totalLiftCharge), 2)
-        // this.totalPrice = this.$toFixed(Number(this.totalPrice), 2)
         this.totalPrice = this.$toFixed(Number(totalPrice) + Number(this.totalLiftCharge), 2)
         this.totalWeight = this.$toFixed(Number(this.totalWeight), 3)
       }

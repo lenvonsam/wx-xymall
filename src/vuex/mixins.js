@@ -499,6 +499,11 @@ const wxMixins = {
         num = f * m - 0.00000001 // 为了处理类似-1.99999999994之类的为题
       }
       return Math.round(num, 10) / m
+    },
+    numberFormat (val) {
+      const numStr = val.toString()
+      const idx = numStr.indexOf('.') + 1
+      return Number(numStr.substr(0, idx) + numStr.substr(idx).replace(/\./g, ''))
     }
   }
 }
