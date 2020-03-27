@@ -215,11 +215,11 @@ export default {
       const cartList = JSON.parse(JSON.stringify(this.carts))
       if (newVal === 2) {
         cartList.map(item => {
-          if (Number(item.lift_charge) > 0) item.dx_prices = Number(item.dx_prices) + 30
+          if (Number(item.lift_charge) > 0) item.dx_prices = Number(item.price) + 30
         })
       } else if (oldVal === 2) {
         cartList.map(item => {
-          if (Number(item.lift_charge) > 0) item.dx_prices = Number(item.dx_prices) - 30
+          if (Number(item.lift_charge) > 0) item.dx_prices = Number(item.price)
         })
       }
       this.carts = cartList
