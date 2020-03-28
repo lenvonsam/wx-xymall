@@ -45,7 +45,7 @@ div
                     .row
                       template(v-if="tabName === '0'")
                         //- .text-gray(v-if="item.match_status === 3") 不匹配
-                        .bill-btn.round.margin-left-sm(v-if="item.match_status === 3", @click="delBankWater(item.id)") 删除
+                        .bill-btn.round.margin-left-sm(v-if="(item.match_status!==1 && item.match_status!==2) || item.status===9", @click="delBankWater(item.id)") 删除
                         .bill-btn.round.margin-left-sm(v-else, @click.stop="jumpDetail(item, 'review')") 审核
                         //- .bill-btn.round.margin-left-sm(v-else-if="item.status === 0", @click.stop="jumpDetail(item, 'review')") 审核
                       .bill-btn.round.margin-left-sm(@click.stop="jumpDetail(item)", v-else) 详情
@@ -71,7 +71,7 @@ export default {
       openStatus: false,
       billTab: [
         { title: '收款审核', status: '0', data: [], isActive: true },
-        { title: '收藏历史', status: '1', data: [], isActive: false },
+        { title: '收款历史', status: '1', data: [], isActive: false },
         { title: '私对公', status: '2', data: [], isActive: false },
         { title: '已删除', status: '3', data: [], isActive: false }
       ],
