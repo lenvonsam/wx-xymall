@@ -16,20 +16,20 @@ div
         .text-gray.padding-bottom-xs(v-if="item.delay_text")
           span 延时理由：{{item.delay_text}}
         .solid-top.padding-top-xs.padding-bottom-xs
-          span 付款截至时间：
+          span 付款截止时间：
           span.text-red.padding-left-xs {{item.order_end_time}}
     template(v-else)
       .bg-white.card
         .row.justify-between.padding-bottom-xs
           .col.text-blue {{detailData.billNo}}
-          .text-red {{detailData.status}}
+          .text-red {{auditType === '退货' ? '待退款' : detailData.status}}
         .row.justify-between.padding-bottom-xs
           .text-gray.col {{detailData.custName}}
           .text-black ¥ {{detailData.totalMoeny}}
         template(v-if="auditType === '退货'")
-          .text-gray.padding-bottom-xs
-            span {{detailData.invoiceStatus}}
-            span.padding-left-xs 操作员：{{detailData.operName}}
+          .text-gray.padding-bottom-xs.row.justify-between
+            .col 发票状态：{{detailData.invoiceStatus}}
+            span 操作员：{{detailData.operName}}
         template(v-else)
           .row.justify-between.text-gray.padding-bottom-xs
             .col 共{{detailData.totalAmount}}支，{{detailData.totalWeight}}吨
@@ -37,7 +37,7 @@ div
         .solid-top.padding-top-xs.padding-bottom-xs.row.justify-between
           template(v-if="auditType !== '退货'")
             .col
-              span {{auditType==='定向' ? '' : '付款'}}截至时间：
+              span {{auditType==='定向' ? '' : '付款'}}截止时间：
               span.text-red.padding-left-xs {{detailData.endTime}}
             span(v-if="auditType==='定向'") {{liftStatus[detailData.liftStatus]}}
           template(v-else)  
@@ -136,6 +136,7 @@ export default {
     this.disabled = false
   },
   onShow () {
+    this.disabled = false
     console.log('modules', this.modules)
     this.auditType = this.tempObject.auditType
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 203

@@ -220,12 +220,11 @@ export default {
           this.totalGoodsWeight += Number(itm.countWeight)
           this.totalGoodsPrice += itm.price * Number(itm.countWeight)
         })
-        this.totalGoodsPrice = this.$toFixed(Number(this.totalGoodsPrice), 2)
-        this.totalGoodsWeight = this.$toFixed(Number(this.totalGoodsWeight), 3)
-
-        this.totalPrice = this.isliftShow ? this.$toFixed(Number(this.totalGoodsPrice) + Number(this.totalLiftCharge), 2) : this.totalGoodsPrice
-        this.totalWeight = this.totalGoodsWeight
       }
+      this.totalGoodsPrice = this.$toFixed(Number(this.totalGoodsPrice), 2)
+      this.totalGoodsWeight = this.$toFixed(Number(this.totalGoodsWeight), 3)
+      this.totalPrice = this.isliftShow ? this.$toFixed(Number(this.totalGoodsPrice) + Number(this.totalLiftCharge), 2) : this.totalGoodsPrice
+      this.totalWeight = this.totalGoodsWeight
     },
     liftInput (e) {
       const val = Number(e.mp.detail.value)
@@ -263,13 +262,15 @@ export default {
         const prices = []
         const filterArray = list.filter(item => {
           // amountTotal += item.count
+          item.metering_way_str = this.meteringWay[item.metering_way]
           weights.push(item.countWeight)
           amounts.push(item.count)
           seqIds.push(item.seq_d)
           prices.push(item.price)
           return item.choosed === true
         })
-        if (filterArray.length === 0 && (!this.isliftShow || !this.totalLiftCharge)) {
+        // if (filterArray.length === 0 && (!this.isliftShow || !this.totalLiftCharge)) {
+        if (filterArray.length === 0) {
           this.showMsg('请正确填写退货物资数量')
           this.btnDisabled = false
           return false

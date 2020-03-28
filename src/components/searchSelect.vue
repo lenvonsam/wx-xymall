@@ -111,6 +111,7 @@ export default {
       })
     },
     loadMore () {
+      if (this.selectType === 'dept') return false
       const me = this
       this.throttle(function () {
         me.currentPage++
@@ -135,9 +136,9 @@ export default {
           case 'dept':
             api = this.apiList.xy.deptList
             params = {
-              dept_name: this.searchVal,
-              current_page: this.currentPage,
-              page_size: this.pageSize
+              dept_name: this.searchVal
+              // current_page: this.currentPage,
+              // page_size: this.pageSize
             }
             data = await this.ironRequest(api.url, params, api.method)
             break
@@ -175,6 +176,7 @@ export default {
           me.cstmCurrentPage--
         }
         if (this.pickList.length < 10) this.currentPage = 0
+        if (this.selectType === 'dept') this.currentPage = 2
         this.$forceUpdate()
       } catch (e) {
         console.error(e)

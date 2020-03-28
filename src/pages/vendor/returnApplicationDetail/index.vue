@@ -116,7 +116,7 @@ export default {
       resList.map(item => {
         item.name = item.goods_name
         item.standard = item.stander
-        item.metering_way_str = item.metering_way === 1 ? '磅计' : '理计'
+        // item.metering_way_str = item.metering_way === 1 ? '磅计' : '理计'
         item.amount = item.count
         item.weight = item.countWeight
         item.money = this.$toFixed(Number(item.countWeight * item.price), 2)
