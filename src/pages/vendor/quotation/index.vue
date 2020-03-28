@@ -246,24 +246,24 @@ export default {
     this.carts = []
     this.status = ''
     this.pageType = ''
-    this.qutId = ''
+    // this.qutId = ''
     this.btnDisable = false
     this.modalDefaultMsg = ''
     this.modalDefaultShow = false
     // this.pageType = ''
   },
   onShow () {
-    if (!this.isLogin) {
-      const me = this
-      this.confirm({ title: '友情提示', content: '您未登录,请先登录' }).then(res => {
-        if (res === 'confirm') {
-          me.jump('/pages/account/login/main')
-        } else {
-          me.tab('/pages/index/main')
-        }
-      })
-      return
-    }
+    // if (!this.isLogin) {
+    //   const me = this
+    //   this.confirm({ title: '友情提示', content: '您未登录,请先登录' }).then(res => {
+    //     if (res === 'confirm') {
+    //       me.jump('/pages/account/login/main')
+    //     } else {
+    //       me.tab('/pages/index/main')
+    //     }
+    //   })
+    //   return
+    // }
     if (this.$root.$mp.query.qutId) {
       this.pageType = 'share'
       this.qutId = this.$root.$mp.query.qutId
@@ -466,7 +466,7 @@ export default {
       try {
         this.isLoad = false
         const quotationDetail = this.apiList.xy.quotationDetail
-        const url = `${this.apiList.xy.quotationDetail.url}?user_id=${this.currentUser.user_id}&qut_id=${this.qutId}`
+        const url = `${this.apiList.xy.quotationDetail.url}?qut_id=${this.qutId}`
         const data = await this.ironRequest(url, '', quotationDetail.method)
         console.log('quotationDetail', data)
         this.serverTime = data.server_time
@@ -496,6 +496,17 @@ export default {
         if (this.status === '已完成' || this.status === '已失效') return false
         if (this.btnDisable) return false
         this.btnDisable = true
+        if (!this.isLogin) {
+          const me = this
+          this.confirm({ title: '友情提示', content: '您未登录,请先登录' }).then(res => {
+            if (res === 'confirm') {
+              me.jump('/pages/account/login/main')
+            } else {
+              me.tab('/pages/index/main')
+            }
+          })
+          return false
+        }
         let orderIds = []
         let dxPrices = []
         let costPrices = []

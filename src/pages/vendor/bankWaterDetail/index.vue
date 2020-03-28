@@ -6,7 +6,7 @@ div
       .text-black.padding-right-sm {{item.label}}
       .col.text-right {{item.content}}    
   .padding(v-if="flag")
-    .mt-50.main-btn(hover-class="hover-gray", @click="bankWaterHandler") {{this.flag === 'review' ? '审核通过' : '恢复'}}
+    .mt-50.main-btn(hover-class="hover-gray", @click="bankWaterHandler") {{flag === 'review' ? '审核通过' : '恢复'}}
     
 </template>
 <script>

@@ -152,7 +152,12 @@ export default {
   onShow () {
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 210
     if (this.tempObject.fromPage === 'billFilter') {
+      const tempObject = this.tempObject
+      delete tempObject.fromPage
+      this.configVal({ key: 'tempObject', val: tempObject })
       this.tabName = '6'
+      this.scrollId = 'idx_0'
+      this.swiperCount = 0
       this.filterObj = {
         tstc_no: this.tempObject.no,
         employee_code: this.tempObject.employee.id || '',
@@ -365,7 +370,8 @@ export default {
           let m = 0
           let s = 0
           if (leftTime >= 0) {
-            h = Math.floor(leftTime / 1000 / 60 / 60 % 24)
+            // h = Math.floor(leftTime / 1000 / 60 / 60 % 24)
+            h = Math.floor(leftTime / 1000 / 60 / 60)
             m = Math.floor(leftTime / 1000 / 60 % 60)
             s = Math.floor(leftTime / 1000 % 60)
           }

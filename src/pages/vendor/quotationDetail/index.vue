@@ -4,40 +4,41 @@ div
   .bg-white.row.padding-sm.justify-between
     .text-black.col.text-bold {{resData.cust_name}}
     .text-gray {{resData.status}}
-  .margin-top-sm.solid-bottom.bg-white.padding-sm(v-for="(item, rIdx) in resData.list", :key="rIdx")
-    .goods-item.text-gray
-      .row.justify-between.padding-bottom-xs.text-bold
-        .text-black.col
-          span {{item.name}} 
-          span.padding-left-xs {{item.standard}}
-        .text-blue ￥{{item.dx_price}}
-      .padding-bottom-xs.row.justify-between
-        .col
-          span {{item.material}}
-          span.ml-5 {{item.length}}米
-          span.ml-5 {{item.warehouse}}
-          span.sub-mark.ml-5 {{item.supply}}
-        span ({{item.metering_way}})  
-      .padding-bottom-xs
-        span {{item.amount_left}}支
-        span.padding-left-xs.padding-right-xs /
-        span {{item.amount_weight}}吨
-        span.ml-5(v-if="resData.need_lift") 吊费：25 元/吨
-      .padding-bottom-xs(v-if="item.tolerance_range || item.weight_range")
-        span.padding-right-xs(v-if="item.tolerance_range") 公差范围：{{item.tolerance_range}}
-        span(v-if="item.weight_range") 重量范围：{{item.weight_range}}
-      .padding-bottom-xs
-        span 数量：{{item.amount}}支
-        span.ml-5 重量：{{item.weight}}吨
-  .padding-sm.text-right.bg-white
-    .ft-15.text-bold
-      span.text-black 合计：
-      span.text-red ￥{{resData.money}}
-    .padding-top-xs
-      span 共{{resData.amount}}支
-      span.padding-left-xs {{resData.weight}}吨，
-      span 吊费：{{resData.lift}}元
-  .footer.row.bg-white.text-center.text-white.padding-sm
+  div(style="margin-bottom: 150rpx")  
+    .margin-top-sm.solid-bottom.bg-white.padding-sm(v-for="(item, rIdx) in resData.list", :key="rIdx")
+      .goods-item.text-gray
+        .row.justify-between.padding-bottom-xs.text-bold
+          .text-black.col
+            span {{item.name}} 
+            span.padding-left-xs {{item.standard}}
+          .text-blue ￥{{item.dx_price}}
+        .padding-bottom-xs.row.justify-between
+          .col
+            span {{item.material}}
+            span.ml-5 {{item.length}}米
+            span.ml-5 {{item.warehouse}}
+            span.sub-mark.ml-5 {{item.supply}}
+          span ({{item.metering_way}})  
+        .padding-bottom-xs
+          span {{item.amount_left}}支
+          span.padding-left-xs.padding-right-xs /
+          span {{item.amount_weight}}吨
+          span.ml-5(v-if="resData.need_lift") 吊费：25 元/吨
+        .padding-bottom-xs(v-if="item.tolerance_range || item.weight_range")
+          span.padding-right-xs(v-if="item.tolerance_range") 公差范围：{{item.tolerance_range}}
+          span(v-if="item.weight_range") 重量范围：{{item.weight_range}}
+        .padding-bottom-xs
+          span 数量：{{item.amount}}支
+          span.ml-5 重量：{{item.weight}}吨
+    .padding-sm.text-right.bg-white
+      .ft-15.text-bold
+        span.text-black 合计：
+        span.text-red ￥{{resData.money}}
+      .padding-top-xs
+        span 共{{resData.amount}}支
+        span.padding-left-xs {{resData.weight}}吨，
+        span 吊费：{{resData.lift}}元
+  .footer.row.bg-white.text-center.text-white.padding-sm(style="height: 120rpx")
     template(v-if="resData.status == '已锁货' || resData.status == '未锁货'")
       .col.foot-btn.bg-red(@click="quotationHandler('cancel')") 强制失效
       .col.foot-cancel.margin-left-sm(@click="quotationHandler('release')", v-if="resData.status === '已锁货'") 取消锁货

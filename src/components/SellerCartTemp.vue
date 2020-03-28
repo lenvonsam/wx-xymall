@@ -62,11 +62,11 @@
                 .margin-top-xs.padding-sm.solid-top.solid-bottom.padding-top-sm.padding-bottom-sm.row.text-gray.price
                   .text-black 定向价格：
                   .col.ml-5.padding-xs.solid.line-gray
-                    input(type="digit", v-model="cart.dx_prices", maxlength="8", :data-idx="cartIdx", @input="inputFormat")
+                    input(type="digit", v-model="cart.dx_prices", maxlength="8", :data-idx="cartIdx", data-key="dx_prices", @blur="inputFormat(cart, 'dx_prices')")
                   .padding-left-xs 元
                   .padding-left-xs.text-black 费用：
                   .col.ml-5.padding-xs.solid.line-gray
-                    input(type="digit", v-model="cart.cost_prices", maxlength="8", :data-idx="cartIdx", @input="inputFormat")
+                    input(type="digit", v-model="cart.cost_prices", maxlength="8", :data-idx="cartIdx", data-key="cost_prices", @blur="inputFormat(cart, 'cost_prices')")
                   .padding-left-xs 元
                 .row.padding-sm.justify-end.align-end
                   .col(style="flex: 0 0 60px;")
@@ -269,19 +269,19 @@ export default {
       this.pickWayShow = false
       this.tabActive = 0
     },
-    inputFormat (e) {
-      const idx = e.mp.currentTarget.dataset.idx
-      this.carts[idx].dx_prices = Number(e.mp.detail.value.toString().match(/\d+\.\d{2}/)[0])
-      console.log(e)
+    inputFormat (cart, key) {
+      const newVal = this.numberFormat(cart[key]).toString().match(/\d+\.\d{2}/)
+      if (newVal) cart[key] = newVal ? newVal[0] : this.numberFormat(cart[key])
+      if (!cart[key]) cart[key] = key === 'dx_prices' ? cart.price : 0
     },
     // dxPriceChange (cart) {
-    //   cart.dx_prices = this.numberFormat(cart.dx_prices)
+    //   cart.dx_prices = this.numberFormat(cart.dx_prices).toString().match(/\d+\.\d{2}/)[0]
     //   if (!cart.dx_prices) cart.dx_prices = cart.price
     // },
-    costPriceChange (cart) {
-      cart.cost_prices = this.numberFormat(cart.cost_prices)
-      if (!cart.cost_prices) cart.cost_prices = 0
-    },
+    // costPriceChange (cart) {
+    //   cart.cost_prices = this.numberFormat(cart.cost_prices)
+    //   if (!cart.cost_prices) cart.cost_prices = 0
+    // },
     cartCalculation (newVal) {
       newVal = newVal || this.carts
       let filterArray = newVal.filter(item => {

@@ -76,25 +76,29 @@ export default {
     })
   },
   onShow () {
+    if (!this.tempObject.hasOwnProperty('no')) {
+      this.isReset = !this.isReset
+      this.deptName = ''
+      this.employeeName = ''
+      this.customName = ''
+      this.statusStr = ''
+      this.form = {
+        no: '',
+        custom: '',
+        startDate: '',
+        endDate: '',
+        dept: '',
+        employee: '',
+        status: ''
+      }
+    }
+
     this.statusList = this.tempObject.statusList || []
     this.contentHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar)
   },
   onUnload () {
     this.selectShow = ''
     this.statusList = []
-    // this.deptName = ''
-    // this.employeeName = ''
-    // this.customName = ''
-    // this.statusStr = ''
-    // this.form = {
-    //   no: '',
-    //   custom: '',
-    //   startDate: '',
-    //   endDate: '',
-    //   dept: '',
-    //   employee: '',
-    //   status: ''
-    // }
   },
   methods: {
     ...mapActions(['configVal']),

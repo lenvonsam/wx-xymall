@@ -1,8 +1,8 @@
 <template lang="pug">
 .cu-modal.bottom-modal(:class="modalName", @click="btnClick('cancel')")
-  .cu-dialog.bg-white(:style="{'mix-height': '140rpx', width: '100%'}", @click.stop="")
+  .cu-dialog.bg-white(:style="{'mix-height': '160rpx', width: '100%'}", @click.stop="")
     slot
-    .padding.row.justify-center
+    .padding.row.justify-center(v-if="btns.length")
       button.confirm-btn(
         v-for="(item, bIdx) in btns", 
         :key="bIdx", 

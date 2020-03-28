@@ -1,12 +1,13 @@
 <template lang="pug">
 div
   nav-bar(title="条件筛选", isBack)
-  .bg-white.text-right.text-gray
+  .bg-white.text-right.text-gray(@click="closeSelect")
     .row.justify-between.solid-bottom.item(@click.stop="openSelect('custom')", :style="itemSty")
       .label 汇款抬头
       .text-right.row.justify-end.col.select
         span {{customName || '请选择汇款抬头'}}
         span(:class="selectShow==='custom' ? 'cuIcon-fold' : 'cuIcon-unfold'")
+      //- modal-bottom(valKey="name", :clearVal="isReset", :scrollHeight="400", :selectType="'custom'", @cb="selectCb($event, 'custom')", :show="selectShow==='custom'", :inputShow="true")
       search-select(:selectSty="'top: 90rpx; height: '+ (contentHeight - 90) +'rpx'", valKey="name", :clearVal="isReset", :scrollHeight="400", :selectType="'custom'", @cb="selectCb($event, 'custom')", :show="selectShow==='custom'", :inputShow="true")    
     .row.justify-between.solid-bottom.item(:style="itemSty")
       .label 起始日期
@@ -19,13 +20,16 @@ div
   .footer.row.bg-white.text-center.text-white.padding-sm(style="height: 100rpx")
     .col.foot-cancel(@click="confirm('reset')") 重置
     .col.foot-confirm.margin-left-sm(@click="confirm") 搜索   
+  //- picker-bottom(valKey="name", :clearVal="isReset", :scrollHeight="400", :selectType="'custom'", @cb="selectCb($event, 'custom')", :show="selectShow==='custom'", :inputShow="true")  
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
 import searchSelect from '@/components/searchSelect.vue'
+// import PickerBottom from '@/components/PickerBottom.vue'
 export default {
   components: {
     searchSelect
+    // PickerBottom
   },
   data () {
     return {

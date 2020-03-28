@@ -47,6 +47,7 @@ div
                         //- .text-gray(v-if="item.match_status === 3") 不匹配
                         .bill-btn.round.margin-left-sm(v-if="item.match_status === 3", @click="delBankWater(item.id)") 删除
                         .bill-btn.round.margin-left-sm(v-else, @click.stop="jumpDetail(item, 'review')") 审核
+                        //- .bill-btn.round.margin-left-sm(v-else-if="item.status === 0", @click.stop="jumpDetail(item, 'review')") 审核
                       .bill-btn.round.margin-left-sm(@click.stop="jumpDetail(item)", v-else) 详情
                       .bill-btn.round.margin-left-sm(v-if="tabName === '3'", @click.stop="jumpDetail(item, 'restore')") 恢复                      
                       //- .bill-btn.round.margin-left-sm(v-else, @click.stop="jumpDetail(item)") {{tabName === '0' ? '审核' : tabName === '1' ? '详情' : '恢复'}}

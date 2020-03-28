@@ -1,30 +1,33 @@
 <template lang="pug">
-.tab-select-dialog.solid-top(:style="selectSty", v-show="show")
-  .bg-white(@click.stop="")
-    .padding(v-if="inputShow")
-      .select-search.bg-gray.round.row.padding-xs
+modal-bottom(:value="modalShow", @cb="modalHandler", :btns="[]", ref="modal")
+  .bg-white
+    .padding(v-if="inputShow", style="height: 130rpx;")
+      .select-search.round.row.padding-xs
         .cuIcon-search.padding-left-sm
         input.col.margin-left-xs.text-left(type="text", v-model="searchVal")
         .close-icon(@click="searchVal = ''", v-if="searchVal")
           .cuIcon-roundclosefill.ft-18
-    iron-scroll(:height="scrollHeight", heightUnit="rpx", @scrolltolower="loadMore", :loadFinish="loadFinish")
-      .bg-white.solid-top.row.padding.justify-between(@click="tabSelect(item)", v-for="(item, pickIdx) in pickList", :key="pickIdx")
+    iron-scroll(:height="600", heightUnit="rpx", @scrolltolower="loadMore", :loadFinish="loadFinish")
+      .solid-top.row.padding.justify-between(@click="tabSelect(item)", v-for="(item, pickIdx) in pickList", :key="pickIdx")
         .row.justify-between.response(:class="{'text-blue': item[valKey] === checkItem[valKey]}")
           .col.text-left {{item.name}}
           .cuIcon-check(v-if="item[valKey] === checkItem[valKey]")
     .solid-top.text-right.padding.text-gray 共{{total}}条数据
 </template>
 <script>
+import ModalBottom from '@/components/ModalBottom.vue'
 export default {
+  components: {
+    ModalBottom
+  },
   props: {
-    show: ['Boolean'],
-    inputShow: {
+    show: {
       type: Boolean,
       default: false
     },
-    selectSty: {
-      type: Object,
-      default: {}
+    inputShow: {
+      type: Boolean,
+      default: true
     },
     list: {
       type: Array,
@@ -38,29 +41,27 @@ export default {
     labelKey: ['String'],
     scrollHeight: {
       type: Number,
-      default: 0
+      default: 200
     },
-    clearVal: {
-      type: Boolean,
-      default: false
-    }
+    clearVal: ['Boolean']
   },
   data () {
     return {
       pickList: [],
       checkItem: {},
       searchVal: '',
-      selectRemote: '',
       loadFinish: 0,
       total: 0,
       currentPage: 0,
-      pageSize: 10
+      pageSize: 10,
+      modalShow: false
     }
   },
-  // onUnload () {
-  //   this.checkItem = []
-  // },
   watch: {
+    show (newVal) {
+      this.modalShow = newVal
+      if (newVal) this.loadData()
+    },
     clearVal () {
       this.checkItem = {}
     },
@@ -73,44 +74,24 @@ export default {
       }, 300)
     }
   },
-  beforeMount () {
-    // if (this.clearVal) this.checkItem = {}
-    this.loadData()
-  },
+  // onShow () {
+  //   this.loadData()
+  // },
+  // beforeMount () {
+  //   this.loadData()
+  // },
+  // mounted () {
+  //   this.$nextTick(() => {
+  //     debugger
+  //     this.loadData()
+  //     console.log(this.$refs)
+  //   })
+  // },
   methods: {
+    modalHandler () { },
     tabSelect (item) {
       this.checkItem = item
       this.$emit('cb', this.checkItem)
-    },
-    deptList () {
-      const deptList = this.apiList.xy.deptList
-      const params = { dept_name: this.searchVal }
-      const me = this
-      this.ironRequest(deptList.url, params, deptList.method).then((res) => {
-        if (res.returncode === '0') {
-          me.pickList = res.list
-          me.total = res.amount.amount
-          me.pickList.unshift({ name: '全部', id: '' })
-        }
-        me.$forceUpdate()
-      })
-    },
-    employeeList () {
-      const employeeList = this.apiList.xy.employeeList
-      const params = {
-        employee_name: this.searchVal,
-        current_page: 0,
-        page_size: 10
-      }
-      const me = this
-      this.ironRequest(employeeList.url, params, employeeList.method).then((res) => {
-        if (res.returncode === '0') {
-          me.pickList = res.list
-          me.total = res.amount.amount
-          me.pickList.unshift({ name: '全部', id: '' })
-        }
-        me.$forceUpdate()
-      })
     },
     loadMore () {
       if (this.selectType === 'dept') return false
@@ -120,15 +101,6 @@ export default {
         me.loadData()
       }, 300)
     },
-    // searchChange (e) {
-    //   this.customSearchVal = e.mp.detail.value
-    //   const me = this
-    //   this.throttle(function () {
-    //     me.currentPage = 0
-    //     me.loadData()
-    //     me.$emit('search', e)
-    //   }, 300)
-    // },
     async loadData () {
       try {
         let api = {}
@@ -188,12 +160,6 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
-.tab-select-dialog
-  position absolute
-  left 0
-  right 0
-  z-index 99
-  background rgba(0, 0, 0, 0.5)
-  bottom 0
-  // height 100vh
+.select-search
+  background #f6f6f6
 </style>

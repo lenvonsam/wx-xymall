@@ -284,7 +284,8 @@ export default {
           let m = 0
           let s = 0
           if (leftTime >= 0) {
-            h = Math.floor(leftTime / 1000 / 60 / 60 % 24)
+            // h = Math.floor(leftTime / 1000 / 60 / 60 % 24)
+            h = Math.floor(leftTime / 1000 / 60 / 60)
             m = Math.floor(leftTime / 1000 / 60 % 60)
             s = Math.floor(leftTime / 1000 % 60)
           }
