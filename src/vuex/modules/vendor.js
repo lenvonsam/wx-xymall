@@ -1,6 +1,33 @@
 export default {
   actions: {},
   state: {
+    // 首页图片
+    mainIcons: [
+      {
+        url: '/static/images/ht_icon.png',
+        title: '合同跟踪',
+        path: '/pages/vendor/contractTrack/main',
+        event: ''
+      },
+      {
+        url: '/static/images/td_icon.png',
+        title: '我的报价单',
+        path: '/pages/vendor/quotationList/main',
+        event: ''
+      },
+      {
+        url: '/static/images/pr_icon.png',
+        title: '待审核',
+        path: '/pages/vendor/pendingReview/main',
+        event: ''
+      },
+      {
+        url: '/static/images/bank_icon.png',
+        title: '用户余额',
+        path: '/pages/vendor/balance/main',
+        event: ''
+      }
+    ],
     billTrackIcons: [
       {
         icon: '/static/images/dfk.png',

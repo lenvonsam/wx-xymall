@@ -92,7 +92,6 @@ export default {
         status: ''
       }
     }
-
     this.statusList = this.tempObject.statusList || []
     this.contentHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar)
   },

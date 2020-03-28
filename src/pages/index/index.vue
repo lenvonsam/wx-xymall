@@ -13,7 +13,7 @@ div
         img.response(:src="imgOuterUrl + g.url", v-if="imgOuterUrl", style="height: 300rpx", mode="widthFix")
     time-line(v-else, type="gallery")
   .row.bg-white.padding-bottom-sm
-    .col.text-center(v-for="(icon,idx) in mainIcons", :key="idx", @click="iconJump(icon)")
+    .col.text-center(v-for="(icon,idx) in (currentUser.type === 'seller' ? sellerMainIcons : mainIcons)", :key="idx", @click="iconJump(icon)")
       img(:src="icon.url", style="width: 85rpx; height: 85rpx")
       .mt-5 {{icon.title}}
   .bg-white.padding.margin-top-sm
@@ -105,6 +105,7 @@ export default {
   computed: {
     ...mapState({
       mainIcons: state => state.mainIcons,
+      sellerMainIcons: state => state.vendor.mainIcons,
       mainClassify: state => state.mainClassify
     })
   },

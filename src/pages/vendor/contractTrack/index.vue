@@ -90,7 +90,8 @@ export default {
             { label: '待审核', value: '12,20' },
             { label: '待确认', value: '16' },
             { label: '修改中', value: '18,19' },
-            { label: '已完成', value: '-1' },
+            { label: '已完成', value: '99' },
+            { label: '已取消', value: '-1' },
             { label: '已违约', value: '13' }
           ]
         }, {
@@ -122,7 +123,7 @@ export default {
           ]
         },
         { title: '修改中', status: '10', data: [], isActive: false, statusList: [{ label: '修改中', value: '18,19' }] },
-        { title: '已完成', status: '4', data: [], isActive: false, statusList: [{ label: '已违约', value: '13' }] }
+        { title: '已完成', status: '4', data: [], isActive: false, statusList: [{ label: '已完成', value: '99' }] }
       ],
       tabName: '6',
       currentPage: 0,
@@ -260,7 +261,9 @@ export default {
     ...mapActions(['configVal']),
     openFilter () {
       const statusList = this.billTab[this.swiperCount].statusList
-      this.configVal({ key: 'tempObject', val: { statusList: statusList } })
+      const tempObject = this.tempObject
+      tempObject.statusList = statusList
+      this.configVal({ key: 'tempObject', val: tempObject })
       this.jump('/pages/vendor/billFilter/main')
     },
     onRefresh (done) {

@@ -11,6 +11,7 @@
         template(v-else)
           span 报价单2小时内有效，超时自动失效
           span.padding-left-xs(v-if="pageType === 'share'") {{timeDown}}
+    .bg-white.padding-sm.text-bold {{custName}}
     template(v-if="!isLoad")
       time-line(type="mallist")
     template(v-else)
@@ -182,7 +183,8 @@ export default {
       checkGoods: [],
       status: '',
       isAudit: false,
-      enforce: 0
+      enforce: 0,
+      custName: ''
     }
   },
   components: {
@@ -442,6 +444,7 @@ export default {
     loadData () {
       this.status = ''
       const arr = this.tempObject.list
+      this.custName = this.tempObject.buyer_name
       arr.map(itm => {
         itm.choosed = true
         const checkedRadio = itm.radios.filter(item => {
@@ -472,6 +475,7 @@ export default {
         this.serverTime = data.server_time
         this.endTime = data.end_time
         this.status = data.status
+        this.custName = data.cust_name
         if (data.returncode === '0') {
           const resData = data.list
           resData.map(item => {
