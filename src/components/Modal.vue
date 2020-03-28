@@ -55,11 +55,16 @@ export default {
 </script>
 <style lang="stylus" scoped>
 .confirm-btn
-  margin 0 auto
+  margin 0 10px
   width 40%
   height 40px
   border-radius 5px
   font-size 14px
+  display flex
+  flex 1
+  align-items center
+  justify-content center
+  letter-spacing 6rpx
 // .confirm-btn
 // margin 0 auto
 // width 100px
