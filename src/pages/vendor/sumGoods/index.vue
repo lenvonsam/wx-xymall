@@ -55,34 +55,6 @@ export default {
   data () {
     return {
       ballValue: null,
-      mallTypeObject: {
-        'product': {
-          name: 'name',
-          supply: 'supply',
-          price: 'price',
-          standard: 'standard',
-          material: 'material',
-          wh_name: 'wh_name',
-          max_count: 'max_count',
-          max_weight: 'max_weight',
-          tolerance: 'tolerance_range',
-          length: 'length',
-          weightRange: 'weight_range'
-        },
-        'trove': {
-          name: 'product_name',
-          supply: 'supply',
-          price: 'price',
-          standard: 'product_standard',
-          material: 'product_material',
-          wh_name: 'wh_name',
-          max_count: 'max_count',
-          max_weight: 'max_weight',
-          tolerance: 'tolerance_range',
-          length: 'product_length',
-          weightRange: 'weight_range'
-        }
-      },
       weightMark: '',
       itemType: 'product',
       introImages: ['mall_classify.png', 'mall_good.png', 'mall_standard.png'],
@@ -122,6 +94,21 @@ export default {
       })
     }
   },
+  onUnload () {
+    this.ballValue = null
+    this.mallTabVal = ''
+    this.mallItems = []
+    this.queryObject = {}
+    this.isRefresh = 'refresh'
+    this.currentPage = 0
+    this.mallFlag = 1
+    this.btnDisable = false
+    this.goodsNameList = []
+    this.swiperCount = 0
+    this.scrollHeight = 0
+    this.swiperFirst = 0
+    this.prevIdx = null
+  },
   onHide () {
     this.btnDisable = false
     // this.queryObject.search = ''
@@ -130,10 +117,7 @@ export default {
     this.showLoading()
     this.isload = true
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 285
-    if (this.tempObject.fromPage === 'home') {
-      // 首页
-      this.mallTabVal = this.tempObject.name
-    } else if (this.tempObject.fromPage === 'mallFilter' && this.tempObject.noBack) {
+    if (this.tempObject.fromPage === 'mallFilter' && this.tempObject.noBack) {
       // 分类
       this.swiperFirst = 1
       Object.assign(this.queryObject, this.tempObject)

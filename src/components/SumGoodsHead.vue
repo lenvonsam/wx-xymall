@@ -163,6 +163,24 @@ export default {
     this.sortCb('name')
     this.filterHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 95
   },
+  onUnload () {
+    this.scrollId = 'idx_0'
+    this.tabVal = ''
+    this.searchVal = ''
+    this.standardStr = ''
+    this.materialStr = ''
+    this.originStr = ''
+    this.warehouseStr = ''
+    this.sortList[0].data = []
+    this.sortList[1].data = []
+    this.sortList[2].data = []
+    this.sortList[3].data = []
+    this.sortList[4].data = []
+    this.tabList = []
+    this.scrollLeft = 0
+    this.scrollTop = 3
+    this.activeTab = ''
+  },
   onShow () {
     this.isFilter = false
     if (this.sortList[0].data.length === 0) this.sortCb('name')

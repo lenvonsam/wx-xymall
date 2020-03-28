@@ -112,9 +112,13 @@ export default {
     this.searchVal = ''
     this.currentPage = 0
     this.filterObj = {}
+    this.delayDate = 1
+    this.textVal = ''
     this.configVal({ key: 'tempObject', val: {} })
   },
   onHide () {
+    this.delayDate = 1
+    this.textVal = ''
     this.modalShow = false
     wx.hideKeyboard()
   },
@@ -191,8 +195,12 @@ export default {
           this.showMsg(data.errormsg)
           this.currentPage = 0
           this.refresher()
+          this.delayDate = 1
+          this.textVal = ''
         }
       } catch (err) {
+        this.delayDate = 1
+        this.textVal = ''
         this.showMsg(err || '网络错误')
       }
     },
