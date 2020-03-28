@@ -83,7 +83,7 @@
               span 合计：
               b.text-red ￥{{totalPrice}}
           .text-right.ft-12(style="color:#999;") 共{{totalCount}}支 ，{{totalWeight}}吨
-            span(v-if="tempObject.need_lift === 1") ，吊费: {{totalLiftCharge}}元
+            span ，吊费: {{totalLiftCharge}}元
         .cart-settle-btn.ft-18(:class="status === '已完成' || status === '已失效' ? 'bg-gray' : 'bg-red'", v-if="pageType === 'share'", @click="auditDxCheck") 生成合同
         button.cart-settle-btn.bg-red.ft-18(@click="shareClick" v-else) 分享
     modal(:title="modalTitle", :btns="btns", :value="modalShow", @cb="modalHandler", :width="modalWidth")
@@ -288,7 +288,7 @@ export default {
   mounted () {
     this.$nextTick(() => {
       const me = this
-      if (this.status !== '已完成' && this.status !== '已失效' && this.currentUser.type === 'buyer') {
+      if (this.status !== '已完成' && this.status !== '已失效') {
         this.timeInterval = setInterval(() => {
           me.countTime()
           me.serverTime += 1000
@@ -355,8 +355,8 @@ export default {
         let weights = []
         let orderPrices = []
         // let totalPrice = 0
-        let totalWeight = 0
-        let totalLiftCharge = 0
+        // let totalWeight = 0
+        // let totalLiftCharge = 0
         this.checkGoods.map(itm => {
           orderIds.push(itm.order_id)
           dxPrices.push(itm.dx_prices)
@@ -366,11 +366,10 @@ export default {
           weights.push(itm.countWeight)
           orderPrices.push(itm.price)
           // totalPrice += Number(itm.dx_prices) * Number(itm.countWeight)
-          totalWeight += Number(itm.countWeight)
-          if (Number(itm.lift_charge) > 0 && this.tempObject.need_lift === 1) {
-            totalLiftCharge += Number(itm.countWeight) * Number(itm.lift_charge)
-          }
-          // totalLiftCharge +=
+          // totalWeight += Number(itm.countWeight)
+          // if (Number(itm.lift_charge) > 0 && this.tempObject.need_lift === 1) {
+          //   totalLiftCharge += Number(itm.countWeight) * Number(itm.lift_charge)
+          // }
         })
         const params = {
           user_id: this.tempObject.user_id,
@@ -385,8 +384,8 @@ export default {
           jl_types: jlTypes.toString(),
           total_money: this.totalPrice,
           total_amount: this.totalCount,
-          total_weight: this.$toFixed(totalWeight, 3),
-          lift_money: totalLiftCharge,
+          total_weight: this.totalWeight,
+          lift_money: this.totalLiftCharge,
           lock_goods: this.lockGoods
         }
         this.ironRequest(this.apiList.xy.quotation.url, params, this.apiList.xy.quotation.method).then(res => {
