@@ -1,7 +1,7 @@
 import UTF8 from 'utf8'
 import BASE64 from 'base-64'
-const BASICURL = 'https://mobileapp.xingyun361.com/quasarserverdev'
-// const BASICURL = 'https://mobileapp.xingyun361.com/quasarserverstage'
+// const BASICURL = 'https://mobileapp.xingyun361.com/quasarserverdev'
+const BASICURL = 'https://mobileapp.xingyun361.com/quasarserverstage'
 // const BASICURL = 'https://mobileapp.xingyun361.com/quasarserver'
 // const BASICURL = 'https://47.97.195.16/quasarserver'
 // const BASICURL = 'http://localhost:8077'
@@ -174,7 +174,9 @@ export default {
     // prod
     // dr: 'http://appadmin.xingyun361.com/driver-bk/api/'
     // dev
-    crm: 'http://crm-admin-test.xingyun361.com/crmserver/api/v1/wxmini/'
+    // crm: 'http://crm-admin-test.xingyun361.com/crmserver/api/v1/wxmini/'
+    // stage
+    crm: 'http://crm-admin-pro.xingyun361.com/crmserver/api/v1/wxmini/'
   },
   ironRequest,
   request (url, params, urlMethod) {

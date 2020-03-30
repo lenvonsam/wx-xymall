@@ -14,8 +14,8 @@ const wxMixins = {
       pageSize: 10,
       imgProxy: 'http://xymobile.xingyun361.com/',
       // 型云图片访问地址
-      imgOuterUrl: 'http://web-test.xingyun361.com',
-      // imgOuterUrl: 'http://xyweb-pro.xingyun361.com',
+      // imgOuterUrl: 'http://web-test.xingyun361.com',
+      imgOuterUrl: 'http://xyweb-pro.xingyun361.com',
       // imgOuterUrl: 'https://www.xingyun361.com',
       phoneReg: /^1[3-9]\d{9}$/,
       // 6-12为字母数字下划线
