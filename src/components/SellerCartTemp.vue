@@ -238,7 +238,6 @@ export default {
     this.totalWeight = 0
     this.totalLiftCharge = 0
     this.totalCount = 0
-    this.pickway = 0
   },
   onShow () {
     if (this.tempObject.type) {
