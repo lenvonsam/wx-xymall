@@ -105,7 +105,7 @@ export default {
   onShow () {
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 203
     if (this.tempObject.fromPage === 'bankWaterFilter') {
-      this.tabName = '0'
+      // this.tabName = '0'
       // this.filterArr = []
       this.filterObj = {
         date_end: this.tempObject.endDate,
@@ -117,7 +117,7 @@ export default {
       //     this.filterArr.push(`${key}=${obj[key]}`)
       //   }
       // })
-      this.currentPage = 0
+      // this.currentPage = 0
       this.onRefresh()
     } else {
       this.onRefresh()
@@ -176,11 +176,11 @@ export default {
     searchOrder () {
       this.listData = []
       this.isTabDisabled = true
-      this.swiperCount = 0
-      this.tabName = '0'
-      this.billTab[0].data = []
+      // this.swiperCount = 0
+      // this.tabName = '0'
+      // this.billTab[0].data = []
       this.isload = true
-      this.refresher()
+      this.onRefresh()
     },
     swiperChange (e) {
       this.showLoading()

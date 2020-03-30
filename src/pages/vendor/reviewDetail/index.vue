@@ -174,7 +174,8 @@ export default {
       if (this.disabled) return false
       this.disabled = true
       let params = {}
-      switch (this.auditType) {
+      const auditType = this.auditType
+      switch (auditType) {
         case '退货':
           this.disabled = false
           this.modalShow = true
@@ -246,7 +247,8 @@ export default {
       try {
         let url = ''
         const modules = this.modules
-        switch (this.auditType) {
+        const auditType = this.auditType
+        switch (auditType) {
           case '定向':
             const sellerDxAudit = this.apiList.xy.sellerDxAudit
             url = `${sellerDxAudit.url}?user_id=${this.currentUser.user_id}&deal_no=${this.tempObject.tstc_no}`
@@ -269,10 +271,11 @@ export default {
         }
         const data = await this.ironRequest(url, '', 'get')
         if (data.returncode === '0') {
-          switch (this.auditType) {
+          const auditType = this.auditType
+          switch (auditType) {
             case '定向':
               this.detailData = {
-                liftStatus: data.att56,
+                liftStatus: data.need_lift,
                 billNo: data.deal_no,
                 custName: data.cust_name,
                 totalAmount: data.amount,

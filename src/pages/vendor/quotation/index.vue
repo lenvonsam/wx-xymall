@@ -94,7 +94,10 @@
           .margin-right-sm.margin-left-sm(v-for="(r, rIdx) in radios", :key="rIdx")
               z-radio(@checkHander="lockCheck(r)", :label="r.label", :checked="lockGoods === r.val")
     modal(v-model="modalDefaultShow", :btns="modalBtns === 'mall' ? mallBtns : btns", @cb="modalDefaultHandler")
-      .padding-sm {{modalDefaultMsg}}
+      template(v-if="errList.length > 0")
+        .padding-sm.text-left(v-for="(item, errIdx) in errList", :key="errIdx") {{item}}
+      template(v-else)  
+        .padding-sm {{modalDefaultMsg}}
     modal-bottom(:btns="previewBtns", :value="previewShow", @cb="modalHandler")
       .bg-gray
         scroll-view.scroll-view(scroll-y, :style="{'max-height': '800rpx', 'min-height': '400rpx'}")
@@ -140,6 +143,7 @@ import modalBottom from '@/components/ModalBottom.vue'
 export default {
   data () {
     return {
+      errList: [],
       modalDefaultShow: false,
       modalDefaultMsg: '',
       previewShow: false,
@@ -252,6 +256,7 @@ export default {
     this.btnDisable = false
     this.modalDefaultMsg = ''
     this.modalDefaultShow = false
+    this.errList = []
     // this.pageType = ''
   },
   onShow () {
@@ -285,6 +290,7 @@ export default {
     this.modalDefaultMsg = ''
     this.modalDefaultShow = false
     this.modalBtns = ''
+    this.errList = []
     clearInterval(this.timeInterval)
   },
   mounted () {
@@ -336,6 +342,7 @@ export default {
         this.tab('/pages/mall/main')
         return false
       }
+      this.errList = []
       if (flag === 'cancel') {
         this.enforce = 0
         this.modalDefaultShow = false
@@ -571,7 +578,14 @@ export default {
           me.btnDisable = false
           me.hideLoading()
           me.modalDefaultShow = true
-          me.modalDefaultMsg = err
+          const errList = err.split('|')
+          if (errList.length > 0) {
+            this.errList = errList.filter((item) => {
+              return item !== ''
+            })
+          } else {
+            me.modalDefaultMsg = err
+          }
           if (err === '该报价单中所有物资的可卖数量都不足！') {
             this.modalBtns = 'mall'
           } else {

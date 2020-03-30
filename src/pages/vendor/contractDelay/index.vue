@@ -211,6 +211,7 @@ export default {
     modalHandler ({ type }) {
       console.log('type', type)
       if (type === 'confirm') {
+        this.delayBlur()
         this.orderDelay()
       } else {
         this.delayDate = ''

@@ -263,10 +263,11 @@ export default {
         const filterArray = list.filter(item => {
           // amountTotal += item.count
           item.metering_way_str = this.meteringWay[item.metering_way]
+          const price = this.$toFixed(Number(item.price) * Number(item.countWeight), 2)
           weights.push(item.countWeight)
           amounts.push(item.count)
           seqIds.push(item.seq_d)
-          prices.push(item.price)
+          prices.push(price)
           return item.choosed === true
         })
         // if (filterArray.length === 0 && (!this.isliftShow || !this.totalLiftCharge)) {
