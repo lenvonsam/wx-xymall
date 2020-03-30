@@ -17,7 +17,7 @@ const wxMixins = {
       imgOuterUrl: 'http://web-test.xingyun361.com',
       // imgOuterUrl: 'http://xyweb-pro.xingyun361.com',
       // imgOuterUrl: 'https://www.xingyun361.com',
-      phoneReg: /^1[3|4|5|8|7|9][0-9]\d{4,8}$/,
+      phoneReg: /^1[3-9]\d{9}$/,
       // 6-12为字母数字下划线
       pwdReg: /^[\w]{6,12}$/,
       erpProxy: httpUtil.proxy.erp,
@@ -355,9 +355,9 @@ const wxMixins = {
         case 1:
           one = this.$toFixed(
             parseFloat(opt.att14) *
-            parseFloat(opt.att8) *
-            (1 - parseFloat(opt.att12)) *
-            1.05,
+              parseFloat(opt.att8) *
+              (1 - parseFloat(opt.att12)) *
+              1.05,
             6
           )
           // 当物资是【花纹板187】【普碳开平板185】【低合金开平板186】【碳钢板278】【普板253】【中板280】【低合金中板211】的时候计算公式：板材磅重计算公式=米重*长度*105%
@@ -503,7 +503,9 @@ const wxMixins = {
     numberFormat (val) {
       const numStr = val.toString()
       const idx = numStr.indexOf('.') + 1
-      return Number(numStr.substr(0, idx) + numStr.substr(idx).replace(/\./g, ''))
+      return Number(
+        numStr.substr(0, idx) + numStr.substr(idx).replace(/\./g, '')
+      )
     }
   }
 }
