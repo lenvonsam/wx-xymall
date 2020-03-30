@@ -233,6 +233,12 @@ export default {
     this.liftSelectVal = 1
     this.liftSelect = '收吊费'
     this.firstLoad = false
+    this.tabActive = 0
+    this.totalPrice = 0
+    this.totalWeight = 0
+    this.totalLiftCharge = 0
+    this.totalCount = 0
+    this.pickway = 0
   },
   onShow () {
     if (this.tempObject.type) {
