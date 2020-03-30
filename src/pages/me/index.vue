@@ -32,7 +32,7 @@ div
     .padding-sm
       .bg-white.features
         .ft-18.text-bold.padding-sm.padding-top.padding-bottom 功能列表
-        .grid.col-3.text-center
+        .grid.col-3.text-center.features-top
           .features-card(v-for="(ficon, fIdx) in featuresModules", :key="fIdx", @click="jump(ficon.url.path)")
             .relative.contract-img(v-if="ficon.icon")
               img(:src="ficon.icon", mode="widthFix")
@@ -347,12 +347,17 @@ export default {
 .item
   height 50px
   line-height 50px
+.features-top
+  border-top 1px #EEEEEE solid
 .features-card
   padding 20px 0
-  border-top 1px #EEEEEE solid
+  // border-top 1px #EEEEEE solid
+  border-bottom 1px #EEEEEE solid
   border-right 1px #EEEEEE solid
   &:nth-child(3n)
     border-right none
+  &:nth-child(n+7)
+    border-bottom none
   .contract-img
     width 25px
     // height 20px
