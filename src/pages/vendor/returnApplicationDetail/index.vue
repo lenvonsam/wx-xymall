@@ -171,6 +171,7 @@ export default {
           this.listData = resList
           this.returnReason = resData.return_reason
           this.returnRemark = resData.return_remark
+          this.totalLiftCharge = resData.lift_money
           this.detailData = data.data
           this.totalCount = totalCount
           this.totalWeight = this.$toFixed(totalWeight, 3)

@@ -2,7 +2,7 @@
 div
   nav-bar(title="待审核", isBack)
   .padding-sm(style="margin-bottom: 120rpx")
-    template(v-if="auditType === '延时'")
+    template(v-if="tempObject.auditType === '延时'")
       .bg-white.card(v-for="(item, idx) in detailData.list", :key="idx")
         .row.justify-between.padding-bottom-xs
           .col.text-blue(@click="jumpBillDetail(item)") {{item.deal_no}}
@@ -22,11 +22,11 @@ div
       .bg-white.card
         .row.justify-between.padding-bottom-xs
           .col.text-blue {{detailData.billNo}}
-          .text-red {{auditType === '退货' ? '待退款' : detailData.status}}
+          .text-red {{tempObject.auditType === '退货' ? '待退款' : detailData.status}}
         .row.justify-between.padding-bottom-xs
           .text-gray.col {{detailData.custName}}
           .text-black ¥ {{detailData.totalMoeny}}
-        template(v-if="auditType === '退货'")
+        template(v-if="tempObject.auditType === '退货'")
           .text-gray.padding-bottom-xs.row.justify-between
             .col 发票状态：{{detailData.invoiceStatus}}
             span 操作员：{{detailData.operName}}
@@ -35,21 +35,22 @@ div
             .col 共{{detailData.totalAmount}}支，{{detailData.totalWeight}}吨
             span 操作员：{{detailData.operName}}
         .solid-top.padding-top-xs.padding-bottom-xs.row.justify-between
-          template(v-if="auditType !== '退货'")
+          template(v-if="tempObject.auditType !== '退货'")
             .col
-              span {{auditType==='定向' ? '' : '付款'}}截止时间：
+              span {{tempObject.auditType==='定向' ? '' : '付款'}}截止时间：
               span.text-red.padding-left-xs {{detailData.endTime}}
-            span(v-if="auditType==='定向'") {{liftStatus[detailData.liftStatus]}}
-          template(v-else)  
-            span.text-black {{detailData.endTime}}
+            span(v-if="tempObject.auditType==='定向'") {{liftStatus[detailData.liftStatus]}}
+          template(v-else)
+            .col.text-black {{detailData.endTime}}
+            span 吊费：{{detailData.totalLiftCharge}}元
       //- template(v-if="auditType !== '延时'")
       .ft-18.padding-top-sm.padding-bottom-sm 商品信息
       .bg-white.card(v-for="(item, idx) in dataList", :key="idx")
         .row.justify-between.padding-bottom-xs
           .text-black.col {{item.name}} {{item.standard}}
-          .text-blue ¥ {{auditType === '定向' ? item.order_price : item.price}}
+          .text-blue ¥ {{tempObject.auditType === '定向' ? item.order_price : item.price}}
         .text-gray
-          template(v-if="auditType === '定向'")  
+          template(v-if="tempObject.auditType === '定向'")  
             .row.justify-between.padding-bottom-xs
               .col
                 span.padding-right-xs {{item.material}}
@@ -77,8 +78,8 @@ div
               span 退款重量：{{item.weight}}吨  
               span.padding-left-xs 退款金额：{{item.money}}元
   .footer.row.bg-white.text-center.text-white.padding-sm(style="height: 120rpx", v-if="btnShow && tempObject.fromPage !== 'reviewHistory'")
-    .col.foot-cancel(@click="confirm('cancel')") {{auditType === '退货' ? '驳回' : '拒绝'}}
-    .col.foot-confirm.margin-left-sm(@click="confirm") {{auditType === '退货' ? '退货' : '通过'}}
+    .col.foot-cancel(@click="confirm('cancel')") {{tempObject.auditType === '退货' ? '驳回' : '拒绝'}}
+    .col.foot-confirm.margin-left-sm(@click="confirm") {{tempObject.auditType === '退货' ? '退货' : '通过'}}
   modal-input(v-model="modalShow", :title="modalInputTitle", confirmText="确定", type="customize", :cb="modalHandler")
     .padding-sm
       .bg-gray.input-box
@@ -122,10 +123,10 @@ export default {
       return this.detailData.list.filter(item => {
         return item.good_name !== '吊费'
       })
-    },
-    auditType () {
-      return this.tempObject.auditType
     }
+    // auditType () {
+    //   return this.tempObject.auditType
+    // }
   },
   onUnload () {
     this.disabled = false
@@ -173,7 +174,7 @@ export default {
       if (this.disabled) return false
       this.disabled = true
       let params = {}
-      switch (this.auditType) {
+      switch (this.tempObject.auditType) {
         case '退货':
           this.disabled = false
           this.modalShow = true
@@ -234,7 +235,7 @@ export default {
       try {
         let url = ''
         const modules = this.modules
-        switch (this.auditType) {
+        switch (this.tempObject.auditType) {
           case '定向':
             const sellerDxAudit = this.apiList.xy.sellerDxAudit
             url = `${sellerDxAudit.url}?user_id=${this.currentUser.user_id}&deal_no=${this.tempObject.tstc_no}`
@@ -259,7 +260,7 @@ export default {
         const data = await this.ironRequest(url, '', 'get')
         console.log('data', data)
         if (data.returncode === '0') {
-          switch (this.auditType) {
+          switch (this.tempObject.auditType) {
             case '定向':
               this.detailData = {
                 liftStatus: data.need_lift,
@@ -289,6 +290,7 @@ export default {
                 invoiceFlag: datas.kp_flag,
                 operName: datas.applyer_name,
                 id: datas.id,
+                totalLiftCharge: datas.lift_money,
                 list: data.list
               }
               break

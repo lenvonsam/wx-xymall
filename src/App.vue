@@ -50,6 +50,15 @@ export default {
         } else {
           me.configVal({ key: 'customBar', val: statusBar + 50 })
         }
+        const model = e.model
+        if (/iphone\sx/i.test(model) ||
+          (/iphone/i.test(model) && /unknown/.test(model)) ||
+          /iphone\s11/i.test(model)) {
+          console.log('model', e.model)
+          me.configVal({ key: 'isIpx', val: true })
+        } else {
+          me.configVal({ key: 'isIpx', val: false })
+        }
         console.log('capsule:>>', capsule)
       }
     })

@@ -4,9 +4,9 @@ div
   .bg-white
     .ft-16.padding-sm 退货选择
     .solid-top.row.padding-sm
-      .col.row(@click="returnGoodsCheck('isGoodsShow')")
-        img.choose-icon(src="/static/images/blue_check.png", v-if="isGoodsShow")
-        img.choose-icon(src="/static/images/btn_ck_n.png", v-else)
+      .col.row
+        img.choose-icon(src="/static/images/blue_check.png")
+        //- img.choose-icon(src="/static/images/btn_ck_n.png", v-else)
         span.padding-left-sm 退货款
       .col.row(@click="returnGoodsCheck('isliftShow')")
         img.choose-icon(src="/static/images/blue_check.png", v-if="isliftShow")

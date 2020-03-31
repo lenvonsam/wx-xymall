@@ -12,87 +12,89 @@
             .cart-empty-btn(@click="tab('/pages/mall/main')") ^_^去商城逛逛吧
       .s-content-wrap(v-else)
         .s-content
-          .solid-bottom.flex.padding-sm.bg-white.align-center.justify-between(style="height: 100rpx")
-            .quotation.text-blue.line-blue.solid(@click="auditDxCheck(2)") 生成报价单
-            .text-center
-              .padding-xs(v-show="isEdit", @click="openEdit") 完成
-              .flex(v-show="!isEdit")
-                .padding-xs.mr-5(@click="openEdit") 编辑
-                .padding-xs(@click="clearCarts") 清空
-          .row.text-gray.text-center.bg-white(style="height: 100rpx")
-            .row.col.tab-select(@click.stop="openPickWay(1)", :class="{'text-blue': pickWayShow && tabActive === 1}")
-              .col.text-cut {{customerName || '客户选择'}}
-              i(:class="pickWayShow && tabActive === 1 ? 'cuIcon-fold' : 'cuIcon-unfold'")
-            .row.col.tab-select(@click.stop="openPickWay(2)", :class="{'text-blue': pickWayShow && tabActive === 2}")
-              .col.text-cut {{liftSelect}}
-              i(:class="pickWayShow && tabActive === 2 ? 'cuIcon-fold' : 'cuIcon-unfold'")
-          scroll-view.scroll-view(scroll-y, :style="{height: scrollHeight}")
-            .cart-items(v-for="(cart, cartIdx) in carts", :key="cartIdx")
-              .cart-item
-                .padding-sm
-                  .flex.flex-center.align-center.ft-15.text-bold
-                    .col.flex-25(@click="cart.choosed = !cart.choosed", style="padding-top: 5px;")
-                      img.choose-icon(src="/static/images/blue_check.png", v-if="cart.choosed")
-                      img.choose-icon(src="/static/images/btn_ck_n.png", v-else)
-                    .col(@click="cart.choosed = !cart.choosed")
-                      span {{cart.product_name}}
-                      span.padding-left-xs {{cart.product_standard}}
-                    .text-blue ￥{{cart.price}}
-                  .content.ft-13
-                    .flex.flex-center.justify-between
-                      div
+          .head(:style="{height: '200rpx', top: (selectDialogTop - 200)+'rpx'}")
+            .solid-bottom.flex.padding-sm.bg-white.align-center.justify-between(style="height: 100rpx")
+              .quotation.text-blue.line-blue.solid(@click="auditDxCheck(2)") 生成报价单
+              .text-center
+                .padding-xs(v-show="isEdit", @click="openEdit") 完成
+                .flex(v-show="!isEdit")
+                  .padding-xs.mr-5(@click="openEdit") 编辑
+                  .padding-xs(@click="clearCarts") 清空
+            .row.text-gray.text-center.bg-white(style="height: 100rpx")
+              .row.col.tab-select(@click.stop="openPickWay(1)", :class="{'text-blue': pickWayShow && tabActive === 1}")
+                .col.text-cut {{customerName || '客户选择'}}
+                i(:class="pickWayShow && tabActive === 1 ? 'cuIcon-fold' : 'cuIcon-unfold'")
+              .row.col.tab-select(@click.stop="openPickWay(2)", :class="{'text-blue': pickWayShow && tabActive === 2}")
+                .col.text-cut {{liftSelect}}
+                i(:class="pickWayShow && tabActive === 2 ? 'cuIcon-fold' : 'cuIcon-unfold'")
+          div(style="margin-top: 200rpx")
+            scroll-view.scroll-view(scroll-y, :style="{height: scrollHeight}")
+              .cart-items(v-for="(cart, cartIdx) in carts", :key="cartIdx")
+                .cart-item
+                  .padding-sm
+                    .flex.flex-center.align-center.ft-15.text-bold
+                      .col.flex-25(@click="cart.choosed = !cart.choosed", style="padding-top: 5px;")
+                        img.choose-icon(src="/static/images/blue_check.png", v-if="cart.choosed")
+                        img.choose-icon(src="/static/images/btn_ck_n.png", v-else)
+                      .col(@click="cart.choosed = !cart.choosed")
+                        span {{cart.product_name}}
+                        span.padding-left-xs {{cart.product_standard}}
+                      .text-blue ￥{{cart.price}}
+                    .content.ft-13
+                      .flex.flex-center.justify-between
                         div
-                          span {{cart.product_material}}
-                          span.ml-5 {{cart.product_length}}米
-                          span.ml-5 {{cart.wh_name}}
-                          span.sub-mark.ml-5 {{cart.product_supply}}
-                        .pt-5
-                          span {{cart.amount_left}}支 / {{cart.weight_left}}吨
-                          span.padding-left-xs 吊费:
-                          span.ml-10 {{cart.price === '--' ? '--' : cart.lift_charge > 0 ? '￥' + cart.lift_charge + '/吨' : cart.lift_charge == 0 ? '无' : '线下结算'}}
-                        .pt-5(v-if="cart.tolerance_range || cart.weight_range")
-                          span(v-if="cart.tolerance_range") 公差范围:
-                          span.ml-10.mr-10(v-if="cart.tolerance_range") {{cart.tolerance_range}}
-                          span.ml-5(v-if="cart.weight_range") 重量范围:
-                          span.ml-10(v-if="cart.weight_range") {{cart.weight_range}} 
-                      .text-right.flex.justify-end.flex-direction
-                        .text-gray (可让{{cart.allowedPrice}}元)
-                        .flex.flex-direction.justify-end.pt-5
-                          z-radio(@checkHander="weightChoose(r.m_way, cart)", v-for="(r, rIdx) in cart.radios", :key="rIdx", :label="r.label", :checked="cart.measure_way_id === r.m_way")
-                .margin-top-xs.padding-sm.solid-top.solid-bottom.padding-top-sm.padding-bottom-sm.row.text-gray.price
-                  .text-black 定向价格：
-                  .col.ml-5.padding-xs.solid.line-gray
-                    z-input(inputType="digit", type="price", maxlength="8", :initVal="cart.price", v-model="cart.dx_prices")
-                  .padding-left-xs 元
-                  .padding-left-xs.text-black 费用：
-                  .col.ml-5.padding-xs.solid.line-gray
-                    z-input(inputType="digit", type="price", maxlength="8", v-model="cart.cost_prices")
-                  .padding-left-xs 元
-                .row.padding-sm.justify-end.align-end
-                  .col(style="flex: 0 0 60px;")
-                    count-step(v-model="cart.count", @change="rowCartCount(cart)", :max="cart.amount_left")
-                  .padding-left-xs {{cart.countWeight}}吨
-            .margin-top-sm.padding-bottom-sm(v-if="soldCarts.length > 0", :class="{'padding-top-sm': carts.length === 0}")
-              .bg-white
-                .row.padding.flex-center.border-bottom-line
-                  .col 失效物资{{soldCarts.length}}件
-                  .ocl.text-right
-                    span.c-blue(@click="emptySoldItems") 清空失效物资
-                .solid-bottom.ft-12.text-gray(v-for="(itm, itmIdx) in soldCarts", :key="itmIdx")
-                  .padding
-                    span {{itm.product_name}}
-                    span.ml-5 {{itm.product_supply}}
-                  .padding.pt-0
-                    span 仓库：{{itm.wh_name}}
-                  .padding.pt-0
-                    span 规格：{{itm.product_standard}}
-                    q-btn.pull-right.no-shadow(color="grey-6", rounded, small) 失效
-                  .padding.pt-0
-                    span 材质：{{itm.product_material}}
-                  //- .row.padding.pt-0
-                    .col
-                      span 吊费：{{itm.price === '--' ? '--' : itm.lift_charge > 0 ? '￥' + itm.lift_charge + '/吨' : itm.lift_charge == 0 ? '无' : '线下结算'}}
-                    .col.text-right.c-black 物资不能购买，请联系客服
+                          div
+                            span {{cart.product_material}}
+                            span.ml-5 {{cart.product_length}}米
+                            span.ml-5 {{cart.wh_name}}
+                            span.sub-mark.ml-5 {{cart.product_supply}}
+                          .pt-5
+                            span {{cart.amount_left}}支 / {{cart.weight_left}}吨
+                            span.padding-left-xs 吊费:
+                            span.ml-10 {{cart.price === '--' ? '--' : cart.lift_charge > 0 ? '￥' + cart.lift_charge + '/吨' : cart.lift_charge == 0 ? '无' : '线下结算'}}
+                          .pt-5(v-if="cart.tolerance_range || cart.weight_range")
+                            span(v-if="cart.tolerance_range") 公差范围:
+                            span.ml-10.mr-10(v-if="cart.tolerance_range") {{cart.tolerance_range}}
+                            span.ml-5(v-if="cart.weight_range") 重量范围:
+                            span.ml-10(v-if="cart.weight_range") {{cart.weight_range}} 
+                        .text-right.flex.justify-end.flex-direction
+                          .text-gray (可让{{cart.allowedPrice}}元)
+                          .flex.flex-direction.justify-end.pt-5
+                            z-radio(@checkHander="weightChoose(r.m_way, cart)", v-for="(r, rIdx) in cart.radios", :key="rIdx", :label="r.label", :checked="cart.measure_way_id === r.m_way")
+                  .margin-top-xs.padding-sm.solid-top.solid-bottom.padding-top-sm.padding-bottom-sm.row.text-gray.price
+                    .text-black 定向价格：
+                    .col.ml-5.padding-xs.solid.line-gray
+                      z-input(inputType="digit", type="price", maxlength="8", :initVal="cart.price", v-model="cart.dx_prices")
+                    .padding-left-xs 元
+                    .padding-left-xs.text-black 费用：
+                    .col.ml-5.padding-xs.solid.line-gray
+                      z-input(inputType="digit", type="price", maxlength="8", v-model="cart.cost_prices")
+                    .padding-left-xs 元
+                  .row.padding-sm.justify-end.align-end
+                    .col(style="flex: 0 0 60px;")
+                      count-step(v-model="cart.count", @change="rowCartCount(cart)", :max="cart.amount_left")
+                    .padding-left-xs {{cart.countWeight}}吨
+              .margin-top-sm.padding-bottom-sm(v-if="soldCarts.length > 0", :class="{'padding-top-sm': carts.length === 0}")
+                .bg-white
+                  .row.padding.flex-center.border-bottom-line
+                    .col 失效物资{{soldCarts.length}}件
+                    .ocl.text-right
+                      span.c-blue(@click="emptySoldItems") 清空失效物资
+                  .solid-bottom.ft-12.text-gray(v-for="(itm, itmIdx) in soldCarts", :key="itmIdx")
+                    .padding
+                      span {{itm.product_name}}
+                      span.ml-5 {{itm.product_supply}}
+                    .padding.pt-0
+                      span 仓库：{{itm.wh_name}}
+                    .padding.pt-0
+                      span 规格：{{itm.product_standard}}
+                      q-btn.pull-right.no-shadow(color="grey-6", rounded, small) 失效
+                    .padding.pt-0
+                      span 材质：{{itm.product_material}}
+                    //- .row.padding.pt-0
+                      .col
+                        span 吊费：{{itm.price === '--' ? '--' : itm.lift_charge > 0 ? '￥' + itm.lift_charge + '/吨' : itm.lift_charge == 0 ? '无' : '线下结算'}}
+                      .col.text-right.c-black 物资不能购买，请联系客服
     .s-footer(v-if="carts.length > 0", style="height: 100rpx")
       .cart-footer.justify-between
         .col.cart-footer-col
@@ -196,7 +198,8 @@ export default {
     ...mapState({
       custom: state => state.custom,
       tempObject: state => state.tempObject,
-      bottomBarHeight: state => state.bottomBarHeight
+      bottomBarHeight: state => state.bottomBarHeight,
+      isIpx: state => state.isIpx
     })
   },
   watch: {
@@ -250,8 +253,13 @@ export default {
         this.pwAddrDetail = this.tempObject.detail
       }
     }
+    console.log('isIpx', this.isIpx)
     this.selectDialogTop = this.getRpx(this.customBar) + 200
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 300 + 'rpx'
+    if (this.tempObject.isIpx) {
+      this.selectDialogTop -= 68
+      this.scrollHeight -= 68
+    }
     if (this.carts.length === 0 && !this.firstLoad) {
       this.firstLoad = true
       this.loadCartData()
@@ -842,4 +850,10 @@ radio.radio[checked]::after
     color #333
     font-size 30rpx
     font-weight bold
+.head
+  position fixed
+  top 0
+  left 0
+  right 0
+  z-index 3
 </style>
