@@ -338,10 +338,11 @@ export default {
             me.customList.push(item)
           })
         } else {
-          if (me.customList.length >= 10) me.customLoadFinish = 2
+          // if (me.customList.length >= 10) me.customLoadFinish = 2
           me.cstmCurrentPage--
         }
-        if (this.customList.length < 10) this.customLoadFinish = 0
+        // if (this.customList.length < 10) this.customLoadFinish = 0
+        this.customLoadFinish = 0
         this.$forceUpdate()
       } catch (e) {
         console.error(e)

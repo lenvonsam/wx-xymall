@@ -67,7 +67,7 @@ div
               span.padding-left-xs 费用：￥{{item.cost_price}}
               span.padding-left-xs 价差：
               span.text-red ￥{{item.diff}}
-          template(v-else)    
+          template(v-else)
             .row.justify-between.text-gray.padding-bottom-xs
               .col 
                 span.padding-right-xs {{item.material}}
@@ -97,7 +97,6 @@ export default {
       modalVal: '',
       modalInputTitle: '退款金额',
       modalShow: false,
-      auditType: '',
       detailData: {
         list: []
       },
@@ -123,25 +122,25 @@ export default {
       return this.detailData.list.filter(item => {
         return item.good_name !== '吊费'
       })
+    },
+    auditType () {
+      return this.tempObject.auditType
     }
-    // btnShow () {
-    //   return () => {
-    //     switch () {}
-    //     this.modules
-    //     detailData.status
-    //   }
-    // }
   },
   onUnload () {
     this.disabled = false
+    this.detailData = {
+      list: []
+    }
+    this.modalVal = ''
   },
   onShow () {
     this.disabled = false
-    console.log('modules', this.modules)
-    this.auditType = this.tempObject.auditType
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 203
-    this.showLoading()
-    this.loadData()
+    if (this.tempObject.auditType) {
+      this.showLoading()
+      this.loadData()
+    }
   },
   methods: {
     jumpBillDetail (item) {
@@ -174,8 +173,7 @@ export default {
       if (this.disabled) return false
       this.disabled = true
       let params = {}
-      const auditType = this.auditType
-      switch (auditType) {
+      switch (this.auditType) {
         case '退货':
           this.disabled = false
           this.modalShow = true
@@ -186,17 +184,6 @@ export default {
             this.modalInputTitle = '退款金额'
             this.modalVal = this.detailData.totalMoeny
           }
-
-          // params = {
-          //   return_id: this.tempObject.return_id,
-          //   status: 1
-          // }
-          // if (flag === 'cancel') {
-          //   params.status = 2
-          //   params.reject_cause = ''
-          //   params.kp_flag = this.detailData.invoiceFlag
-          // }
-          // this.confirmAudit(params, this.apiList.xy.returnGoodsAudit)
           break
         case '定向':
           params = {
@@ -218,8 +205,8 @@ export default {
           params.id = this.tempObject.return_id
           this.confirmAudit(params, this.apiList.xy.orderDelayAudit)
           break
-        default:
-          console.log('default')
+        // default:
+        //   console.log('default')
       }
     },
     async confirmAudit (params, api) {
@@ -247,8 +234,7 @@ export default {
       try {
         let url = ''
         const modules = this.modules
-        const auditType = this.auditType
-        switch (auditType) {
+        switch (this.auditType) {
           case '定向':
             const sellerDxAudit = this.apiList.xy.sellerDxAudit
             url = `${sellerDxAudit.url}?user_id=${this.currentUser.user_id}&deal_no=${this.tempObject.tstc_no}`
@@ -267,12 +253,13 @@ export default {
             url = `${sellerOrderDelayAudit.url}?tstc_no=${this.tempObject.tstc_no}`
             break
           default:
-            console.log('-----')
+            console.log('default')
+            break
         }
         const data = await this.ironRequest(url, '', 'get')
+        console.log('data', data)
         if (data.returncode === '0') {
-          const auditType = this.auditType
-          switch (auditType) {
+          switch (this.auditType) {
             case '定向':
               this.detailData = {
                 liftStatus: data.need_lift,
@@ -309,6 +296,10 @@ export default {
               this.detailData = {
                 list: data.data.resultlist
               }
+              break
+            default:
+              console.log('default')
+              break
           }
         }
         this.hideLoading()

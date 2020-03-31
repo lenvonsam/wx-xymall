@@ -182,7 +182,10 @@ export default {
       item.auditType = this.auditType[item.audit_type]
       item.statusStr = this.statusList[item.status] || '待审核'
       this.configVal({ key: 'tempObject', val: item })
-      this.jump(`/pages/vendor/reviewDetail/main`)
+      if (this.tempObject.auditType) {
+        console.log('auditType_1', this.tempObject.auditType)
+        this.jump(`/pages/vendor/reviewDetail/main`)
+      }
     }
   }
 }
