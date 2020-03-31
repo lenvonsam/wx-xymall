@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  nav-bar(title="审核历史", isBack)
+  nav-bar(title="审核历史", isBack) 
   .head.bg-white(:style="{height: '115rpx'}")
     .serach.flex.align-center.padding-sm
       .col.search-input.text-gray
@@ -32,6 +32,7 @@ div
                     span {{item.emp_name}}
                     .text-black {{item.audit_time}}
                   .padding-bottom-xs {{item.dept_name}}
+                  .padding-bottom-xs(v-if="item.delay_text") 延时理由：{{item.delay_text}}
     .text-center.c-gray.pt-100(v-else)
       empty-image(url="bill_empty.png", className="img-empty")
       .empty-content 您暂时没有相关合同        

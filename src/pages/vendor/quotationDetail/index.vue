@@ -47,7 +47,10 @@ div
     template(v-else)
       .col.foot-confirm.margin-left-sm(@click="quotationHandler('copy')") 复制到购物车
   modal(:value="modalShow", @cb="modalCb", :btns="modalBtns")
-    .padding-sm.text-left {{modalMsg}}  
+    template(v-if="errList.length > 0")
+      .padding-sm.text-left(v-for="(item, errIdx) in errList", :key="errIdx") {{item}}
+    template(v-else)  
+      .padding-sm {{modalMsg}}
 </template>
 <script>
 import { mapState } from 'vuex'
@@ -55,6 +58,7 @@ import modal from '@/components/Modal.vue'
 export default {
   data () {
     return {
+      errList: [],
       scrollHeight: 0,
       resData: {},
       qutId: '',
@@ -76,6 +80,7 @@ export default {
     this.qutId = ''
     this.btnDisabled = false
     this.modalShow = false
+    this.errList = []
   },
   onShow () {
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 205
@@ -104,6 +109,7 @@ export default {
       this.resData.lift = this.$toFixed(this.resData.lift, 2)
     },
     async quotationHandler (flag) {
+      this.errList = []
       try {
         if (this.btnDisabled) return false
         this.btnDisabled = true
@@ -143,13 +149,18 @@ export default {
         } else {
           this.btnDisabled = false
         }
-      } catch (e) {
-        this.modalMsg = e
+      } catch (err) {
+        const errList = err.split('|')
+        if (errList.length > 0) {
+          this.errList = errList.filter((item) => {
+            return item !== ''
+          })
+        } else {
+          this.modalMsg = err
+        }
         this.modalShow = true
         this.btnDisabled = false
         this.hideLoading()
-        // this.showMsg(e)
-        console.log(e)
       }
     }
   }

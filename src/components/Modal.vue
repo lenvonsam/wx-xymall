@@ -34,7 +34,8 @@ export default {
   },
   data () {
     return {
-      modalName: ''
+      modalName: '',
+      btnDisabled: false
     }
   },
   beforeMount () {
@@ -48,6 +49,12 @@ export default {
   },
   methods: {
     btnClick (flag) {
+      if (this.btnDisabled) return false
+      this.btnDisabled = true
+      const me = this
+      setTimeout(() => {
+        me.btnDisabled = false
+      }, 1000)
       this.$emit('cb', flag)
     }
   }
