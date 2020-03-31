@@ -62,11 +62,13 @@
                 .margin-top-xs.padding-sm.solid-top.solid-bottom.padding-top-sm.padding-bottom-sm.row.text-gray.price
                   .text-black 定向价格：
                   .col.ml-5.padding-xs.solid.line-gray
-                    input(type="digit", v-model="cart.dx_prices", maxlength="8", :data-idx="cartIdx", data-key="dx_prices", @blur="inputFormat(cart, 'dx_prices')")
+                    z-input(inputType="digit", type="price", maxlength="8", :initVal="cart.price", v-model="cart.dx_prices")
+                    //- input(type="digit", v-model="cart.dx_prices", maxlength="8", :data-idx="cartIdx", data-key="dx_prices", @blur="inputFormat(cart, 'dx_prices')")
                   .padding-left-xs 元
                   .padding-left-xs.text-black 费用：
                   .col.ml-5.padding-xs.solid.line-gray
-                    input(type="digit", v-model="cart.cost_prices", maxlength="8", :data-idx="cartIdx", data-key="cost_prices", @blur="inputFormat(cart, 'cost_prices')")
+                    z-input(inputType="digit", type="price", maxlength="8", v-model="cart.cost_prices")
+                    //- input(type="digit", v-model="cart.cost_prices", maxlength="8", :data-idx="cartIdx", data-key="cost_prices", @blur="inputFormat(cart, 'cost_prices')")
                   .padding-left-xs 元
                 .row.padding-sm.justify-end.align-end
                   .col(style="flex: 0 0 60px;")
@@ -138,6 +140,7 @@ import CountStep from '@/components/CountStep.vue'
 import { mapState, mapActions } from 'vuex'
 import timeLine from '@/components/TimeLine.vue'
 import modal from '@/components/Modal.vue'
+import zInput from '@/components/ZInput.vue'
 export default {
   data () {
     return {
@@ -188,7 +191,8 @@ export default {
   components: {
     CountStep,
     timeLine,
-    modal
+    modal,
+    zInput
   },
   computed: {
     ...mapState({
@@ -278,6 +282,15 @@ export default {
       const newVal = this.numberFormat(cart[key]).toString().match(/\d+\.\d{2}/)
       if (newVal) cart[key] = newVal ? newVal[0] : this.numberFormat(cart[key])
       if (!cart[key]) cart[key] = key === 'dx_prices' ? cart.price : 0
+    },
+    inputChange (val) {
+      debugger
+      this.carts[0].dx_prices = val
+      // return (val) => {
+      //   debugger
+      //   if (val) cart[key] = val
+      //   console.log(val)
+      // }
     },
     // dxPriceChange (cart) {
     //   cart.dx_prices = this.numberFormat(cart.dx_prices).toString().match(/\d+\.\d{2}/)[0]

@@ -2,9 +2,9 @@
 .row.relation.input-box
   input.col(v-if="isFocus && inputType === 'number'", type="number", v-model="inputVal", :focus="isFocus", :selection-start="0", :selection-end="selectionEnd", maxlength="8", @blur="inputBur")
   input.col(v-else-if="isFocus && inputType === 'digit'", type="digit", v-model="inputVal", :focus="isFocus", :selection-start="0", :selection-end="selectionEnd", maxlength="8", @blur="inputBur")
-  input.col(v-else="isFocus", type="text", v-model="inputVal", :focus="isFocus", :selection-start="0", :selection-end="selectionEnd", maxlength="8", @blur="inputBur")
-  .mask(v-if="!isFocus", @click="inputFocus") {{inputVal}}
-  //- input.mask(v-if="!isFocus", @click="inputFocus", :value="inputVal", disabled)
+  input.col(v-else-if="isFocus", type="text", v-model="inputVal", :focus="isFocus", :selection-start="0", :selection-end="selectionEnd", maxlength="8", @blur="inputBur")
+  //- .mask(v-if="!isFocus", @click="inputFocus") {{inputVal}}
+  input.mask(v-if="!isFocus", @click="inputFocus", v-model="inputVal", disabled)
 </template>
 <script>
 export default {
@@ -19,7 +19,8 @@ export default {
     initVal: {
       type: String,
       default: ''
-    }
+    },
+    cb: ['Function']
   },
   data () {
     return {
@@ -28,22 +29,25 @@ export default {
       selectionEnd: 0
     }
   },
+  watch: {
+    value (newVal, oldVal) {
+      this.inputVal = newVal
+    }
+  },
   beforeMount () {
-    debugger
     this.inputVal = this.value
   },
   methods: {
     inputFocus () {
-      debugger
       this.selectionEnd = this.inputVal.toString().length
       this.isFocus = true
     },
     inputBur () {
-      debugger
       this.selectionEnd = 0
       this.isFocus = false
       let val = this.inputVal
-      switch (this.type) {
+      const type = this.type
+      switch (type) {
         case 'price':
           const newVal = this.numberFormat(val).toString().match(/\d+\.\d{2}/)
           val = newVal ? newVal[0] : this.numberFormat(val)
@@ -53,9 +57,11 @@ export default {
         case 'weight':
           break
       }
-      // wx.hideKeyboard()
-      // this.$emit('input')
-      this.$emit('change', val)
+      this.inputVal = val
+      const me = this
+      setTimeout(() => {
+        me.$emit('input', val)
+      }, 100)
     }
   }
 }
