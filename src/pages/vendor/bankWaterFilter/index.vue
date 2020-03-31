@@ -81,6 +81,7 @@ export default {
         }
       } else {
         this.form.fromPage = 'bankWaterFilter'
+        if (this.customName) this.form.custom.name = this.customName
         this.configVal({ key: 'tempObject', val: this.form })
         this.back()
       }

@@ -128,10 +128,6 @@ export default {
     ...mapActions(['configVal']),
     clearSearch () {
       this.searchVal = ''
-      const tempObject = this.tempObject
-      delete tempObject.custom
-      delete tempObject.fromPage
-      this.configVal({ key: 'tempObject', val: tempObject })
     },
     delBankWater (id) {
       this.delBankWaterId = id
