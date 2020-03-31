@@ -347,6 +347,12 @@ export default {
         this.enforce = 0
         this.modalDefaultShow = false
       } else {
+        if (this.modalDefaultMsg === '您当前登录账号和报价单位抬头不一致，请重新登录') {
+          this.jump('/pages/account/login/main')
+          this.hideLoading()
+          this.modalDefaultShow = false
+          return false
+        }
         this.goToSettle()
       }
     },
@@ -542,7 +548,6 @@ export default {
         this.modalDefaultMsg = data.errormsg
         this.modalDefaultShow = true
         this.btnDisable = false
-        console.log(data)
       } catch (error) {
         this.btnDisable = false
         this.showMsg(error)
@@ -583,9 +588,8 @@ export default {
             this.errList = errList.filter((item) => {
               return item !== ''
             })
-          } else {
-            me.modalDefaultMsg = err
           }
+          me.modalDefaultMsg = err
           if (err === '该报价单中所有物资的可卖数量都不足！') {
             this.modalBtns = 'mall'
           } else {

@@ -42,7 +42,7 @@ div
             span(v-if="tempObject.auditType==='定向'") {{liftStatus[detailData.liftStatus]}}
           template(v-else)
             .col.text-black {{detailData.endTime}}
-            span 吊费：{{detailData.totalLiftCharge}}元
+            span(v-if="detailData.totalLiftCharge") 吊费：{{detailData.totalLiftCharge}}元
       //- template(v-if="auditType !== '延时'")
       .ft-18.padding-top-sm.padding-bottom-sm 商品信息
       .bg-white.card(v-for="(item, idx) in dataList", :key="idx")

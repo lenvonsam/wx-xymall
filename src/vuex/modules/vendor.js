@@ -97,7 +97,7 @@ export default {
       },
       {
         icon: '/static/images/balance_icon.png',
-        name: '账户余额',
+        name: '用户余额',
         dotKey: 'balance',
         url: {
           path: '/pages/vendor/balance/main'

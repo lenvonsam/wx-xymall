@@ -7,7 +7,7 @@ div
         .flex.align-center
           .cuIcon-search
           input.full-width.padding-left-sm(v-model="searchVal", type="text", placeholder="汇款抬头", confirm-type="search", @confirm="searchOrder")
-          .close-icon(@click="searchVal = ''", v-if="searchVal")
+          .close-icon(@click="clearSearch", v-if="searchVal")
             .cuIcon-roundclosefill.ft-18
       .search-btn.text-blue(@click="searchOrder") 搜索
       .filter-btn.row(@click="openFilter")
@@ -105,19 +105,11 @@ export default {
   onShow () {
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 203
     if (this.tempObject.fromPage === 'bankWaterFilter') {
-      // this.tabName = '0'
-      // this.filterArr = []
       this.filterObj = {
         date_end: this.tempObject.endDate,
         date_start: this.tempObject.startDate
       }
-      this.searchVal = this.tempObject.custom.name === '全部' ? '' : this.tempObject.custom.name
-      // Object.keys(obj).forEach(key => {
-      //   if (obj[key]) {
-      //     this.filterArr.push(`${key}=${obj[key]}`)
-      //   }
-      // })
-      // this.currentPage = 0
+      this.searchVal = this.tempObject.custom.name === '全部' || !this.tempObject.custom.name ? '' : this.tempObject.custom.name
       this.onRefresh()
     } else {
       this.onRefresh()
@@ -134,6 +126,13 @@ export default {
   },
   methods: {
     ...mapActions(['configVal']),
+    clearSearch () {
+      this.searchVal = ''
+      const tempObject = this.tempObject
+      delete tempObject.custom
+      delete tempObject.fromPage
+      this.configVal({ key: 'tempObject', val: tempObject })
+    },
     delBankWater (id) {
       this.delBankWaterId = id
       this.modalShow = true

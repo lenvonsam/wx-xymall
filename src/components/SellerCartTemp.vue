@@ -64,11 +64,13 @@
                   .margin-top-xs.padding-sm.solid-top.solid-bottom.padding-top-sm.padding-bottom-sm.row.text-gray.price
                     .text-black 定向价格：
                     .col.ml-5.padding-xs.solid.line-gray
-                      z-input(inputType="digit", type="price", maxlength="8", :initVal="cart.price", v-model="cart.dx_prices")
+                      //- z-input(inputType="digit", type="price", :isBlur="isBlur", maxlength="8", :initVal="cart.price", v-model="cart.dx_prices")
+                      input(type="digit", v-model="cart.dx_prices", maxlength="8", @blur="inputFormat(cart, 'dx_prices')")
                     .padding-left-xs 元
                     .padding-left-xs.text-black 费用：
                     .col.ml-5.padding-xs.solid.line-gray
-                      z-input(inputType="digit", type="price", maxlength="8", v-model="cart.cost_prices")
+                      //- z-input(inputType="digit", type="price", :isBlur="isBlur", maxlength="8", v-model="cart.cost_prices")
+                      input(type="digit", v-model="cart.cost_prices", maxlength="8", @blur="inputFormat(cart, 'cost_prices')")
                     .padding-left-xs 元
                   .row.padding-sm.justify-end.align-end
                     .col(style="flex: 0 0 60px;")
@@ -140,10 +142,11 @@ import CountStep from '@/components/CountStep.vue'
 import { mapState, mapActions } from 'vuex'
 import timeLine from '@/components/TimeLine.vue'
 import modal from '@/components/Modal.vue'
-import zInput from '@/components/ZInput.vue'
+// import zInput from '@/components/ZInput.vue'
 export default {
   data () {
     return {
+      isBlur: false,
       customerName: '',
       modalShow: false,
       modalMsg: '',
@@ -191,8 +194,8 @@ export default {
   components: {
     CountStep,
     timeLine,
-    modal,
-    zInput
+    modal
+    // zInput
   },
   computed: {
     ...mapState({
@@ -283,6 +286,11 @@ export default {
     clearPicker () {
       this.pickWayShow = false
       this.tabActive = 0
+    },
+    inputFormat (cart, key) {
+      const newVal = this.numberFormat(cart[key]).toString().match(/\d+\.\d{2}/)
+      if (newVal) cart[key] = newVal ? newVal[0] : this.numberFormat(cart[key])
+      if (!cart[key]) cart[key] = key === 'dx_prices' ? cart.price : 0
     },
     cartCalculation (newVal) {
       newVal = newVal || this.carts
@@ -455,70 +463,74 @@ export default {
         })
       }
     },
-    async auditDxCheck (flag) {
-      try {
-        if (this.btnDisable) return false
-        this.btnDisable = true
-        let filterArray = this.carts.filter(itm => itm.choosed === true)
-        if (this.isEdit) {
-          this.btnDisable = false
-          if (filterArray.length === 0) {
-            this.showMsg('请选择所需删除的商品')
+    auditDxCheck (flag) {
+      if (this.btnDisable) return false
+      this.btnDisable = true
+      this.isBlur = true
+      wx.hideKeyboard()
+      setTimeout(async () => {
+        try {
+          let filterArray = this.carts.filter(itm => itm.choosed === true)
+          if (this.isEdit) {
+            this.btnDisable = false
+            if (filterArray.length === 0) {
+              this.showMsg('请选择所需删除的商品')
+              return false
+            }
+            // 删除
+            this.delCartRow(filterArray)
             return false
           }
-          // 删除
-          this.delCartRow(filterArray)
-          return false
-        }
-        if (filterArray.length === 0) {
-          this.showMsg('请选择需要操作的物资')
-          this.btnDisable = false
-          return false
-        }
-        if (this.customerName === '') {
-          this.showMsg('请选择客户')
-          this.btnDisable = false
-          return false
-        }
-        let orderIds = []
-        let dxPrices = []
-        let costPrices = []
-        let jlTypes = []
-        filterArray.map(itm => {
-          orderIds.push(itm.order_id)
-          dxPrices.push(itm.dx_prices)
-          costPrices.push(itm.cost_prices)
-          jlTypes.push(itm.measure_way_id)
-        })
-        const params = {
-          user_id: this.currentUser.user_id,
-          buyer_name: this.customerName,
-          order_ids: orderIds.toString(),
-          dx_prices: dxPrices.toString(),
-          cost_prices: costPrices.toString(),
-          jl_types: jlTypes.toString(),
-          need_lift: this.liftSelectVal
-        }
-        const data = await this.ironRequest(this.apiList.xy.auditDxCheck.url, params, this.apiList.xy.auditDxCheck.method)
-        if (data.returncode === '0') {
-          this.flag = flag
-          this.dxFilterArray = filterArray
-          this.modalMsg = data.errormsg
-          if (data.errormsg === '是否生成合同？ ' && flag === 2) {
-            this.modalShow = false
-            this.generateQuotation()
-          } else if (flag === 2) {
-            this.modalMsg += '注：客户如从报价单中生成合同，则需要定向审核'
-            this.modalShow = true
-          } else {
-            this.modalShow = true
+          if (filterArray.length === 0) {
+            this.showMsg('请选择需要操作的物资')
+            this.btnDisable = false
+            return false
           }
+          if (this.customerName === '') {
+            this.showMsg('请选择客户')
+            this.btnDisable = false
+            return false
+          }
+          let orderIds = []
+          let dxPrices = []
+          let costPrices = []
+          let jlTypes = []
+          filterArray.map(itm => {
+            orderIds.push(itm.order_id)
+            dxPrices.push(itm.dx_prices)
+            costPrices.push(itm.cost_prices)
+            jlTypes.push(itm.measure_way_id)
+          })
+          const params = {
+            user_id: this.currentUser.user_id,
+            buyer_name: this.customerName,
+            order_ids: orderIds.toString(),
+            dx_prices: dxPrices.toString(),
+            cost_prices: costPrices.toString(),
+            jl_types: jlTypes.toString(),
+            need_lift: this.liftSelectVal
+          }
+          const data = await this.ironRequest(this.apiList.xy.auditDxCheck.url, params, this.apiList.xy.auditDxCheck.method)
+          if (data.returncode === '0') {
+            this.flag = flag
+            this.dxFilterArray = filterArray
+            this.modalMsg = data.errormsg
+            if (data.errormsg === '是否生成合同？ ' && flag === 2) {
+              this.modalShow = false
+              this.generateQuotation()
+            } else if (flag === 2) {
+              this.modalMsg += '注：客户如从报价单中生成合同，则需要定向审核'
+              this.modalShow = true
+            } else {
+              this.modalShow = true
+            }
+            this.btnDisable = false
+          }
+        } catch (e) {
           this.btnDisable = false
+          this.showMsg(e)
         }
-      } catch (e) {
-        this.btnDisable = false
-        this.showMsg(e)
-      }
+      }, 150)
     },
     weightChoose (val, rowItem) {
       rowItem.measure_way_id = val
