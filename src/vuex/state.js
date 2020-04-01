@@ -1,6 +1,6 @@
 export default {
   // 版本
-  currentVersion: '2.0.4',
+  currentVersion: '2.1.0',
   // 临时存储对象
   tempObject: {},
   // 权限
