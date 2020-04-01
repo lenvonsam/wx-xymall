@@ -85,7 +85,7 @@ export default {
       this.filterArr = []
       const obj = {
         // tstc_no: this.tempObject.no,
-        cust_id: this.tempObject.custom.id,
+        cust_id: this.tempObject.custom.xyCode,
         dept_code: this.tempObject.dept.id,
         employee_code: this.tempObject.employee.id,
         deal_time_s: this.tempObject.startDate,
