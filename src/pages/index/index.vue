@@ -106,7 +106,8 @@ export default {
     ...mapState({
       mainIcons: state => state.mainIcons,
       sellerMainIcons: state => state.vendor.mainIcons,
-      mainClassify: state => state.mainClassify
+      mainClassify: state => state.mainClassify,
+      modules: state => state.modules
     })
   },
   methods: {
@@ -137,6 +138,10 @@ export default {
     iconJump (icon) {
       this.statisticRequest({ event: icon.event })
       if (this.isLogin) {
+        if (icon.dotKey && this.currentUser.type === 'seller' && !this.modules[icon.dotKey]) {
+          this.showMsg('暂无权限')
+          return false
+        }
         this.jump(icon.path)
       } else {
         this.confirm({ title: '友情提示', content: '您未登录，请先登录' }).then(res => {

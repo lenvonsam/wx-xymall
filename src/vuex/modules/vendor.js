@@ -25,7 +25,8 @@ export default {
         url: '/static/images/bank_icon.png',
         title: '用户余额',
         path: '/pages/vendor/balance/main',
-        event: ''
+        event: '',
+        dotKey: 'balance'
       }
     ],
     billTrackIcons: [

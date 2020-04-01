@@ -113,7 +113,10 @@ export default {
         const obj = { label: this.auditType[key], value: key }
         statusList.push(obj)
       })
-      this.configVal({ key: 'tempObject', val: { fromPage: 'pendingReview', statusList: statusList } })
+      const tempObject = this.tempObject
+      tempObject.fromPage = 'pendingReview'
+      tempObject.statusList = statusList
+      this.configVal({ key: 'tempObject', val: tempObject })
       this.jump('/pages/vendor/billFilter/main')
     },
     onRefresh (done) {
