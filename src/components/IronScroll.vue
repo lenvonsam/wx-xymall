@@ -58,7 +58,7 @@ export default {
       type: String,
       default: '加载中'
     },
-    // 0 不显示文字 1 加载中 2 加载完成
+    // 0 不显示文字 1 加载中 2 加载完成 3 加载完成不显示文字
     loadFinish: {
       type: Number,
       default: 0

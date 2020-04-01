@@ -252,6 +252,7 @@ export default {
       this.onRefresh()
     },
     onRefresh (done) {
+      this.isRefresh = 'refresh'
       this.currentPage = 0
       this.refresher(done)
     },
@@ -408,10 +409,11 @@ export default {
     },
     async refresher (done) {
       try {
+        this.showLoading()
         this.loadFinish = 1
         const me = this
         this.queryObject.current_page = this.currentPage
-        this.queryObject.page_size = 20
+        this.queryObject.page_size = this.pageSize
         const data = await this.ironRequest(
           this.apiList.xy.mallList.url,
           this.queryObject,
@@ -474,12 +476,12 @@ export default {
             }
           }
           me.$forceUpdate()
-          me.hideLoading()
+          // me.hideLoading()
           if (me.prevIdx !== null && me.prevIdx !== -1) {
             me.goodsNameList[me.prevIdx].data = []
             me.prevIdx = null
           }
-          if (me.goodsNameList[idx].data.length < 10) me.loadFinish = 0
+          if (me.goodsNameList[idx].data.length < 10) me.loadFinish = 3
           // me.goodsNameList.mp((item, index) => {
           //   if (Math.abs(index - idx) > 1) {
           //     item.data = []
@@ -492,6 +494,12 @@ export default {
           this.configVal({ key: 'tempObject', val: '' })
           this.swiperFirst = 0
         }
+        this.$nextTick(() => {
+          const me = this
+          setTimeout(() => {
+            me.hideLoading()
+          }, 800)
+        })
         if (done) done()
       } catch (err) {
         console.log('异常', err)

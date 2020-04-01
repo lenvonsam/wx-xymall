@@ -310,16 +310,19 @@ export default {
             me.goodsNameList[me.prevIdx].data = []
             me.prevIdx = null
           }
-          if (me.goodsNameList[idx].data.length < 10) me.loadFinish = 0
-          me.$nextTick(() => {
-            me.hideLoading()
-          })
+          if (me.goodsNameList[idx].data.length < 10) me.loadFinish = 3
         }
         console.log('loadfinish:>>', this.loadFinish)
         if (this.swiperFirst === 1) {
           this.configVal({ key: 'tempObject', val: '' })
           this.swiperFirst = 0
         }
+        this.$nextTick(() => {
+          const me = this
+          setTimeout(() => {
+            me.hideLoading()
+          }, 800)
+        })
         if (done) done()
       } catch (err) {
         console.log('异常', err)

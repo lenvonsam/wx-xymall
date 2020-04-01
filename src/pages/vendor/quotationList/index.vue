@@ -202,7 +202,7 @@ export default {
           }
         }
         this.isTabDisabled = false
-        if (this.listData.length < 10) this.loadFinish = 0
+        if (this.listData.length < 10) this.loadFinish = 3
       })
       if (done) done()
     },

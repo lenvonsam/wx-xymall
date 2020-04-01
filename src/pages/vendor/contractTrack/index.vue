@@ -330,7 +330,7 @@ export default {
           }
         }
         me.isTabDisabled = false
-        if (me.billTab[idx].data.length < 10) me.loadFinish = 2
+        if (me.billTab[idx].data.length < 10) me.loadFinish = 3
         me.hideLoading()
         // me.$forceUpdate()
         if (done) done()

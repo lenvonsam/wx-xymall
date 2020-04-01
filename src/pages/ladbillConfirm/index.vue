@@ -92,7 +92,7 @@ export default {
           }
         }
         this.hideLoading()
-        if (this.listData.length < 10) this.loadFinish = 0
+        if (this.listData.length < 10) this.loadFinish = 3
         this.isload = false
         if (done) done()
       }).catch(err => {

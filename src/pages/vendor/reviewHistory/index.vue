@@ -163,7 +163,7 @@ export default {
             }
           }
           me.isTabDisabled = false
-          if (me.listData.length < 10) me.loadFinish = 2
+          if (me.listData.length < 10) me.loadFinish = 3
           me.hideLoading()
           if (done) done()
         })

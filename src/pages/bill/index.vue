@@ -230,7 +230,7 @@ export default {
           }
         }
         me.isTabDisabled = false
-        if (me.billTab[idx].data.length < 10) me.loadFinish = 2
+        if (me.billTab[idx].data.length < 10) me.loadFinish = 3
         if (done) done()
       })
     },
@@ -341,7 +341,7 @@ export default {
         }
         me.isTabDisabled = false
         me.hideLoading()
-        if (me.billTab[idx].data.length < 10) me.loadFinish = 0
+        if (me.billTab[idx].data.length < 10) me.loadFinish = 3
         if (done) done()
       })
     },

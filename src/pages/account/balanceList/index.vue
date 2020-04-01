@@ -211,7 +211,7 @@ export default {
         }
         this.loading = false
         if (done) done()
-        if (me.listData.length < 10) me.loadFinish = 0
+        if (me.listData.length < 10) me.loadFinish = 3
         this.hideLoading()
         // this.isTabDisabled = false
       } catch (e) {
