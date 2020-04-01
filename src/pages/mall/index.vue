@@ -141,7 +141,7 @@ export default {
       isRefresh: 'refresh',
       pullDownRefresh: false,
       currentPage: 0,
-      pageSize: 10,
+      pageSize: 20,
       mallFlag: 1,
       btnDisable: false,
       goodsNameList: [],

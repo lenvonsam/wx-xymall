@@ -103,7 +103,7 @@ export default {
   },
   onUnload () {
     this.filterObj = {}
-    this.hideZero = ''
+    this.hideZero = 'on'
     this.searchVal = ''
     this.currentPage = 0
     this.configVal({ key: 'tempObject', val: {} })

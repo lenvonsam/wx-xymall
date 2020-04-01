@@ -15,9 +15,9 @@ div
         icon.cuIcon-triangleupfill.text-blue(v-if="activeName === 'time'")
         icon.cuIcon-triangledownfill(v-else)
       .col.text-right 展示近6个月明细
-    .float-bar(:style="{height: screenHeight - customBar - 120 - 51 + 'px'}", v-if="floatBarShow")
-      .bg-white.padding-tb-sm
-        .check-btn(v-for="(itm,idx) in tabList", :key="idx", @click="selectKey(itm)", :class="{'active': selectActive == itm.val}") {{itm.label}}
+    .float-bar(:style="{height: screenHeight - customBar - 120 - 51 + 'px'}", v-if="floatBarShow", @click="checkTab(activeName)")
+      .bg-white.padding-tb-sm(@click.stop="")
+        .check-btn(v-for="(itm,idx) in tabList", :key="idx", @click.stop="selectKey(itm)", :class="{'active': selectActive == itm.val}") {{itm.label}}
   div(style="padding-top: 15px")
     template(v-if="isLoad")
       template(v-if="listData.length > 0")
