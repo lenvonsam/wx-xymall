@@ -111,12 +111,12 @@ export default {
         '2': '免吊费',
         '3': '开平免吊费'
       },
-      btnShow: false
+      btnShow: false,
+      tempObject: {}
     }
   },
   computed: {
     ...mapState({
-      tempObject: state => state.tempObject,
       modules: state => state.modules
     }),
     dataList () {
@@ -138,6 +138,8 @@ export default {
   onShow () {
     this.disabled = false
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 203
+    // this.auditType = this.$root.$mp.query.auditType
+    this.tempObject = this.$root.$mp.query
     if (this.tempObject.auditType) {
       this.showLoading()
       this.loadData()

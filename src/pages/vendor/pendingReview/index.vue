@@ -184,10 +184,9 @@ export default {
       this.btnDisable = true
       item.auditType = this.auditType[item.audit_type]
       item.statusStr = this.statusList[item.status] || '待审核'
-      this.configVal({ key: 'tempObject', val: item })
-      if (this.tempObject.auditType) {
-        console.log('auditType_1', this.tempObject.auditType)
-        this.jump(`/pages/vendor/reviewDetail/main`)
+      // this.configVal({ key: 'tempObject', val: item })
+      if (item.auditType) {
+        this.jump(`/pages/vendor/reviewDetail/main?auditType=${item.auditType}&statusStr=${item.statusStr}&tstc_no=${item.tstc_no}&return_id=${item.return_id}`)
       }
     }
   }

@@ -192,12 +192,12 @@ export default {
         this.jump(`/pages/vendor/returnApplicationDetail/main?subsNo=${item.tstc_no}`)
         return false
       }
-      item.auditType = this.auditType[item.audit_type]
-      item.statusStr = this.statusList[item.status] || '待审核'
-      item.fromPage = 'reviewHistory'
-      item.return_id = item.discussid
-      this.configVal({ key: 'tempObject', val: item })
-      this.jump(`/pages/vendor/reviewDetail/main`)
+      // item.auditType = this.auditType[item.audit_type]
+      // item.statusStr = this.statusList[item.status] || '待审核'
+      // item.fromPage = 'reviewHistory'
+      // item.return_id = item.discussid
+      // this.configVal({ key: 'tempObject', val: item })
+      // this.jump(`/pages/vendor/reviewDetail/main`)
     }
   }
 }
