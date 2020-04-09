@@ -126,7 +126,7 @@ export default {
           if (this.currentPage < 0) this.currentPage = 0
           if (this.currentPage > 0) this.loadFinish = 2
         }
-        if (this.listData.length < 10) this.loadFinish = 3
+        if (this.listData.length < 10 || this.pageType === 'queryWithdrawList') this.loadFinish = 3
       } catch (e) {
         this.showMsg(e)
         this.loadFinish = 0
