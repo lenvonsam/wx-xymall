@@ -26,7 +26,7 @@ div
                   .col
                     .flex.align-center
                       .ft-16.padding-right-sm {{auditType[item.audit_type]}} - {{item.tstc_no}}
-                  .text-gray {{statusList[item.status]}}
+                  .text-gray {{item.statusStr}}
                 .text-gray
                   .flex.justify-between.padding-bottom-xs 
                     span {{item.emp_name}}
@@ -62,6 +62,12 @@ export default {
       statusList: {
         '0': '已拒绝',
         '1': '已审核'
+      },
+      dxStatusList: {
+        '2': '已初审',
+        '3': '已复审',
+        '1': '初审拒绝'
+        // '2': '复审拒绝'
       },
       filterArr: []
     }
@@ -136,6 +142,7 @@ export default {
     },
     refresher (done) {
       try {
+        debugger
         this.loadFinish = 1
         const me = this
         const auditHistory = this.apiList.xy.auditHistory
@@ -150,6 +157,21 @@ export default {
         this.ironRequest(url, '', auditHistory.method).then(resp => {
           if (resp.returncode === '0') {
             let arr = resp.resultlist
+            arr.map(item => {
+              if (item.audit_type === 1) {
+                if (item.status === 1 && item.audit_num === 1) {
+                  item.statusStr = '已初审'
+                } else if (item.status === 1 && item.audit_num === 2) {
+                  item.statusStr = '已复审'
+                } else if (item.status === 0 && item.audit_num === 1) {
+                  item.statusStr = '初审拒绝'
+                } else if (item.status === 0 && item.audit_num === 2) {
+                  item.statusStr = '复审拒绝'
+                }
+              } else {
+                item.statusStr = this.statusList[item.status]
+              }
+            })
             if (arr.length === 0 && me.currentPage === 0) {
               me.listData = []
               me.isload = false

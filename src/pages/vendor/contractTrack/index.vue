@@ -156,9 +156,9 @@ export default {
       const tempObject = this.tempObject
       delete tempObject.fromPage
       this.configVal({ key: 'tempObject', val: tempObject })
-      this.tabName = '6'
-      this.scrollId = 'idx_0'
-      this.swiperCount = 0
+      // this.tabName = '6'
+      // this.scrollId = 'idx_0'
+      // this.swiperCount = 0
       this.filterObj = {
         tstc_no: this.tempObject.no,
         employee_code: this.tempObject.employee.id || '',
@@ -274,9 +274,9 @@ export default {
     searchOrder () {
       this.listData = []
       this.isTabDisabled = true
-      this.swiperCount = 0
-      this.tabName = '6'
-      this.billTab[0].data = []
+      // this.swiperCount = 0
+      // this.tabName = '6'
+      // this.billTab[0].data = []
       this.isload = true
       this.refresher()
     },
