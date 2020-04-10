@@ -87,7 +87,7 @@ div
           .text-right.flex.justify-end
             span 合计：
             b.text-red ￥ {{totalPrice}}
-        .text-right.ft-12 共{{totalCount}}件 ，{{totalWeight}}吨
+        .text-right.ft-12 共{{totalCount}}支 ，{{totalWeight}}吨
           span(v-if="isliftShow") ，吊费: {{totalLiftCharge}}元
       .cart-settle-btn.ft-18.bg-blue(@click="returnGoods")
         span 申请
@@ -208,20 +208,24 @@ export default {
         if (!Number(item.countWeight)) item.countWeight = 0.001
         return item.choosed === true
       })
-      this.totalCount = filterArray.length
-      this.allChoosed = this.totalCount === listData.length
+      // this.totalCount = filterArray.length
+      // this.allChoosed = this.totalCount === listData.length
+      this.allChoosed = filterArray.length === listData.length
       this.totalGoodsWeight = 0
       this.totalGoodsPrice = 0
       this.totalPrice = 0
       this.totalWeight = 0
+      let totalCount = 0
       // countWeight
       if (filterArray.length > 0) {
         filterArray.map(itm => {
+          totalCount += itm.count
           // const countWeight = itm.count * itm.singleWeight
           this.totalGoodsWeight += Number(itm.countWeight)
           this.totalGoodsPrice += itm.price * Number(itm.countWeight)
         })
       }
+      this.totalCount = totalCount
       this.totalGoodsPrice = this.$toFixed(Number(this.totalGoodsPrice), 2)
       this.totalGoodsWeight = this.$toFixed(Number(this.totalGoodsWeight), 3)
       this.totalPrice = this.isliftShow ? this.$toFixed(Number(this.totalGoodsPrice) + Number(this.totalLiftCharge), 2) : this.totalGoodsPrice

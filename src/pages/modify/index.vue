@@ -26,7 +26,7 @@ div
               .card-right
                 .ft-16.padding-bottom-xs.text-bold.text-black ￥{{item.price}}
                 .text-red.text-right(v-if="item.status === 18") 修改中
-                .bill-btn.round(v-else) {{tabName == '1' ? '申请修改' : '去确认'}}
+                .bill-btn.round(v-else, style="width: 160rpx") {{tabName == '1' ? '申请修改' : '去确认'}}
     .text-center.c-gray.pt-100(v-else)
       empty-image(url="bill_empty.png", className="img-empty")
       div 您暂时没有相关合同           

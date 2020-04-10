@@ -63,7 +63,7 @@ div
     .text-center.c-gray.pt-100(v-else)
       empty-image(url="bill_empty.png", className="img-empty")
       .empty-content 您暂时没有相关合同
-    .bottom-option.bg-white.flex.align-center.justify-between(v-if="isEdit", :style="{height: isIpx ? '308rpx' : '240rpx'}")
+    .bottom-option.bg-white.flex.align-center.justify-between(v-if="isEdit", :style="{height: isIpx ? '168rpx' : '100rpx', 'padding-bottom': isIpx ? '68rpx' : 0}")
       .flex.align-center(@click="choosedAll()")
         .flex.flex-center
           img.choose-icon(src="/static/images/blue_check.png", v-if="allChoosed")
@@ -229,19 +229,22 @@ export default {
           order_id: orderList.toString(),
           amount: countList.toString()
         }
+        this.showLoading()
         this.ironRequest('buy_edit_contract_app.shtml', params, 'post').then(res => {
+          this.hideLoading()
           if (res.returncode === '0') {
             this.showMsg(res.msg ? res.msg : '提交成功')
             const me = this
             setTimeout(() => {
               me.back()
-            }, 3000)
+            }, 1000)
           } else {
             this.btnDisabled = false
             this.showMsg(res.msg ? res.msg : '操作失败')
             return false
           }
         }).catch(err => {
+          this.hideLoading()
           this.btnDisabled = false
           this.showMsg(err)
           return false
@@ -256,20 +259,20 @@ export default {
         contract_id: this.contractDetail.contract_id
       }
       const me = this
-      // this.$ironLoad.show()
+      this.showLoading()
       this.ironRequest('confirm_contract_app.shtml', params, 'post').then(res => {
-        // this.$ironLoad.hide()
-
+        this.hideLoading()
         if (res.returncode === '0') {
           me.showMsg(res.msg ? res.msg : '修改成功', 'positive')
           setTimeout(() => {
             me.back()
-          }, 3000)
+          }, 1000)
         } else {
           me.showMsg(res.msg ? res.msg : '操作失败')
           this.btnDisabled = false
         }
       }).catch(err => {
+        this.hideLoading()
         this.btnDisabled = false
         this.showMsg(err || '网络错误')
       })
@@ -282,17 +285,20 @@ export default {
         contract_id: this.contractDetail.contract_id
       }
       const me = this
+      this.showLoading()
       this.ironRequest('reject_contract_app.shtml', params, 'post').then(res => {
+        this.hideLoading()
         if (res.returncode === '0') {
           me.showMsg('驳回成功', 'positive')
           setTimeout(() => {
             me.back()
-          }, 3000)
+          }, 1000)
         } else {
           me.showMsg(res.data.msg)
           me.btnDisabled = false
         }
       }).catch(err => {
+        this.hideLoading()
         me.btnDisabled = false
         this.showMsg(err || '网络错误')
         // if (done) done()

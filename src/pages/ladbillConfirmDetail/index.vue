@@ -1,7 +1,7 @@
 <template lang="pug">
 div
   nav-bar(:title="navTitle", isBack)
-  div(style="margin-bottom: 60px")
+  div(:style="{'margin-bottom': isIpx ? '188rpx' : '120rpx'}")
     .bg-white.row.text-blue.padding-sm
       .col
         span.ft-15.text-blue.text-bold {{ladObject.td_no}}
@@ -55,12 +55,13 @@ div
       .tel-btn.bg-red.text-center.text-white.row.justify-center(@click="makeCall(tdContact)")
         span 点击拨打
         .padding-left-xs.cuIcon-phone
-  .footer.row.bg-white.text-center.text-white.padding-sm(v-if="ladObject.status === '提单待确认'")
+  .footer.row.bg-white.text-center.text-white.padding-sm(v-if="ladObject.status === '提单待确认'", :style="{'padding-bottom': isIpx ? '68rpx' : '20rpx'}")
     .bg-red.col.padding-sm.round(@click="ladCancel") 驳回
     .bg-blue.col.margin-left-sm.padding-sm.round(@click="ladConfirm") 确认提单  
 </template>
 <script>
 import copyBtn from '@/components/CopyBtn.vue'
+import { mapState } from 'vuex'
 export default {
   data () {
     return {
@@ -94,6 +95,9 @@ export default {
     })
   },
   computed: {
+    ...mapState({
+      isIpx: state => state.isIpx
+    }),
     tdContact () {
       return this.ladObject.make_phone === undefined ? '0519-86921892' : this.ladObject.make_phone
     }

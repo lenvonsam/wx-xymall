@@ -7,7 +7,7 @@
       time-line(type="mallist")  
     template(v-else) 
       template(v-if="carts.length > 0")   
-        .scroll-view.bg-white(scroll-y, :style="{top:customBar + 40 + 'px'}")
+        .scroll-view.bg-white(:style="{top:customBar + 40 + 'px', 'margin-bottom': isIpx ? '228rpx' : '160rpx'}")
           .bill-items.solid-bottom.padding-bottom-sm(v-for="(bill, billIdx) in carts", :key="billIdx")
             .bill-item.padding-left-sm.padding-right-sm.padding-top-sm
               .flex.flex-center.align-center(@click="selectBill(bill)")
@@ -45,7 +45,7 @@
       .text-center.c-gray.pt-100(v-else)
         empty-image(url="bill_empty.png", className="img-empty")
         .empty-content 您暂时没有相关合同
-      .s-footer(v-if="carts.length > 0")
+      .s-footer(v-if="carts.length > 0", :style="{'padding-bottom': isIpx ? '68rpx' : 0}")
         .cart-footer.align-center.justify-between
           .row.flex-center(@click="choosedAll()", style="padding-left: 10px;")
             .flex.flex-center
@@ -57,7 +57,7 @@
               span 合计：
               b.text-red ￥{{totalObject.totalPrice}}
             .text-right.ft-12(style="color:#999;") 
-              span 共{{totalObject.num}}件 ，{{totalObject.totalWeight}}吨，吊费：{{totalObject.liftPrice}}元
+              span 共{{totalObject.num}}支 ，{{totalObject.totalWeight}}吨，吊费：{{totalObject.liftPrice}}元
           .cart-settle-btn.bg-red.ft-18(@click="generateOrder", v-if="!isEdit") 生成合同
           .main-btn.margin-right-sm.bg-red.ft-20(@click="delCartRow()", v-else) 删除      
 </template>
@@ -83,6 +83,7 @@ export default {
   },
   computed: {
     ...mapState({
+      isIpx: state => state.isIpx,
       tempObject: state => state.tempObject
     }),
     totalObject () {
@@ -96,7 +97,8 @@ export default {
         // itm.newTotalWeight = Number((itm.count * itm.weight).toFixed(3))
         itm.newTotalWeight = Number(this.$toFixed(Number(itm.count) * Number(itm.weight), 3))
         if (itm.choosed) {
-          num++
+          // num++
+          num += itm.count
           if (itm.price.indexOf('--') < 0) {
             price += itm.price * itm.newTotalWeight
             totalWeight += Number(this.$toFixed(itm.weight * itm.count, 3))

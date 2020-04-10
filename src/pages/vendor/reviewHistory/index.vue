@@ -142,7 +142,6 @@ export default {
     },
     refresher (done) {
       try {
-        debugger
         this.loadFinish = 1
         const me = this
         const auditHistory = this.apiList.xy.auditHistory

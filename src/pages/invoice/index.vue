@@ -37,7 +37,7 @@ div
         .text-center.c-gray.pt-100(v-else)
           empty-image(url="bill_empty.png", className="img-empty")
           .empty-content 您暂时没有相关发票
-  .s-footer(v-if="tabName == '0' || tabName == '2'", style="height: 100rpx")
+  .s-footer(v-if="tabName == '0' || tabName == '2'", :style="{height: isIpx ? '168rpx' : '100rpx', 'padding-bottom': isIpx ? '68rpx' : 0}")
     .invoice-footer.align-center.justify-between
       .flex
         .flex-25.flex.flex-center(@click="allCheckHandler")
@@ -81,6 +81,7 @@ export default {
   },
   computed: {
     ...mapState({
+      isIpx: state => state.isIpx,
       custom: state => state.custom,
       tempObject: state => state.tempObject
     })
@@ -118,7 +119,7 @@ export default {
     this.swiperCount = 0
     this.tabName = '0'
     this.disabledBtn = false
-    this.configVal({key: 'tempObject', val: ''})
+    this.configVal({ key: 'tempObject', val: '' })
   },
   onShow () {
     // this.listData = []
@@ -130,9 +131,9 @@ export default {
       this.tabName = this.$root.$mp.query.tabName
       this.swiperCount = this.tabName
     }
-
+    const isPhoneHeight = this.isIpx ? 68 : 0
     if (this.tabName === '1' || this.tabName === '3') {
-      this.pageHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 98 + 'rpx'
+      this.pageHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 98 - isPhoneHeight + 'rpx'
     } else {
       this.currentPage = 0
       this.queryObject = {
@@ -140,7 +141,7 @@ export default {
         page_size: this.pageSize
       }
       this.loadData()
-      this.pageHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 198 + 'rpx'
+      this.pageHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 198 - isPhoneHeight + 'rpx'
     }
     if (this.listData.length === 0) {
       this.currentPage = 0

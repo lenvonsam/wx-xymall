@@ -36,14 +36,15 @@ div
       .col.text-right.padding-left-xs
         span(v-if="pno") {{pObj.remark}}
         input(v-else, type="text", placeholder="请输入备注", v-model="remark")
-  .process(v-if="rowCount.length > 0")
+  .process(v-if="rowCount.length > 0" :style="{'padding-bottom': isIpx ? '218rpx' : '150rpx'}")
     process-item(v-if="i", :pno="pno", :ref="`processItem_${idx}`", v-for="(i,idx) in rowCount", :row="i", :key="idx", :process-type="processType", :cb="pickerItemCb", :rowidx="idx")  
-  .bottom-footer.bg-white.padding-sm
+  .bottom-footer.bg-white.padding-sm(:style="{'padding-bottom': isIpx ? '98rpx' : '20rpx'}")
     .main-btn.bg-red(@click="delProcess", v-if="pno") 删除
     .main-btn(@click="createProcess", v-else) 提交
     
 </template>
 <script>
+import { mapState } from 'vuex'
 import processItem from '@/components/ProcessItem.vue'
 export default {
   data () {
@@ -66,6 +67,11 @@ export default {
   },
   components: {
     processItem
+  },
+  computed: {
+    ...mapState({
+      isIpx: state => state.isIpx
+    })
   },
   watch: {
     processType (newVal, oldVal) {
