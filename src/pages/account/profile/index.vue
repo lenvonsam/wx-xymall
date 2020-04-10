@@ -69,6 +69,7 @@ export default {
         if (res === 'confirm') {
           const localSearch = me.currentUser.localSearchs
           me.ironRequest(me.apiList.xy.searchHistory.url, { user_id: me.currentUser.user_id, history: localSearch }, me.apiList.xy.searchHistory.method, me)
+          me.ironRequest(`${me.apiList.xy.loginOut.url}&user_id=${me.currentUser.user_id}`, {}, me.apiList.xy.loginOut.method)
           me.exitUser()
           me.redirect('/pages/account/login/main')
         }

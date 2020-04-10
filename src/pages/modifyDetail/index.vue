@@ -12,7 +12,7 @@ div
     time-line(type="mallist")
   template(v-else)
     template(v-if="modifyList.length > 0")   
-      .scroll-view
+      .scroll-view(:style="{'padding-bottom': isIpx ? '308rpx' : '240rpx'}")
         .bill-items.bg-white.solid-bottom.padding-bottom-sm(v-for="(bill, billIdx) in modifyList", :key="billIdx")
           .bill-item.padding-left-sm.padding-right-sm.padding-top-sm
             .flex.flex-center.align-center(@click="selectBill(bill)")
@@ -63,14 +63,14 @@ div
     .text-center.c-gray.pt-100(v-else)
       empty-image(url="bill_empty.png", className="img-empty")
       .empty-content 您暂时没有相关合同
-    .bottom-option.bg-white.flex.align-center.justify-between(v-if="isEdit")
+    .bottom-option.bg-white.flex.align-center.justify-between(v-if="isEdit", :style="{height: isIpx ? '308rpx' : '240rpx'}")
       .flex.align-center(@click="choosedAll()")
         .flex.flex-center
           img.choose-icon(src="/static/images/blue_check.png", v-if="allChoosed")
           img.choose-icon(src="/static/images/btn_ck_n.png", v-else)
         .padding-xs 全选
       .main-btn.bg-red(@click="promptClose()") 删除  
-    .bottom-panel.padding-sm(v-else)
+    .bottom-panel.padding-sm(v-else, :style="{height: isIpx ? '308rpx' : '240rpx'}")
       .flex
         .col.flex-100 旧单金额：
         .col.text-gray.text-right ￥{{contractDetail.price}}（含吊费：{{contractDetail.lift_price}}）      
@@ -101,6 +101,7 @@ div
 </template>
 <script>
 import CountStep from '@/components/CountStep.vue'
+import { mapState } from 'vuex'
 export default {
   data () {
     return {
@@ -127,6 +128,11 @@ export default {
   },
   components: {
     CountStep
+  },
+  computed: {
+    ...mapState({
+      isIpx: state => state.isIpx
+    })
   },
   onUnload () {
     this.isEdit = false

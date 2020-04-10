@@ -90,7 +90,9 @@ export default {
     sumGoodsDetail: { url: 'seller/erp/sumGoodsDetail.shtml', method: 'get' },
     sumGoodsNameList: { url: 'seller/erp/goods.shtml', method: 'post' },
     sumGoodsStandardList: { url: 'seller/erp/standard.shtml', method: 'post' },
-    returnGoodsCancel: { url: 'seller/returnGoodsCancel.shtml', method: 'post' }
+    returnGoodsCancel: { url: 'seller/returnGoodsCancel.shtml', method: 'post' },
+    loginOut: { url: 'loginOut', method: 'get' },
+    checkUUID: { url: 'seller/checkUUID.shtml', method: 'get' }
   },
   erp: {
     // 手机验证码登录

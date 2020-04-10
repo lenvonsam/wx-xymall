@@ -56,7 +56,7 @@ div
       .col.text-right.margin-right-xs.padding-left-sm.row
         input.col(type="text", :placeholder="liftPlaceholder", v-model="totalLiftCharge", @blur="liftInput")
         span 元
-  .margin-sm.bg-white.radius(style="margin-bottom: 120rpx")
+  .margin-sm.bg-white.radius(:style="{'margin-bottom': isIpx ? '188rpx' : '120rpx'}")
     .solid-bottom.text-black.ft-16.padding-sm 上传退货协议
     .row.justify-between.solid-bottom.padding-sm
       .col 退款总金额
@@ -75,7 +75,7 @@ div
     .flex.justify-between.solid-bottom.padding-sm
       div(style="width: 200rpx") 具体原因描述
       textarea.text-gray.col.bg-gray.padding-xs(style="height: 250rpx", v-model="returnRemark")
-  .s-footer
+  .s-footer(:style="{'padding-bottom': isIpx ? '68rpx' : 0}")
     .cart-footer.justify-between
       .col.cart-footer-col
         .row.justify-between
@@ -137,6 +137,7 @@ export default {
   },
   computed: {
     ...mapState({
+      isIpx: state => state.isIpx,
       tempObject: state => state.tempObject
     })
   },

@@ -30,9 +30,23 @@ export default {
     //   logs.unshift(Date.now())
     //   mpvue.setStorageSync('logs', logs)
     // }
+    // 检查userid合法性
+    const currentUser = mpvue.getStorageSync('currentUser')
+    const me = this
+    if (currentUser && currentUser.type === 'seller') {
+      const uid = currentUser.user_id
+      this.ironRequest(`${this.apiList.xy.checkUUID.url}?user_id=${uid}`, {}, this.apiList.xy.checkUUID.method).then(resp => {
+        console.log('未失效')
+      }).catch((e) => {
+        me.showMsg('登录已失效，请重新登录')
+        setTimeout(() => {
+          me.jump('/pages/account/login/main')
+        }, 500)
+      })
+    }
     // 自动登录
     this.autoUser()
-    const me = this
+
     // 设置自定义customer bar
     mpvue.getSystemInfo({
       success (e) {
@@ -62,7 +76,6 @@ export default {
         console.log('capsule:>>', capsule)
       }
     })
-    console.log('this.currentUser', this.currentUser)
   }
 }
 </script>

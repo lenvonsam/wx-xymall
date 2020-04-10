@@ -4,7 +4,7 @@ div
   .bg-white.row.padding-sm.justify-between
     .text-black.col.text-bold {{resData.cust_name}}
     .text-gray {{resData.status}}
-  div(style="margin-bottom: 150rpx")  
+  div(:style="{'margin-bottom': isIpx ? '218rpx' : '150rpx'}")
     .margin-top-sm.solid-bottom.bg-white.padding-sm(v-for="(item, rIdx) in resData.list", :key="rIdx")
       .goods-item.text-gray
         .row.justify-between.padding-bottom-xs.text-bold
@@ -38,7 +38,7 @@ div
         span 共{{resData.amount}}支
         span.padding-left-xs {{resData.weight}}吨，
         span 吊费：{{resData.lift}}元
-  .footer.row.bg-white.text-center.text-white.padding-sm(style="height: 120rpx")
+  .footer.row.bg-white.text-center.text-white.padding-sm(:style="{height: isIpx ? '188' : '120rpx', 'padding-bottom': isIpx ? '68rpx' : 0}")
     template(v-if="resData.status == '已锁货' || resData.status == '未锁货'")
       .col.foot-btn.bg-red(@click="quotationHandler('cancel')") 强制失效
       .col.foot-cancel.margin-left-sm(@click="quotationHandler('release')", v-if="resData.status === '已锁货'") 取消锁货
@@ -73,6 +73,7 @@ export default {
   },
   computed: {
     ...mapState({
+      isIpx: state => state.isIpx,
       tempObject: state => state.tempObject
     })
   },

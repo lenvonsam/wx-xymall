@@ -1,7 +1,7 @@
 <template lang="pug">
 div
   nav-bar(title="待审核", isBack)
-  .padding-sm(style="margin-bottom: 120rpx")
+  .padding-sm(:style="{'margin-bottom': isIpx ? '188rpx' : '120rpx'}")
     template(v-if="tempObject.auditType === '延时'")
       .bg-white.card(v-for="(item, idx) in detailData.list", :key="idx")
         .row.justify-between.padding-bottom-xs
@@ -77,7 +77,7 @@ div
             .text-gray 
               span 退款重量：{{item.weight}}吨  
               span.padding-left-xs 退款金额：{{item.money}}元
-  .footer.row.bg-white.text-center.text-white.padding-sm(style="height: 120rpx", v-if="btnShow && tempObject.fromPage !== 'reviewHistory'")
+  .footer.row.bg-white.text-center.text-white.padding-sm(:style="{height: isIpx ? '188rpx' : '120rpx', 'padding-bottom': isIpx ? '68rpx' : '20rpx'}", v-if="btnShow && tempObject.fromPage !== 'reviewHistory'")
     .col.foot-cancel(@click="confirm('cancel')") {{tempObject.auditType === '退货' ? '驳回' : '拒绝'}}
     .col.foot-confirm.margin-left-sm(@click="confirm") {{tempObject.auditType === '退货' ? '退货' : '通过'}}
   modal-input(v-model="modalShow", :title="modalInputTitle", confirmText="确定", type="customize", :cb="modalHandler")
@@ -117,6 +117,7 @@ export default {
   },
   computed: {
     ...mapState({
+      isIpx: state => state.isIpx,
       modules: state => state.modules
     }),
     dataList () {

@@ -23,7 +23,7 @@ div
             span.padding-right-xs(v-if="item.gcfw") 公差范围：{{item.gcfw}}
             span(v-if="item.zlfw") 重量范围：{{item.zlfw}}    
         .padding-bottom-xs {{item.amount}}支/{{item.weight}}吨/{{item.money}}元
-    .padding-sm.text-black(style="margin-bottom: 100rpx")
+    .padding-sm.text-black(:style="{'margin-bottom': isIpx ? '168rpx' : '100rpx'}")
       .row.justify-between.padding-bottom-xs
         span 合计
         .text-gray {{totalCount}}支/{{totalWeight}}吨/{{totalGoodsPrice}}元
@@ -39,7 +39,7 @@ div
       .row.justify-between.padding-bottom-xs(v-if="returnRemark")
         span 具体原因描述
         .text-gray {{returnRemark}}  
-  .s-footer(style="height: 100rpx", v-if="!subsNo")  
+  .s-footer(:style="{height: isIpx ? '168rpx' : '100rpx'}", v-if="!subsNo")  
     .cart-footer
       .col.cart-footer-col.text-right
         span 总重量：{{totalGoodsWeight}}吨  总金额：¥{{totalPrice}}
@@ -75,6 +75,7 @@ export default {
   },
   computed: {
     ...mapState({
+      isIpx: state => state.isIpx,
       tempObject: state => state.tempObject
     })
   },

@@ -71,7 +71,7 @@
                       count-step(v-model="cart.count", @click.native="rowCartCount(cart)", @blur="rowCartCount(cart)", :max="cart.amount_left")
                       .padding-left-xs {{cart.countWeight}}吨
 
-    .s-footer(v-if="carts.length > 0", style="height: 100rpx")
+    .s-footer(v-if="carts.length > 0", :style="{height: isIpx ? '168rpx' : '100rpx'}")
       .cart-footer.justify-between
         .col.cart-footer-col
           .row.justify-between
@@ -84,7 +84,7 @@
               span 合计：
               b.text-red ￥{{totalPrice}}
           .text-right.ft-12(style="color:#999;") 共{{totalCount}}支 ，{{totalWeight}}吨
-            span ，吊费: {{totalLiftCharge}}元
+            span ，吊费: {{totalLiftCharge}}元 
         .cart-settle-btn.ft-18(:class="status === '已完成' || status === '已失效' ? 'bg-gray' : 'bg-red'", v-if="pageType === 'share'", @click="auditDxCheck") 生成合同
         button.cart-settle-btn.bg-red.ft-18(@click="shareClick" v-else) 分享
     modal(:title="modalTitle", :btns="btns", :value="modalShow", @cb="modalHandler", :width="modalWidth")
@@ -183,7 +183,6 @@ export default {
         { label: '分享', flag: 'share', className: 'main-btn', type: 'share' }
       ],
       modalBtns: '',
-      modalScrollHeight: 0,
       checkGoods: [],
       status: '',
       isAudit: false,
@@ -199,6 +198,7 @@ export default {
   },
   computed: {
     ...mapState({
+      isIpx: state => state.isIpx,
       tempObject: state => state.tempObject,
       bottomBarHeight: state => state.bottomBarHeight
     })
@@ -252,25 +252,12 @@ export default {
     this.carts = []
     this.status = ''
     this.pageType = ''
-    // this.qutId = ''
     this.btnDisable = false
     this.modalDefaultMsg = ''
     this.modalDefaultShow = false
     this.errList = []
-    // this.pageType = ''
   },
   onShow () {
-    // if (!this.isLogin) {
-    //   const me = this
-    //   this.confirm({ title: '友情提示', content: '您未登录,请先登录' }).then(res => {
-    //     if (res === 'confirm') {
-    //       me.jump('/pages/account/login/main')
-    //     } else {
-    //       me.tab('/pages/index/main')
-    //     }
-    //   })
-    //   return
-    // }
     if (this.$root.$mp.query.qutId) {
       this.pageType = 'share'
       this.qutId = this.$root.$mp.query.qutId
@@ -279,8 +266,8 @@ export default {
       this.loadData()
     }
     console.log('tempObject', this.tempObject)
-    this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 170 + 'rpx'
-    this.modalScrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 400 + 'rpx'
+    const ipxHeight = this.isIpx ? 238 : 170
+    this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - ipxHeight + 'rpx'
   },
   onUnload () {
     this.enforce = 0
