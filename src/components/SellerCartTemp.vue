@@ -56,7 +56,7 @@
                             span(v-if="cart.tolerance_range") 公差范围:
                             span.ml-10.mr-10(v-if="cart.tolerance_range") {{cart.tolerance_range}}
                             span.ml-5(v-if="cart.weight_range") 重量范围:
-                            span.ml-10(v-if="cart.weight_range") {{cart.weight_range}} 
+                            span.ml-10(v-if="cart.weight_range") {{cart.weight_range}}
                         .text-right.flex.justify-end.flex-direction
                           .text-gray (可让{{cart.allowedPrice}}元)
                           .flex.flex-direction.justify-end.pt-5
@@ -64,13 +64,13 @@
                   .margin-top-xs.padding-sm.solid-top.solid-bottom.padding-top-sm.padding-bottom-sm.row.text-gray.price
                     .text-black 定向价格：
                     .col.ml-5.padding-xs.solid.line-gray
-                      //- z-input(inputType="digit", type="price", :isBlur="isBlur", maxlength="8", :initVal="cart.price", v-model="cart.dx_prices")
-                      input(type="digit", v-model="cart.dx_prices", maxlength="8", @blur="inputFormat(cart, 'dx_prices')")
+                      z-input(inputType="digit", type="price", maxlength="8", :initVal="cart.price", inputSty="font-weight: bold", v-model="cart.dx_prices")
+                      //- input(type="digit", v-model="cart.dx_prices", maxlength="8", @blur="inputFormat(cart, 'dx_prices')")
                     .padding-left-xs 元
                     .padding-left-xs.text-black 费用：
                     .col.ml-5.padding-xs.solid.line-gray
-                      //- z-input(inputType="digit", type="price", :isBlur="isBlur", maxlength="8", v-model="cart.cost_prices")
-                      input(type="digit", v-model="cart.cost_prices", maxlength="8", @blur="inputFormat(cart, 'cost_prices')")
+                      z-input(inputType="digit", type="price", maxlength="8", v-model="cart.cost_prices", inputSty="font-weight: bold")
+                      //- input(type="digit", v-model="cart.cost_prices", maxlength="8", @blur="inputFormat(cart, 'cost_prices')")
                     .padding-left-xs 元
                   .row.padding-sm.justify-end.align-end
                     .col(style="flex: 0 0 60px;")
@@ -142,11 +142,10 @@ import CountStep from '@/components/CountStep.vue'
 import { mapState, mapActions } from 'vuex'
 import timeLine from '@/components/TimeLine.vue'
 import modal from '@/components/Modal.vue'
-// import zInput from '@/components/ZInput.vue'
+import zInput from '@/components/ZInput.vue'
 export default {
   data () {
     return {
-      isBlur: false,
       customerName: '',
       modalShow: false,
       modalMsg: '',
@@ -194,8 +193,8 @@ export default {
   components: {
     CountStep,
     timeLine,
-    modal
-    // zInput
+    modal,
+    zInput
   },
   computed: {
     ...mapState({
@@ -466,8 +465,8 @@ export default {
     auditDxCheck (flag) {
       if (this.btnDisable) return false
       this.btnDisable = true
-      this.isBlur = true
-      wx.hideKeyboard()
+      this.showLoading()
+      // wx.hideKeyboard()
       setTimeout(async () => {
         try {
           let filterArray = this.carts.filter(itm => itm.choosed === true)
@@ -530,7 +529,8 @@ export default {
           this.btnDisable = false
           this.showMsg(e)
         }
-      }, 150)
+        this.hideLoading()
+      }, 300)
     },
     weightChoose (val, rowItem) {
       rowItem.measure_way_id = val

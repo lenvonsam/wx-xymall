@@ -27,7 +27,7 @@ div
       .col.flex-25
         .ft-25 ￥
       .col.pl-10.pr-10
-        input.full-width.ft-16(:placeholder="'可转出到卡'+currentUser.account_balance+'元'", v-model="chargeVal")
+        input.full-width.ft-16(:placeholder="'可转出到卡'+currentUser.account_balance+'元'", v-model="chargeVal", type="digit")
       .col.flex-50.text-blue.ft-12(@click="withdrawAll") 全部提出
   .padding.margin-top-lg
    .main-btn(hover-class="hover-gray", @click="confirmWithdraw") 确认提现

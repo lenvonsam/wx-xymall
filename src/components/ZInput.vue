@@ -1,10 +1,10 @@
 <template lang="pug">
 .row.relation.input-box
-  input.col(v-if="isFocus && inputType === 'number'", type="number", v-model="inputVal", :focus="isFocus", :selection-start="0", :selection-end="selectionEnd", maxlength="8", @blur="inputBur")
-  input.col(v-else-if="isFocus && inputType === 'digit'", type="digit", v-model="inputVal", :focus="isFocus", :selection-start="0", :selection-end="selectionEnd", maxlength="8", @blur="inputBur")
-  input.col(v-else-if="isFocus", type="text", v-model="inputVal", :focus="isFocus", :selection-start="0", :selection-end="selectionEnd", maxlength="8", @blur="inputBur")
+  input.col(v-if="isFocus && inputType === 'number'", :style="inputSty", type="number", v-model="inputVal", :focus="isFocus", :selection-start="0", :selection-end="selectionEnd", maxlength="8", @blur="inputBur")
+  input.col(v-else-if="isFocus && inputType === 'digit'", :style="inputSty", type="digit", v-model="inputVal", :focus="isFocus", :selection-start="0", :selection-end="selectionEnd", maxlength="8", @blur="inputBur")
+  input.col(v-else-if="isFocus", :style="inputSty", type="text", v-model="inputVal", :focus="isFocus", :selection-start="0", :selection-end="selectionEnd", maxlength="8", @blur="inputBur")
   //- .mask(v-if="!isFocus", @click="inputFocus") {{inputVal}}
-  input.mask(v-if="!isFocus", @click="inputFocus", v-model="inputVal", disabled)
+  input.mask(v-if="!isFocus", @click="inputFocus", v-model="inputVal", disabled, :style="inputSty")
 </template>
 <script>
 export default {
@@ -20,7 +20,11 @@ export default {
       type: String,
       default: ''
     },
-    cb: ['Function']
+    cb: ['Function'],
+    inputSty: {
+      type: String,
+      default: ''
+    }
   },
   data () {
     return {
@@ -28,6 +32,9 @@ export default {
       isFocus: false,
       selectionEnd: 0
     }
+  },
+  onHide () {
+    this.isFocus = false
   },
   watch: {
     value (newVal, oldVal) {
@@ -61,6 +68,7 @@ export default {
       const me = this
       setTimeout(() => {
         me.$emit('input', val)
+        me.$emit('blur', val)
       }, 100)
     }
   }
@@ -89,5 +97,5 @@ input, .mask
   line-height 25px
   color #333
   font-size 30rpx
-  font-weight bold
+  // font-weight bold
 </style>

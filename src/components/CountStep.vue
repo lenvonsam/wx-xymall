@@ -3,17 +3,22 @@
   .min.align-center.flex(@click="minus")
     text.cuIcon-move
   .num
-    input(v-model="num", @blur="inputBlur", type="number")
+    //- input(v-model="num", @blur="inputBlur", type="number")
+    z-input(inputType="number", :initVal="max", v-model="num", @blur="inputBlur", inputSty="width: 100%; border: 0px; height: 26px; color: '#333'; text-align: center; font-size: 15px;")
   .plus.align-center.flex(@click="add")
     text.cuIcon-add
 </template>
 
 <script>
+import zInput from '@/components/ZInput.vue'
 export default {
   data () {
     return {
       num: 1
     }
+  },
+  components: {
+    zInput
   },
   props: {
     value: {

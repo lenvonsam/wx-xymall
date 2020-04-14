@@ -91,7 +91,7 @@ export default {
     sumGoodsNameList: { url: 'seller/erp/goods.shtml', method: 'post' },
     sumGoodsStandardList: { url: 'seller/erp/standard.shtml', method: 'post' },
     returnGoodsCancel: { url: 'seller/returnGoodsCancel.shtml', method: 'post' },
-    loginOut: { url: 'loginOut', method: 'get' },
+    loginOut: { url: 'loginOut.shtml', method: 'get' },
     checkUUID: { url: 'seller/checkUUID.shtml', method: 'get' }
   },
   erp: {

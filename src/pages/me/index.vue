@@ -152,8 +152,6 @@ export default {
       this.alertShow = false
       this.showNoticeIcon = this.currentUser.message_switch === '1'
       if (this.currentUser.type === 'seller') {
-        // TODO 卖家相关接口
-        // this.featuresModules = this.featuresIcons // 暂时
         this.ironRequest(this.apiList.xy.modules.url, { user_id: this.currentUser.user_id }, this.apiList.xy.modules.method).then(res => {
           const resData = res.list
           this.rowCountObj.waitAudit = 0
@@ -172,6 +170,9 @@ export default {
             return !item.dotKey || (item.dotKey && this.rowCountObj.hasOwnProperty(item.dotKey)) || item.dotKey === 'waitAudit'
           })
           this.configVal({ key: 'modules', val: modules })
+        }).catch((e) => {
+          this.showMsg(e)
+          this.featuresModules = []
         })
         const orderCount = this.apiList.xy.orderCount
         this.ironRequest(orderCount.url, '', orderCount.method).then(resp => {

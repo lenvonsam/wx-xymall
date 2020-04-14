@@ -4,7 +4,8 @@ export default {
   methods: {
     ...mapActions([
       'configVal',
-      'autoUser'
+      'autoUser',
+      'exitUser'
     ])
   },
   created () {
@@ -34,18 +35,25 @@ export default {
     const currentUser = mpvue.getStorageSync('currentUser')
     const me = this
     if (currentUser && currentUser.type === 'seller') {
+      me.showLoading()
       const uid = currentUser.user_id
       this.ironRequest(`${this.apiList.xy.checkUUID.url}?user_id=${uid}`, {}, this.apiList.xy.checkUUID.method).then(resp => {
         console.log('未失效')
+        me.hideLoading()
+        // 自动登录
+        me.autoUser()
       }).catch((e) => {
+        me.hideLoading()
         me.showMsg('登录已失效，请重新登录')
+        const localSearch = currentUser.localSearchs
+        me.ironRequest(me.apiList.xy.searchHistory.url, { user_id: me.currentUser.user_id, history: localSearch }, me.apiList.xy.searchHistory.method, me)
+        me.ironRequest(`${me.apiList.xy.loginOut.url}?user_id=${me.currentUser.user_id}`, {}, me.apiList.xy.loginOut.method)
         setTimeout(() => {
+          me.exitUser()
           me.jump('/pages/account/login/main')
         }, 500)
       })
     }
-    // 自动登录
-    this.autoUser()
 
     // 设置自定义customer bar
     mpvue.getSystemInfo({
