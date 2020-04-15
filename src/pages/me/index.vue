@@ -23,7 +23,7 @@ div
             span 查看全部
             span.text-gray.cuIcon-right
         .flex.text-center.justify-between.padding-top-lg
-          .col(v-for="(bicon, biconIdx) in billTrackIcons", :key="biconIdx", @click="jumpBicon(bicon.url)")
+          .col(v-for="(bicon, biconIdx) in billTrackIcons", :key="biconIdx", @click="jumpBicon(bicon)")
             .relative.contract-img
               img(:src="bicon.icon", mode="widthFix")
               .dot(v-if="rowCountObj[bicon.dotKey] > 0", :class="{'max': rowCountObj[bicon.dotKey] > 9}") 
@@ -33,7 +33,7 @@ div
       .bg-white.features
         .ft-18.text-bold.padding-sm.padding-top.padding-bottom 功能列表
         .grid.col-3.text-center.features-top
-          .features-card(v-for="(ficon, fIdx) in featuresModules", :key="fIdx", @click="jump(ficon.url.path)")
+          .features-card(v-for="(ficon, fIdx) in featuresModules", :key="fIdx", @click="jumpModules(ficon)")
             .relative.contract-img(v-if="ficon.icon")
               img(:src="ficon.icon", mode="widthFix")
               .dot(v-if="rowCountObj[ficon.dotKey] > 0", :class="{'max': rowCountObj[ficon.dotKey] > 9}") 
@@ -62,7 +62,7 @@ div
           .text-gray.ft-14(@click="jumpBillMore") 查看全部
             span.cuIcon-right
         .flex.text-center.justify-between.padding-top-lg
-          .col(v-for="(bicon, biconIdx) in billIcons", :key="biconIdx", @click="jumpBicon(bicon.url)")
+          .col(v-for="(bicon, biconIdx) in billIcons", :key="biconIdx", @click="jumpBicon(bicon)")
             .relative.contract-img
               img(:src="bicon.icon", mode="widthFix")
               .dot(v-if="rowCountObj[bicon.dotKey] > 0", :class="{'max': rowCountObj[bicon.dotKey] > 9}") 
@@ -264,6 +264,7 @@ export default {
     },
     jumpBalance () {
       if (this.currentUser.type === 'seller') {
+        this.statisticRequest({ event: 'click_app_me_order_all_seller' }, true)
         this.jump('/pages/vendor/contractTrack/main')
       } else {
         this.statisticRequest({ event: 'click_app_me_balance' })
@@ -275,12 +276,20 @@ export default {
       this.statisticRequest({ event: 'click_app_me_order_all' })
       this.jump('/pages/bill/main')
     },
-    jumpBicon (url) {
-      if (url.path === '/pages/bill/main?tabName=1') this.statisticRequest({ event: 'click_app_me_to_pay' })
-      if (url.path === '/pages/ladbillConfirm/main') this.statisticRequest({ event: 'click_app_me_to_confirm' })
-      if (url.path === '/pages/bill/main?tabName=6') this.statisticRequest({ event: 'click_app_me_to_lad' })
-      if (url.path === '/pages/invoice/main?tabName=0') this.statisticRequest({ event: 'click_app_me_to_invoice' })
-      this.jump(url.path)
+    jumpBicon (icon) {
+      if (this.currentUser.type === 'seller') {
+        this.statisticRequest({ event: icon.event }, true)
+      } else {
+        if (icon.url.path === '/pages/bill/main?tabName=1') this.statisticRequest({ event: 'click_app_me_to_pay' })
+        if (icon.url.path === '/pages/ladbillConfirm/main') this.statisticRequest({ event: 'click_app_me_to_confirm' })
+        if (icon.url.path === '/pages/bill/main?tabName=6') this.statisticRequest({ event: 'click_app_me_to_lad' })
+        if (icon.url.path === '/pages/invoice/main?tabName=0') this.statisticRequest({ event: 'click_app_me_to_invoice' })
+      }
+      this.jump(icon.url.path)
+    },
+    jumpModules (icon) {
+      this.statisticRequest({ event: icon.event }, true)
+      this.jump(icon.url.path)
     }
   }
 }

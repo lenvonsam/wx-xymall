@@ -217,17 +217,14 @@ export default {
       'configVal'
     ]),
     openStandard () {
-      // this.statisticRequest({ event: 'click_app_mall_standard' })
       this.currentPage = 0
       this.sortCb('standard')
     },
     openMaterial () {
-      // this.statisticRequest({ event: 'click_app_mall_material' })
       this.currentPage = 0
       this.sortCb('material')
     },
     openSupply () {
-      // this.statisticRequest({ event: 'click_app_mall_supply' })
       this.currentPage = 0
       this.sortCb('origin')
     },
@@ -236,7 +233,6 @@ export default {
       this.sortCb('warehouse')
     },
     openName () {
-      // this.statisticRequest({ event: 'click_app_mall_goods_drop_down' })
       this.currentPage = 0
       this.activeTab = 'name'
     },
@@ -326,7 +322,6 @@ export default {
       this.originStr = filters['origin'].toString() === '全部' ? '' : filters['origin'].toString()
       this.warehouseStr = filters['warehouse'].toString() === '全部' ? '' : filters['warehouse'].toString()
       this.temporary = []
-      // this.statisticRequest({ event: 'app_mall_filter', goods_name: this.tabVal, standard: this.standardStr, material: this.materialStr, supply: this.originStr })
       this.sortClose()
     },
     openFilter () {

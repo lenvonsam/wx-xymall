@@ -187,8 +187,8 @@ export default {
   requestDecode (type, url, params, urlMethod, iptCharset = 'gbk') {
     return basicRequest(type, url, params, urlMethod, iptCharset)
   },
-  statisticRequest (param) {
-    if (this.currentUser.type === 'seller') return false
+  statisticRequest (param, isSeller) {
+    if (this.currentUser.type === 'seller' && !isSeller) return false
     let basicParams = Object.assign({}, param)
     if (this.isLogin) {
       basicParams.user_id = this.currentUser.user_id

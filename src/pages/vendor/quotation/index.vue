@@ -309,6 +309,7 @@ export default {
         this.btnDisable = false
         return false
       }
+      this.statisticRequest({ event: 'click_app_quotation_share' }, true)
       const filterArray = this.carts.filter(item => {
         return item.choosed === true
       })

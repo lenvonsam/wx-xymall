@@ -370,7 +370,9 @@ export default {
             break
           case 'notice':
           case 'cart':
-            if (type === 'cart') this.statisticRequest({ event: 'click_app_mall_add_cart' })
+            if (type === 'cart') {
+              this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_add_cart_seller' }, true) : this.statisticRequest({ event: 'click_app_mall_add_cart' })
+            }
             if (!this.btnDisable) {
               this.btnDisable = true
               this.addCart(obj, type, this.currentUser.user_id).then(

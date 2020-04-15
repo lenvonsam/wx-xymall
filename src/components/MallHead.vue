@@ -43,7 +43,7 @@
             span.pl-10.text-bold.ft-16 {{sort.title}}
             .search-input.row.bg-gray.margin-left-sm.text-gray(v-if="activeTab === 'standard'")
               .cuIcon-search.ft-16
-              input.full-width.pl-10.ft-13(@input="standardChange", v-model="standardVal", type="text", placeholder="请输入规格快速查询")
+              input.full-width.pl-10.ft-13(@input="standardChange", @focus="standardInputFocus", v-model="standardVal", type="text", placeholder="请输入规格快速查询")
               .close-icon(@click="cleanStandard", v-if="standardVal")
                 .cuIcon-roundclosefill.ft-16
           .row.padding-sm(@click="sortClose(sortIdx)")
@@ -200,28 +200,31 @@ export default {
     ...mapActions([
       'configVal'
     ]),
+    standardInputFocus () {
+      this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_standard_search_seller' }, true) : this.statisticRequest({ event: 'click_app_mall_standard_search' })
+    },
     openStandard () {
       this.currentPage = 0
-      this.statisticRequest({ event: 'click_app_mall_standard' })
+      this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_standard_seller' }, true) : this.statisticRequest({ event: 'click_app_mall_standard' })
       this.sortCb('standard')
     },
     openMaterial () {
       this.currentPage = 0
-      this.statisticRequest({ event: 'click_app_mall_material' })
+      this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_material_seller' }, true) : this.statisticRequest({ event: 'click_app_mall_material' })
       this.sortCb('material')
     },
     openSupply () {
       this.currentPage = 0
-      this.statisticRequest({ event: 'click_app_mall_supply' })
+      this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_supply_seller' }, true) : this.statisticRequest({ event: 'click_app_mall_supply' })
       this.sortCb('origin')
     },
     openName () {
       this.currentPage = 0
-      this.statisticRequest({ event: 'click_app_mall_goods_drop_down' })
+      this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_goods_drop_down_seller' }, true) : this.statisticRequest({ event: 'click_app_mall_goods_drop_down' })
       this.activeTab = 'name'
     },
     jumpSearchInput () {
-      this.statisticRequest({ event: 'click_app_mall_search' })
+      this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_search_seller' }, true) : this.statisticRequest({ event: 'click_app_mall_search' })
       this.jump('/pages/search/main')
     },
     cleanStandard () {
@@ -239,7 +242,7 @@ export default {
       // this.sortCb('name')
     },
     classifyClick () {
-      this.statisticRequest({ event: 'click_app_mall_category' })
+      this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_category_seller' }, true) : this.statisticRequest({ event: 'click_app_mall_category' })
       const firstShare = mpvue.getStorageSync('firstShareMallClassify') || false
       if (!firstShare) {
         this.modalIntroShow = true
@@ -323,10 +326,8 @@ export default {
     },
     standardChange (e) {
       this.throttle(() => {
-        // this.sortList[1].data = []
-        this.statisticRequest({ event: 'click_app_mall_category_search' })
+        this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_category_search_seller' }, true) : this.statisticRequest({ event: 'click_app_mall_category_search' })
         this.queryObject.search = e.mp.detail.value
-        // this.standardSearch = e.mp.detail.value
         this.currentPage = 0
         this.sortCb('standard')
       }, 300)
@@ -468,9 +469,9 @@ export default {
     },
     selectMall (flag) {
       if (flag) {
-        this.statisticRequest({ event: 'click_app_mall_view_list' })
+        this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_view_list_seller' }, true) : this.statisticRequest({ event: 'click_app_mall_view_list' })
       } else {
-        this.statisticRequest({ event: 'click_app_mall_view_grid' })
+        this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_view_grid_seller' }, true) : this.statisticRequest({ event: 'click_app_mall_view_grid' })
       }
       this.mallFlag = flag
       this.$emit('selectMall', flag)

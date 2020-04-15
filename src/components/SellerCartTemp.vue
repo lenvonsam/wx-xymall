@@ -375,6 +375,7 @@ export default {
       }
     },
     openEdit () {
+      if (!this.isEdit) this.statisticRequest({ event: 'click_app_quotation_modify' }, true)
       this.pickWayShow = false
       this.isEdit = !this.isEdit
     },
@@ -409,6 +410,7 @@ export default {
     },
     clearCarts () {
       const me = this
+      this.statisticRequest({ event: 'click_app_quotation_del_all' }, true)
       this.confirm({ content: '确定清空购物车？' }).then((res) => {
         if (res === 'confirm') {
           me.btnDisable = true
@@ -451,6 +453,7 @@ export default {
       }
     },
     choosedAll () {
+      this.statisticRequest({ event: 'click_app_quotation_checkall' }, true)
       this.allChoosed = !this.allChoosed
       if (this.allChoosed) {
         this.carts.map(itm => {
@@ -469,8 +472,10 @@ export default {
       // wx.hideKeyboard()
       setTimeout(async () => {
         try {
+          if (flag === 2) this.statisticRequest({ event: 'click_app_quotation_generate' }, true)
           let filterArray = this.carts.filter(itm => itm.choosed === true)
           if (this.isEdit) {
+            if (flag === 1) this.statisticRequest({ event: 'click_app_quotation_del' }, true)
             this.btnDisable = false
             if (filterArray.length === 0) {
               this.showMsg('请选择所需删除的商品')
@@ -479,6 +484,8 @@ export default {
             // 删除
             this.delCartRow(filterArray)
             return false
+          } else if (flag === 1) {
+            this.statisticRequest({ event: 'click_app_quotation_dx' }, true)
           }
           if (filterArray.length === 0) {
             this.showMsg('请选择需要操作的物资')

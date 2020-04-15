@@ -90,7 +90,7 @@ export default {
           this.setUser(data)
           this.configVal({ key: 'oldVersion', val: this.currentVersion })
           this.getRemoteSearchHistory(data)
-          this.statisticRequest({ event: 'click_app_login' })
+          data.type === 'seller' ? this.statisticRequest({ event: 'click_app_login_seller' }, true) : this.statisticRequest({ event: 'click_app_login' })
           if (data.isnew) {
             this.canClick = true
             const me = this

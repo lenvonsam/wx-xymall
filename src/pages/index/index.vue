@@ -29,7 +29,7 @@ div
     .margin-top
       .row(v-for="(row,ridx) in mainClassify", :key="ridx", :class="{'margin-top-sm': ridx > 0}")
         .col.text-center(v-for="(col,cidx) in row", :key="cidx")
-          .btn-classify(@click="classifyClick(col.id)") {{col.title}}
+          .btn-classify(@click="classifyClick(col.id, col.title)") {{col.title}}
       .margin-top.text-center.text-blue.ft-13(@click="mallMore") 查看更多>>
   //- .margin-top-sm.margin-bottom-sm.bg-white.padding
     .text-center.ft-16
@@ -119,7 +119,7 @@ export default {
       this.jump('/pages/cardList/main?title=型云公告&type=notice')
     },
     jumpSearch () {
-      this.statisticRequest({ event: 'click_app_index_search' })
+      this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_index_search_seller' }, true) : this.statisticRequest({ event: 'click_app_index_search' })
       this.jump('/pages/search/main')
     },
     showShareBanner () {
@@ -129,14 +129,14 @@ export default {
         mpvue.setStorageSync('firstShare', true)
       }
     },
-    classifyClick (id) {
+    classifyClick (id, name) {
       // this.configVal({ key: 'tempObject', val: { name: title } })
-      this.statisticRequest({ event: 'click_app_index_category' })
+      this.statisticRequest({ event: 'click_app_index_category', name: name }, true)
       this.configVal({ key: 'tempObject', val: { name: id, fromPage: 'home' } })
       this.tab('/pages/mall/main')
     },
     iconJump (icon) {
-      this.statisticRequest({ event: icon.event })
+      this.statisticRequest({ event: icon.event }, true)
       if (this.isLogin) {
         if (icon.dotKey && this.currentUser.type === 'seller' && !this.modules[icon.dotKey]) {
           this.showMsg('暂无权限')
@@ -150,7 +150,7 @@ export default {
       }
     },
     mallMore () {
-      this.statisticRequest({ event: 'click_app_index_category' })
+      this.statisticRequest({ event: 'click_app_index_category', name: '查看更多' }, true)
       this.tab('/pages/mall/main')
     },
     // initChart (canvas, width, height) {

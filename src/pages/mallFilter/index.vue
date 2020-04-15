@@ -144,7 +144,7 @@ export default {
       })
     },
     selectTag (idx) {
-      this.statisticRequest({ event: 'click_app_mall_category_right' })
+      this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_category_right_seller' }, true) : this.statisticRequest({ event: 'click_app_mall_category_right' })
       this.searchIdx = idx
     }
   }
