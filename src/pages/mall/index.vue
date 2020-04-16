@@ -366,6 +366,10 @@ export default {
       if (this.isLogin) {
         switch (type) {
           case 'showPrice':
+            if (this.currentUser.type === 'seller') {
+              this.showMsg('登录已失效，请重新登录')
+              return false
+            }
             this.showMsg('请完善信息，耐心等待审批通过')
             break
           case 'notice':
