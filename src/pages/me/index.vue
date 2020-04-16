@@ -241,6 +241,7 @@ export default {
         data.localSearchs = this.currentUser.localSearchs || []
         if (data.avatar) data.avatar = data.avatar.indexOf('webpage/') > 0 ? data.avatar : '/filepool' + data.avatar
         else data.avatar = this.currentUser.avatar
+        data.user_id = this.currentUser.user_id
         this.setUser(data)
         if (this.currentUser.isnew) {
           this.alertText = '您还需要完善公司信息才能正常工作'

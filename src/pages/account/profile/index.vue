@@ -54,6 +54,7 @@ export default {
       this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(resp => {
         let obj = me.currentUser
         obj.cust_name = resp.cust_name
+        obj.user_id = me.currentUser.user_id
         me.setUser(obj)
       })
     }
