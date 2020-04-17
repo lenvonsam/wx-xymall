@@ -4,7 +4,7 @@
     text.cuIcon-move
   .num
     //- input(v-model="num", @blur="inputBlur", type="number")
-    z-input(inputType="number", :initVal="max", v-model="num", @blur="inputBlur", inputSty="width: 100%; border: 0px; height: 26px; color: '#333'; text-align: center; font-size: 15px;")
+    z-input(inputType="number", type="number", :initVal="num", :minVal="1", v-model="num", @blur="inputBlur", inputSty="width: 100%; border: 0px; height: 26px; color: '#333'; text-align: center; font-size: 15px;")
   .plus.align-center.flex(@click="add")
     text.cuIcon-add
 </template>

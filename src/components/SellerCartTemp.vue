@@ -537,7 +537,7 @@ export default {
           this.showMsg(e)
         }
         this.hideLoading()
-      }, 300)
+      }, 500)
     },
     weightChoose (val, rowItem) {
       rowItem.measure_way_id = val
