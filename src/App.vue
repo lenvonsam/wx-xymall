@@ -53,6 +53,8 @@ export default {
           me.jump('/pages/account/login/main')
         }, 500)
       })
+    } else {
+      me.autoUser()
     }
 
     // 设置自定义customer bar
