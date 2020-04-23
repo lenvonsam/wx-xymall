@@ -34,7 +34,7 @@ export default {
     // 检查userid合法性
     const currentUser = mpvue.getStorageSync('currentUser')
     const me = this
-    if (currentUser && currentUser.type === 'seller') {
+    if (currentUser) {
       me.showLoading()
       const uid = currentUser.user_id
       this.ironRequest(`${this.apiList.xy.checkUUID.url}?user_id=${uid}`, {}, this.apiList.xy.checkUUID.method).then(resp => {
@@ -53,8 +53,6 @@ export default {
           me.jump('/pages/account/login/main')
         }, 500)
       })
-    } else {
-      me.autoUser()
     }
 
     // 设置自定义customer bar
