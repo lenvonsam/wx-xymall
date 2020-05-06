@@ -47,8 +47,15 @@ div
             .author
               img(:src="imgOuterUrl + (currentUser.avatar == undefined ? '/webpage/zhd/images/img.png' : currentUser.avatar)", v-if="imgOuterUrl")
             .col.padding-left-sm
-              .ft-15.padding-bottom-sm {{currentUser.user_mark}}
-              .ft-12 {{currentUser.phone}}
+              template(v-if="currentUser.isLogin")
+                .ft-15.padding-bottom-sm {{currentUser.user_mark}}
+                .ft-12 {{currentUser.phone}}
+              template(v-else)
+                .ft-16.padding-bottom-xs
+                  span(@click="jump('/pages/account/login/main')") 登录
+                  span.padding-left-xs.padding-right-xs /
+                  span(@click="jump('/pages/account/register/main')") 注册
+                .ft-12(style="color: rgba(255,255,255,0.5)") 您未登录哦，登录后查看信息。
         .cuIcon-right.ft-25(@click="jumpProfile")
       .account.bg-white.flex.align-center(@click="jumpBalance")
         .ft-16.text-bold 账户余额
@@ -203,8 +210,8 @@ export default {
       }
     } else {
       this.tabDot(0)
-      this.modalMsg = '您未登录,请先登录'
-      this.modalShow = true
+      // this.modalMsg = '您未登录,请先登录'
+      // this.modalShow = true
       // this.alertText = '您未登录,请先登录'
       // this.alertShow = true
     }
@@ -260,6 +267,7 @@ export default {
       this.jump(item.url)
     },
     jumpProfile () {
+      if (!this.currentUser.isLogin) return false
       this.statisticRequest({ event: 'click_app_me_profile' })
       this.jump('/pages/account/profile/main')
     },

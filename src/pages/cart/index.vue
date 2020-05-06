@@ -1,9 +1,12 @@
 <template lang="pug">
-.s-layout
+.s-layout.bg-white
   nav-bar(title="购物车")
-  seller-cart-temp(v-if="currentUser.type === 'seller' && isLogin")
-  buyer-cart-temp(v-if="currentUser.type === 'buyer' && isLogin")
-  modal(v-model="alertShow", @cb="modalCb")
+  template(v-if="currentUser.isLogin")
+    seller-cart-temp(v-if="currentUser.type === 'seller' && isLogin")
+    buyer-cart-temp(v-if="currentUser.type === 'buyer' && isLogin")
+  template(v-else)  
+    noData
+  //- modal(v-model="alertShow", @cb="modalCb")
     .padding-sm 您未登录,请先登录
   //- alert(msg="您未登录,请先登录", v-model="alertShow", :cb="alertCb")
 </template>
@@ -12,12 +15,14 @@
 import SellerCartTemp from '@/components/SellerCartTemp.vue'
 import buyerCartTemp from '@/components/BuyerCartTemp.vue'
 import modal from '@/components/Modal.vue'
+import noData from '@/components/NoData'
 import { mapState } from 'vuex'
 export default {
   components: {
     SellerCartTemp,
     buyerCartTemp,
-    modal
+    modal,
+    noData
   },
   computed: {
     ...mapState({
