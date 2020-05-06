@@ -75,7 +75,11 @@ npm run build --report
 
 **等项目启动好之后，打开微信开放者工具，将 dist/wx 导入即可正常进行开发**
 
+## 开发项目结构
 
+### 卖家模块
+
+```
 |--src
     |-- components
         |-- SellerCartTemp // 卖家购物车
@@ -104,3 +108,6 @@ npm run build --report
             |-- sumGoods // 现货物资
             |-- sumGoodsDetail // 现货物资详情
             |-- sumGoodsFilter // 现货物资分类
+```
+
+### 买家模块
