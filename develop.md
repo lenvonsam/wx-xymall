@@ -44,3 +44,36 @@
 ```
 
 ### 买家模块
+
+```
+|--src
+    |--components
+        |-- BuyerCartTemp // 买家购物车
+    |--pages
+        |-- index // 首页
+        |-- mall // 商城
+        |-- cart // 购物车
+        |-- ladbillConfirm // 待确认提单
+        |-- ladbillConfirmDetail // 提单详情
+        |-- me // 个人中心
+        |-- askBuy // 我的求购
+        |-- askBuyCreate // 发布求购
+        |-- process // 我的加工
+        |-- processDetail // 发布加工
+        |-- ladbill // 我的提单
+        |-- ladbillDetail // 提货人信息
+        |-- modify // 合同修改
+        |-- modifyDetail // 合同修改操作
+        |-- invoice // 我的发票
+        |-- invoiceDetail // 申请发票
+        |-- billRecycle // 合同回收站
+        |-- billRecycleDetail // 回收合同详情
+        |-- bill // 我的合同
+        |-- billDetail // 合同详情
+        |-- pay // 型云收银台
+        |-- modifyDetail // 合同修改
+        |-- mallFilter // 商城分类项
+        |-- search // 商城搜索框
+        |-- cardList // 型云公告
+        |-- h5 // 消息详情
+```
