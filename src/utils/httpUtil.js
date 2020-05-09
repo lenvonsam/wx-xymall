@@ -158,27 +158,27 @@ export default {
     // 开发
     // erp: 'http://192.168.80.147:8980/eep/interfacesAjax!',
     // dev
-    // erp: 'http://erp-test.xingyun361.com/eep/interfacesAjax!',
+    erp: 'http://erp-test.xingyun361.com/eep/interfacesAjax!',
     // stage
     // erp: 'http://erp-pro.xingyun361.com/eep/interfacesAjax!',
     // prod
-    erp: 'http://erp.xingyun361.com/eep/interfacesAjax!',
+    // erp: 'http://erp.xingyun361.com/eep/interfacesAjax!',
     // dev
-    // wh: 'http://wms-test.xingyun361.com/app/interfacesAjax!',
+    wh: 'http://wms-test.xingyun361.com/app/interfacesAjax!',
     // stage
     // wh: 'http://wms-pro.xingyun361.com/app/interfacesAjax!',
     // prod
-    wh: 'http://wms.xingyun361.com/app/interfacesAjax!',
+    // wh: 'http://wms.xingyun361.com/app/interfacesAjax!',
     // dev
-    // dr: 'http://appadmin-test.xingyun361.com/driver-bk/api/',
+    dr: 'http://appadmin-test.xingyun361.com/driver-bk/api/',
     // prod
-    dr: 'http://appadmin.xingyun361.com/driver-bk/api/',
+    // dr: 'http://appadmin.xingyun361.com/driver-bk/api/',
     // dev
-    // crm: 'http://crm-admin-test.xingyun361.com/crmserver/api/v1/wxmini/'
+    crm: 'http://crm-admin-test.xingyun361.com/crmserver/api/v1/wxmini/'
     // stage
     // crm: 'http://crm-admin-pro.xingyun361.com/crmserver/api/v1/wxmini/'
     // prod
-    crm: 'http://crmadmin.xingyun361.com/api/v1/wxmini/'
+    // crm: 'http://crmadmin.xingyun361.com/api/v1/wxmini/'
   },
   ironRequest,
   request (url, params, urlMethod) {
