@@ -48,7 +48,15 @@
 ```
 |--src
     |--components
-        |-- BuyerCartTemp // 买家购物车
+        |-- modalIntro // 分享框
+        |-- vertBanner // 首页新闻横栏
+        |-- mallHead // 商城头部条件筛选
+        |-- buyerCartTemp //  买家购物车详情
+        |-- CountStep // 计数器
+        |-- noData // 未登录提示
+        |-- modal // 登录提示框
+        |-- processItem // 发布加工内容详情
+        |-- timeLine // 时间轴
     |--pages
         |-- index // 首页
         |-- mall // 商城
