@@ -37,7 +37,7 @@ export default {
     const me = this
     me.autoUser()
     console.log('App.vue_currentUser========>' + JSON.stringify(me.currentUser))
-    if (me.currentUser) {
+    if (me.isLogin) {
       me.showLoading()
       const uid = me.currentUser.user_id
       this.ironRequest(`${this.apiList.xy.checkUUID.url}?user_id=${uid}`, {}, this.apiList.xy.checkUUID.method).then(resp => {
@@ -57,7 +57,7 @@ export default {
         }, 500)
       })
     } else {
-      console.log('已失效noCurrentUser')
+      console.log('未登录me.isLogin======>' + me.isLogin)
     }
 
     // 设置自定义customer bar

@@ -41,31 +41,33 @@ export default {
   onShow () {
     const self = this
     const uid = self.currentUser.user_id
-    self.showLoading()
-    self.ironRequest(`${self.apiList.xy.checkUUID.url}?user_id=${uid}`, {}, self.apiList.xy.checkUUID.method).then(resp => {
-      console.log('page_cart_checkoutuuid=======>' + JSON.stringify(resp))
-      self.hideLoading()
-      if (resp.returncode.toString() === '0') {
-        if (self.isLogin) {
+    debugger
+    if (self.isLogin) {
+      self.showLoading()
+      self.ironRequest(`${self.apiList.xy.checkUUID.url}?user_id=${uid}`, {}, self.apiList.xy.checkUUID.method).then(resp => {
+        console.log('page_cart_checkoutuuid=======>' + JSON.stringify(resp))
+        self.hideLoading()
+        if (resp.returncode.toString() === '0') {
           self.showCartContent = true
           self.alertShow = false
         } else {
           self.showCartContent = false
           self.alertShow = true
+          self.exitUser()
         }
-      } else {
+      }).catch(e => {
+        self.hideLoading()
+        console.log('page_cart_checkoutuuid_已失效catch=======>' + e)
+        self.showMsg('登录已失效，请重新登录')
         self.showCartContent = false
         self.alertShow = true
         self.exitUser()
-      }
-    }).catch(e => {
-      self.hideLoading()
-      console.log('page_cart_checkoutuuid_已失效catch=======>' + e)
-      self.showMsg('登录已失效，请重新登录')
+        self.tabDot(0)
+      })
+    } else {
       self.showCartContent = false
       self.alertShow = true
-      self.exitUser()
-    })
+    }
   },
   onTabItemTap (item) {
     this.statisticRequest({ event: 'click_app_nav_cart' })
