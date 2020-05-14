@@ -62,6 +62,7 @@ export default {
         self.showCartContent = false
         self.alertShow = true
         self.exitUser()
+        self.tabDot(0)
       })
     } else {
       self.showCartContent = false
