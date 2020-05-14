@@ -85,6 +85,7 @@ function basicRequest (type, url, params, urlMethod, inputCharset = 'utf8') {
                 errMsg = '该手机号未在线下一体机认证,请先认证'
               }
               showMsg(errMsg)
+              console.log('showMsgerrMsg========>' + errMsg)
             }
           }
         } else {
@@ -138,11 +139,14 @@ function ironRequest (reqUrl, param, type) {
             if (Number(res.data.returncode) === 0) {
               resolve(res.data)
             } else {
+              // msg: "当前uuid:186947251e4d464b9f10568376ed7f38不存在"
               reject(res.data.errormsg || res.data.msg)
+              console.log('showMsgerrMsg2========>' + res.data.errormsg)
             }
           }
         } else {
           reject(res.data === undefined ? '网络异常' : res.data.errormsg)
+          console.log('showMsgerrMsg3========>' + res.data.errormsg)
         }
       },
       error (err) {
@@ -208,6 +212,7 @@ export default {
             resolve(res.data)
           } else {
             reject(res.data === undefined ? '网络异常' : res.data.errormsg)
+            console.log('showMsgerrMsg4========>' + res.data.errormsg)
           }
         },
         error (err) {
@@ -234,6 +239,7 @@ export default {
             resolve(res.data)
           } else {
             reject(res.data === undefined ? '网络异常' : res.data.errormsg)
+            console.log('showMsgerrMsg5========>' + res.data.errormsg)
           }
         },
         fail (err) {

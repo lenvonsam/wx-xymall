@@ -267,7 +267,7 @@ export default {
     }
     console.log('tempObject', this.tempObject)
     const ipxHeight = this.isIpx ? 238 : 170
-    this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - ipxHeight + 'rpx'
+    this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - ipxHeight - 80 + 'rpx'
   },
   onUnload () {
     this.enforce = 0

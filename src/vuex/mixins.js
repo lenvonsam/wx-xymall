@@ -68,7 +68,9 @@ const wxMixins = {
       })
     },
     hideLoading () {
-      mpvue.hideLoading()
+      setTimeout(() => {
+        mpvue.hideLoading()
+      }, 2500)
     },
     whiteStatusBar () {
       mpvue.setNavigationBarColor({

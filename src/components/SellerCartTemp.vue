@@ -3,8 +3,8 @@
     template(v-if="!isLoad")
       time-line(type="mallist")
     template(v-else)
-      .s-empty-content(v-if="(carts.length + soldCarts.length) == 0")
-        div(style="padding-top: 20%")
+      .s-empty-content(v-if="(carts.length + soldCarts.length) == 0",:style="{height: height+'rpx'}")
+        div(style="padding-top: 20%;")
           .text-center
             empty-image(url="cart_empty.png", className="img-empty")
           .text-center.empty-content 购物车空空如也
@@ -146,6 +146,7 @@ import zInput from '@/components/ZInput.vue'
 export default {
   data () {
     return {
+      height: 0,
       customerName: '',
       modalShow: false,
       modalMsg: '',
@@ -201,8 +202,13 @@ export default {
       custom: state => state.custom,
       tempObject: state => state.tempObject,
       bottomBarHeight: state => state.bottomBarHeight,
-      isIpx: state => state.isIpx
+      isIpx: state => state.isIpx,
+      screenHeight: state => state.screenHeight,
+      customBar: state => state.customBar
     })
+  },
+  beforeMount () {
+    this.height = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight)
   },
   watch: {
     carts: {
@@ -815,6 +821,7 @@ export default {
   // right 0
   // .scroll-view
   // overflow auto
+  background-color #F1F1F1
 .s-footer
   position fixed
   bottom 0

@@ -59,10 +59,15 @@ export default {
       })
     }
   },
+  onHide () {
+    // self.setCartCount(self.currentUser.user_id)
+    this.tabDot(0)
+  },
   methods: {
     ...mapActions([
       'setUser',
-      'exitUser'
+      'exitUser',
+      'configVal'
     ]),
     userExit () {
       const me = this
@@ -72,6 +77,7 @@ export default {
           me.ironRequest(me.apiList.xy.searchHistory.url, { user_id: me.currentUser.user_id, history: localSearch }, me.apiList.xy.searchHistory.method, me)
           me.ironRequest(`${me.apiList.xy.loginOut.url}?user_id=${me.currentUser.user_id}`, {}, me.apiList.xy.loginOut.method)
           me.exitUser()
+          me.tabDot(0)
           me.redirect('/pages/account/login/main')
         }
       })
