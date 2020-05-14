@@ -154,13 +154,13 @@ export default {
   onShow () {
     const self = this
     const uid = self.currentUser.user_id
-    self.ironRequest(`${self.apiList.xy.checkUUID.url}?user_id=${uid}`, {}, self.apiList.xy.checkUUID.method).then(resp => {
-      console.log('page_me_checkoutuuid=======>' + JSON.stringify(resp))
-      if (resp.returncode.toString() === '0') {
-        self.whiteStatusBar()
-        self.showNoticeIcon = false
-        // self.rowCountObj = {}
-        if (self.isLogin) {
+    if (self.isLogin) {
+      self.ironRequest(`${self.apiList.xy.checkUUID.url}?user_id=${uid}`, {}, self.apiList.xy.checkUUID.method).then(resp => {
+        console.log('page_me_checkoutuuid=======>' + JSON.stringify(resp))
+        if (resp.returncode.toString() === '0') {
+          self.whiteStatusBar()
+          self.showNoticeIcon = false
+          // self.rowCountObj = {}
           self.setCartCount(self.currentUser.user_id)
           self.alertShow = false
           self.showNoticeIcon = self.currentUser.message_switch === '1'
@@ -215,22 +215,22 @@ export default {
             })
           }
         } else {
+          self.exitUser()
           self.tabDot(0)
-          // this.modalMsg = '您未登录,请先登录'
-          // this.modalShow = true
-          // this.alertText = '您未登录,请先登录'
-          // this.alertShow = true
         }
-      } else {
+      }).catch(e => {
+        console.log('page_me_checkoutuuid_已失效catch=======>' + e)
+        self.showMsg('登录已失效，请重新登录')
         self.exitUser()
         self.tabDot(0)
-      }
-    }).catch(e => {
-      console.log('page_me_checkoutuuid_已失效catch=======>' + e)
-      self.showMsg('登录已失效，请重新登录')
-      self.exitUser()
+      })
+    } else {
       self.tabDot(0)
-    })
+      // this.modalMsg = '您未登录,请先登录'
+      // this.modalShow = true
+      // this.alertText = '您未登录,请先登录'
+      // this.alertShow = true
+    }
   },
   methods: {
     ...mapActions([
