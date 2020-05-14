@@ -9,6 +9,7 @@ export default {
     ])
   },
   created () {
+    console.log('App.vue created生命周期')
     // 调用API从本地缓存中获取数据
     /*
      * 平台 api 差异的处理方式:  api 方法统一挂载到 mpvue 名称空间, 平台判断通过 mpvuePlatform 特征字符串
@@ -32,20 +33,22 @@ export default {
     //   mpvue.setStorageSync('logs', logs)
     // }
     // 检查userid合法性
-    const currentUser = mpvue.getStorageSync('currentUser')
+    // const currentUser = mpvue.getStorageSync('currentUser')
     const me = this
-    if (currentUser) {
+    me.autoUser()
+    console.log('App.vue_currentUser========>' + JSON.stringify(me.currentUser))
+    if (me.currentUser) {
       me.showLoading()
-      const uid = currentUser.user_id
+      const uid = me.currentUser.user_id
       this.ironRequest(`${this.apiList.xy.checkUUID.url}?user_id=${uid}`, {}, this.apiList.xy.checkUUID.method).then(resp => {
-        console.log('未失效')
+        console.log('checkUUID未失效')
         me.hideLoading()
         // 自动登录
-        me.autoUser()
       }).catch((e) => {
         me.hideLoading()
+        console.log('App.vue_已失效currentUser_catch========>' + JSON.stringify(e))
         me.showMsg('登录已失效，请重新登录')
-        const localSearch = currentUser.localSearchs
+        const localSearch = me.currentUser.localSearchs
         me.ironRequest(me.apiList.xy.searchHistory.url, { user_id: me.currentUser.user_id, history: localSearch }, me.apiList.xy.searchHistory.method, me)
         me.ironRequest(`${me.apiList.xy.loginOut.url}?user_id=${me.currentUser.user_id}`, {}, me.apiList.xy.loginOut.method)
         setTimeout(() => {
@@ -53,6 +56,8 @@ export default {
           me.jump('/pages/account/login/main')
         }, 500)
       })
+    } else {
+      console.log('已失效noCurrentUser')
     }
 
     // 设置自定义customer bar

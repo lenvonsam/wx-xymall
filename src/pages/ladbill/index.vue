@@ -278,18 +278,18 @@ export default {
             me.currentPage--
           }
         } else {
+          this.hideLoading()
           this.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
           this.currentPage--
           this.finished = true
           this.isload = true
         }
-        this.hideLoading()
         this.loading = false
       }).catch(err => {
+        this.hideLoading()
         me.showMsg(err || '网络异常')
         this.loading = false
         this.isload = true
-        this.hideLoading()
       })
     }
   }

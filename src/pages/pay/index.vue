@@ -261,6 +261,7 @@ export default {
               this.ironRequest('recharge.shtml', body, 'post').then(resp => {
                 if (resp.returncode === '0') {
                   this.confirm({ content: '银行转账信息提交成功，请耐心等待审批' }).then((res) => {
+                    this.hideLoading()
                     if (res === 'confirm') {
                       me.back()
                     }
@@ -270,7 +271,6 @@ export default {
                   me.btnDisable = false
                   me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
                 }
-                this.hideLoading()
               }).catch(err => {
                 this.btnDisable = false
                 this.hideLoading()
@@ -298,8 +298,8 @@ export default {
             if (this.smsNotify) body.sms_notify = 1
             this.showLoading()
             me.ironRequest(reqUrl, body, 'post', me).then(res => {
+              me.hideLoading()
               if (res && res.returncode === '0') {
-                me.hideLoading()
                 if (me.pageType === 'offlinePay') {
                   this.alertTitle = '支付成功！请联系司机去平台仓库提货!'
                   this.alertFlag = 1
@@ -331,6 +331,7 @@ export default {
                 me.showMsg(res === undefined ? '网络异常' : res.errormsg)
               }
             }).catch(err => {
+              me.hideLoading()
               me.showMsg(err)
               me.btnDisable = false
             })

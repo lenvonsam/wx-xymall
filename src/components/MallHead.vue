@@ -458,6 +458,9 @@ export default {
           this.isMore = false
           this.hideLoading()
         }
+      }).catch((e) => {
+        console.log('sortQueryList_catch=======>' + JSON.stringify(e))
+        this.hideLoading()
       })
     },
     sortRest (key) {

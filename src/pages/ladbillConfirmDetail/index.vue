@@ -142,6 +142,7 @@ export default {
         this.showLoading()
         this.ironRequest('cancelTdOrder.shtml', { user_id: this.currentUser.user_id, td_no: this.$root.$mp.query.no }, 'post').then(resp => {
           // me.$ironLoad.hide()
+          this.hideLoading()
           if (resp && resp.returncode === '0') {
             this.showMsg('提单驳回成功')
             setTimeout(() => {
@@ -152,7 +153,6 @@ export default {
             this.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
             this.btnDisable = false
           }
-          this.hideLoading()
         }).catch(err => {
           console.log(err)
           this.hideLoading()
