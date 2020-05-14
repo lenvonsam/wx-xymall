@@ -422,6 +422,7 @@ export default {
           me.btnDisable = true
           this.showLoading()
           me.ironRequest('cartEmpty.shtml', { user_id: me.currentUser.user_id, data_source: 1 }, 'post').then(resp => {
+            this.hideLoading()
             if (resp && resp.returncode === '0') {
               me.showMsg('清空成功')
               me.btnDisable = false
@@ -432,10 +433,10 @@ export default {
               me.btnDisable = false
             }
           }).catch(err => {
+            this.hideLoading()
             me.showMsg(err || '网络异常')
             me.btnDisable = false
           })
-          this.hideLoading()
         }
       })
     },
@@ -477,6 +478,7 @@ export default {
       this.showLoading()
       // wx.hideKeyboard()
       setTimeout(async () => {
+        this.hideLoading()
         try {
           if (flag === 2) this.statisticRequest({ event: 'click_app_quotation_generate' }, true)
           let filterArray = this.carts.filter(itm => itm.choosed === true)
@@ -539,10 +541,10 @@ export default {
             this.btnDisable = false
           }
         } catch (e) {
+          this.hideLoading()
           this.btnDisable = false
           this.showMsg(e)
         }
-        this.hideLoading()
       }, 500)
     },
     weightChoose (val, rowItem) {

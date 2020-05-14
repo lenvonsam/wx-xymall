@@ -303,6 +303,7 @@ export default {
           me.btnDisable = true
           this.showLoading()
           me.ironRequest('cartEmpty.shtml', { user_id: me.currentUser.user_id }, 'post').then(resp => {
+            this.hideLoading()
             if (resp && resp.returncode === '0') {
               me.showMsg('清空成功')
               me.btnDisable = false
@@ -314,10 +315,10 @@ export default {
               me.btnDisable = false
             }
           }).catch(err => {
+            this.hideLoading()
             me.showMsg(err || '网络异常')
             me.btnDisable = false
           })
-          this.hideLoading()
         }
       })
     },
