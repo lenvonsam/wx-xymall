@@ -398,7 +398,6 @@ export default {
       let queryObj = Object.assign({}, this.queryObject)
       this.showLoading()
       this.ironRequest(this.sortQueryList[key].reqUrl, queryObj, 'post').then(resp => {
-        this.hideLoading()
         if (resp.returncode === '0') {
           let arr = resp[this.sortQueryList[key].respKey]
           const tabList = []
@@ -457,7 +456,11 @@ export default {
             this.activeTab = key
           }
           this.isMore = false
+          this.hideLoading()
         }
+      }).catch((e) => {
+        console.log('sortQueryList_catch=======>' + JSON.stringify(e))
+        this.hideLoading()
       })
     },
     sortRest (key) {
