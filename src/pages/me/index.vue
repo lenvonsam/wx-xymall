@@ -153,70 +153,69 @@ export default {
   },
   onShow () {
     const self = this
-    const currentUser = mpvue.getStorageSync('currentUser')
-    const uid = currentUser.user_id
+    const uid = self.currentUser.user_id
     self.ironRequest(`${self.apiList.xy.checkUUID.url}?user_id=${uid}`, {}, self.apiList.xy.checkUUID.method).then(resp => {
       console.log('page_me_checkoutuuid=======>' + JSON.stringify(resp))
       if (resp.returncode.toString() === '0') {
-        this.whiteStatusBar()
-        this.showNoticeIcon = false
-        // this.rowCountObj = {}
-        if (this.isLogin) {
-          this.setCartCount(this.currentUser.user_id)
-          this.alertShow = false
-          this.showNoticeIcon = this.currentUser.message_switch === '1'
-          if (this.currentUser.type === 'seller') {
-            this.ironRequest(this.apiList.xy.modules.url, { user_id: this.currentUser.user_id }, this.apiList.xy.modules.method).then(res => {
+        self.whiteStatusBar()
+        self.showNoticeIcon = false
+        // self.rowCountObj = {}
+        if (self.isLogin) {
+          self.setCartCount(self.currentUser.user_id)
+          self.alertShow = false
+          self.showNoticeIcon = self.currentUser.message_switch === '1'
+          if (self.currentUser.type === 'seller') {
+            self.ironRequest(self.apiList.xy.modules.url, { user_id: self.currentUser.user_id }, self.apiList.xy.modules.method).then(res => {
               const resData = res.list
-              this.rowCountObj.waitAudit = 0
+              self.rowCountObj.waitAudit = 0
               const modules = {}
               const auditName = ['audit', 're_audit', 'return_audit', 'delay_audit']
               resData.map(item => {
                 modules[item.memu_name] = item.flag
                 if (item.flag) {
-                  this.rowCountObj[item.memu_name] = item.count
+                  self.rowCountObj[item.memu_name] = item.count
                   if (auditName.indexOf(item.memu_name) !== -1) {
-                    this.rowCountObj.waitAudit += Number(item.count)
+                    self.rowCountObj.waitAudit += Number(item.count)
                   }
                 }
               })
-              this.featuresModules = this.featuresIcons.filter(item => {
-                return !item.dotKey || (item.dotKey && this.rowCountObj.hasOwnProperty(item.dotKey)) || item.dotKey === 'waitAudit'
+              self.featuresModules = self.featuresIcons.filter(item => {
+                return !item.dotKey || (item.dotKey && self.rowCountObj.hasOwnProperty(item.dotKey)) || item.dotKey === 'waitAudit'
               })
-              this.configVal({ key: 'modules', val: modules })
+              self.configVal({ key: 'modules', val: modules })
             }).catch((e) => {
-              this.showMsg(e)
-              this.featuresModules = []
+              self.showMsg(e)
+              self.featuresModules = []
             })
-            const orderCount = this.apiList.xy.orderCount
-            this.ironRequest(orderCount.url, '', orderCount.method).then(resp => {
+            const orderCount = self.apiList.xy.orderCount
+            self.ironRequest(orderCount.url, '', orderCount.method).then(resp => {
               console.log('resp', resp)
               if (resp.returncode === '0') {
-                // this.rowCountObj = resp.data
-                Object.assign(this.rowCountObj, resp.data)
-                this.$forceUpdate()
+                // self.rowCountObj = resp.data
+                Object.assign(self.rowCountObj, resp.data)
+                self.$forceUpdate()
               }
             })
           } else {
-            this.refreshUser()
-            this.ironRequest('toOperCounts.shtml?user_id=' + this.currentUser.user_id, {}, 'get').then(resp => {
+            self.refreshUser()
+            self.ironRequest('toOperCounts.shtml?user_id=' + this.currentUser.user_id, {}, 'get').then(resp => {
               if (resp && resp.returncode === '0') {
-                this.rowCountObj = resp
-                this.$forceUpdate()
+                self.rowCountObj = resp
+                self.$forceUpdate()
               }
             })
-            this.ironRequest('balanceList.shtml?type=0&only_all=1&user_id=' + this.currentUser.user_id, {}, 'get').then(resp => {
+            self.ironRequest('balanceList.shtml?type=0&only_all=1&user_id=' + this.currentUser.user_id, {}, 'get').then(resp => {
               if (resp && resp.returncode === '0') {
-                let obj = this.currentUser
+                let obj = self.currentUser
                 obj.account_balance = resp.balance
-                this.currentUser.account_balance = resp.balance
-                this.setUser(obj)
-                this.$forceUpdate()
+                self.currentUser.account_balance = resp.balance
+                self.setUser(obj)
+                self.$forceUpdate()
               }
             })
           }
         } else {
-          this.tabDot(0)
+          self.tabDot(0)
           // this.modalMsg = '您未登录,请先登录'
           // this.modalShow = true
           // this.alertText = '您未登录,请先登录'
@@ -224,12 +223,13 @@ export default {
         }
       } else {
         self.exitUser()
-        this.tabDot(0)
+        self.tabDot(0)
       }
     }).catch(e => {
       console.log('page_me_checkoutuuid_已失效catch=======>' + e)
+      self.showMsg('登录已失效，请重新登录')
       self.exitUser()
-      this.tabDot(0)
+      self.tabDot(0)
     })
   },
   methods: {

@@ -139,7 +139,6 @@ function ironRequest (reqUrl, param, type) {
             if (Number(res.data.returncode) === 0) {
               resolve(res.data)
             } else {
-              // msg: "当前uuid:186947251e4d464b9f10568376ed7f38不存在"
               reject(res.data.errormsg || res.data.msg)
               console.log('showMsgerrMsg2========>' + res.data.errormsg)
             }

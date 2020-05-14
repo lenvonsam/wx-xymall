@@ -40,8 +40,7 @@ export default {
   },
   onShow () {
     const self = this
-    const currentUser = mpvue.getStorageSync('currentUser')
-    const uid = currentUser.user_id
+    const uid = self.currentUser.user_id
     self.ironRequest(`${self.apiList.xy.checkUUID.url}?user_id=${uid}`, {}, self.apiList.xy.checkUUID.method).then(resp => {
       console.log('page_cart_checkoutuuid=======>' + JSON.stringify(resp))
       if (resp.returncode.toString() === '0') {
@@ -59,6 +58,7 @@ export default {
       }
     }).catch(e => {
       console.log('page_cart_checkoutuuid_已失效catch=======>' + e)
+      self.showMsg('登录已失效，请重新登录')
       self.showCartContent = false
       self.alertShow = true
       self.exitUser()
