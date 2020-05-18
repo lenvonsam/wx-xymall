@@ -6,10 +6,15 @@
     .col.text-right 登录
     span.pl-10.pr-10 /
     .col() 注册
+  <pick-way></pick-way>
 </template>
 <script>
 import { mapState } from 'vuex'
+import pickWay from '@/components/PickWay'
 export default {
+  components: {
+    pickWay
+  },
   data () {
     return {
       height: 0

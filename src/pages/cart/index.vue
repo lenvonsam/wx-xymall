@@ -41,29 +41,35 @@ export default {
   onShow () {
     const self = this
     const uid = self.currentUser.user_id
-    debugger
     if (self.isLogin) {
-      self.showLoading()
-      self.ironRequest(`${self.apiList.xy.checkUUID.url}?user_id=${uid}`, {}, self.apiList.xy.checkUUID.method).then(resp => {
-        console.log('page_cart_checkoutuuid=======>' + JSON.stringify(resp))
-        self.hideLoading()
-        if (resp.returncode.toString() === '0') {
-          self.showCartContent = true
-          self.alertShow = false
-        } else {
-          self.showCartContent = false
-          self.alertShow = true
-          self.exitUser()
+      self.showCartContent = true
+      self.alertShow = false
+      if (typeof self.currentUser.type !== 'undefined') {
+        if (self.currentUser.type === 'seller') {
+          self.showLoading()
+          self.ironRequest(`${self.apiList.xy.checkUUID.url}?user_id=${uid}`, {}, self.apiList.xy.checkUUID.method).then(resp => {
+            console.log('page_cart_checkoutuuid=======>' + JSON.stringify(resp))
+            self.hideLoading()
+            if (resp.returncode === 0) {
+              self.alertShow = false
+            } else {
+              self.showCartContent = false
+              self.alertShow = true
+              self.exitUser()
+            }
+          }).catch(e => {
+            self.hideLoading()
+            console.log('page_cart_checkoutuuid_已失效catch=======>' + e)
+            self.showMsg('登录已失效，请重新登录')
+            self.showCartContent = false
+            self.alertShow = true
+            self.exitUser()
+            self.tabDot(0)
+          })
         }
-      }).catch(e => {
-        self.hideLoading()
-        console.log('page_cart_checkoutuuid_已失效catch=======>' + e)
-        self.showMsg('登录已失效，请重新登录')
-        self.showCartContent = false
-        self.alertShow = true
-        self.exitUser()
-        self.tabDot(0)
-      })
+      } else {
+        console.log('self.currentUser.type======>' + self.currentUser.type)
+      }
     } else {
       self.showCartContent = false
       self.alertShow = true

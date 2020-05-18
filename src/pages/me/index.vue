@@ -155,76 +155,100 @@ export default {
     const self = this
     const uid = self.currentUser.user_id
     if (self.isLogin) {
-      self.ironRequest(`${self.apiList.xy.checkUUID.url}?user_id=${uid}`, {}, self.apiList.xy.checkUUID.method).then(resp => {
-        console.log('page_me_checkoutuuid=======>' + JSON.stringify(resp))
-        if (resp.returncode.toString() === '0') {
-          self.whiteStatusBar()
-          self.showNoticeIcon = false
-          // self.rowCountObj = {}
-          self.setCartCount(self.currentUser.user_id)
-          self.alertShow = false
-          self.showNoticeIcon = self.currentUser.message_switch === '1'
-          if (self.currentUser.type === 'seller') {
-            self.ironRequest(self.apiList.xy.modules.url, { user_id: self.currentUser.user_id }, self.apiList.xy.modules.method).then(res => {
-              const resData = res.list
-              self.rowCountObj.waitAudit = 0
-              const modules = {}
-              const auditName = ['audit', 're_audit', 'return_audit', 'delay_audit']
-              resData.map(item => {
-                modules[item.memu_name] = item.flag
-                if (item.flag) {
-                  self.rowCountObj[item.memu_name] = item.count
-                  if (auditName.indexOf(item.memu_name) !== -1) {
-                    self.rowCountObj.waitAudit += Number(item.count)
+      /** 判断账号状态
+       * 已完善信息账号可打开“我的”
+       * 未完善信息账号点击“我的”提示去完善信息 */
+      self.showNoticeIcon = self.currentUser.message_switch === '1'
+      if (self.currentUser.type === 'seller') {
+        self.ironRequest(`${self.apiList.xy.checkUUID.url}?user_id=${uid}`, {}, self.apiList.xy.checkUUID.method).then(resp => {
+          console.log('page_me_checkoutuuid=======>' + JSON.stringify(resp))
+          if (resp.returncode.toString() === '0') {
+            self.whiteStatusBar()
+            // self.showNoticeIcon = false
+            // self.rowCountObj = {}
+            self.setCartCount(self.currentUser.user_id)
+            self.alertShow = false
+            // self.showNoticeIcon = self.currentUser.message_switch === '1'
+            if (self.currentUser.type === 'seller') {
+              self.ironRequest(self.apiList.xy.modules.url, { user_id: self.currentUser.user_id }, self.apiList.xy.modules.method).then(res => {
+                const resData = res.list
+                self.rowCountObj.waitAudit = 0
+                const modules = {}
+                const auditName = ['audit', 're_audit', 'return_audit', 'delay_audit']
+                resData.map(item => {
+                  modules[item.memu_name] = item.flag
+                  if (item.flag) {
+                    self.rowCountObj[item.memu_name] = item.count
+                    if (auditName.indexOf(item.memu_name) !== -1) {
+                      self.rowCountObj.waitAudit += Number(item.count)
+                    }
                   }
+                })
+                self.featuresModules = self.featuresIcons.filter(item => {
+                  return !item.dotKey || (item.dotKey && self.rowCountObj.hasOwnProperty(item.dotKey)) || item.dotKey === 'waitAudit'
+                })
+                self.configVal({ key: 'modules', val: modules })
+              }).catch((e) => {
+                self.showMsg(e)
+                self.featuresModules = []
+              })
+              const orderCount = self.apiList.xy.orderCount
+              self.ironRequest(orderCount.url, '', orderCount.method).then(resp => {
+                console.log('resp', resp)
+                if (resp.returncode === '0') {
+                  // self.rowCountObj = resp.data
+                  Object.assign(self.rowCountObj, resp.data)
+                  self.$forceUpdate()
                 }
               })
-              self.featuresModules = self.featuresIcons.filter(item => {
-                return !item.dotKey || (item.dotKey && self.rowCountObj.hasOwnProperty(item.dotKey)) || item.dotKey === 'waitAudit'
+            } else {
+              self.refreshUser()
+              self.ironRequest('toOperCounts.shtml?user_id=' + this.currentUser.user_id, {}, 'get').then(resp => {
+                if (resp && resp.returncode === '0') {
+                  self.rowCountObj = resp
+                  self.$forceUpdate()
+                }
               })
-              self.configVal({ key: 'modules', val: modules })
-            }).catch((e) => {
-              self.showMsg(e)
-              self.featuresModules = []
-            })
-            const orderCount = self.apiList.xy.orderCount
-            self.ironRequest(orderCount.url, '', orderCount.method).then(resp => {
-              console.log('resp', resp)
-              if (resp.returncode === '0') {
-                // self.rowCountObj = resp.data
-                Object.assign(self.rowCountObj, resp.data)
-                self.$forceUpdate()
-              }
-            })
+              self.ironRequest('balanceList.shtml?type=0&only_all=1&user_id=' + this.currentUser.user_id, {}, 'get').then(resp => {
+                if (resp && resp.returncode === '0') {
+                  let obj = self.currentUser
+                  obj.account_balance = resp.balance
+                  self.currentUser.account_balance = resp.balance
+                  self.setUser(obj)
+                  self.$forceUpdate()
+                }
+              })
+            }
           } else {
-            self.refreshUser()
-            self.ironRequest('toOperCounts.shtml?user_id=' + this.currentUser.user_id, {}, 'get').then(resp => {
-              if (resp && resp.returncode === '0') {
-                self.rowCountObj = resp
-                self.$forceUpdate()
-              }
-            })
-            self.ironRequest('balanceList.shtml?type=0&only_all=1&user_id=' + this.currentUser.user_id, {}, 'get').then(resp => {
-              if (resp && resp.returncode === '0') {
-                let obj = self.currentUser
-                obj.account_balance = resp.balance
-                self.currentUser.account_balance = resp.balance
-                self.setUser(obj)
-                self.$forceUpdate()
-              }
-            })
+            self.exitUser()
+            self.tabDot(0)
           }
-        } else {
+        }).catch(e => {
+          console.log('page_me_checkoutuuid_已失效catch=======>' + e)
+          self.showMsg('登录已失效，请重新登录')
           self.exitUser()
           self.tabDot(0)
-        }
-      }).catch(e => {
-        console.log('page_me_checkoutuuid_已失效catch=======>' + e)
-        self.showMsg('登录已失效，请重新登录')
-        self.exitUser()
-        self.tabDot(0)
-      })
+        })
+      } else {
+        self.refreshUser()
+        self.ironRequest('toOperCounts.shtml?user_id=' + this.currentUser.user_id, {}, 'get').then(resp => {
+          if (resp && resp.returncode === '0') {
+            self.rowCountObj = resp
+            self.$forceUpdate()
+          }
+        })
+        self.ironRequest('balanceList.shtml?type=0&only_all=1&user_id=' + this.currentUser.user_id, {}, 'get').then(resp => {
+          if (resp && resp.returncode === '0') {
+            let obj = self.currentUser
+            obj.account_balance = resp.balance
+            self.currentUser.account_balance = resp.balance
+            self.setUser(obj)
+            self.$forceUpdate()
+          }
+        })
+      }
     } else {
+      self.showNoticeIcon = false
       self.tabDot(0)
       // this.modalMsg = '您未登录,请先登录'
       // this.modalShow = true
@@ -239,8 +263,13 @@ export default {
       'exitUser'
     ]),
     jumpNoticeList () {
-      this.statisticRequest({ event: 'click_app_me_message' })
-      this.jump('/pages/cardList/main?title=消息中心&type=noticeList')
+      if (!this.isLogin) {
+        this.modalMsg = '您未登录,请先登录'
+        this.modalShow = true
+      } else {
+        this.statisticRequest({ event: 'click_app_me_message' })
+        this.jump('/pages/cardList/main?title=消息中心&type=noticeList')
+      }
     },
     modalCb (flag) {
       this.modalShow = false
