@@ -177,11 +177,15 @@ export default {
     // prod
     // dr: 'http://appadmin.xingyun361.com/driver-bk/api/',
     // dev
-    crm: 'http://crm-admin-test.xingyun361.com/crmserver/api/v1/wxmini/'
+    crm: 'http://crm-admin-test.xingyun361.com/crmserver/api/v1/wxmini/',
     // stage
     // crm: 'http://crm-admin-pro.xingyun361.com/crmserver/api/v1/wxmini/'
     // prod
     // crm: 'http://crmadmin.xingyun361.com/api/v1/wxmini/'
+    // dev
+    scp: 'http://scp-dev.xingyun361.com/api/'
+    // prod
+    // scp: 'http://scp.xingyun361.com/api/'
   },
   ironRequest,
   request (url, params, urlMethod) {
