@@ -6,7 +6,41 @@ export default {
       'configVal',
       'autoUser',
       'exitUser'
-    ])
+    ]),
+    wxAuthLogin () {
+      const me = this
+      try {
+        const localOpenId = mpvue.getStorageSync('openId') || false
+        if (!localOpenId) {
+          mpvue.login({
+            success (res) {
+              console.log('login data', res)
+              me.request(me.scpProxy + me.apiList.scp.login.url, { code: res.code, appKey: me.appKey }, me.apiList.scp.login.method).then(data => {
+                if (data.return_code === 0 && data.openId) {
+                  mpvue.setStorage({
+                    key: 'openId',
+                    data: data.openId
+                  })
+                  if (data.unionId) {
+                    mpvue.setStorage({
+                      key: 'unionId',
+                      data: data.unionId
+                    })
+                  }
+                }
+              }).catch(e => {
+                console.error('login fail', e)
+              })
+            },
+            fail (err) {
+              console.error('login error', err)
+            }
+          })
+        }
+      } catch (e) {
+        console.error('get storage info error:>>', e)
+      }
+    }
   },
   created () {
     console.log('App.vue created生命周期')
@@ -34,6 +68,8 @@ export default {
     // }
     // 检查userid合法性
     // const currentUser = mpvue.getStorageSync('currentUser')
+    // 微信登录
+    this.wxAuthLogin()
     const me = this
     me.autoUser()
     console.log('App.vue_currentUser========>' + JSON.stringify(me.currentUser))
