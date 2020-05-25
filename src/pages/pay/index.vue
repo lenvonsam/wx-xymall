@@ -156,6 +156,8 @@ export default {
   },
   onUnload () {
     this.payPwd = ''
+    this.alertShow = false
+    this.btnDisable = false
   },
   methods: {
     alertCb () {
@@ -236,7 +238,7 @@ export default {
                 console.log('res', resp)
                 if (resp.returncode === '0') {
                   this.confirm({ content: '银行转账信息提交成功，请耐心等待审批' }).then((res) => {
-                    if (res !== 'confirm') return false
+                    // if (res !== 'confirm') return false
                     me.btnDisable = false
                     me.back()
                   })

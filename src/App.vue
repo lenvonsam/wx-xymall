@@ -76,22 +76,27 @@ export default {
     if (me.isLogin) {
       me.showLoading()
       const uid = me.currentUser.user_id
-      this.ironRequest(`${this.apiList.xy.checkUUID.url}?user_id=${uid}`, {}, this.apiList.xy.checkUUID.method).then(resp => {
-        console.log('checkUUID未失效')
+      if (me.currentUser.type === 'buyer') { // 判断用户type,buyer不需要调接口判断checkUUID失效与否
+        console.log('App.vue_me.currentUser.type========>' + me.currentUser.type)
         me.hideLoading()
+      } else {
+        this.ironRequest(`${this.apiList.xy.checkUUID.url}?user_id=${uid}`, {}, this.apiList.xy.checkUUID.method).then(resp => {
+          console.log('checkUUID未失效')
+          me.hideLoading()
         // 自动登录
-      }).catch((e) => {
-        me.hideLoading()
-        console.log('App.vue_已失效currentUser_catch========>' + JSON.stringify(e))
-        me.showMsg('登录已失效，请重新登录')
-        const localSearch = me.currentUser.localSearchs
-        me.ironRequest(me.apiList.xy.searchHistory.url, { user_id: me.currentUser.user_id, history: localSearch }, me.apiList.xy.searchHistory.method, me)
-        me.ironRequest(`${me.apiList.xy.loginOut.url}?user_id=${me.currentUser.user_id}`, {}, me.apiList.xy.loginOut.method)
-        setTimeout(() => {
-          me.exitUser()
-          me.jump('/pages/account/login/main')
-        }, 500)
-      })
+        }).catch((e) => {
+          me.hideLoading()
+          console.log('App.vue_已失效currentUser_catch========>' + JSON.stringify(e))
+          me.showMsg('登录已失效，请重新登录')
+          const localSearch = me.currentUser.localSearchs
+          me.ironRequest(me.apiList.xy.searchHistory.url, { user_id: me.currentUser.user_id, history: localSearch }, me.apiList.xy.searchHistory.method, me)
+          me.ironRequest(`${me.apiList.xy.loginOut.url}?user_id=${me.currentUser.user_id}`, {}, me.apiList.xy.loginOut.method)
+          setTimeout(() => {
+            me.exitUser()
+            me.jump('/pages/account/login/main')
+          }, 500)
+        })
+      }
     } else {
       console.log('未登录me.isLogin======>' + me.isLogin)
     }

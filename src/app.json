@@ -46,7 +46,8 @@
         "withdraw/main",
         "balanceList/main",
         "phoneLogin/main",
-        "companyUpdate/main"
+        "companyUpdate/main",
+        "wxBind/main"
       ]
     },
     {

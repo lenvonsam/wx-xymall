@@ -13,12 +13,15 @@ export default {
     codeType: {
       type: Number,
       required: false,
-      default: 1 // 1注册 2忘记密码 3修改手机号（原手机） 4 修改手机号（新手机）5 登录密码 6支付 7手机号登录
+      default: 1 // 1注册 2忘记密码 3修改手机号（原手机） 4 修改手机号（新手机）5 登录密码 6支付 7手机号登录 -1 通用
     },
     timeCount: {
       type: Number,
       required: false,
       default: 60
+    },
+    cb: {
+      default: false
     }
   },
   data () {
@@ -51,7 +54,7 @@ export default {
       if (this.canGetCode) {
         this.canGetCode = false
         const me = this
-        this.ironRequest(this.apiList.xy.captcha.url + '?user_phone=' + this.phone + '&type=' + this.codeType, {}, this.apiList.xy.captcha.method).then((resp) => {
+        this.ironRequest(this.apiList.xy.captcha.url + '?user_phone=' + this.phone + (this.codeType === -1 ? '' : '&type=' + this.codeType), {}, this.apiList.xy.captcha.method).then((resp) => {
           let timeTxt = me.timeCount
           me.timeInterval = setInterval(() => {
             if (timeTxt > 0) {
@@ -63,8 +66,13 @@ export default {
               me.canGetCode = true
             }
           }, 1000)
+          if (me.cb) me.cb(resp)
         }).catch((e) => {
-          me.showErrMsg(e)
+          if (me.cb) {
+            me.cb(e)
+          } else {
+            me.showErrMsg(e)
+          }
         })
       }
     },

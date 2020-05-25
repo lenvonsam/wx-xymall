@@ -18,12 +18,13 @@
       .col.text-right.padding-top(@click="jumpForgetPwd") 忘记密码？
     .mt-50.main-btn(hover-class="hover-gray", @click="remoteLogin") 登录
     .margin-top-sm.text-center.text-blue(@click="jumpPhoneLogin") 手机验证码登录
-
+    wxLogin
 
         
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
+import wxLogin from '@/components/WxLogin'
 export default {
   data () {
     return {
@@ -33,6 +34,9 @@ export default {
       backType: 1,
       canClick: true
     }
+  },
+  components: {
+    wxLogin
   },
   computed: {
     ...mapState({

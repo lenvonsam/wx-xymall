@@ -1,7 +1,7 @@
 import UTF8 from 'utf8'
 import BASE64 from 'base-64'
-const BASICURL = 'https://mobileapp.xingyun361.com/quasarserverdev'
-// const BASICURL = 'https://mobileapp.xingyun361.com/quasarserverstage'
+const BASICURL = 'https://mobileapp.xingyun361.com/quasarserverdev' // 测试环境地址
+// const BASICURL = 'https://mobileapp.xingyun361.com/quasarserverstage' // 预上线环境地址
 // const BASICURL = 'https://mobileapp.xingyun361.com/quasarserver'
 // const BASICURL = 'https://47.97.195.16/quasarserver'
 // const BASICURL = 'http://localhost:8077'
@@ -140,7 +140,7 @@ function ironRequest (reqUrl, param, type) {
               resolve(res.data)
             } else {
               reject(res.data.errormsg || res.data.msg)
-              console.log('showMsgerrMsg2========>' + res.data.errormsg)
+              console.log('showMsgerrMsg2========>' + 'errormsg：' + res.data.errormsg + 'msg：' + res.data.msg)
             }
           }
         } else {
@@ -177,9 +177,9 @@ export default {
     // prod
     // dr: 'http://appadmin.xingyun361.com/driver-bk/api/',
     // dev
-    crm: 'http://crm-admin-test.xingyun361.com/crmserver/api/v1/wxmini/',
+    crm: 'http://crm-admin-test.xingyun361.com/crmserver/api/v1/wxmini/', // 测试环境地址
     // stage
-    // crm: 'http://crm-admin-pro.xingyun361.com/crmserver/api/v1/wxmini/'
+    // crm: 'http://crm-admin-pro.xingyun361.com/crmserver/api/v1/wxmini/' // 预上线环境地址
     // prod
     // crm: 'http://crmadmin.xingyun361.com/api/v1/wxmini/'
     // dev

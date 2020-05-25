@@ -303,7 +303,7 @@ export default {
         }
         this.companyInfo.user_pwd = this.base64Str(this.companyInfo.user_pwd)
         await this.ironRequest(this.apiList.xy.companyUpdate.url, this.companyInfo, this.apiList.xy.companyUpdate.method)
-        this.exitUser()
+        // this.exitUser()
         this.alertShow = true
       } catch (e) {
         this.canClick = true

@@ -14,7 +14,7 @@
         .s-content
           .head(:style="{height: '200rpx', top: (selectDialogTop - 200)+'rpx'}")
             .solid-bottom.flex.padding-sm.bg-white.align-center.justify-between(style="height: 100rpx")
-              .quotation.text-blue.line-blue.solid(@click="auditDxCheck(2)") 生成报价单
+              .quotation.solid(@click="auditDxCheck(2)" :style="{visibility: isEdit ? 'hidden' : 'visible'}" :class="auditDxCheckDisable === true?'text-blue line-blue':'text-grey line-grey'") 生成报价单
               .text-center
                 .padding-xs(v-show="isEdit", @click="openEdit") 完成
                 .flex(v-show="!isEdit")
@@ -188,7 +188,8 @@ export default {
       customLoadFinish: 0,
       dxFilterArray: [],
       flag: 1,
-      firstLoad: false
+      firstLoad: false,
+      auditDxCheckDisable: true
     }
   },
   components: {
@@ -384,6 +385,7 @@ export default {
       if (!this.isEdit) this.statisticRequest({ event: 'click_app_quotation_modify' }, true)
       this.pickWayShow = false
       this.isEdit = !this.isEdit
+      this.auditDxCheckDisable = !this.auditDxCheckDisable
     },
     tabSelect (type, item) {
       if (type === 'lift') {

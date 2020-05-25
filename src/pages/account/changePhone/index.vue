@@ -61,6 +61,7 @@ export default {
   },
   onUnload () {
     this.codeBtnShow = false
+    this.alertShow = false
   },
   methods: {
     ...mapActions([
@@ -115,6 +116,7 @@ export default {
         if (this.bindClick) {
           this.bindClick = false
           await this.ironRequest(this.apiList.xy.bindNewPhone.url, { user_id: this.currentUser.user_id, user_phone: this.newPhone, msg_code: this.code2 }, this.apiList.xy.bindNewPhone.method)
+          this.exitUser()
           this.alertShow = true
         }
       } catch (e) {

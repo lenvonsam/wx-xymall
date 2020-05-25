@@ -102,7 +102,8 @@ export default {
             phone: this.phone,
             user_id: data.user_id,
             user_mark: data.emp_acct,
-            server_time: data.server_time
+            server_time: data.server_time,
+            type: 'buyer'
           }
           this.setUser(newUser)
           this.confirm({ content: '注册成功，但您是新用户，请先完成公司信息' }).then(res => {
