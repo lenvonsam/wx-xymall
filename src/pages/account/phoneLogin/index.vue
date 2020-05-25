@@ -27,10 +27,12 @@
       .col.text-right.padding-top(@click="jumpToChildPwd") 忘记密码？
     .mt-50.main-btn(hover-class="hover-gray", @click="remoteHandler") {{pageType === 'smsLogin' ? '登录' : '提交'}}
     .margin-top-sm.text-center.text-blue(@click="jumpBack", v-if="pageType === 'smsLogin'") 账号密码登录
+    wxLogin(v-if="pageType == 'smsLogin'")
 </template>
 
 <script>
 import authBtn from '@/components/AuthBtn'
+import wxLogin from '@/components/WxLogin'
 import { mapActions, mapState } from 'vuex'
 export default {
   data () {
@@ -52,7 +54,8 @@ export default {
     })
   },
   components: {
-    authBtn
+    authBtn,
+    wxLogin
   },
   onShow () {
     this.codeBtnShow = true

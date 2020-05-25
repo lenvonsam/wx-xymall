@@ -49,6 +49,7 @@ import modalIntro from '../../components/ModalIntro.vue'
 import vertBanner from '../../components/VertBanner.vue'
 import lineOpts from '../../utils/lineOpts'
 import modalInput from '@/components/ModalInput.vue'
+import modal from '@/components/Modal.vue'
 // const echarts = require('../../../static/libs/echarts.min.js')
 // let chart = null
 export default {
@@ -64,7 +65,7 @@ export default {
       gallery: [],
       notices: {},
       lineOptions: lineOpts,
-      alertShow: false,
+      alertShow: true,
       top: 0
     }
   },
@@ -72,7 +73,8 @@ export default {
     mpvueEcharts,
     vertBanner,
     modalIntro,
-    modalInput
+    modalInput,
+    modal
   },
   beforeMount () {
     this.$nextTick(function () {

@@ -101,7 +101,11 @@ export default {
       method: 'post'
     },
     loginOut: { url: 'loginOut.shtml', method: 'get' },
-    checkUUID: { url: 'seller/checkUUID.shtml', method: 'get' }
+    checkUUID: { url: 'seller/checkUUID.shtml', method: 'get' },
+    // 微信登录
+    wxLogin: { url: 'wxLogin.shtml', method: 'post' },
+    // 微信绑定
+    wxBind: { url: 'wxBind.shtml', method: 'post' }
   },
   erp: {
     // 手机验证码登录

@@ -88,7 +88,8 @@ div
       //- .solid-top.solid-top-sm.row(v-else-if="((contractDetail.status === 12 || contractDetail.status === 14) && currentUser.type === 'buyer') || ((contractDetail.status === 15 || contractDetail.status === 16) && currentUser.type === 'seller')")
       .solid-top.solid-top-sm.row(v-else-if="editStatus.indexOf(contractDetail.status) !== -1")
         .col.padding-right-xs
-          button.bg-gray(@click="btnDisabled ? '' : back") 放弃修改
+          //- button.bg-gray(@click="btnDisabled ? '' : back") 放弃修改
+          button.bg-gray(@click="giveUp") 放弃修改
         .col.padding-left-xs
           button.text-white.bg-blue(@click="applyEdit") 申请修改
     //- .bill-foot.bg-white.padding-sm
@@ -133,6 +134,9 @@ export default {
     ...mapState({
       isIpx: state => state.isIpx
     })
+  },
+  onShow () {
+    console.log('this.btnDisabled=====>' + this.btnDisabled)
   },
   onUnload () {
     this.isEdit = false
@@ -468,6 +472,11 @@ export default {
         this.hideLoading()
         // if (done) done()
       })
+    },
+    giveUp () {
+      if (!this.btnDisabled) {
+        this.back()
+      }
     }
   }
 }
