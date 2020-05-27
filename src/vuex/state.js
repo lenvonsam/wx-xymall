@@ -85,6 +85,22 @@ export default {
       }
     ]
   ],
+  /**
+   * 根据扫码id自动转成品名
+   * @author samy
+   * @date 2020/05/27
+   */
+  qrCodeForGoodsName: {
+    '169': 'hxg',
+    '175': 'gzg',
+    '168': 'cg',
+    '167': 'jg',
+    '273': 'bg',
+    '272,181': 'yg',
+    '185': 'bc',
+    '183': 'jb',
+    '999': 'gbz'
+  },
   billIcons: [
     {
       icon: '/static/images/dfk.png',

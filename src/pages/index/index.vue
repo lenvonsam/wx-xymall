@@ -93,7 +93,36 @@ export default {
       }
     }
   },
-  onShow () {
+  onLoad (opt) {
+    console.log('onLoad', opt)
+    /**
+     * 添加扫码后获取参数操作
+     * @author samy
+     * @date 2020/05/27
+     */
+    if (opt.scene) {
+      const decodeStr = decodeURIComponent(opt.scene)
+      const arr = decodeStr.split('|')
+      console.log('arr:>>', arr)
+      if (arr.length > 0 && arr.length === 3 && arr[0] === 'qrp') {
+        mpvue.setStorageSync(
+          'qrp',
+          JSON.stringify({
+            id: arr[1],
+            source: arr[2],
+            time: new Date().getTime()
+          })
+        )
+        // 自动跳转到商城页面
+        if (arr[1] !== '999') {
+          this.configVal({ key: 'tempObject', val: { name: arr[1], fromPage: 'home' } })
+          this.tab('/pages/mall/main')
+        }
+      }
+    }
+  },
+  onShow (opt) {
+    console.log('onshow', opt)
     this.echartHeight = (400 / 345) * (this.screenWidth - 30)
     this.loadBanner()
     // this.getTrends()

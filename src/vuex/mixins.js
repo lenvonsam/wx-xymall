@@ -78,6 +78,13 @@ const wxMixins = {
         backgroundColor: '#ffffff'
       })
     },
+    removeStoreKey (key) {
+      try {
+        mpvue.removeStorageSync(key)
+      } catch (err) {
+        console.error(err)
+      }
+    },
     tabDot (text, index = 2) {
       if (Number(text) > 0) {
         mpvue.setTabBarBadge({
@@ -508,6 +515,25 @@ const wxMixins = {
       return Number(
         numStr.substr(0, idx) + numStr.substr(idx).replace(/\./g, '')
       )
+    },
+    getQrParams () {
+      let result = '-1'
+      try {
+        const val = mpvue.getStorageSync('qrp') || '-1'
+        if (val !== '-1') {
+          const json = JSON.parse(val)
+          // 3天过期
+          const now = new Date().getTime()
+          const diff = now - json.time
+          const totalTime = 3600 * 1000 * 24 * 3
+          if (diff < totalTime) {
+            result = json.id + '|' + json.source
+          }
+        }
+      } catch (err) {
+        console.error(err)
+      }
+      return result
     }
   }
 }

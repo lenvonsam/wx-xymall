@@ -27,7 +27,7 @@
 
 <script>
 import authBtn from '@/components/AuthBtn'
-import { mapActions } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 export default {
   data () {
     return {
@@ -41,6 +41,11 @@ export default {
   },
   components: {
     authBtn
+  },
+  computed: {
+    ...mapState({
+      qrCodeForGoodsName: state => state.qrCodeForGoodsName
+    })
   },
   onShow () {
     this.canClick = true
@@ -85,10 +90,19 @@ export default {
         }
         if (this.canClick) {
           this.canClick = false
-          const data = await this.ironRequest(this.apiList.xy.userRegister.url, {
+          const body = {
             user_phone: this.phone,
             msg_code: this.code
-          }, this.apiList.xy.userRegister.method)
+          }
+          const qrParams = this.getQrParams()
+          console.log('qrParams:>>', qrParams)
+          if (qrParams !== '-1') {
+            const arr = qrParams.split('|')
+            const q = this.qrCodeForGoodsName[arr[0]] + '_' + arr[1]
+            body.promotion = q
+          }
+          const data = await this.ironRequest(this.apiList.xy.userRegister.url, body, this.apiList.xy.userRegister.method)
+          this.removeStoreKey('qrp')
           console.log('data', data)
           const me = this
           const newUser = {

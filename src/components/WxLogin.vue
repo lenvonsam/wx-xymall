@@ -34,7 +34,7 @@ export default {
        * 未绑定==》跳转账号绑定页面
        */
         if (self.bindwx) {
-        // 微信自动登录接口
+          // 微信自动登录接口
           console.log('self.bindwx===>' + self.bindwx)
           self.ironRequest(this.apiList.xy.wxLogin.url, { openid: self.openId }, this.apiList.xy.wxLogin.method).then((res) => {
             console.log('res===>' + JSON.stringify(res))
@@ -48,7 +48,7 @@ export default {
           }).catch(e => {
             console.log('catch===>' + JSON.stringify(e))
             self.jump('/pages/account/wxBind/main')
-          // modal提示是否绑定
+            // modal提示是否绑定
           })
         }
       } else {
