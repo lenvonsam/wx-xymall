@@ -101,8 +101,7 @@ export default {
      * @date 2020/05/27
      */
     if (opt.scene) {
-      const decodeStr = decodeURIComponent(opt.scene)
-      const arr = decodeStr.split('|')
+      const arr = opt.scene.split('*')
       console.log('arr:>>', arr)
       if (arr.length > 0 && arr.length === 3 && arr[0] === 'qrp') {
         mpvue.setStorageSync(
