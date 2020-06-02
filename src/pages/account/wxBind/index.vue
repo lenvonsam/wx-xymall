@@ -23,14 +23,14 @@
         .flex-30.row
           .register-icon.phone(:style="{backgroundImage: 'url(' + imgProxy + 'phone_icon.png)'}", v-if="imgProxy")
         .col
-          input.no-border.ft-16(placeholder="请输入手机号", v-model="phone", type="number", :maxlength="11",@blur="testPhoneNum")
+          input.no-border.ft-16(placeholder="请输入手机号", v-model="phone", type="number", :maxlength="11")
       .row.padding-tb-sm.border-bottom-line.margin-top-xl
         .flex-30.row
           .register-icon.code(:style="{backgroundImage: 'url(' + imgProxy + 'code_icon.png)'}", v-if="imgProxy")
         .col
           input.no-border.ft-16(placeholder="请输入验证码", type="number", v-model="code")
         .flex-90.text-center(style="border-left: 1rpx solid #888")
-          auth-btn(:phone="phone",v-if="codeBtnShow",:codeType="isNew ? '1' : '7'")
+          auth-btn(:phone="phone",v-if="codeBtnShow",:codeType="1", :cb="authBtnCB")
       .row
         .col.padding-top.ft-12 新用户绑定即完成注册
   .padding-40
@@ -51,7 +51,7 @@ export default {
     return {
       openId: '',
       unionId: '',
-      isNew: false,
+      isNew: true,
       userName: '',
       password: '',
       phone: '',
@@ -66,8 +66,7 @@ export default {
       acceptProtocol: false,
       modalShow: false,
       modalTitle: '确认协议',
-      modalMsg: '我已经阅读并同意',
-      authBtnDisa: true
+      modalMsg: '我已经阅读并同意'
     }
   },
   components: {
@@ -75,7 +74,7 @@ export default {
     modal
   },
   onShow () {
-    this.selectTabId = 0
+    // this.selectTabId = 0
     this.codeBtnShow = true
     this.openId = mpvue.getStorageSync('openId')
     this.unionId = mpvue.getStorageSync('unionId')
@@ -102,49 +101,66 @@ export default {
       this.selectTab(1)
     },
     // 获取微信手机号信息
-    getPhoneNumber (e) {
-      let self = this
-      console.log(e)
-      if (e.mp.detail.errMsg === 'getPhoneNumber:ok') {
-        self.request(self.scpProxy + self.apiList.scp.phoneInfo.url, { appKey: self.appKey, encryptedData: e.mp.detail.encryptedData, iv: e.mp.detail.iv, openId: self.openId }, self.apiList.scp.phoneInfo.method).then((res) => {
-          console.log('获取微信手机号信息res------------>' + JSON.stringify(res))
-          if (res.return_code === 0) {
-            self.phone = res.purePhone
-            self.ironRequest(self.apiList.xy.captcha.url + '?user_phone=' + res.purePhone + '&type=1',
-              {},
-              self.apiList.xy.captcha.method).then((r) => {
-              console.log('注册验证码接口结果r------------>' + JSON.stringify(r))
-              if (res.return_code === 0) {
-                self.isNew = true
-              }
-            }).catch((err) => {
-              console.log('注册验证码接口结果err------------>' + JSON.stringify(err))
-              self.isNew = false
-            })
-          }
-        })
-      } else {
-        this.phone = ''
-      }
-    },
+    // getPhoneNumber (e) {
+    //   let self = this
+    //   console.log(e)
+    //   if (e.mp.detail.errMsg === 'getPhoneNumber:ok') {
+    //     self.request(self.scpProxy + self.apiList.scp.phoneInfo.url, { appKey: self.appKey, encryptedData: e.mp.detail.encryptedData, iv: e.mp.detail.iv, openId: self.openId }, self.apiList.scp.phoneInfo.method).then((res) => {
+    //       console.log('获取微信手机号信息res------------>' + JSON.stringify(res))
+    //       if (res.return_code === 0) {
+    //         self.phone = res.purePhone
+    //         self.ironRequest(self.apiList.xy.captcha.url + '?user_phone=' + res.purePhone + '&type=1',
+    //           {},
+    //           self.apiList.xy.captcha.method).then((r) => {
+    //           console.log('注册验证码接口结果r------------>' + JSON.stringify(r))
+    //           if (res.return_code === 0) {
+    //             self.isNew = true
+    //           }
+    //         }).catch((err) => {
+    //           console.log('注册验证码接口结果err------------>' + JSON.stringify(err))
+    //           self.isNew = false
+    //         })
+    //       }
+    //     })
+    //   } else {
+    //     this.phone = ''
+    //   }
+    // },
     // 失焦判断手机号是否已注册
-    testPhoneNum () {
+    // testPhoneNum () {
+    //   let self = this
+    //   if (self.mobileReg(self.phone)) {
+    //     self.ironRequest(self.apiList.xy.captcha.url + '?user_phone=' + this.phone + '&type=1',
+    //       {},
+    //       self.apiList.xy.captcha.method).then((r) => {
+    //       console.log('注册验证码接口结果r------------>' + JSON.stringify(r))
+    //       if (r.returncode.toString() === '0') {
+    //         self.isNew = true
+    //       }
+    //     }).catch((err) => {
+    //       console.log('注册验证码接口结果err------------>' + JSON.stringify(err))
+    //       self.isNew = false
+    //     })
+    //   } else {
+    //     self.showMsg('手机号码不合法，请重新输入！')
+    //   }
+    // },
+    authBtnCB (obj) {
       let self = this
-      if (self.mobileReg(self.phone)) {
-        self.ironRequest(self.apiList.xy.captcha.url + '?user_phone=' + this.phone + '&type=1',
+      console.log('authBtnCB(obj)======>' + JSON.stringify(obj))
+      if (obj.toString() === '手机号已被注册') { // 已注册
+        self.isNew = false
+        self.ironRequest(self.apiList.xy.captcha.url + '?user_phone=' + this.phone + '&type=7',
           {},
           self.apiList.xy.captcha.method).then((r) => {
-          console.log('注册验证码接口结果r------------>' + JSON.stringify(r))
+          console.log('已注册获取登录验证码r------------>' + JSON.stringify(r))
           if (r.returncode.toString() === '0') {
-            self.isNew = true
           }
         }).catch((err) => {
-          console.log('注册验证码接口结果err------------>' + JSON.stringify(err))
-          self.isNew = false
+          console.log('已注册获取登录验证码err------------>' + JSON.stringify(err))
         })
-        self.authBtnDisa = false
-      } else {
-        self.showMsg('手机号码不合法，请重新输入！')
+      } else if (obj.errormsg === '获取验证码成功') { // 未注册
+        self.isNew = true
       }
     },
     // 登录
@@ -183,7 +199,7 @@ export default {
         body.valid_code = self.code.trim()
       }
 
-      if (self.selectTabId === 1 && self.isnew) {
+      if (self.selectTabId === 1 && self.isNew) {
         self.modalShow = true
         canHttp = false
         return
@@ -203,11 +219,13 @@ export default {
             self.setUser(res)
             self.showMsg(res.errormsg)
             // 微信绑定手机号注册成功，新用户res.isnew == 1跳转完善信息页面
-            if (res.isnew === 1) {
-              self.jump('/pages/account/companyUpdate/main?type=3')
-            } else {
-              self.tab('/pages/me/main')
-            }
+            setTimeout(function () {
+              if (res.isnew === 1) {
+                self.jump('/pages/account/companyUpdate/main?type=3')
+              } else {
+                self.tab('/pages/me/main')
+              }
+            }, 1500)
           }
         }).catch(e => {
           console.log('page_wxBind_catch===>' + JSON.stringify(e))
