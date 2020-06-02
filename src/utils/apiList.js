@@ -105,7 +105,9 @@ export default {
     // 微信登录
     wxLogin: { url: 'wxLogin.shtml', method: 'post' },
     // 微信绑定
-    wxBind: { url: 'wxBind.shtml', method: 'post' }
+    wxBind: { url: 'wxBind.shtml', method: 'post' },
+    // 更新用户关于rule的状态
+    updateRule: { url: 'updateRule.shtml', method: 'post' }
   },
   erp: {
     // 手机验证码登录

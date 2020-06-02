@@ -55,20 +55,11 @@ export default {
         this.canGetCode = false
         const me = this
         this.ironRequest(this.apiList.xy.captcha.url + '?user_phone=' + this.phone + (this.codeType === -1 ? '' : '&type=' + this.codeType), {}, this.apiList.xy.captcha.method).then((resp) => {
-          let timeTxt = me.timeCount
-          me.timeInterval = setInterval(() => {
-            if (timeTxt > 0) {
-              me.btnTxt = `${timeTxt}s后重发`
-              timeTxt--
-            } else {
-              me.btnTxt = '重新获取'
-              me.clearTime()
-              me.canGetCode = true
-            }
-          }, 1000)
+          me.timeDown()
           if (me.cb) me.cb(resp)
         }).catch((e) => {
           if (me.cb) {
+            me.timeDown()
             me.cb(e)
           } else {
             me.showErrMsg(e)
@@ -81,6 +72,20 @@ export default {
       this.btnTxt = '获取验证码'
       this.canGetCode = true
       this.showMsg(errMsg)
+    },
+    timeDown () {
+      const me = this
+      let timeTxt = me.timeCount
+      me.timeInterval = setInterval(() => {
+        if (timeTxt > 0) {
+          me.btnTxt = `${timeTxt}s后重发`
+          timeTxt--
+        } else {
+          me.btnTxt = '重新获取'
+          me.clearTime()
+          me.canGetCode = true
+        }
+      }, 1000)
     },
     clearTime () {
       if (this.timeInterval) {

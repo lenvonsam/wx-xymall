@@ -54,9 +54,9 @@ div(@click="openStatus=false")
                       .flex.justify-between.padding-bottom-xs 
                         span 共{{item.total_left_qtt}}支，{{item.total_provided_qtt}}吨
                         span 吊费：¥{{item.lift_money}}
-                  .solid-top.text-black.ft-15.padding-sm.row(v-if="item.cancel_button || item.edit_button || item.payButton || item.status === 14")
+                  .solid-top.text-black.ft-15.padding-sm.row(v-if="item.cancel_button || item.edit_button || item.payButton || item.status === 14 || item.status === 15")
                     .col
-                      template(v-if="item.status === 14")
+                      template(v-if="item.status === 14 || item.status === 15")
                         span 倒计时：
                         span.padding-left-xs.text-red {{item.timeDown}}
                     .flex
@@ -363,8 +363,9 @@ export default {
     countTime () {
       const idx = this.swiperCount
       const arr = this.billTab[idx].data
+      debugger
       arr.map(item => {
-        if (item.status === 14) {
+        if (item.status === 14 || item.status === 15) {
           const nowTime = this.serverTime
           const endTimeFormat = item.end_pay_time.replace(/-/g, '/')
           const endTime = new Date(endTimeFormat).getTime()

@@ -86,6 +86,9 @@ div
     //-   .empty-content 您暂时没有相关合同
   modal-intro(v-model="modalIntroShow", :images="introImages", :cb="modalIntroCb")
   //- cart-ball(v-model="ballValue", :cb="ballCb")
+  modal(v-model="modalShow", @cb="modalCb", :title="modalTitle" :btns="btn")
+    div
+      .padding-15 {{modalMsg}}
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
@@ -93,12 +96,14 @@ import mallHead from '@/components/MallHead'
 import mallItem from '@/components/MallItem'
 import modalIntro from '@/components/ModalIntro.vue'
 import cartBall from '@/components/ParabolicPic.vue'
+import modal from '@/components/Modal.vue'
 export default {
   components: {
     mallHead,
     mallItem,
     modalIntro,
-    cartBall
+    cartBall,
+    modal
   },
   data () {
     return {
@@ -152,7 +157,11 @@ export default {
       finished: false,
       loadFinish: 0,
       swiperFirst: 0,
-      prevIdx: null
+      prevIdx: null,
+      modalShow: false,
+      modalTitle: '超时未提货物收费标准',
+      modalMsg: '对于在库物资，买方在平台上购买物资并支付货款后，应在约定的时间内（系统默认时间为5天）制作提单并提货。超过约定时间未提的合同物资将被判定为违约（超期未提），买方须承担未及时提货而产生的仓储管理费，并于提货时自行与仓库管理方结算。卖方有权对违约合同物资进行处置，进行合同取消并退还对应货款。',
+      btn: [{ label: '确定', flag: 'confirm', className: 'main-btn' }]
     }
   },
   computed: {
@@ -233,6 +242,14 @@ export default {
     // this.refresher()
     if (this.isLogin) {
       this.setCartCount(this.currentUser.user_id)
+      console.log('index_state.currentUser======>' + JSON.stringify(this.currentUser))
+      if (this.currentUser.type === 'buyer' && this.currentUser.isnew === 0) {
+        let rule = mpvue.getStorageSync('rule')
+        console.log('mall_rule======>' + rule)
+        if (rule === 0) {
+          this.modalShow = true
+        }
+      }
     } else {
       this.tabDot(0)
     }
@@ -243,7 +260,9 @@ export default {
     })
   },
   methods: {
-    ...mapActions(['configVal']),
+    ...mapActions([
+      'configVal'
+    ]),
     ballCb () {
       console.log('ball cb')
     },
@@ -515,6 +534,17 @@ export default {
         this.hideLoading()
         this.showMsg(err)
       }
+    },
+    modalCb (flag) {
+      this.ironRequest(this.apiList.xy.updateRule.url, {user_id: this.currentUser.user_id}, this.apiList.xy.updateRule.method).then(res => {
+        console.log('updateRule_res=====>' + JSON.stringify(res))
+        if (res.returncode === '0') {
+          mpvue.setStorageSync('rule', res.rule)
+        }
+      }).catch(e => {
+        console.log('updateRule_e=====>' + e)
+      })
+      this.modalShow = false
     }
   }
 }
@@ -578,4 +608,6 @@ export default {
   font-size 12px
   border-radius 10px
   color #262626
+.padding-15
+  padding 15px
 </style>

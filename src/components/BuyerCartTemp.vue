@@ -107,12 +107,21 @@
           .text-gray.padding-top-sm {{item.content}}
     //- alert(title="您还未登录，请先登录", v-model="alertShow", :cb="alertCb")
     alert(:msg="alertText", :cb="alertCb", v-model="alertShow", force)
+    modal(v-model="modalShow", @cb="modalCb", :showWarningIcon = "showWarningIcon", :title="modalTitle")
+      .padding-lr-22(style="text-align: left;")
+        div 1、合同提交后请
+          sapn(style="color: red;font-size: 16px") 2小时
+            sapn(style="color: #000;font-size: 14px") 内完成付款，超时合同将会自动取消！
+        div 2、付款成功后请
+          sapn(style="color: red;font-size: 16px") 5天内
+            sapn(style="color: #000;font-size: 14px") 完成提货，超期未提需缴纳相应的仓储费用
 </template>
 
 <script>
 import CountStep from '@/components/CountStep.vue'
 // import CartItem from '@/components/CartItem.vue'
 import { mapState, mapActions } from 'vuex'
+import modal from '@/components/Modal.vue'
 export default {
   data () {
     return {
@@ -156,11 +165,16 @@ export default {
         { title: '自提点3-合肥东港库', content: '合肥市大兴镇南淝河旁，合肥东港码头w' }
       ],
       scrollHeight: 0,
-      firstLoad: false
+      firstLoad: false,
+      modalShow: false,
+      showWarningIcon: true,
+      modalTitle: '是否继续提交？',
+      modalMsg: '<div>1、合同提交后请2小时内完成付款，超时合同将会自动取消！<br />2、付款成功后请5天内完成提货，超期未提需缴纳相应的仓储费用</div>'
     }
   },
   components: {
-    CountStep
+    CountStep,
+    modal
     // CartItem
   },
   computed: {
@@ -361,7 +375,7 @@ export default {
     goToSettle () {
       let filterArray = this.carts.filter(itm => itm.choosed === true)
       let canSellArray = filterArray.filter(itm => itm.price.indexOf('--') >= 0)
-      const me = this
+      // const me = this
       if (this.isEdit) {
         this.statisticRequest({ event: 'click_app_cart_del' })
         if (filterArray.length === 0) {
@@ -377,68 +391,125 @@ export default {
         return
       }
       if (filterArray.length > 0 && !this.btnDisable) {
-        let heFeiArray = filterArray.filter(itm => itm.wh_name.indexOf('合肥') >= 0)
-        let dongGangArray = filterArray.filter(itm => itm.wh_name.indexOf('常州东港') >= 0)
-        let msgs = ''
-        if (heFeiArray.length > 0 && dongGangArray.length > 0) {
-          msgs = '所选物资包含合肥仓库,常州东港库物资最快次日可提'
-        } else if (heFeiArray.length > 0) {
-          msgs = '所选物资包含合肥仓库'
-        } else if (dongGangArray.length > 0) {
-          msgs = '常州东港库物资最快次日可提'
-        }
-        this.confirm({ content: msgs + '是否确认提交' }).then((res) => {
-          if (res === 'confirm') {
-            me.btnDisable = true
-            let price = filterArray.map(i => i.price).join(',')
-            let num = filterArray.map(i => `${i.count}`).join(',')
-            let billId = filterArray.map(i => `${i.cart_id}`).join(',')
-            let measureId = filterArray.map(i => `${i.measure_way_id}`).join(',')
-            // 增加重量字段，便于以后日志查询
-            let weightStr = filterArray.map(i => `${i.weight}`).join(',')
-            let body = {
-              user_id: me.currentUser.user_id,
-              amount_s: num,
-              o_priceStr: price,
-              orderIdStr: billId,
-              jl_types: measureId,
-              csg_way: me.pickway === 1 ? 51 : 1,
-              weightStr: weightStr
-            }
-            if (me.pickway === 1) {
-              body.mobile = me.pwPhone
-              body.end_addr = me.pwAddr + ' ' + me.pwAddrDetail
-            }
-            this.showLoading()
-            me.ironRequest('generateOrder.shtml', body, 'post').then(resp => {
-              this.hideLoading()
-              if (resp && resp.returncode === '0') {
-                me.btnDisable = false
-                if (resp.order_size > 1) {
-                  me.confirm({ content: `您批量生成${resp.order_size}个合同，请到待付款依次支付` }).then((res) => {
-                    if (res === 'confirm') {
-                      me.jump('/pages/bill/main?tabName=1')
-                    }
-                  })
-                } else {
-                  // 跳转到支付确认页面
-                  me.jump(`/pages/pay/main?orderNo=${resp.order_no}&price=${resp.deal_price}&pageType=offlinePay`)
-                }
-              } else {
-                me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
-                me.btnDisable = false
-              }
-            }).catch(err => {
-              me.btnDisable = false
-              this.hideLoading()
-              // me.showMsg(err || '网络异常')
-              this.alertText = err || '网络异常'
-              this.alertShow = true
-            })
-          }
-        })
+        // let heFeiArray = filterArray.filter(itm => itm.wh_name.indexOf('合肥') >= 0)
+        // let dongGangArray = filterArray.filter(itm => itm.wh_name.indexOf('常州东港') >= 0)
+        // let msgs = ''
+        // debugger
+        // if (heFeiArray.length > 0 && dongGangArray.length > 0) {
+        //   msgs = '所选物资包含合肥仓库,常州东港库物资最快次日可提'
+        // } else if (heFeiArray.length > 0) {
+        //   msgs = '所选物资包含合肥仓库'
+        // } else if (dongGangArray.length > 0) {
+        //   msgs = '常州东港库物资最快次日可提'
+        // }
+        this.modalShow = true
+        // this.confirm({ content: msgs + '是否确认提交？' }).then((res) => {
+        //   if (res === 'confirm') {
+        //     me.btnDisable = true
+        //     let price = filterArray.map(i => i.price).join(',')
+        //     let num = filterArray.map(i => `${i.count}`).join(',')
+        //     let billId = filterArray.map(i => `${i.cart_id}`).join(',')
+        //     let measureId = filterArray.map(i => `${i.measure_way_id}`).join(',')
+        //     // 增加重量字段，便于以后日志查询
+        //     let weightStr = filterArray.map(i => `${i.weight}`).join(',')
+        //     let body = {
+        //       user_id: me.currentUser.user_id,
+        //       amount_s: num,
+        //       o_priceStr: price,
+        //       orderIdStr: billId,
+        //       jl_types: measureId,
+        //       csg_way: me.pickway === 1 ? 51 : 1,
+        //       weightStr: weightStr
+        //     }
+        //     if (me.pickway === 1) {
+        //       body.mobile = me.pwPhone
+        //       body.end_addr = me.pwAddr + ' ' + me.pwAddrDetail
+        //     }
+        //     this.showLoading()
+        //     me.ironRequest('generateOrder.shtml', body, 'post').then(resp => {
+        //       this.hideLoading()
+        //       if (resp && resp.returncode === '0') {
+        //         me.btnDisable = false
+        //         if (resp.order_size > 1) {
+        //           me.confirm({ content: `您批量生成${resp.order_size}个合同，请到待付款依次支付` }).then((res) => {
+        //             if (res === 'confirm') {
+        //               me.jump('/pages/bill/main?tabName=1')
+        //             }
+        //           })
+        //         } else {
+        //           // 跳转到支付确认页面
+        //           me.jump(`/pages/pay/main?orderNo=${resp.order_no}&price=${resp.deal_price}&pageType=offlinePay`)
+        //         }
+        //       } else {
+        //         me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
+        //         me.btnDisable = false
+        //       }
+        //     }).catch(err => {
+        //       me.btnDisable = false
+        //       this.hideLoading()
+        //       // me.showMsg(err || '网络异常')
+        //       this.alertText = err || '网络异常'
+        //       this.alertShow = true
+        //     })
+        //   }
+        // })
       } else {
         this.showMsg('请选择结算商品', 'warn')
+      }
+    },
+    modalCb (flag) {
+      let self = this
+      let filterArray = this.carts.filter(itm => itm.choosed === true)
+      if (flag.toString() === 'confirm') {
+        self.btnDisable = true
+        let price = filterArray.map(i => i.price).join(',')
+        let num = filterArray.map(i => `${i.count}`).join(',')
+        let billId = filterArray.map(i => `${i.cart_id}`).join(',')
+        let measureId = filterArray.map(i => `${i.measure_way_id}`).join(',')
+        // 增加重量字段，便于以后日志查询
+        let weightStr = filterArray.map(i => `${i.weight}`).join(',')
+        let body = {
+          user_id: self.currentUser.user_id,
+          amount_s: num,
+          o_priceStr: price,
+          orderIdStr: billId,
+          jl_types: measureId,
+          csg_way: self.pickway === 1 ? 51 : 1,
+          weightStr: weightStr
+        }
+        if (self.pickway === 1) {
+          body.mobile = self.pwPhone
+          body.end_addr = self.pwAddr + ' ' + self.pwAddrDetail
+        }
+        this.showLoading()
+        self.ironRequest('generateOrder.shtml', body, 'post').then(resp => {
+          this.modalShow = false
+          this.hideLoading()
+          if (resp && resp.returncode === '0') {
+            self.btnDisable = false
+            if (resp.order_size > 1) {
+              self.confirm({ content: `您批量生成${resp.order_size}个合同，请到待付款依次支付` }).then((res) => {
+                if (res === 'confirm') {
+                  self.jump('/pages/bill/main?tabName=1')
+                }
+              })
+            } else {
+              // 跳转到支付确认页面
+              self.jump(`/pages/pay/main?orderNo=${resp.order_no}&price=${resp.deal_price}&pageType=offlinePay`)
+            }
+          } else {
+            self.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
+            self.btnDisable = false
+          }
+        }).catch(err => {
+          self.btnDisable = false
+          this.hideLoading()
+          // me.showMsg(err || '网络异常')
+          this.alertText = err || '网络异常'
+          this.alertShow = true
+        })
+      } else {
+        this.modalShow = false
       }
     },
     weightChoose (val, rowItem) {
@@ -801,4 +872,6 @@ radio.radio[checked]::after
   &:last-child
     &:after
       display none
+.padding-lr-22
+  padding 0 22px
 </style>
