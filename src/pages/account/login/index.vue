@@ -93,9 +93,8 @@ export default {
           data.pwd = encrptPwd
           this.setUser(data)
           let res = await this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method)
-          console.log('login_rule======>', res.rule)
           if (res.returncode === '0') {
-            console.log('App.vue_接口返回_rule=====>' + res.rule)
+            console.log('login.vue_接口返回_rule=====>' + res.rule)
             mpvue.setStorageSync('rule', res.rule)
           }
           this.configVal({ key: 'oldVersion', val: this.currentVersion })

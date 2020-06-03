@@ -79,6 +79,9 @@ export default {
     this.openId = mpvue.getStorageSync('openId')
     this.unionId = mpvue.getStorageSync('unionId')
   },
+  onLoad () {
+    this.selectTabId = 0
+  },
   onUnload () {
     console.log('onUnload--------wxbind')
     this.userName = ''

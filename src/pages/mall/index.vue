@@ -25,8 +25,8 @@ div
                       //- .sub-mark.ml-5 {{item[mallTypeObject[itemType].supply]}}
                       //- span.ml-5.ft-12(style="color:#666") ({{weightMark}})
                     .text-right.ft-16
-                      span.text-red.ft-13(v-if="item.price === '--'") 开售时间:{{item.show_time}}
-                      span.text-blue(v-else-if="item.show_price === true") ￥{{item.price}}
+                      span.text-red.ft-13(v-if="item.price === '--' && experienceRights") 开售时间:{{item.show_time}}
+                      span.text-blue(v-else-if="item.show_price === true && experienceRights") ￥{{item.price}}
                       .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)") 查看价格
                   .row.pt-5.flex-center.ft-12
                     .col.c-gray
@@ -41,12 +41,12 @@ div
                     span.ml-8(v-if="item[mallTypeObject[itemType].weightRange]") 重量范围: {{item[mallTypeObject[itemType].weightRange]}}
                   .row.pt-5.flex-center.ft-13.text-gray
                     .col
-                      span(v-if="item[mallTypeObject[itemType].max_count] > 0 && isLogin") {{item[mallTypeObject[itemType].max_count]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
+                      span(v-if="item[mallTypeObject[itemType].max_count] > 0 && isLogin && experienceRights") {{item[mallTypeObject[itemType].max_count]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
                       span(v-else) --支/--吨
                     .flex-120.relative.text-right.ft-14.row.justify-end
                       //- .mall-row(:class="{'notice': item.max_count === 0}")
                       .blue-buy(v-if="item.max_count == 0 && isLogin",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
-                      .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="item.show_price") 购买
+                      .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="item.show_price && experienceRights") 购买
                 template(v-else)
                   .ft-15.row
                     span.text-bold {{item[mallTypeObject[itemType].name]}}
@@ -61,18 +61,18 @@ div
                     span.ft-10 公差/重量范围
                     span.ml-8 {{item[mallTypeObject[itemType].tolerance] ? item[mallTypeObject[itemType].tolerance] : '--'}}/{{item[mallTypeObject[itemType].weightRange]?item[mallTypeObject[itemType].weightRange]: '--'}}
                   .text-gray.ft-12
-                    span(v-if="item[mallTypeObject[itemType].max_count] > 0 && isLogin") {{item[mallTypeObject[itemType].max_count]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
+                    span(v-if="item[mallTypeObject[itemType].max_count] > 0 && isLogin && experienceRights") {{item[mallTypeObject[itemType].max_count]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
                     span(v-else) --支/--吨
                   .text-blue.ft-15.text-bold 
                     //- ￥{{item[mallTypeObject[itemType].price]}}
                     span.text-red.ft-13(v-if="item.price === '--'") 开售时间:{{item.show_time}}
-                    span(v-else-if="item.show_price === true") ￥{{item[mallTypeObject[itemType].price]}}
+                    span(v-else-if="item.show_price === true && experienceRights") ￥{{item[mallTypeObject[itemType].price]}}
                     //- .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)") 查看价格
                   .text-gray.flex
                     .ft-11.col ({{item.weightMark}})
                     .text-right
-                      .blue-buy(v-if="item.max_count == 0 && isLogin",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
-                      .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="item.show_price") 购买
+                      .blue-buy(v-if="item.max_count == 0 && isLogin && experienceRights",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
+                      .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="item.show_price && experienceRights") 购买
                       .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)", style="padding-top: 2rpx") 查看价格
             //- .padding.text-gray.ft-13.text-center(v-if="loading") 努力加载中...
             //- .padding.text-gray.ft-13.text-center(v-if="goodsNameList[tabIdx].finished") 加载完成
@@ -86,6 +86,10 @@ div
     //-   .empty-content 您暂时没有相关合同
   modal-intro(v-model="modalIntroShow", :images="introImages", :cb="modalIntroCb")
   //- cart-ball(v-model="ballValue", :cb="ballCb")
+  modal(v-model="modalShow", :title="modalTitle", :btns="modalBtns", @cb="modalCb")
+    .padding-sm {{modalMsg}}
+  modal(v-model="fillModalShow", :title="modalTitle", @cb="fillModalCb")
+    .padding-sm {{fillModalMsg}}
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
@@ -93,12 +97,14 @@ import mallHead from '@/components/MallHead'
 import mallItem from '@/components/MallItem'
 import modalIntro from '@/components/ModalIntro.vue'
 import cartBall from '@/components/ParabolicPic.vue'
+import modal from '@/components/Modal.vue'
 export default {
   components: {
     mallHead,
     mallItem,
     modalIntro,
-    cartBall
+    cartBall,
+    modal
   },
   data () {
     return {
@@ -152,7 +158,14 @@ export default {
       finished: false,
       loadFinish: 0,
       swiperFirst: 0,
-      prevIdx: null
+      prevIdx: null,
+      modalShow: false,
+      modalTitle: '提示',
+      modalBtns: [{ label: '确定', flag: 'confirm', className: 'main-btn' }],
+      modalMsg: '',
+      fillModalShow: false,
+      fillModalMsg: '',
+      experienceRights: true
     }
   },
   computed: {
@@ -187,6 +200,40 @@ export default {
   },
   onShow () {
     this.isload = true
+    if (this.currentUser.type === 'buyer') {
+      let trial = -1 // 剩余体验天数
+      let isAuditing = 0 // 账号是否正在审核中
+      let lastExperienceDay = mpvue.getStorageSync('lastExperienceDay') || ''
+      this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(data => {
+        if (data.returncode === '0') {
+          trial = data.trial
+          isAuditing = data.is_auditing
+          if (trial > 0) {
+            this.experienceRights = true
+            if (data.isnew === 1) { // 新用户
+              if (lastExperienceDay !== trial) {
+                this.modalMsg = '恭喜您成为型云用户，您的商城体验天数还剩' + trial + '天，请尽快完善信息哦！'
+                this.modalShow = true
+                mpvue.setStorageSync('lastExperienceDay', trial)
+              }
+            } else if (data.isnew === 0 && isAuditing === 1) { // 已完善未审核
+              this.modalMsg = '恭喜您成为型云用户，您的信息正在审核中，请耐心等待'
+              this.modalShow = true
+            }
+          } else if (trial === 0) {
+            this.experienceRights = false
+            this.modalMsg = '尊敬的用户，您的商城体验权限时间已经结束，如需继续查看商城物资详情，请尽快完善个人信息并等待审核通过'
+            this.modalShow = true
+            mpvue.setStorageSync('lastExperienceDay', trial)
+            // 超过体验时间，商城显示未登录状态页面
+          } else {
+            this.experienceRights = true
+            mpvue.setStorageSync('lastExperienceDay', trial)
+          }
+        }
+      })
+    }
+
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 285
     if (this.tempObject.fromPage === 'home') {
       // 首页
@@ -246,6 +293,24 @@ export default {
     ...mapActions(['configVal']),
     ballCb () {
       console.log('ball cb')
+    },
+    getDate () {
+      let date = new Date()
+      let year = date.getFullYear()
+      let month = date.getMonth() + 1
+      let day = date.getDate()
+      date = year + '-' + month + '-' + day
+      return date
+    },
+    modalCb () {
+      this.modalShow = false
+    },
+    fillModalCb (flag) {
+      console.log(flag)
+      this.fillModalShow = false
+      if (flag.toString() === 'confirm') {
+        this.jump('/pages/account/companyUpdate/main?type=2')
+      }
     },
     cleanSearch () {
       delete this.queryObject.search
@@ -377,21 +442,27 @@ export default {
             if (type === 'cart') {
               this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_add_cart_seller' }, true) : this.statisticRequest({ event: 'click_app_mall_add_cart' })
             }
-            if (!this.btnDisable) {
-              this.btnDisable = true
-              this.addCart(obj, type, this.currentUser.user_id).then(
-                rt => {
+            if (this.currentUser.isnew === 1) {
+              this.fillModalMsg = '请先完善信息'
+              this.fillModalShow = true
+            } else {
+              if (!this.btnDisable) {
+                this.btnDisable = true
+                this.addCart(obj, type, this.currentUser.user_id).then(
+                  rt => {
                   // me.ballValue = evt
-                  me.showMsg(rt.msg, '', 1000)
-                  if (type === 'cart') me.setCartCount(me.currentUser.user_id)
-                  me.btnDisable = false
-                },
-                err => {
-                  me.showMsg(err === '该商品已经存在于购物车中' ? '该商品已加入购物车' : err)
-                  me.btnDisable = false
-                }
-              )
+                    me.showMsg(rt.msg, '', 1000)
+                    if (type === 'cart') me.setCartCount(me.currentUser.user_id)
+                    me.btnDisable = false
+                  },
+                  err => {
+                    me.showMsg(err === '该商品已经存在于购物车中' ? '该商品已加入购物车' : err)
+                    me.btnDisable = false
+                  }
+                )
+              }
             }
+
             break
           default:
             break

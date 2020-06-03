@@ -93,6 +93,7 @@ export default {
     EXITUSER (state) {
       try {
         mpvue.removeStorageSync('currentUser')
+        mpvue.setStorageSync('lastExperienceDay', '')
       } catch (e) {
         console.error('exituser:>>', e)
       }
