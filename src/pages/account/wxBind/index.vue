@@ -232,6 +232,7 @@ export default {
           }
         }).catch(e => {
           console.log('page_wxBind_catch===>' + JSON.stringify(e))
+          self.modalShow = false
           self.showMsg(e)
         })
       }
