@@ -87,7 +87,14 @@ div
   modal-intro(v-model="modalIntroShow", :images="introImages", :cb="modalIntroCb")
   //- cart-ball(v-model="ballValue", :cb="ballCb")
   modal(v-model="modalShow", :title="modalTitle", :btns="modalBtns", @cb="modalCb")
-    .padding-sm {{modalMsg}}
+    .padding-sm(v-if="modalMsg == '1'")
+      div 恭喜您成为型云用户，您的商城体验天数还剩
+        sapn(style="color: red;font-size: 16px;font-weight: 600;") {{trial}}
+          sapn(style="color: #000;font-size: 14px;font-weight: 400;") 天，请尽快完善信息哦！
+    .padding-sm(v-else-if="modalMsg == '2'")
+      div 尊敬的用户，您的商城体验权限时间已经结束，如需继续查看商城物资详情，请尽快完善个人信息并等待审核通过
+    .padding-sm(v-else)
+      div 恭喜您成为型云用户，您的信息正在审核中，请耐心等待
   modal(v-model="fillModalShow", :title="modalTitle", @cb="fillModalCb")
     .padding-sm {{fillModalMsg}}
 </template>
@@ -162,10 +169,11 @@ export default {
       modalShow: false,
       modalTitle: '提示',
       modalBtns: [{ label: '确定', flag: 'confirm', className: 'main-btn' }],
-      modalMsg: '',
+      modalMsg: '1',
       fillModalShow: false,
       fillModalMsg: '',
-      experienceRights: true
+      experienceRights: true,
+      trial: -1
     }
   },
   computed: {
@@ -201,34 +209,38 @@ export default {
   onShow () {
     this.isload = true
     if (this.currentUser.type === 'buyer') {
-      let trial = -1 // 剩余体验天数
       let isAuditing = 0 // 账号是否正在审核中
       let lastExperienceDay = mpvue.getStorageSync('lastExperienceDay') || ''
+      let overdueReminder = mpvue.getStorageSync('overdueReminder') || ''
       this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(data => {
         if (data.returncode === '0') {
-          trial = data.trial
+          debugger
+          this.trial = data.trial
           isAuditing = data.is_auditing
-          if (trial > 0) {
+          if (this.trial > 0) {
             this.experienceRights = true
             if (data.isnew === 1) { // 新用户
-              if (lastExperienceDay !== trial) {
-                this.modalMsg = '恭喜您成为型云用户，您的商城体验天数还剩' + trial + '天，请尽快完善信息哦！'
+              if (lastExperienceDay !== this.trial) {
+                this.modalMsg = '1'
                 this.modalShow = true
-                mpvue.setStorageSync('lastExperienceDay', trial)
+                mpvue.setStorageSync('lastExperienceDay', this.trial)
               }
             } else if (data.isnew === 0 && isAuditing === 1) { // 已完善未审核
-              this.modalMsg = '恭喜您成为型云用户，您的信息正在审核中，请耐心等待'
+              this.modalMsg = '3'
               this.modalShow = true
             }
-          } else if (trial === 0) {
-            this.experienceRights = false
-            this.modalMsg = '尊敬的用户，您的商城体验权限时间已经结束，如需继续查看商城物资详情，请尽快完善个人信息并等待审核通过'
-            this.modalShow = true
-            mpvue.setStorageSync('lastExperienceDay', trial)
+          } else if (this.trial === 0) { // 超过体验期限
+            if (overdueReminder !== this.getDate()) {
+              this.experienceRights = false
+              this.modalMsg = '2'
+              this.modalShow = true
+              mpvue.setStorageSync('lastExperienceDay', this.trial)
+              mpvue.setStorageSync('overdueReminder', this.getDate())
             // 超过体验时间，商城显示未登录状态页面
+            }
           } else {
             this.experienceRights = true
-            mpvue.setStorageSync('lastExperienceDay', trial)
+            mpvue.setStorageSync('lastExperienceDay', this.trial)
           }
         }
       })

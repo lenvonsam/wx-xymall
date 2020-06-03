@@ -94,6 +94,7 @@ export default {
       try {
         mpvue.removeStorageSync('currentUser')
         mpvue.setStorageSync('lastExperienceDay', '')
+        mpvue.setStorageSync('overdueReminder', '')
       } catch (e) {
         console.error('exituser:>>', e)
       }
