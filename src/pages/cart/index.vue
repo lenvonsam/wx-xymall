@@ -45,11 +45,15 @@ export default {
   onHide () {
     console.log('cart----')
     this.alertShow = false
+    if (this.modalShow) {
+      this.modalShow = false
+    }
   },
   onShow () {
     const self = this
     const uid = self.currentUser.user_id
     if (self.isLogin) {
+      console.log('cart_state.currentUser======>' + JSON.stringify(this.currentUser))
       self.showCartContent = true
       self.alertShow = false
       if (typeof self.currentUser.type !== 'undefined') {
@@ -75,7 +79,7 @@ export default {
             self.tabDot(0)
           })
         } else if (self.currentUser.type === 'buyer' && this.currentUser.isnew === 0) {
-          let rule = mpvue.getStorageSync('rule')
+          let rule = mpvue.getStorageSync('rule') || this.currentUser.rule
           console.log('cart_rule======>' + rule)
           if (rule === 0) {
             this.modalShow = true

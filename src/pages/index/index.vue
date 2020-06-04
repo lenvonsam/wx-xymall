@@ -137,7 +137,7 @@ export default {
       this.setCartCount(this.currentUser.user_id)
       console.log('index_state.currentUser======>' + JSON.stringify(this.currentUser))
       if (this.currentUser.type === 'buyer' && this.currentUser.isnew === 0) {
-        let rule = mpvue.getStorageSync('rule')
+        let rule = mpvue.getStorageSync('rule') || this.currentUser.rule
         console.log('index_state.rule======>' + rule)
         if (rule === 0) {
           this.modalShow = true
@@ -147,6 +147,11 @@ export default {
       }
     } else {
       this.tabDot(0)
+    }
+  },
+  onHide () {
+    if (this.modalShow) {
+      this.modalShow = false
     }
   },
   computed: {

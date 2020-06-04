@@ -146,8 +146,7 @@ export default {
       tempObject: state => state.tempObject,
       serviceCall: state => state.serviceCall,
       featuresIcons: state => state.vendor.featuresIcons,
-      billTrackIcons: state => state.vendor.billTrackIcons,
-      rule: state => state.rule
+      billTrackIcons: state => state.vendor.billTrackIcons
     })
   },
   onTabItemTap (item) {
@@ -167,6 +166,7 @@ export default {
       /** 判断账号状态
        * 已完善信息账号可打开“我的”
        * 未完善信息账号点击“我的”提示去完善信息 */
+      console.log('me_state.currentUser======>' + JSON.stringify(this.currentUser))
       self.showNoticeIcon = self.currentUser.message_switch === '1'
       if (self.currentUser.type === 'seller') {
         self.ironRequest(`${self.apiList.xy.checkUUID.url}?user_id=${uid}`, {}, self.apiList.xy.checkUUID.method).then(resp => {
@@ -241,7 +241,7 @@ export default {
       } else {
         if (self.currentUser.type === 'buyer' && self.currentUser.isnew === 0) {
           self.modalShow = false
-          let rule = mpvue.getStorageSync('rule')
+          let rule = mpvue.getStorageSync('rule') || this.currentUser.rule
           console.log('mall_rule======>' + rule)
           if (rule === 0) {
             this.ruleModalShow = true
