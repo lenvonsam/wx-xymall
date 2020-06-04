@@ -211,12 +211,14 @@ export default {
     if (this.currentUser.type === 'buyer') {
       let isAuditing = 0 // 账号是否正在审核中
       let lastExperienceDay = mpvue.getStorageSync('lastExperienceDay') || ''
+      let isAuditingReminder = mpvue.getStorageSync('isAuditingReminder') || ''
       let overdueReminder = mpvue.getStorageSync('overdueReminder') || ''
       this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(data => {
         if (data.returncode === '0') {
           debugger
           this.trial = data.trial
           isAuditing = data.is_auditing
+          this.currentUser.isnew = data.isnew
           if (this.trial > 0) {
             this.experienceRights = true
             if (data.isnew === 1) { // 新用户
@@ -225,9 +227,12 @@ export default {
                 this.modalShow = true
                 mpvue.setStorageSync('lastExperienceDay', this.trial)
               }
-            } else if (data.isnew === 0 && isAuditing === 1) { // 已完善未审核
-              this.modalMsg = '3'
-              this.modalShow = true
+            } else if (data.isnew === 0 && isAuditing === 1) { // 已完善未审核过
+              if (isAuditingReminder !== this.getDate()) {
+                this.modalMsg = '3'
+                this.modalShow = true
+                mpvue.setStorageSync('isAuditingReminder', this.getDate())
+              }
             }
           } else if (this.trial === 0) { // 超过体验期限
             if (overdueReminder !== this.getDate()) {
@@ -294,6 +299,14 @@ export default {
       this.setCartCount(this.currentUser.user_id)
     } else {
       this.tabDot(0)
+    }
+  },
+  onHide () {
+    if (this.modalShow) {
+      this.modalShow = false
+    }
+    if (this.fillModalShow) {
+      this.fillModalShow = false
     }
   },
   mounted () {
