@@ -54,10 +54,16 @@ div(@click="openStatus=false")
                       .flex.justify-between.padding-bottom-xs 
                         span 共{{item.total_left_qtt}}支，{{item.total_provided_qtt}}吨
                         span 吊费：¥{{item.lift_money}}
-                  .solid-top.text-black.ft-15.padding-sm.row(v-if="item.cancel_button || item.edit_button || item.payButton || item.status === 14 || item.status === 15")
+                  .solid-top.text-black.ft-15.padding-sm.row(v-if="item.cancel_button || item.edit_button || item.payButton || item.status === 14 || item.status === 15 || item.status === 16")
                     .col
-                      template(v-if="item.status === 14 || item.status === 15")
+                      template(v-if="item.status === 14")
                         span 倒计时：
+                        span.padding-left-xs.text-red {{item.timeDown}}
+                      template(v-else-if="!item.overdue && item.status === 15 || item.status === 16")
+                        span 提货倒计时：
+                        span.padding-left-xs.text-blue {{item.timeDown}}
+                      template(v-else-if="item.overdue && item.status === 15 || item.status === 16")
+                        span 提货已超时：
                         span.padding-left-xs.text-red {{item.timeDown}}
                     .flex
                       .bill-gray-btn.round(v-if="item.cancel_button == 1", @click.stop="billCancel(item)") 取消合同
@@ -363,29 +369,58 @@ export default {
     countTime () {
       const idx = this.swiperCount
       const arr = this.billTab[idx].data
-      debugger
       arr.map(item => {
-        if (item.status === 14 || item.status === 15) {
+        if (item.status === 14 || item.status === 15 || item.status === 16) {
           const nowTime = this.serverTime
-          const endTimeFormat = item.end_pay_time.replace(/-/g, '/')
+          const endTimeFormat = item.status === 15 || item.status === 16 ? item.end_pack_time.replace(/-/g, '/') : item.end_pay_time.replace(/-/g, '/')
           const endTime = new Date(endTimeFormat).getTime()
           const leftTime = endTime - nowTime
+          let d = 0
           let h = 0
           let m = 0
           let s = 0
           if (leftTime >= 0) {
             // h = Math.floor(leftTime / 1000 / 60 / 60 % 24)
-            h = Math.floor(leftTime / 1000 / 60 / 60)
-            m = Math.floor(leftTime / 1000 / 60 % 60)
-            s = Math.floor(leftTime / 1000 % 60)
+            if (item.status === 15 || item.status === 16) {
+              item.overdue = false
+              d = Math.floor(leftTime / (24 * 3600 * 1000))
+              let leave1 = leftTime % (24 * 3600 * 1000) // 计算天数后剩余的毫秒数
+              h = Math.floor(leave1 / (3600 * 1000))
+              let leave2 = leave1 % (3600 * 1000) // 计算小时数后剩余的毫秒数
+              m = Math.floor(leave2 / (60 * 1000))
+              let leave3 = leave2 % (60 * 1000) // 计算分钟数后剩余的毫秒数
+              s = Math.round(leave3 / 1000)
+              item.timeDown = `${d}天${h}小时${m}分`
+            } else {
+              h = Math.floor(leftTime / 1000 / 60 / 60)
+              m = Math.floor(leftTime / 1000 / 60 % 60)
+              s = Math.floor(leftTime / 1000 % 60)
+            }
+          } else {
+            if (item.status === 15 || item.status === 16) {
+              item.overdue = true
+              let overTime = Math.abs(leftTime)
+              d = Math.floor(overTime / (24 * 3600 * 1000))
+              let leave1 = overTime % (24 * 3600 * 1000) // 计算天数后剩余的毫秒数
+              h = Math.floor(leave1 / (3600 * 1000))
+              let leave2 = leave1 % (3600 * 1000) // 计算小时数后剩余的毫秒数
+              m = Math.floor(leave2 / (60 * 1000))
+              let leave3 = leave2 % (60 * 1000) // 计算分钟数后剩余的毫秒数
+              s = Math.round(leave3 / 1000)
+              item.timeDown = `${d}天${h}小时${m}分`
+            }
           }
           if (h + m + s === 0) {
-            item.status = 13
+            if (item.status === 14) {
+              item.status = 13
+            }
           } else {
-            h = h < 10 ? '0' + h : h
-            m = m < 10 ? '0' + m : m
-            s = s < 10 ? '0' + s : s
-            item.timeDown = `${h}:${m}:${s}`
+            if (item.status === 14) {
+              h = h < 10 ? '0' + h : h
+              m = m < 10 ? '0' + m : m
+              s = s < 10 ? '0' + s : s
+              item.timeDown = `${h}:${m}:${s}`
+            }
           }
         }
       })
