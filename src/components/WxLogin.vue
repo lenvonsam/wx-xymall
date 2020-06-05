@@ -40,11 +40,13 @@ export default {
             console.log('res===>' + JSON.stringify(res))
             self.setUser(res)
             self.showMsg(res.errormsg)
-            if (res.isnew === 1) {
-              self.jump('/pages/account/companyUpdate/main?type=3')
-            } else {
-              self.tab('/pages/me/main')
-            }
+            setTimeout(function () {
+              if (res.isnew === 1) {
+                self.jump('/pages/account/companyUpdate/main?type=3')
+              } else {
+                self.tab('/pages/me/main')
+              }
+            }, 1500)
           }).catch(e => {
             console.log('catch===>' + JSON.stringify(e))
             self.jump('/pages/account/wxBind/main')
