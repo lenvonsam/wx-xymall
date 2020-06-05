@@ -143,6 +143,7 @@ export default {
           // TODO 接口正在修改
           const data = await this.ironRequest(this.apiList.xy[this.pageType].url, params, this.apiList.xy[this.pageType].method)
           const me = this
+          console.log('phoneLogin.vue=====>', JSON.stringify(data))
           if (me.pageType === 'smsLogin') {
             me.showMsg('登录成功')
             me.statisticRequest({ event: 'click_app_login' })
