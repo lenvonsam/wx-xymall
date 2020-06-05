@@ -217,6 +217,12 @@ export default {
           if (res.returncode.toString() === '0') {
             if (qrParams !== '-1') self.removeStoreKey('qrp')
             self.setUser(res)
+            self.ironRequest(self.apiList.xy.queryProfile.url, {}, self.apiList.xy.queryProfile.method).then(res => {
+              if (res.returncode === '0') {
+                console.log('wxlogin.vue_接口返回_rule=====>' + res.rule)
+                mpvue.setStorageSync('rule', res.rule)
+              }
+            })
             self.showMsg(res.errormsg)
             // 微信绑定手机号注册成功，新用户res.isnew == 1跳转完善信息页面
             setTimeout(function () {

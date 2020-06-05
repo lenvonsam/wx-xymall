@@ -136,8 +136,9 @@ export default {
     if (this.isLogin) {
       this.setCartCount(this.currentUser.user_id)
       console.log('index_state.currentUser======>' + JSON.stringify(this.currentUser))
+      debugger
       if (this.currentUser.type === 'buyer' && this.currentUser.isnew === 0) {
-        let rule = mpvue.getStorageSync('rule') || this.currentUser.rule
+        let rule = mpvue.getStorageSync('rule')
         console.log('index_state.rule======>' + rule)
         if (rule === 0) {
           this.modalShow = true

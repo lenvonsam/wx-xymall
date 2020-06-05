@@ -151,6 +151,12 @@ export default {
             if (me.pageType === 'smsLogin') {
               me.resetVal()
               me.setUser(data)
+              me.ironRequest(me.apiList.xy.queryProfile.url, {}, me.apiList.xy.queryProfile.method).then(res => {
+                if (res.returncode === '0') {
+                  console.log('phonelogin.vue_接口返回_rule=====>' + res.rule)
+                  mpvue.setStorageSync('rule', res.rule)
+                }
+              })
               me.configVal({ key: 'oldVersion', val: me.currentVersion })
               me.getRemoteSearchHistory(data)
               if (data.isnew) {
