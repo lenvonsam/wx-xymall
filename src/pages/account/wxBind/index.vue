@@ -45,7 +45,7 @@
 <script>
 import modal from '@/components/Modal.vue'
 import authBtn from '@/components/AuthBtn'
-import { mapActions } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 export default {
   data () {
     return {
@@ -69,6 +69,11 @@ export default {
       modalMsg: '我已经阅读并同意',
       onpresscTime: 0 // 阻止短时间内连续点击
     }
+  },
+  computed: {
+    ...mapState({
+      qrCodeForGoodsName: state => state.qrCodeForGoodsName
+    })
   },
   components: {
     authBtn,
@@ -215,7 +220,7 @@ export default {
           console.log('qrParams:>>', qrParams)
           if (qrParams !== '-1') {
             const arr = qrParams.split('|')
-            const q = self.qrCodeForGoodsName[arr[0]] + '_' + arr[1]
+            const q = arr[1] + '_' + self.qrCodeForGoodsName[arr[0]]
             body.promotion = q
           }
           self.ironRequest(self.apiList.xy.wxBind.url, body, self.apiList.xy.wxBind.method).then((res) => {
