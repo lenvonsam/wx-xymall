@@ -128,7 +128,6 @@ export default {
     }
   },
   onShow (opt) {
-    console.log('onshow', opt)
     this.echartHeight = (400 / 345) * (this.screenWidth - 30)
     this.loadBanner()
     // this.getTrends()
@@ -257,7 +256,7 @@ export default {
       this.ironRequest(this.apiList.xy.updateRule.url, {user_id: this.currentUser.user_id}, this.apiList.xy.updateRule.method).then(res => {
         console.log('updateRule_res=====>' + JSON.stringify(res))
         if (res.returncode === '0') {
-          mpvue.setStorageSync('rule', res.rule)
+          mpvue.setStorageSync('rule', '1')
         }
       }).catch(e => {
         console.log('updateRule_e=====>' + e)

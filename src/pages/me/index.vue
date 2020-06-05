@@ -239,12 +239,15 @@ export default {
           self.tabDot(0)
         })
       } else {
+        debugger
         if (self.currentUser.type === 'buyer' && self.currentUser.isnew === 0) {
           self.modalShow = false
-          let rule = mpvue.getStorageSync('rule') || this.currentUser.rule
+          let rule = mpvue.getStorageSync('rule')
           console.log('mall_rule======>' + rule)
           if (rule === 0) {
             this.ruleModalShow = true
+          } else {
+            this.ruleModalShow = false
           }
         }
         self.refreshUser()
@@ -403,7 +406,7 @@ export default {
       this.ironRequest(this.apiList.xy.updateRule.url, {user_id: this.currentUser.user_id}, this.apiList.xy.updateRule.method).then(res => {
         console.log('updateRule_res=====>' + JSON.stringify(res))
         if (res.returncode === '0') {
-          mpvue.setStorageSync('rule', res.rule)
+          mpvue.setStorageSync('rule', '1')
         }
       }).catch(e => {
         console.log('updateRule_e=====>' + e)
