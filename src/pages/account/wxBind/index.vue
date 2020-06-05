@@ -66,7 +66,8 @@ export default {
       acceptProtocol: false,
       modalShow: false,
       modalTitle: '确认协议',
-      modalMsg: '我已经阅读并同意'
+      modalMsg: '我已经阅读并同意',
+      onpresscTime: 0 // 阻止短时间内连续点击
     }
   },
   components: {
@@ -208,33 +209,38 @@ export default {
         return
       }
       if (canHttp) {
-        const qrParams = self.getQrParams()
-        console.log('qrParams:>>', qrParams)
-        if (qrParams !== '-1') {
-          const arr = qrParams.split('|')
-          const q = self.qrCodeForGoodsName[arr[0]] + '_' + arr[1]
-          body.promotion = q
-        }
-        self.ironRequest(self.apiList.xy.wxBind.url, body, self.apiList.xy.wxBind.method).then((res) => {
-          console.log('page_wxBind_res===>' + JSON.stringify(res))
-          if (res.returncode.toString() === '0') {
-            if (qrParams !== '-1') self.removeStoreKey('qrp')
-            self.setUser(res)
-            self.showMsg(res.errormsg)
-            // 微信绑定手机号注册成功，新用户res.isnew == 1跳转完善信息页面
-            setTimeout(function () {
-              if (res.isnew === 1) {
-                self.jump('/pages/account/companyUpdate/main?type=3')
-              } else {
-                self.tab('/pages/me/main')
-              }
-            }, 1500)
+        if ((Date.now() - this.onpresscTime) > 1500) {
+          this.onpresscTime = Date.now()
+          const qrParams = self.getQrParams()
+          console.log('qrParams:>>', qrParams)
+          if (qrParams !== '-1') {
+            const arr = qrParams.split('|')
+            const q = self.qrCodeForGoodsName[arr[0]] + '_' + arr[1]
+            body.promotion = q
           }
-        }).catch(e => {
-          console.log('page_wxBind_catch===>' + JSON.stringify(e))
-          self.modalShow = false
-          self.showMsg(e)
-        })
+          self.ironRequest(self.apiList.xy.wxBind.url, body, self.apiList.xy.wxBind.method).then((res) => {
+            console.log('page_wxBind_res===>' + JSON.stringify(res))
+            if (res.returncode.toString() === '0') {
+              if (qrParams !== '-1') self.removeStoreKey('qrp')
+              self.setUser(res)
+              self.showMsg(res.errormsg)
+              // 微信绑定手机号注册成功，新用户res.isnew == 1跳转完善信息页面
+              setTimeout(function () {
+                if (res.isnew === 1) {
+                  self.jump('/pages/account/companyUpdate/main?type=3')
+                } else {
+                  self.tab('/pages/me/main')
+                }
+              }, 1500)
+            }
+          }).catch(e => {
+            console.log('page_wxBind_catch===>' + JSON.stringify(e))
+            self.modalShow = false
+            self.showMsg(e)
+          })
+        } else {
+          self.showMsg('点击过于频繁，请稍等！')
+        }
       }
     },
     modalCb (flag) {
