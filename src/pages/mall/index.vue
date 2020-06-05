@@ -215,7 +215,6 @@ export default {
       let overdueReminder = mpvue.getStorageSync('overdueReminder') || ''
       this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(data => {
         if (data.returncode === '0') {
-          debugger
           this.trial = data.trial
           isAuditing = data.is_auditing
           this.currentUser.isnew = data.isnew
