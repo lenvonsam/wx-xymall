@@ -53,6 +53,9 @@ export default {
     this.canClick = true
     if (this.$root.$mp.query.type) this.backType = Number(this.$root.$mp.query.type)
     else this.backType = 1
+    mpvue.setStorageSync('lastExperienceDay', '')
+    mpvue.setStorageSync('overdueReminder', '')
+    mpvue.setStorageSync('isAuditingReminder', '')
   },
   methods: {
     ...mapActions([

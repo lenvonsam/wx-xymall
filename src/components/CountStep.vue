@@ -4,7 +4,8 @@
     text.cuIcon-move
   .num
     //- input(v-model="num", @blur="inputBlur", type="number")
-    z-input(inputType="number", type="number", :initVal="num", :minVal="1", v-model="num", @blur="inputBlur", inputSty="width: 100%; border: 0px; height: 26px; color: '#333'; text-align: center; font-size: 15px;")
+    z-input(inputType="number", type="number", :initVal="num", :minVal="1", :maxVal="max" v-model="num", @blur="inputBlur", 
+    inputSty="width: 100%; border: 0px; height: 26px; color: '#333'; text-align: center; font-size: 15px;")
   .plus.align-center.flex(@click="add")
     text.cuIcon-add
 </template>
@@ -14,7 +15,8 @@ import zInput from '@/components/ZInput.vue'
 export default {
   data () {
     return {
-      num: 1
+      num: 1,
+      maxVal: ''
     }
   },
   components: {
@@ -69,7 +71,7 @@ export default {
       if (this.num.toString().trim().length === 0 || Number(this.num) === 0) {
         this.num = 1
       }
-      if (this.num > this.max) {
+      if (Number(this.num) > this.max) {
         this.num = Number(this.max)
       }
       this.$emit('change', Number(this.num))
