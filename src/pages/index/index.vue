@@ -114,7 +114,7 @@ export default {
         )
         // 自动跳转到商城页面
         if (arr[1] !== '999') {
-          this.configVal({ key: 'tempObject', val: { name: arr[1], fromPage: 'home' } })
+          this.configVal({ key: 'tempObject', val: { name: decodeURIComponent(arr[1]), fromPage: 'home' } })
           this.tab('/pages/mall/main')
         }
       }
