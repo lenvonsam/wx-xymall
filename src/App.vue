@@ -6,9 +6,45 @@ export default {
       'configVal',
       'autoUser',
       'exitUser'
-    ])
+    ]),
+    wxAuthLogin () {
+      const me = this
+      try {
+        const localOpenId = mpvue.getStorageSync('openId') || false
+        if (!localOpenId) {
+          mpvue.login({
+            success (res) {
+              console.log('login data', res)
+              me.request(me.scpProxy + me.apiList.scp.login.url, { code: res.code, appKey: me.appKey }, me.apiList.scp.login.method).then(data => {
+                if (data.return_code === 0 && data.openId) {
+                  mpvue.setStorage({
+                    key: 'openId',
+                    data: data.openId
+                  })
+                  console.log('getStorage("openId")========>' + mpvue.getStorage('openId'))
+                  if (data.unionId) {
+                    mpvue.setStorage({
+                      key: 'unionId',
+                      data: data.unionId
+                    })
+                  }
+                }
+              }).catch(e => {
+                console.error('login fail', e)
+              })
+            },
+            fail (err) {
+              console.error('login error', err)
+            }
+          })
+        }
+      } catch (e) {
+        console.error('get storage info error:>>', e)
+      }
+    }
   },
   created () {
+    console.log('App.vue created生命周期')
     // 调用API从本地缓存中获取数据
     /*
      * 平台 api 差异的处理方式:  api 方法统一挂载到 mpvue 名称空间, 平台判断通过 mpvuePlatform 特征字符串
@@ -32,27 +68,38 @@ export default {
     //   mpvue.setStorageSync('logs', logs)
     // }
     // 检查userid合法性
-    const currentUser = mpvue.getStorageSync('currentUser')
+    // const currentUser = mpvue.getStorageSync('currentUser')
+    // 微信登录
+    this.wxAuthLogin()
     const me = this
-    if (currentUser) {
+    me.autoUser()
+    console.log('App.vue_currentUser========>' + JSON.stringify(me.currentUser))
+    if (me.isLogin) {
       me.showLoading()
-      const uid = currentUser.user_id
-      this.ironRequest(`${this.apiList.xy.checkUUID.url}?user_id=${uid}`, {}, this.apiList.xy.checkUUID.method).then(resp => {
-        console.log('未失效')
+      const uid = me.currentUser.user_id
+      if (me.currentUser.type === 'buyer') { // 判断用户type,buyer不需要调接口判断checkUUID失效与否
+        console.log('App.vue_me.currentUser.type========>' + me.currentUser.type)
         me.hideLoading()
+      } else {
+        this.ironRequest(`${this.apiList.xy.checkUUID.url}?user_id=${uid}`, {}, this.apiList.xy.checkUUID.method).then(resp => {
+          console.log('checkUUID未失效')
+          me.hideLoading()
         // 自动登录
-        me.autoUser()
-      }).catch((e) => {
-        me.hideLoading()
-        me.showMsg('登录已失效，请重新登录')
-        const localSearch = currentUser.localSearchs
-        me.ironRequest(me.apiList.xy.searchHistory.url, { user_id: me.currentUser.user_id, history: localSearch }, me.apiList.xy.searchHistory.method, me)
-        me.ironRequest(`${me.apiList.xy.loginOut.url}?user_id=${me.currentUser.user_id}`, {}, me.apiList.xy.loginOut.method)
-        setTimeout(() => {
-          me.exitUser()
-          me.jump('/pages/account/login/main')
-        }, 500)
-      })
+        }).catch((e) => {
+          me.hideLoading()
+          console.log('App.vue_已失效currentUser_catch========>' + JSON.stringify(e))
+          me.showMsg('登录已失效，请重新登录')
+          const localSearch = me.currentUser.localSearchs
+          me.ironRequest(me.apiList.xy.searchHistory.url, { user_id: me.currentUser.user_id, history: localSearch }, me.apiList.xy.searchHistory.method, me)
+          me.ironRequest(`${me.apiList.xy.loginOut.url}?user_id=${me.currentUser.user_id}`, {}, me.apiList.xy.loginOut.method)
+          setTimeout(() => {
+            me.exitUser()
+            me.jump('/pages/account/login/main')
+          }, 500)
+        })
+      }
+    } else {
+      console.log('未登录me.isLogin======>' + me.isLogin)
     }
 
     // 设置自定义customer bar

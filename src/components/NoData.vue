@@ -2,14 +2,19 @@
 .content.bg-white.row(:style="{height: height+'rpx'}")
   img.img(src="/static/images/person_icon.png")
   .ft-16.margin-top-lg 您还没有登录哦~
-  .row.button-group.margin-top-sm
-    .col.text-right(@click="jump('/pages/account/login/main')") 登陆
+  .row.button-group.margin-top-sm(@click="jump('/pages/account/login/main')")
+    .col.text-right 登录
     span.pl-10.pr-10 /
-    .col(@click="jump('/pages/account/register/main')") 注册
+    .col() 注册
+  <pick-way></pick-way>
 </template>
 <script>
 import { mapState } from 'vuex'
+import pickWay from '@/components/PickWay'
 export default {
+  components: {
+    pickWay
+  },
   data () {
     return {
       height: 0

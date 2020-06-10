@@ -18,12 +18,13 @@
       .col.text-right.padding-top(@click="jumpForgetPwd") 忘记密码？
     .mt-50.main-btn(hover-class="hover-gray", @click="remoteLogin") 登录
     .margin-top-sm.text-center.text-blue(@click="jumpPhoneLogin") 手机验证码登录
-
+    wxLogin
 
         
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
+import wxLogin from '@/components/WxLogin'
 export default {
   data () {
     return {
@@ -33,6 +34,9 @@ export default {
       backType: 1,
       canClick: true
     }
+  },
+  components: {
+    wxLogin
   },
   computed: {
     ...mapState({
@@ -49,6 +53,9 @@ export default {
     this.canClick = true
     if (this.$root.$mp.query.type) this.backType = Number(this.$root.$mp.query.type)
     else this.backType = 1
+    mpvue.setStorageSync('lastExperienceDay', '')
+    mpvue.setStorageSync('overdueReminder', '')
+    mpvue.setStorageSync('isAuditingReminder', '')
   },
   methods: {
     ...mapActions([
@@ -88,6 +95,11 @@ export default {
           console.log('user login', data)
           data.pwd = encrptPwd
           this.setUser(data)
+          let res = await this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method)
+          if (res.returncode === '0') {
+            console.log('login.vue_接口返回_rule=====>' + res.rule)
+            mpvue.setStorageSync('rule', res.rule)
+          }
           this.configVal({ key: 'oldVersion', val: this.currentVersion })
           this.getRemoteSearchHistory(data)
           data.type === 'seller' ? this.statisticRequest({ event: 'click_app_login_seller' }, true) : this.statisticRequest({ event: 'click_app_login' })

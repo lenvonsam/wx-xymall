@@ -1,6 +1,6 @@
 export default {
   // 版本
-  currentVersion: '2.1.2',
+  currentVersion: '2.1.3',
   // 临时存储对象
   tempObject: {},
   // 权限
@@ -85,6 +85,23 @@ export default {
       }
     ]
   ],
+  /**
+   * 根据扫码id自动转成品名
+   * @author samy
+   * @date 2020/05/27
+   */
+  qrCodeForGoodsName: {
+    '169': 'hxg',
+    '175': 'gzg',
+    '168': 'cg',
+    '167': 'jg',
+    '273': 'bg',
+    '272,181': 'yg',
+    '187': 'bc',
+    '185': 'kpb',
+    '183': 'jb',
+    '999': 'gbz'
+  },
   billIcons: [
     {
       icon: '/static/images/dfk.png',

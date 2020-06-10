@@ -87,6 +87,10 @@ export default {
     this.tabs[0].title = this.titleMap[this.type].tab1
     this.tabs[1].title = this.titleMap[this.type].tab2
   },
+  onUnload () {
+    const self = this
+    self.alertShow = false
+  },
   methods: {
     ...mapActions([
       'exitUser'
@@ -181,6 +185,7 @@ export default {
           this.canClick = false
           await this.ironRequest(this.apiList.xy.resetPwd.url, queryObject, this.apiList.xy.resetPwd.method)
           if (this.type === 'loginPwd') {
+            this.exitUser()
             this.alertText = '登录密码修改成功，请重新登录'
           } else {
             this.alertText = '支付密码修改成功'

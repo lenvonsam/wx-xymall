@@ -93,6 +93,9 @@ export default {
     EXITUSER (state) {
       try {
         mpvue.removeStorageSync('currentUser')
+        mpvue.setStorageSync('lastExperienceDay', '')
+        mpvue.setStorageSync('overdueReminder', '')
+        mpvue.setStorageSync('isAuditingReminder', '')
       } catch (e) {
         console.error('exituser:>>', e)
       }

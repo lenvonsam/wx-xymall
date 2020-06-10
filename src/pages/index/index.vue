@@ -49,6 +49,7 @@ import modalIntro from '../../components/ModalIntro.vue'
 import vertBanner from '../../components/VertBanner.vue'
 import lineOpts from '../../utils/lineOpts'
 import modalInput from '@/components/ModalInput.vue'
+import modal from '@/components/Modal.vue'
 // const echarts = require('../../../static/libs/echarts.min.js')
 // let chart = null
 export default {
@@ -64,7 +65,7 @@ export default {
       gallery: [],
       notices: {},
       lineOptions: lineOpts,
-      alertShow: false,
+      alertShow: true,
       top: 0
     }
   },
@@ -72,7 +73,8 @@ export default {
     mpvueEcharts,
     vertBanner,
     modalIntro,
-    modalInput
+    modalInput,
+    modal
   },
   beforeMount () {
     this.$nextTick(function () {
@@ -91,7 +93,35 @@ export default {
       }
     }
   },
-  onShow () {
+  onLoad (opt) {
+    console.log('onLoad', opt)
+    /**
+     * 添加扫码后获取参数操作
+     * @author samy
+     * @date 2020/05/27
+     */
+    if (opt.scene) {
+      const arr = opt.scene.split('*')
+      console.log('arr:>>', arr)
+      if (arr.length > 0 && arr.length === 3 && arr[0] === 'qrp') {
+        mpvue.setStorageSync(
+          'qrp',
+          JSON.stringify({
+            id: arr[1],
+            source: arr[2],
+            time: new Date().getTime()
+          })
+        )
+        // 自动跳转到商城页面
+        if (arr[1] !== '999') {
+          this.configVal({ key: 'tempObject', val: { name: arr[1], fromPage: 'home' } })
+          this.tab('/pages/mall/main')
+        }
+      }
+    }
+  },
+  onShow (opt) {
+    console.log('onshow', opt)
     this.echartHeight = (400 / 345) * (this.screenWidth - 30)
     this.loadBanner()
     // this.getTrends()

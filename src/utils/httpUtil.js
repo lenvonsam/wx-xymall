@@ -1,7 +1,7 @@
 import UTF8 from 'utf8'
 import BASE64 from 'base-64'
-const BASICURL = 'https://mobileapp.xingyun361.com/quasarserverdev'
-// const BASICURL = 'https://mobileapp.xingyun361.com/quasarserverstage'
+// const BASICURL = 'https://mobileapp.xingyun361.com/quasarserverdev' // 测试环境地址
+const BASICURL = 'https://mobileapp.xingyun361.com/quasarserverstage' // 预上线环境地址
 // const BASICURL = 'https://mobileapp.xingyun361.com/quasarserver'
 // const BASICURL = 'https://47.97.195.16/quasarserver'
 // const BASICURL = 'http://localhost:8077'
@@ -85,6 +85,7 @@ function basicRequest (type, url, params, urlMethod, inputCharset = 'utf8') {
                 errMsg = '该手机号未在线下一体机认证,请先认证'
               }
               showMsg(errMsg)
+              console.log('showMsgerrMsg========>' + errMsg)
             }
           }
         } else {
@@ -139,10 +140,12 @@ function ironRequest (reqUrl, param, type) {
               resolve(res.data)
             } else {
               reject(res.data.errormsg || res.data.msg)
+              console.log('showMsgerrMsg2========>' + 'errormsg：' + res.data.errormsg + 'msg：' + res.data.msg)
             }
           }
         } else {
           reject(res.data === undefined ? '网络异常' : res.data.errormsg)
+          console.log('showMsgerrMsg3========>' + res.data.errormsg)
         }
       },
       error (err) {
@@ -174,11 +177,15 @@ export default {
     // prod
     // dr: 'http://appadmin.xingyun361.com/driver-bk/api/',
     // dev
-    crm: 'http://crm-admin-test.xingyun361.com/crmserver/api/v1/wxmini/'
+    // crm: 'http://crm-admin-test.xingyun361.com/crmserver/api/v1/wxmini/', // 测试环境地址
     // stage
-    // crm: 'http://crm-admin-pro.xingyun361.com/crmserver/api/v1/wxmini/'
+    crm: 'http://crm-admin-pro.xingyun361.com/crmserver/api/v1/wxmini/', // 预上线环境地址
     // prod
     // crm: 'http://crmadmin.xingyun361.com/api/v1/wxmini/'
+    // dev
+    scp: 'http://scp-dev.xingyun361.com/api/'
+    // prod
+    // scp: 'http://scp.xingyun361.com/api/'
   },
   ironRequest,
   request (url, params, urlMethod) {
@@ -208,6 +215,7 @@ export default {
             resolve(res.data)
           } else {
             reject(res.data === undefined ? '网络异常' : res.data.errormsg)
+            console.log('showMsgerrMsg4========>' + res.data.errormsg)
           }
         },
         error (err) {
@@ -234,6 +242,7 @@ export default {
             resolve(res.data)
           } else {
             reject(res.data === undefined ? '网络异常' : res.data.errormsg)
+            console.log('showMsgerrMsg5========>' + res.data.errormsg)
           }
         },
         fail (err) {

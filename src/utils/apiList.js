@@ -15,7 +15,10 @@ export default {
     withdraw: { url: 'withdraw.shtml', method: 'post' },
     queryWithdrawList: { url: 'queryWithdrawList.shtml', method: 'get' },
     creditRecordList: { url: 'creditRecordList.shtml', method: 'get' },
-    sellerCreditRecordList: { url: 'seller/sellerCreditRecordList.shtml', method: 'get' },
+    sellerCreditRecordList: {
+      url: 'seller/sellerCreditRecordList.shtml',
+      method: 'get'
+    },
     companyInfo: { url: 'companyInformation.shtml', method: 'get' },
     companyUpdate: { url: 'companyUpdate.shtml', method: 'post' },
     trend: { url: 'trends.shtml', method: 'get' },
@@ -71,7 +74,10 @@ export default {
     },
     returnGoodsList: { url: 'seller/returnGoodsList.shtml', method: 'post' },
     returnGoods: { url: 'seller/returnGoodsApply.shtml', method: 'post' },
-    returnGoodsApplyDetail: { url: 'seller/returnGoodsApply.shtml', method: 'get' },
+    returnGoodsApplyDetail: {
+      url: 'seller/returnGoodsApply.shtml',
+      method: 'get'
+    },
     returnGoodsDetail: { url: 'seller/returnGoodsDetail.shtml', method: 'get' },
     modules: { url: 'seller/modules.shtml', method: 'post' },
     returnGoodsReason: {
@@ -90,9 +96,16 @@ export default {
     sumGoodsDetail: { url: 'seller/erp/sumGoodsDetail.shtml', method: 'get' },
     sumGoodsNameList: { url: 'seller/erp/goods.shtml', method: 'post' },
     sumGoodsStandardList: { url: 'seller/erp/standard.shtml', method: 'post' },
-    returnGoodsCancel: { url: 'seller/returnGoodsCancel.shtml', method: 'post' },
+    returnGoodsCancel: {
+      url: 'seller/returnGoodsCancel.shtml',
+      method: 'post'
+    },
     loginOut: { url: 'loginOut.shtml', method: 'get' },
-    checkUUID: { url: 'seller/checkUUID.shtml', method: 'get' }
+    checkUUID: { url: 'seller/checkUUID.shtml', method: 'get' },
+    // 微信登录
+    wxLogin: { url: 'wxLogin.shtml', method: 'post' },
+    // 微信绑定
+    wxBind: { url: 'wxBind.shtml', method: 'post' }
   },
   erp: {
     // 手机验证码登录
@@ -145,5 +158,15 @@ export default {
   crm: {
     // 客户列表
     cstmList: { url: 'customer', method: 'get' }
+  },
+  scp: {
+    // 登录
+    login: { url: 'wechat/miniAuth/login', method: 'post' },
+
+    // 用户信息
+    profile: { url: 'wechat/miniAuth/profile', method: 'post' },
+
+    // 手机信息
+    phoneInfo: { url: 'wechat/miniAuth/phone', method: 'post' }
   }
 }
