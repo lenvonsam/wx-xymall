@@ -107,7 +107,7 @@ export default {
         mpvue.setStorageSync(
           'qrp',
           JSON.stringify({
-            id: arr[1],
+            id: decodeURIComponent(arr[1]),
             source: arr[2],
             time: new Date().getTime()
           })
