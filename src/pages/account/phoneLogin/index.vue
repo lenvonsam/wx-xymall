@@ -151,25 +151,19 @@ export default {
             if (me.pageType === 'smsLogin') {
               me.resetVal()
               me.setUser(data)
-              me.ironRequest(me.apiList.xy.queryProfile.url, {}, me.apiList.xy.queryProfile.method).then(res => {
-                if (res.returncode === '0') {
-                  console.log('phonelogin.vue_接口返回_rule=====>' + res.rule)
-                  mpvue.setStorageSync('rule', res.rule)
-                }
-                me.configVal({ key: 'oldVersion', val: me.currentVersion })
-                me.getRemoteSearchHistory(data)
-                if (data.isnew) {
-                  me.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
-                    if (res === 'confirm') {
-                      me.jump('/pages/account/companyUpdate/main')
-                    } else {
-                      me.tab('/pages/index/main')
-                    }
-                  })
-                } else {
-                  me.tab('/pages/index/main')
-                }
-              })
+              me.configVal({ key: 'oldVersion', val: me.currentVersion })
+              me.getRemoteSearchHistory(data)
+              if (data.isnew) {
+                me.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
+                  if (res === 'confirm') {
+                    me.jump('/pages/account/companyUpdate/main')
+                  } else {
+                    me.tab('/pages/index/main')
+                  }
+                })
+              } else {
+                me.tab('/pages/index/main')
+              }
             } else {
               me.confirm({ title: '友情提示', content: '登录密码修改成功，请重新登录' }).then(res => {
                 if (res === 'confirm') {

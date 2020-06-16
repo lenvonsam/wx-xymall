@@ -239,18 +239,7 @@ export default {
           self.tabDot(0)
         })
       } else {
-        debugger
-        if (self.currentUser.type === 'buyer' && self.currentUser.isnew === 0) {
-          self.modalShow = false
-          let rule = mpvue.getStorageSync('rule')
-          console.log('mall_rule======>' + rule)
-          if (rule === 0) {
-            this.ruleModalShow = true
-          } else {
-            this.ruleModalShow = false
-          }
-        }
-        self.refreshUser()
+        self.getUserRule()
         self.ironRequest('toOperCounts.shtml?user_id=' + self.currentUser.user_id, {}, 'get').then(resp => {
           if (resp && resp.returncode === '0') {
             self.rowCountObj = resp
@@ -318,12 +307,24 @@ export default {
         else data.avatar = this.currentUser.avatar
         data.user_id = this.currentUser.user_id
         this.setUser(data)
-        if (this.currentUser.isnew) {
-          this.alertText = '您还需要完善公司信息才能正常工作'
-          this.alertShow = true
-        }
+        // if (this.currentUser.isnew) {
+        //   this.alertText = '您还需要完善公司信息才能正常工作'
+        //   this.alertShow = true
+        // }
       } catch (e) {
         console.error(e)
+      }
+    },
+    async getUserRule () {
+      await this.refreshUser()
+      console.log('me_rule======>' + this.currentUser.rule)
+      debugger
+      if (this.currentUser.type === 'buyer' && this.currentUser.rule === 0) {
+        this.modalShow = false
+        this.ruleModalShow = true
+      } else if (this.currentUser.isnew) {
+        this.alertText = '您还需要完善公司信息才能正常工作'
+        this.alertShow = true
       }
     },
     jumpSetting () {
@@ -403,15 +404,18 @@ export default {
       }
     },
     ruleModalCb (flag) {
-      this.ironRequest(this.apiList.xy.updateRule.url, {user_id: this.currentUser.user_id}, this.apiList.xy.updateRule.method).then(res => {
-        console.log('updateRule_res=====>' + JSON.stringify(res))
+      this.ironRequest(this.apiList.xy.updateRule.url, { user_id: this.currentUser.user_id }, this.apiList.xy.updateRule.method).then(res => {
         if (res.returncode === '0') {
-          mpvue.setStorageSync('rule', '1')
+          console.log('updateRule_res=====>' + JSON.stringify(res))
         }
       }).catch(e => {
         console.log('updateRule_e=====>' + e)
       })
       this.ruleModalShow = false
+      if (this.currentUser.isnew) {
+        this.alertText = '您还需要完善公司信息才能正常工作'
+        this.alertShow = true
+      }
     }
   }
 }

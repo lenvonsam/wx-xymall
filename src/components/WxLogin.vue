@@ -39,12 +39,6 @@ export default {
           self.ironRequest(this.apiList.xy.wxLogin.url, { openid: self.openId }, this.apiList.xy.wxLogin.method).then((res) => {
             console.log('res===>' + JSON.stringify(res))
             self.setUser(res)
-            self.ironRequest(self.apiList.xy.queryProfile.url, {}, self.apiList.xy.queryProfile.method).then(res => {
-              if (res.returncode === '0') {
-                console.log('login.vue_接口返回_rule=====>' + res.rule)
-                mpvue.setStorageSync('rule', res.rule)
-              }
-            })
             self.showMsg(res.errormsg)
             setTimeout(function () {
               if (res.isnew === 1) {

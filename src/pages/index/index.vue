@@ -136,15 +136,14 @@ export default {
       this.setCartCount(this.currentUser.user_id)
       console.log('index_state.currentUser======>' + JSON.stringify(this.currentUser))
       debugger
-      if (this.currentUser.type === 'buyer' && this.currentUser.isnew === 0) {
-        let rule = mpvue.getStorageSync('rule')
-        console.log('index_state.rule======>' + rule)
-        if (rule === 0) {
-          this.modalShow = true
-        } else {
-          this.modalShow = false
+      this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(res => {
+        if (res.returncode === '0') {
+          console.log('index.vue_接口返回_rule=====>' + res.rule)
+          if (this.currentUser.type === 'buyer' && res.rule === 0) {
+            this.modalShow = true
+          }
         }
-      }
+      })
     } else {
       this.tabDot(0)
     }
@@ -253,10 +252,9 @@ export default {
       }
     },
     modalCb (flag) {
-      this.ironRequest(this.apiList.xy.updateRule.url, {user_id: this.currentUser.user_id}, this.apiList.xy.updateRule.method).then(res => {
-        console.log('updateRule_res=====>' + JSON.stringify(res))
+      this.ironRequest(this.apiList.xy.updateRule.url, { user_id: this.currentUser.user_id }, this.apiList.xy.updateRule.method).then(res => {
         if (res.returncode === '0') {
-          mpvue.setStorageSync('rule', '1')
+          console.log('updateRule_res=====>' + JSON.stringify(res))
         }
       }).catch(e => {
         console.log('updateRule_e=====>' + e)

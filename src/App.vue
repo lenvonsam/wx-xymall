@@ -46,7 +46,6 @@ export default {
       self.ironRequest(self.apiList.xy.queryProfile.url, {}, self.apiList.xy.queryProfile.method).then(resp => {
         if (resp.returncode === '0') {
           console.log('App.vue_接口返回_rule=====>' + resp.rule)
-          mpvue.setStorageSync('rule', resp.rule)
         }
         console.log('getQueryProfile()=====>' + JSON.stringify(resp))
       }).catch(e => {

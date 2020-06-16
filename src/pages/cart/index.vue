@@ -78,14 +78,15 @@ export default {
             self.exitUser()
             self.tabDot(0)
           })
-        } else if (self.currentUser.type === 'buyer' && this.currentUser.isnew === 0) {
-          let rule = mpvue.getStorageSync('rule')
-          console.log('cart_rule======>' + rule)
-          if (rule === 0) {
-            this.modalShow = true
-          } else {
-            this.modalShow = false
-          }
+        } else if (self.currentUser.type === 'buyer') {
+          this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(res => {
+            if (res.returncode === '0') {
+              console.log('cart.vue_接口返回_rule=====>' + res.rule)
+              if (res.rule === 0) {
+                this.modalShow = true
+              }
+            }
+          })
         }
       } else {
         console.log('self.currentUser.type======>' + self.currentUser.type)
@@ -103,24 +104,15 @@ export default {
       'exitUser'
     ]),
     modalCb (flag) {
-      this.ironRequest(this.apiList.xy.updateRule.url, {user_id: this.currentUser.user_id}, this.apiList.xy.updateRule.method).then(res => {
-        console.log('updateRule_res=====>' + JSON.stringify(res))
+      this.ironRequest(this.apiList.xy.updateRule.url, { user_id: this.currentUser.user_id }, this.apiList.xy.updateRule.method).then(res => {
         if (res.returncode === '0') {
-          mpvue.setStorageSync('rule', '1')
+          console.log('updateRule_res=====>' + JSON.stringify(res))
         }
       }).catch(e => {
         console.log('updateRule_e=====>' + e)
       })
       this.modalShow = false
     }
-    // modalCb (flag) {
-    //   this.alertShow = false
-    //   if (flag === 'confirm') {
-    //     this.jump('/pages/account/login/main')
-    //   } else {
-    //     this.tab('/pages/index/main')
-    //   }
-    // }
   }
 }
 </script>

@@ -92,11 +92,6 @@ export default {
           console.log('user login', data)
           data.pwd = encrptPwd
           this.setUser(data)
-          let res = await this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method)
-          if (res.returncode === '0') {
-            console.log('login.vue_接口返回_rule=====>' + res.rule)
-            mpvue.setStorageSync('rule', res.rule)
-          }
           this.configVal({ key: 'oldVersion', val: this.currentVersion })
           this.getRemoteSearchHistory(data)
           data.type === 'seller' ? this.statisticRequest({ event: 'click_app_login_seller' }, true) : this.statisticRequest({ event: 'click_app_login' })
