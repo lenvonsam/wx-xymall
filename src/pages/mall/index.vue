@@ -240,12 +240,15 @@ export default {
               this.modalShow = true
               mpvue.setStorageSync('lastExperienceDay', this.trial)
               mpvue.setStorageSync('overdueReminder', this.getDate())
-            // 超过体验时间，商城显示未登录状态页面
+              // 超过体验时间，商城显示未登录状态页面
             }
           } else {
             this.experienceRights = true
             mpvue.setStorageSync('lastExperienceDay', this.trial)
           }
+        } else {
+          this.showMsg(data.errormsg)
+          this.exitUser()
         }
       })
     }
@@ -314,7 +317,7 @@ export default {
     })
   },
   methods: {
-    ...mapActions(['configVal']),
+    ...mapActions(['configVal', 'exitUser']),
     ballCb () {
       console.log('ball cb')
     },
@@ -474,7 +477,7 @@ export default {
                 this.btnDisable = true
                 this.addCart(obj, type, this.currentUser.user_id).then(
                   rt => {
-                  // me.ballValue = evt
+                    // me.ballValue = evt
                     me.showMsg(rt.msg, '', 1000)
                     if (type === 'cart') me.setCartCount(me.currentUser.user_id)
                     me.btnDisable = false
