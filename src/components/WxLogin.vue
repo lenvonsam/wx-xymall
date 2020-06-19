@@ -7,6 +7,12 @@
 import { mapActions } from 'vuex'
 export default {
   name: 'wxLogin',
+  props: {
+    backType: {
+      type: Number,
+      default: 0
+    }
+  },
   data () {
     return {
       bindwx: false,
@@ -41,10 +47,14 @@ export default {
             self.setUser(res)
             self.showMsg(res.errormsg)
             setTimeout(function () {
-              if (res.isnew === 1) {
-                self.jump('/pages/account/companyUpdate/main?type=3')
+              if (self.backType === 1) {
+                self.back()
               } else {
-                self.tab('/pages/me/main')
+                if (res.isnew === 1) {
+                  self.jump('/pages/account/companyUpdate/main?type=3')
+                } else {
+                  self.tab('/pages/me/main')
+                }
               }
             }, 1500)
           }).catch(e => {

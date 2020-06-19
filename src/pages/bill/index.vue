@@ -39,7 +39,12 @@ div
                         span 共{{item.total_count}}支，{{item.total_weight}}吨
                         .ft-18.text-black ￥{{item.fact_price}}
                       .flex.justify-between.padding-bottom-xs
-                        .col 吊费：¥{{item.lift_charge}}
+                        span 吊费：¥{{item.lift_charge}}
+                        span(v-if="item.status === '待制作提单'", style="display: flex;")
+                          span(v-if="item.status === '待制作提单' && !item.overdue") 提货倒计时：
+                          span(v-else) 提货已超时：
+                          span.text-blue(v-if="item.status === '待制作提单' && !item.overdue") {{item.timeDown}}                        
+                          span.text-red(v-else) {{item.timeDown}}
                   .solid-top.text-black.ft-15.padding-sm.row(v-if="item.status === '待补款' || item.status === '待付款'")
                     .col
                       template(v-if="item.status === '待付款'")
@@ -49,7 +54,7 @@ div
                         span 待补款：
                         span.padding-left-xs.text-red ￥{{item.paid_price}}
                     .flex
-                      template(v-if="item.status === '待付款'")
+                      template(v-if="item.  status === '待付款'")
                         .bill-btn.round(@click.stop="payBill(item)") 去付款
                         .bill-red-btn.round.margin-left-sm(@click.stop="billCancel(item)") 取消
                       template(v-if="item.status === '待补款'")
@@ -275,27 +280,59 @@ export default {
       const idx = this.swiperCount
       const arr = this.billTab[idx].data
       arr.map(item => {
-        if (item.status === '待付款') {
+        if (item.status === '待付款' || item.status === '待制作提单') {
           const nowTime = this.serverTime
-          const endTimeFormat = item.end_pay_time.replace(/-/g, '/')
+          const endTimeFormat = item.status === '待制作提单' ? item.end_pack_time.replace(/-/g, '/') : item.end_pay_time.replace(/-/g, '/')
           const endTime = new Date(endTimeFormat).getTime()
           const leftTime = endTime - nowTime
+          let d = 0
           let h = 0
           let m = 0
           let s = 0
           if (leftTime >= 0) {
             // h = Math.floor(leftTime / 1000 / 60 / 60 % 24)
-            h = Math.floor(leftTime / 1000 / 60 / 60)
-            m = Math.floor(leftTime / 1000 / 60 % 60)
-            s = Math.floor(leftTime / 1000 % 60)
+            if (item.status === '待制作提单') {
+              item.overdue = false
+              d = Math.floor(leftTime / (24 * 3600 * 1000))
+              let leave1 = leftTime % (24 * 3600 * 1000) // 计算天数后剩余的毫秒数
+              h = Math.floor(leave1 / (3600 * 1000))
+              let leave2 = leave1 % (3600 * 1000) // 计算小时数后剩余的毫秒数
+              m = Math.floor(leave2 / (60 * 1000))
+              let leave3 = leave2 % (60 * 1000) // 计算分钟数后剩余的毫秒数
+              s = Math.round(leave3 / 1000)
+              console.log(d + h + m + s)
+              item.timeDown = `${d}天${h}小时${m}分`
+            } else {
+              h = Math.floor(leftTime / 1000 / 60 / 60)
+              m = Math.floor(leftTime / 1000 / 60 % 60)
+              s = Math.floor(leftTime / 1000 % 60)
+            }
+          } else {
+            if (item.status === '待制作提单') {
+              item.overdue = true
+              let overTime = Math.abs(leftTime)
+              d = Math.floor(overTime / (24 * 3600 * 1000))
+              let leave1 = overTime % (24 * 3600 * 1000) // 计算天数后剩余的毫秒数
+              h = Math.floor(leave1 / (3600 * 1000))
+              let leave2 = leave1 % (3600 * 1000) // 计算小时数后剩余的毫秒数
+              m = Math.floor(leave2 / (60 * 1000))
+              let leave3 = leave2 % (60 * 1000) // 计算分钟数后剩余的毫秒数
+              s = Math.round(leave3 / 1000)
+              console.log(d + h + m + s)
+              item.timeDown = `${d}天${h}小时${m}分`
+            }
           }
           if (h + m + s === 0) {
-            item.status = '违约'
+            if (item.status === '待付款') {
+              item.status = '违约'
+            }
           } else {
-            h = h < 10 ? '0' + h : h
-            m = m < 10 ? '0' + m : m
-            s = s < 10 ? '0' + s : s
-            item.timeDown = `${h}:${m}:${s}`
+            if (item.status === '待付款') {
+              h = h < 10 ? '0' + h : h
+              m = m < 10 ? '0' + m : m
+              s = s < 10 ? '0' + s : s
+              item.timeDown = `${h}:${m}:${s}`
+            }
           }
         }
       })

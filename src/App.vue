@@ -41,6 +41,17 @@ export default {
       } catch (e) {
         console.error('get storage info error:>>', e)
       }
+    },
+    getQueryProfile () {
+      let self = this
+      self.ironRequest(self.apiList.xy.queryProfile.url, {}, self.apiList.xy.queryProfile.method).then(resp => {
+        if (resp.returncode === '0') {
+          console.log('App.vue_接口返回_rule=====>' + resp.rule)
+        }
+        console.log('getQueryProfile()=====>' + JSON.stringify(resp))
+      }).catch(e => {
+        console.log('getQueryProfile()_catch=====>' + JSON.stringify(e))
+      })
     }
   },
   created () {
@@ -73,8 +84,8 @@ export default {
     this.wxAuthLogin()
     const me = this
     me.autoUser()
-    console.log('App.vue_currentUser========>' + JSON.stringify(me.currentUser))
     if (me.isLogin) {
+      me.getQueryProfile()
       me.showLoading()
       const uid = me.currentUser.user_id
       if (me.currentUser.type === 'buyer') { // 判断用户type,buyer不需要调接口判断checkUUID失效与否

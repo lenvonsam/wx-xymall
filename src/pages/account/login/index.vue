@@ -18,7 +18,7 @@
       .col.text-right.padding-top(@click="jumpForgetPwd") 忘记密码？
     .mt-50.main-btn(hover-class="hover-gray", @click="remoteLogin") 登录
     .margin-top-sm.text-center.text-blue(@click="jumpPhoneLogin") 手机验证码登录
-    wxLogin
+    wxLogin(:backType="wxBack")
 
         
 </template>
@@ -32,7 +32,8 @@ export default {
       upwd: '',
       // 1 返回 2 跳转首页
       backType: 1,
-      canClick: true
+      canClick: true,
+      wxBack: 1
     }
   },
   components: {
@@ -56,6 +57,9 @@ export default {
     mpvue.setStorageSync('lastExperienceDay', '')
     mpvue.setStorageSync('overdueReminder', '')
     mpvue.setStorageSync('isAuditingReminder', '')
+  },
+  onLoad (options) {
+    if (options.back) this.wxBack = Number(options.back)
   },
   methods: {
     ...mapActions([
@@ -95,11 +99,6 @@ export default {
           console.log('user login', data)
           data.pwd = encrptPwd
           this.setUser(data)
-          let res = await this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method)
-          if (res.returncode === '0') {
-            console.log('login.vue_接口返回_rule=====>' + res.rule)
-            mpvue.setStorageSync('rule', res.rule)
-          }
           this.configVal({ key: 'oldVersion', val: this.currentVersion })
           this.getRemoteSearchHistory(data)
           data.type === 'seller' ? this.statisticRequest({ event: 'click_app_login_seller' }, true) : this.statisticRequest({ event: 'click_app_login' })

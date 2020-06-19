@@ -87,6 +87,20 @@ export default {
       this.canGetCode = true
       this.showMsg(errMsg)
     },
+    timeDown () {
+      const me = this
+      let timeTxt = me.timeCount
+      me.timeInterval = setInterval(() => {
+        if (timeTxt > 0) {
+          me.btnTxt = `${timeTxt}s后重发`
+          timeTxt--
+        } else {
+          me.btnTxt = '重新获取'
+          me.clearTime()
+          me.canGetCode = true
+        }
+      }, 1000)
+    },
     clearTime () {
       if (this.timeInterval) {
         clearInterval(this.timeInterval)

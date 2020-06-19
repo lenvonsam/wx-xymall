@@ -86,17 +86,9 @@ div
     //-   .empty-content 您暂时没有相关合同
   modal-intro(v-model="modalIntroShow", :images="introImages", :cb="modalIntroCb")
   //- cart-ball(v-model="ballValue", :cb="ballCb")
-  modal(v-model="modalShow", :title="modalTitle", :btns="modalBtns", @cb="modalCb")
-    .padding-sm(v-if="modalMsg == '1'")
-      div 恭喜您成为型云用户，您的商城体验天数还剩
-        sapn(style="color: red;font-size: 16px;font-weight: 600;") {{trial}}
-          sapn(style="color: #000;font-size: 14px;font-weight: 400;") 天，请尽快完善信息哦！
-    .padding-sm(v-else-if="modalMsg == '2'")
-      div 尊敬的用户，您的商城体验权限时间已经结束，如需继续查看商城物资详情，请尽快完善个人信息并等待审核通过
-    .padding-sm(v-else)
-      div 恭喜您成为型云用户，您的信息正在审核中，请耐心等待
-  modal(v-model="fillModalShow", :title="modalTitle", @cb="fillModalCb")
-    .padding-sm {{fillModalMsg}}
+  modal(v-model="modalShow", @cb="modalCb", :title="modalTitle" :btns="btn")
+    div
+      .padding-15 {{modalMsg}}
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
@@ -167,13 +159,9 @@ export default {
       swiperFirst: 0,
       prevIdx: null,
       modalShow: false,
-      modalTitle: '提示',
-      modalBtns: [{ label: '确定', flag: 'confirm', className: 'main-btn' }],
-      modalMsg: '1',
-      fillModalShow: false,
-      fillModalMsg: '',
-      experienceRights: true,
-      trial: -1
+      modalTitle: '超时未提货物收费标准',
+      modalMsg: '对于在库物资，买方在平台上购买物资并支付货款后，应在约定的时间内（系统默认时间为5天）制作提单并提货。超过约定时间未提的合同物资将被判定为违约（超期未提），买方须承担未及时提货而产生的仓储管理费，并于提货时自行与仓库管理方结算。卖方有权对违约合同物资进行处置，进行合同取消并退还对应货款。',
+      btn: [{ label: '确定', flag: 'confirm', className: 'main-btn' }]
     }
   },
   computed: {
@@ -296,6 +284,15 @@ export default {
     // this.refresher()
     if (this.isLogin) {
       this.setCartCount(this.currentUser.user_id)
+      console.log('mall_state.currentUser======>' + JSON.stringify(this.currentUser))
+      this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(res => {
+        if (res.returncode === '0') {
+          console.log('mall.vue_接口返回_rule=====>' + res.rule)
+          if (this.currentUser.type === 'buyer' && res.rule === 0) {
+            this.modalShow = true
+          }
+        }
+      })
     } else {
       this.tabDot(0)
     }
@@ -304,9 +301,6 @@ export default {
     if (this.modalShow) {
       this.modalShow = false
     }
-    if (this.fillModalShow) {
-      this.fillModalShow = false
-    }
   },
   mounted () {
     this.$nextTick(() => {
@@ -314,7 +308,9 @@ export default {
     })
   },
   methods: {
-    ...mapActions(['configVal']),
+    ...mapActions([
+      'configVal'
+    ]),
     ballCb () {
       console.log('ball cb')
     },
@@ -610,6 +606,16 @@ export default {
         this.hideLoading()
         this.showMsg(err)
       }
+    },
+    modalCb (flag) {
+      this.ironRequest(this.apiList.xy.updateRule.url, {user_id: this.currentUser.user_id}, this.apiList.xy.updateRule.method).then(res => {
+        if (res.returncode === '0') {
+          console.log('updateRule_res=====>' + JSON.stringify(res))
+        }
+      }).catch(e => {
+        console.log('updateRule_e=====>' + e)
+      })
+      this.modalShow = false
     }
   }
 }
@@ -673,4 +679,6 @@ export default {
   font-size 12px
   border-radius 10px
   color #262626
+.padding-15
+  padding 15px
 </style>

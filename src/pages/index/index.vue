@@ -40,6 +40,9 @@ div
   modal-intro(v-model="shareModalShow", :images="introImages", type="home")
   //- alert(msg="资料提交成功,请耐心等待审核", v-model="alertShow")
   //- modal-input(v-model="alertShow")
+  modal(v-model="modalShow", @cb="modalCb", :title="modalTitle" :btns="btn")
+    div
+      .padding-15 {{modalMsg}}
 </template>
 
 <script>
@@ -66,7 +69,11 @@ export default {
       notices: {},
       lineOptions: lineOpts,
       alertShow: true,
-      top: 0
+      top: 0,
+      modalShow: false,
+      modalTitle: '超时未提货物收费标准',
+      modalMsg: '对于在库物资，买方在平台上购买物资并支付货款后，应在约定的时间内（系统默认时间为5天）制作提单并提货。超过约定时间未提的合同物资将被判定为违约（超期未提），买方须承担未及时提货而产生的仓储管理费，并于提货时自行与仓库管理方结算。卖方有权对违约合同物资进行处置，进行合同取消并退还对应货款。',
+      btn: [{ label: '确定', flag: 'confirm', className: 'main-btn' }]
     }
   },
   components: {
@@ -121,15 +128,28 @@ export default {
     }
   },
   onShow (opt) {
-    console.log('onshow', opt)
     this.echartHeight = (400 / 345) * (this.screenWidth - 30)
     this.loadBanner()
     // this.getTrends()
     this.loadNotice()
     if (this.isLogin) {
       this.setCartCount(this.currentUser.user_id)
+      console.log('index_state.currentUser======>' + JSON.stringify(this.currentUser))
+      this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(res => {
+        if (res.returncode === '0') {
+          console.log('index.vue_接口返回_rule=====>' + res.rule)
+          if (this.currentUser.type === 'buyer' && res.rule === 0) {
+            this.modalShow = true
+          }
+        }
+      })
     } else {
       this.tabDot(0)
+    }
+  },
+  onHide () {
+    if (this.modalShow) {
+      this.modalShow = false
     }
   },
   computed: {
@@ -229,6 +249,16 @@ export default {
       } catch (e) {
         this.showMsg(e)
       }
+    },
+    modalCb (flag) {
+      this.ironRequest(this.apiList.xy.updateRule.url, { user_id: this.currentUser.user_id }, this.apiList.xy.updateRule.method).then(res => {
+        if (res.returncode === '0') {
+          console.log('updateRule_res=====>' + JSON.stringify(res))
+        }
+      }).catch(e => {
+        console.log('updateRule_e=====>' + e)
+      })
+      this.modalShow = false
     }
   }
 }
@@ -249,4 +279,6 @@ export default {
   border-radius 10px
   text-align center
   font-size 13px
+.padding-15
+  padding 15px
 </style>

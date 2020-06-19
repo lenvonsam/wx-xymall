@@ -55,13 +55,16 @@ export default {
       auditType: {
         '1': '定向',
         '2': '延时',
-        '3': '退货'
+        '3': '退货',
+        '4': 'erp议价'
       },
       statusList: {
         '5': '定向初审',
-        '3': '定向复审'
+        '3': '定向复审',
+        '6': 'erp议价初审',
+        '7': 'erp议价复审'
       },
-      filterArr: []
+      filterArr: {}
     }
   },
   computed: {
@@ -81,13 +84,17 @@ export default {
     this.btnDisable = false
   },
   onShow () {
+    this.btnDisable = false
     if (this.tempObject.fromPage === 'billFilter') {
-      this.filterArr = []
+      this.filterArr = {}
       const obj = {
         // tstc_no: this.tempObject.no,
-        cust_id: this.tempObject.custom.xyCode,
-        dept_code: this.tempObject.dept.id,
-        employee_code: this.tempObject.employee.id,
+        // cust_id: this.tempObject.custom.xyCode,
+        // dept_code: this.tempObject.dept.id,
+        // employee_code: this.tempObject.employee.id,
+        cust_name: this.tempObject.custom.name,
+        dept_name: this.tempObject.dept.name,
+        employee_name: this.tempObject.employee.name,
         deal_time_s: this.tempObject.startDate,
         deal_time_e: this.tempObject.endDate,
         audit_type: this.tempObject.status
@@ -95,7 +102,8 @@ export default {
       if (this.tempObject.no) this.searchVal = this.tempObject.no
       Object.keys(obj).forEach(key => {
         if (obj[key]) {
-          this.filterArr.push(`${key}=${obj[key]}`)
+          this.filterArr[key] = obj[key]
+          // this.filterArr.push(`${key}=${obj[key]}`)
         }
       })
       this.currentPage = 0
@@ -138,17 +146,24 @@ export default {
     refresher (done) {
       this.loadFinish = 1
       const me = this
+      let params = {
+        user_id: this.currentUser.user_id,
+        current_page: this.currentPage,
+        page_size: this.pageSize
+      }
       // searchVal
       const sellerNeedAudit = this.apiList.xy.sellerNeedAudit
-      let url = `${sellerNeedAudit.url}?user_id=${this.currentUser.user_id}&current_page=${this.currentPage}&page_size=${this.pageSize}`
-      if (this.filterArr.length > 0) {
-        const filterStr = this.filterArr.toString().replace(/,/g, '&')
-        url += `&${filterStr}`
+      // let url = `${sellerNeedAudit.url}?user_id=${this.currentUser.user_id}&current_page=${this.currentPage}&page_size=${this.pageSize}`
+      if (this.filterArr) {
+        params = Object.assign(params, this.filterArr)
+        // const filterStr = this.filterArr.toString().replace(/,/g, '&')
+        // url += `&${filterStr}`
       }
       if (this.searchVal) {
-        url += `&search=${this.searchVal}`
+        params.search = this.searchVal
+        // url += `&search=${this.searchVal}`
       }
-      this.ironRequest(url, '', sellerNeedAudit.method).then(resp => {
+      this.ironRequest(sellerNeedAudit.url, params, sellerNeedAudit.method).then(resp => {
         if (resp.returncode === '0') {
           let arr = resp.resultlist
           if (arr.length === 0 && me.currentPage === 0) {

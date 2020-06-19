@@ -8,6 +8,9 @@
   //- modal(v-model="alertShow", @cb="modalCb")
     .padding-sm 您未登录,请先登录
   //- alert(msg="您未登录,请先登录", v-model="alertShow", :cb="alertCb")
+  modal(v-model="modalShow", @cb="modalCb", :title="modalTitle" :btns="btn")
+    div
+      .padding-15 {{modalMsg}}
 </template>
 
 <script>
@@ -25,23 +28,32 @@ export default {
   },
   computed: {
     ...mapState({
-      tempObject: state => state.tempObject
+      tempObject: state => state.tempObject,
+      rule: state => state.rule
     })
   },
   data () {
     return {
       alertShow: false,
-      showCartContent: false
+      showCartContent: false,
+      modalShow: false,
+      modalTitle: '超时未提货物收费标准',
+      modalMsg: '对于在库物资，买方在平台上购买物资并支付货款后，应在约定的时间内（系统默认时间为5天）制作提单并提货。超过约定时间未提的合同物资将被判定为违约（超期未提），买方须承担未及时提货而产生的仓储管理费，并于提货时自行与仓库管理方结算。卖方有权对违约合同物资进行处置，进行合同取消并退还对应货款。',
+      btn: [{ label: '确定', flag: 'confirm', className: 'main-btn' }]
     }
   },
   onHide () {
     console.log('cart----')
     this.alertShow = false
+    if (this.modalShow) {
+      this.modalShow = false
+    }
   },
   onShow () {
     const self = this
     const uid = self.currentUser.user_id
     if (self.isLogin) {
+      console.log('cart_state.currentUser======>' + JSON.stringify(this.currentUser))
       self.showCartContent = true
       self.alertShow = false
       if (typeof self.currentUser.type !== 'undefined') {
@@ -66,6 +78,15 @@ export default {
             self.exitUser()
             self.tabDot(0)
           })
+        } else if (self.currentUser.type === 'buyer') {
+          this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(res => {
+            if (res.returncode === '0') {
+              console.log('cart.vue_接口返回_rule=====>' + res.rule)
+              if (res.rule === 0) {
+                this.modalShow = true
+              }
+            }
+          })
         }
       } else {
         console.log('self.currentUser.type======>' + self.currentUser.type)
@@ -83,14 +104,19 @@ export default {
       'exitUser'
     ]),
     modalCb (flag) {
-      this.alertShow = false
-      if (flag === 'confirm') {
-        this.jump('/pages/account/login/main')
-      } else {
-        this.tab('/pages/index/main')
-      }
+      this.ironRequest(this.apiList.xy.updateRule.url, { user_id: this.currentUser.user_id }, this.apiList.xy.updateRule.method).then(res => {
+        if (res.returncode === '0') {
+          console.log('updateRule_res=====>' + JSON.stringify(res))
+        }
+      }).catch(e => {
+        console.log('updateRule_e=====>' + e)
+      })
+      this.modalShow = false
     }
   }
 }
 </script>
-<style lang="stylus", scoped></style>
+<style lang="stylus", scoped>
+.padding-15
+  padding 15px
+</style>

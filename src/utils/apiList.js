@@ -42,7 +42,7 @@ export default {
     quotation: { url: 'seller/quotation.shtml', method: 'post' },
     quotationDetail: { url: 'seller/quotationDetail.shtml', method: 'get' },
     sellerOrderList: { url: 'seller/orderList.shtml', method: 'post' },
-    sellerNeedAudit: { url: 'seller/needAudit.shtml', method: 'get' },
+    sellerNeedAudit: { url: 'seller/needAudit.shtml', method: 'post' },
     sellerDxAudit: { url: 'seller/dxAudit.shtml', method: 'get' },
     sellerReturnGoodsAudit: {
       url: 'seller/returnGoodsAudit.shtml',
@@ -52,6 +52,8 @@ export default {
       url: 'seller/orderDelayAudit.shtml',
       method: 'get'
     },
+    // ERP议价提单审核详情
+    sellerBargainAudit: { url: 'seller/bargainAudit.shtml', method: 'get' },
     returnGoodsAudit: { url: 'seller/returnGoodsAudit.shtml', method: 'post' },
     dxAudit: { url: 'seller/dxAudit.shtml', method: 'post' },
     orderDelayAudit: { url: 'seller/orderDelayAudit.shtml', method: 'post' },
@@ -90,7 +92,7 @@ export default {
     bankWaterDelete: { url: 'seller/bankWaterDelete.shtml', method: 'post' },
     bankWaterDetail: { url: 'seller/bankWaterDetail.shtml', method: 'get' },
     orderCount: { url: 'seller/orderCount.shtml', method: 'get' },
-    auditHistory: { url: 'seller/auditHistory.shtml', method: 'get' },
+    auditHistory: { url: 'seller/auditHistory.shtml', method: 'post' },
     // 现货物资列表
     sumGoodsList: { url: 'seller/erp/sumGoodsList.shtml', method: 'post' },
     sumGoodsDetail: { url: 'seller/erp/sumGoodsDetail.shtml', method: 'get' },
@@ -105,7 +107,9 @@ export default {
     // 微信登录
     wxLogin: { url: 'wxLogin.shtml', method: 'post' },
     // 微信绑定
-    wxBind: { url: 'wxBind.shtml', method: 'post' }
+    wxBind: { url: 'wxBind.shtml', method: 'post' },
+    // 更新用户关于rule的状态
+    updateRule: { url: 'updateRule.shtml', method: 'post' }
   },
   erp: {
     // 手机验证码登录
