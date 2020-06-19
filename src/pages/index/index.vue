@@ -128,6 +128,12 @@ export default {
     this.loadNotice()
     if (this.isLogin) {
       this.setCartCount(this.currentUser.user_id)
+      this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(data => {
+        console.log('index.vue_queryProfile_data=====>', JSON.stringify(data))
+      }).catch(e => {
+        console.log('index.vue_queryProfile_catch=====>', JSON.stringify(e))
+        this.showMsg(e)
+      })
     } else {
       this.tabDot(0)
     }

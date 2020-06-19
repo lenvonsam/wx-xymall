@@ -304,6 +304,8 @@ export default {
         }
       } catch (e) {
         console.error(e)
+        this.showMsg(e)
+        this.exitUser()
       }
     },
     jumpSetting () {

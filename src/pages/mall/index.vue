@@ -25,8 +25,8 @@ div
                       //- .sub-mark.ml-5 {{item[mallTypeObject[itemType].supply]}}
                       //- span.ml-5.ft-12(style="color:#666") ({{weightMark}})
                     .text-right.ft-16
-                      span.text-red.ft-13(v-if="item.price === '--' && experienceRights") 开售时间:{{item.show_time}}
-                      span.text-blue(v-else-if="item.show_price === true && experienceRights") ￥{{item.price}}
+                      span.text-red.ft-13(v-if="item.price === '--'") 开售时间:{{item.show_time}}
+                      span.text-blue(v-else-if="item.show_price === true") ￥{{item.price}}
                       .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)") 查看价格
                   .row.pt-5.flex-center.ft-12
                     .col.c-gray
@@ -41,12 +41,12 @@ div
                     span.ml-8(v-if="item[mallTypeObject[itemType].weightRange]") 重量范围: {{item[mallTypeObject[itemType].weightRange]}}
                   .row.pt-5.flex-center.ft-13.text-gray
                     .col
-                      span(v-if="item[mallTypeObject[itemType].max_count] > 0 && isLogin && experienceRights") {{item[mallTypeObject[itemType].max_count]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
+                      span(v-if="item[mallTypeObject[itemType].max_count] > 0 && isLogin") {{item[mallTypeObject[itemType].max_count]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
                       span(v-else) --支/--吨
                     .flex-120.relative.text-right.ft-14.row.justify-end
                       //- .mall-row(:class="{'notice': item.max_count === 0}")
                       .blue-buy(v-if="item.max_count == 0 && isLogin",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
-                      .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="item.show_price && experienceRights") 购买
+                      .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="item.show_price") 购买
                 template(v-else)
                   .ft-15.row
                     span.text-bold {{item[mallTypeObject[itemType].name]}}
@@ -61,18 +61,18 @@ div
                     span.ft-10 公差/重量范围
                     span.ml-8 {{item[mallTypeObject[itemType].tolerance] ? item[mallTypeObject[itemType].tolerance] : '--'}}/{{item[mallTypeObject[itemType].weightRange]?item[mallTypeObject[itemType].weightRange]: '--'}}
                   .text-gray.ft-12
-                    span(v-if="item[mallTypeObject[itemType].max_count] > 0 && isLogin && experienceRights") {{item[mallTypeObject[itemType].max_count]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
+                    span(v-if="item[mallTypeObject[itemType].max_count] > 0 && isLogin") {{item[mallTypeObject[itemType].max_count]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
                     span(v-else) --支/--吨
                   .text-blue.ft-15.text-bold 
                     //- ￥{{item[mallTypeObject[itemType].price]}}
                     span.text-red.ft-13(v-if="item.price === '--'") 开售时间:{{item.show_time}}
-                    span(v-else-if="item.show_price === true && experienceRights") ￥{{item[mallTypeObject[itemType].price]}}
+                    span(v-else-if="item.show_price === true") ￥{{item[mallTypeObject[itemType].price]}}
                     //- .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)") 查看价格
                   .text-gray.flex
                     .ft-11.col ({{item.weightMark}})
                     .text-right
-                      .blue-buy(v-if="item.max_count == 0 && isLogin && experienceRights",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
-                      .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="item.show_price && experienceRights") 购买
+                      .blue-buy(v-if="item.max_count == 0 && isLogin",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
+                      .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="item.show_price") 购买
                       .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)", style="padding-top: 2rpx") 查看价格
             //- .padding.text-gray.ft-13.text-center(v-if="loading") 努力加载中...
             //- .padding.text-gray.ft-13.text-center(v-if="goodsNameList[tabIdx].finished") 加载完成
@@ -172,7 +172,6 @@ export default {
       modalMsg: '1',
       fillModalShow: false,
       fillModalMsg: '',
-      experienceRights: true,
       trial: -1
     }
   },
@@ -219,7 +218,6 @@ export default {
           isAuditing = data.is_auditing
           this.currentUser.isnew = data.isnew
           if (this.trial > 0) {
-            this.experienceRights = true
             if (data.isnew === 1) { // 新用户
               if (lastExperienceDay !== this.trial) {
                 this.modalMsg = '1'
@@ -235,7 +233,6 @@ export default {
             }
           } else if (this.trial === 0) { // 超过体验期限
             if (overdueReminder !== this.getDate()) {
-              this.experienceRights = false
               this.modalMsg = '2'
               this.modalShow = true
               mpvue.setStorageSync('lastExperienceDay', this.trial)
@@ -243,13 +240,16 @@ export default {
               // 超过体验时间，商城显示未登录状态页面
             }
           } else {
-            this.experienceRights = true
             mpvue.setStorageSync('lastExperienceDay', this.trial)
           }
         } else {
           this.showMsg(data.errormsg)
           this.exitUser()
         }
+      }).catch(e => {
+        console.log('mall.vue_queryProfile_catch=====>', JSON.stringify(e))
+        this.showMsg(e)
+        this.isLogin = false
       })
     }
 
