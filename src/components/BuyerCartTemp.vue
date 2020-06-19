@@ -236,6 +236,7 @@ export default {
     this.soldCarts = []
     this.alertShow = false
     this.firstLoad = false
+    this.modalShow = false
   },
   onUnload () {
     this.carts = []

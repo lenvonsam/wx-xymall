@@ -98,6 +98,14 @@
         .padding-sm.text-left(v-for="(item, errIdx) in errList", :key="errIdx") {{item}}
       template(v-else)  
         .padding-sm {{modalDefaultMsg}}
+    modal(v-model="noticeClientModalShow", @cb="noticeClientModalCb" :showWarningIcon = "showWarningIcon", :title="noticeClientModalTitle")
+      .padding-lr-22(style="text-align: left;")
+        div 1、合同提交后请
+          sapn(style="color: red;font-size: 16px") 2小时
+            sapn(style="color: #000;font-size: 14px") 内完成付款，超时合同将会自动取消！
+        div 2、付款成功后请
+          sapn(style="color: red;font-size: 16px") 5天内
+            sapn(style="color: #000;font-size: 14px") 完成提货，超期未提需缴纳相应的仓储费用
     modal-bottom(:btns="previewBtns", :value="previewShow", @cb="modalHandler")
       .bg-gray
         scroll-view.scroll-view(scroll-y, :style="{'max-height': '800rpx', 'min-height': '400rpx'}")
@@ -187,7 +195,10 @@ export default {
       status: '',
       isAudit: false,
       enforce: 0,
-      custName: ''
+      custName: '',
+      noticeClientModalShow: false,
+      showWarningIcon: true,
+      noticeClientModalTitle: '是否继续提交？'
     }
   },
   components: {
@@ -256,6 +267,7 @@ export default {
     this.modalDefaultMsg = ''
     this.modalDefaultShow = false
     this.errList = []
+    this.noticeClientModalShow = false
   },
   onShow () {
     if (this.$root.$mp.query.qutId) {
@@ -336,7 +348,7 @@ export default {
         this.modalDefaultShow = false
       } else {
         if (this.modalDefaultMsg === '您当前登录账号和报价单位抬头不一致，请重新登录') {
-          this.jump('/pages/account/login/main')
+          this.jump('/pages/account/login/main?back=1')
           this.hideLoading()
           this.modalDefaultShow = false
           return false
@@ -533,8 +545,10 @@ export default {
         }
         const data = await this.ironRequest(this.apiList.xy.auditDxCheck.url, params, this.apiList.xy.auditDxCheck.method)
         this.isAudit = data.errormsg !== '是否生成合同？ '
-        this.modalDefaultMsg = data.errormsg
-        this.modalDefaultShow = true
+        this.modalDefaultShow = false
+        // this.modalDefaultMsg = data.errormsg
+        // this.modalDefaultShow = true
+        this.noticeClientModalShow = true
         this.btnDisable = false
       } catch (error) {
         this.btnDisable = false
@@ -595,6 +609,14 @@ export default {
         // this.modalDefaultShow = true
         // this.modalDefaultMsg = e
         this.enforce = 1
+      }
+    },
+    noticeClientModalCb (flag) {
+      if (flag === 'confirm') {
+        this.modalDefaultHandler('confirm')
+        this.noticeClientModalShow = false
+      } else {
+        this.noticeClientModalShow = false
       }
     }
   }
@@ -708,4 +730,6 @@ button
   line-height 25px
   text-align center
   border-radius 20px
+.padding-lr-22
+  padding 0 22px
 </style>

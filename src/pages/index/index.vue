@@ -135,7 +135,6 @@ export default {
     if (this.isLogin) {
       this.setCartCount(this.currentUser.user_id)
       console.log('index_state.currentUser======>' + JSON.stringify(this.currentUser))
-      debugger
       this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(res => {
         if (res.returncode === '0') {
           console.log('index.vue_接口返回_rule=====>' + res.rule)

@@ -18,7 +18,7 @@
       .col.text-right.padding-top(@click="jumpForgetPwd") 忘记密码？
     .mt-50.main-btn(hover-class="hover-gray", @click="remoteLogin") 登录
     .margin-top-sm.text-center.text-blue(@click="jumpPhoneLogin") 手机验证码登录
-    wxLogin
+    wxLogin(:backType="wxBack")
 
         
 </template>
@@ -32,7 +32,8 @@ export default {
       upwd: '',
       // 1 返回 2 跳转首页
       backType: 1,
-      canClick: true
+      canClick: true,
+      wxBack: 1
     }
   },
   components: {
@@ -53,6 +54,9 @@ export default {
     this.canClick = true
     if (this.$root.$mp.query.type) this.backType = Number(this.$root.$mp.query.type)
     else this.backType = 1
+  },
+  onLoad (options) {
+    if (options.back) this.wxBack = Number(options.back)
   },
   methods: {
     ...mapActions([

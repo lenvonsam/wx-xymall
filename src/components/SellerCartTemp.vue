@@ -263,6 +263,7 @@ export default {
     this.totalWeight = 0
     this.totalLiftCharge = 0
     this.totalCount = 0
+    this.noticeClientModalShow = false
   },
   onShow () {
     if (this.tempObject.type) {
@@ -547,6 +548,7 @@ export default {
           }
           const data = await this.ironRequest(this.apiList.xy.auditDxCheck.url, params, this.apiList.xy.auditDxCheck.method)
           if (data.returncode === '0') {
+            debugger
             this.flag = flag
             this.dxFilterArray = filterArray
             this.modalMsg = data.errormsg
@@ -557,6 +559,9 @@ export default {
             } else if (flag === 2) {
               this.modalMsg += '注：客户如从报价单中生成合同，则需要定向审核'
               this.modalShow = true
+            } else if (data.errormsg === '是否生成合同？ ' && flag === 1) {
+              this.modalShow = false
+              this.modalCb('confirm')
             } else {
               this.modalShow = true
             }

@@ -69,7 +69,7 @@ export default {
         '1': '初审拒绝'
         // '2': '复审拒绝'
       },
-      filterArr: []
+      filterArr: {}
     }
   },
   computed: {
@@ -87,12 +87,15 @@ export default {
   },
   onShow () {
     if (this.tempObject.fromPage === 'billFilter') {
-      this.filterArr = []
+      this.filterArr = {}
       const obj = {
         // tstc_no: this.tempObject.no,
-        cust_id: Number(this.tempObject.custom.xyCode) || '',
-        dept_code: this.tempObject.dept.id || '',
-        employee_code: this.tempObject.employee.id || '',
+        // cust_id: Number(this.tempObject.custom.xyCode) || '',
+        // dept_code: this.tempObject.dept.id || '',
+        // employee_code: this.tempObject.employee.id || '',
+        cust_name: this.tempObject.custom.name,
+        dept_name: this.tempObject.dept.name,
+        employee_name: this.tempObject.employee.name,
         deal_time_s: this.tempObject.startDate,
         deal_time_e: this.tempObject.endDate,
         audit_type: this.tempObject.status
@@ -100,7 +103,8 @@ export default {
       if (this.tempObject.no) this.searchVal = this.tempObject.no
       Object.keys(obj).forEach(key => {
         if (obj[key]) {
-          this.filterArr.push(`${key}=${obj[key]}`)
+          this.filterArr[key] = obj[key]
+          // this.filterArr.push(`${key}=${obj[key]}`)
         }
       })
       this.currentPage = 0
@@ -144,16 +148,23 @@ export default {
       try {
         this.loadFinish = 1
         const me = this
+        let params = {
+          user_id: this.currentUser.user_id,
+          current_page: this.currentPage,
+          page_size: this.pageSize
+        }
         const auditHistory = this.apiList.xy.auditHistory
-        let url = `${auditHistory.url}?user_id=${this.currentUser.user_id}&current_page=${this.currentPage}&page_size=${this.pageSize}`
-        if (this.filterArr.length > 0) {
-          const filterStr = this.filterArr.toString().replace(/,/g, '&')
-          url += `&${filterStr}`
+        // let url = `${auditHistory.url}?user_id=${this.currentUser.user_id}&current_page=${this.currentPage}&page_size=${this.pageSize}`
+        if (this.filterArr) {
+          params = Object.assign(params, this.filterArr)
+          // const filterStr = this.filterArr.toString().replace(/,/g, '&')
+          // url += `&${filterStr}`
         }
         if (this.searchVal) {
-          url += `&search=${this.searchVal}`
+          params.search = this.searchVal
+          // url += `&search=${this.searchVal}`
         }
-        this.ironRequest(url, '', auditHistory.method).then(resp => {
+        this.ironRequest(auditHistory.url, params, auditHistory.method).then(resp => {
           if (resp.returncode === '0') {
             let arr = resp.resultlist
             arr.map(item => {

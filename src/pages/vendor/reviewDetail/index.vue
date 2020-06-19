@@ -45,38 +45,62 @@ div
             span(v-if="detailData.totalLiftCharge") 吊费：{{detailData.totalLiftCharge}}元
       //- template(v-if="auditType !== '延时'")
       .ft-18.padding-top-sm.padding-bottom-sm 商品信息
-      .bg-white.card(v-for="(item, idx) in dataList", :key="idx")
-        .row.justify-between.padding-bottom-xs
-          .text-black.col {{item.name}} {{item.standard}}
-          .text-blue ¥ {{tempObject.auditType === '定向' ? item.order_price : item.price}}
-        .text-gray
-          template(v-if="tempObject.auditType === '定向'")  
+      div( v-if="tempObject.auditType === 'erp议价'")
+        .bg-white.card(v-for="(item, index) in dataList", :key="index")
+          .row.justify-between.padding-bottom-xs
+            .text-black.col {{item.scontractDetailPartsname}} {{item.scontractDetailSpec}}
+            .text-blue ¥ {{item.sbillDetailInprice}}
+          .text-gray
             .row.justify-between.padding-bottom-xs
               .col
-                span.padding-right-xs {{item.material}}
-                span.padding-right-xs {{item.length}}
-                span.padding-right-xs {{item.warehouse}}
-                span.sub-mark.ml-5 {{item.supply}}
-              span ({{item.metering_way}})
-            .padding-bottom-xs {{item.amount}}支/{{item.weight}}吨
+                span.padding-right-xs {{item.scontractDetailMaterial}}
+                span.padding-right-xs {{item.goodsProperty1}}
+                span.padding-right-xs {{item.warehouseName}}
+                span.sub-mark.ml-5 {{item.scontractDetailProareaname}}
+              span ({{item.goodsMetering}})
+            .padding-bottom-xs {{item.goodsNum}}支/{{item.goodsWeight}}吨
             .padding-bottom-xs
-              span.padding-right-xs(v-if="item.tolerance_range") 公差范围 {{item.tolerance_range}}
-              span(v-if="item.weight_range") 重量范围 {{item.weight_range}}
+              span.padding-right-xs(v-if="item.goodsProperty5") 公差范围 {{item.goodsProperty5}}
+              span(v-if="item.goodsProperty4") 重量范围 {{item.goodsProperty4}}
             .solid-top.padding-top-xs.padding-bottom-xs.text-black
-              span 定向价：
-              span.text-blue ￥{{item.dx_price}}
-              span.padding-left-xs 费用：￥{{item.cost_price}}
-              span.padding-left-xs 价差：
-              span.text-red ￥{{item.diff}}
-          template(v-else)
-            .row.justify-between.text-gray.padding-bottom-xs
-              .col 
-                span.padding-right-xs {{item.material}}
-                span 退款支数：{{item.amount}}支
-              span ({{item.metering_way_str}})
-            .text-gray 
-              span 退款重量：{{item.weight}}吨  
-              span.padding-left-xs 退款金额：{{item.money}}元
+              span 销售定价：
+              span.text-blue ￥{{item.saleMakeprice}}
+              span.padding-left-xs 原价：￥{{item.sbillDetailInprice}}
+              span.padding-left-xs 定价差：
+              span.text-red ￥{{item.saleMakepriceCale}}
+      div(v-else)
+        .bg-white.card(v-for="(item, idx) in dataList", :key="idx")
+          .row.justify-between.padding-bottom-xs
+            .text-black.col {{item.name}} {{item.standard}}
+            .text-blue ¥ {{tempObject.auditType === '定向' ? item.order_price : item.price}}
+          .text-gray
+            template(v-if="tempObject.auditType === '定向'")  
+              .row.justify-between.padding-bottom-xs
+                .col
+                  span.padding-right-xs {{item.material}}
+                  span.padding-right-xs {{item.length}}
+                  span.padding-right-xs {{item.warehouse}}
+                  span.sub-mark.ml-5 {{item.supply}}
+                span ({{item.metering_way}})
+              .padding-bottom-xs {{item.amount}}支/{{item.weight}}吨
+              .padding-bottom-xs
+                span.padding-right-xs(v-if="item.tolerance_range") 公差范围 {{item.tolerance_range}}
+                span(v-if="item.weight_range") 重量范围 {{item.weight_range}}
+              .solid-top.padding-top-xs.padding-bottom-xs.text-black
+                span 定向价：
+                span.text-blue ￥{{item.dx_price}}
+                span.padding-left-xs 费用：￥{{item.cost_price}}
+                span.padding-left-xs 价差：
+                span.text-red ￥{{item.diff}}
+            template(v-else)
+              .row.justify-between.text-gray.padding-bottom-xs
+                .col 
+                  span.padding-right-xs {{item.material}}
+                  span 退款支数：{{item.amount}}支
+                span ({{item.metering_way_str}})
+              .text-gray 
+                span 退款重量：{{item.weight}}吨  
+                span.padding-left-xs 退款金额：{{item.money}}元
   .footer.row.bg-white.text-center.text-white.padding-sm(:style="{height: isIpx ? '188rpx' : '120rpx', 'padding-bottom': isIpx ? '68rpx' : '20rpx'}", v-if="btnShow && tempObject.fromPage !== 'reviewHistory'")
     .col.foot-cancel(@click="confirm('cancel')") {{tempObject.auditType === '退货' ? '驳回' : '拒绝'}}
     .col.foot-confirm.margin-left-sm(@click="confirm") {{tempObject.auditType === '退货' ? '退货' : '通过'}}
@@ -238,6 +262,7 @@ export default {
       try {
         let url = ''
         const modules = this.modules
+        debugger
         switch (this.tempObject.auditType) {
           case '定向':
             const sellerDxAudit = this.apiList.xy.sellerDxAudit
@@ -255,6 +280,9 @@ export default {
             this.btnShow = modules.delay_audit
             const sellerOrderDelayAudit = this.apiList.xy.sellerOrderDelayAudit
             url = `${sellerOrderDelayAudit.url}?tstc_no=${this.tempObject.tstc_no}`
+            break
+          case 'erp议价':
+            url = `${this.apiList.xy.sellerBargainAudit.url}?user_id=${this.currentUser.user_id}&id=${this.tempObject.tstc_no}`
             break
           default:
             console.log('default')
@@ -301,6 +329,23 @@ export default {
               this.detailData = {
                 list: data.data.resultlist
               }
+              break
+            case 'erp议价':
+              debugger
+              console.log(data.data.sbillBargainingDto)
+              this.detailData = {
+                liftStatus: 1,
+                billNo: data.data.sbillBargainingDto.sbillBillcode,
+                custName: data.data.sbillBargainingDto.datasCustomername,
+                totalAmount: data.data.sbillBargainingDto.goodsNum,
+                totalWeight: data.data.sbillBargainingDto.goodsWeigh,
+                totalMoeny: data.data.sbillBargainingDto.totalMoney,
+                endTime: data.data.sbillBargainingDto.dataSystemdate,
+                status: data.data.sbillBargainingDto.bargainingAuditStatus,
+                operName: data.data.sbillBargainingDto.operatorName,
+                list: data.data.list
+              }
+              this.btnShow = (data.data.sbillBargainingDto.bargainingAuditStatus === '未审' && modules.audit) || (data.data.sbillBargainingDto.bargainingAuditStatus === '已审' && modules.re_audit)
               break
             default:
               console.log('default')
