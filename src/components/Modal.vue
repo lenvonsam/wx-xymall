@@ -1,6 +1,7 @@
 <template lang="pug">
 .cu-modal(:class="modalName")
   .cu-dialog.bg-white(:style="{'mix-height': '280rpx', width: width}")
+    img(src="/static/images/warning.png", alt="alt", v-if="showWarningIcon")
     .padding.text-xl.text-black.text-center {{title}}
     slot
     .padding.row.justify-center
@@ -30,6 +31,10 @@ export default {
     width: {
       type: String,
       default: '75%'
+    },
+    showWarningIcon: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -81,4 +86,8 @@ export default {
 // font-size 12px
 button::after
   display none
+img
+  width 40px
+  height 40px
+  margin 20px auto -10px
 </style>

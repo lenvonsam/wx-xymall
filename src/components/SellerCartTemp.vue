@@ -135,6 +135,14 @@
             .cuIcon-check(v-show="liftSelectVal === item.val")
     modal(v-model="modalShow", @cb="modalCb")
       .padding-sm {{modalMsg}}
+    modal(v-model="noticeClientModalShow", @cb="noticeClientModalCb" :showWarningIcon = "showWarningIcon", :title="noticeClientModalTitle")
+      .padding-lr-22(style="text-align: left;")
+        div 1、合同提交后请
+          sapn(style="color: red;font-size: 16px") 2小时
+            sapn(style="color: #000;font-size: 14px") 内完成付款，超时合同将会自动取消！
+        div 2、付款成功后请
+          sapn(style="color: red;font-size: 16px") 5天内
+            sapn(style="color: #000;font-size: 14px") 完成提货，超期未提需缴纳相应的仓储费用
 </template>
 
 <script>
@@ -189,7 +197,10 @@ export default {
       dxFilterArray: [],
       flag: 1,
       firstLoad: false,
-      auditDxCheckDisable: true
+      auditDxCheckDisable: true,
+      showWarningIcon: true,
+      noticeClientModalShow: false,
+      noticeClientModalTitle: '请及时通知客户付款、提货'
     }
   },
   components: {
@@ -252,6 +263,7 @@ export default {
     this.totalWeight = 0
     this.totalLiftCharge = 0
     this.totalCount = 0
+    this.noticeClientModalShow = false
   },
   onShow () {
     if (this.tempObject.type) {
@@ -373,12 +385,20 @@ export default {
     modalCb (flag) {
       if (flag === 'confirm' && this.dxFilterArray.length > 0) {
         if (this.flag === 1) {
-          this.dx()
+          this.noticeClientModalShow = true
         } else {
           this.generateQuotation()
         }
+        this.modalShow = false
       } else {
         this.modalShow = false
+      }
+    },
+    noticeClientModalCb (flag) {
+      if (flag === 'confirm') {
+        this.dx()
+      } else {
+        this.noticeClientModalShow = false
       }
     },
     openEdit () {
@@ -533,10 +553,14 @@ export default {
             this.modalMsg = data.errormsg
             if (data.errormsg === '是否生成合同？ ' && flag === 2) {
               this.modalShow = false
+              // this.showWarningIcon = true
               this.generateQuotation()
             } else if (flag === 2) {
               this.modalMsg += '注：客户如从报价单中生成合同，则需要定向审核'
               this.modalShow = true
+            } else if (data.errormsg === '是否生成合同？ ' && flag === 1) {
+              this.modalShow = false
+              this.modalCb('confirm')
             } else {
               this.modalShow = true
             }
@@ -736,6 +760,7 @@ export default {
         this.btnDisable = false
         this.dxFilterArray = []
       }
+      this.noticeClientModalShow = false
     },
     generateQuotation () {
       const filterArray = this.carts.filter(itm => {
@@ -886,4 +911,6 @@ radio.radio[checked]::after
   left 0
   right 0
   z-index 3
+.padding-lr-22
+  padding 0 22px
 </style>
