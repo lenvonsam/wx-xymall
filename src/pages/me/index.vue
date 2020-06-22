@@ -320,13 +320,14 @@ export default {
     async getUserRule () {
       await this.refreshUser()
       console.log('me_rule======>' + this.currentUser.rule)
-      debugger
       if (this.currentUser.type === 'buyer' && this.currentUser.rule === 0) {
         this.modalShow = false
         this.ruleModalShow = true
       } else if (this.currentUser.isnew) {
         this.alertText = '您还需要完善公司信息才能正常工作'
         this.alertShow = true
+      } else {
+        this.ruleModalShow = false
       }
     },
     jumpSetting () {

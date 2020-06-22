@@ -262,7 +262,6 @@ export default {
       try {
         let url = ''
         const modules = this.modules
-        debugger
         switch (this.tempObject.auditType) {
           case '定向':
             const sellerDxAudit = this.apiList.xy.sellerDxAudit
@@ -331,7 +330,6 @@ export default {
               }
               break
             case 'erp议价':
-              debugger
               console.log(data.data.sbillBargainingDto)
               this.detailData = {
                 liftStatus: 1,
