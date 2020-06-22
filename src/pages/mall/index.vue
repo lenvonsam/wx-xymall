@@ -86,9 +86,20 @@ div
     //-   .empty-content 您暂时没有相关合同
   modal-intro(v-model="modalIntroShow", :images="introImages", :cb="modalIntroCb")
   //- cart-ball(v-model="ballValue", :cb="ballCb")
-  modal(v-model="modalShow", @cb="modalCb", :title="modalTitle" :btns="btn")
+  modal(v-model="erpModalShow", @cb="erpModalCb", :title="erpModalTitle" :btns="btn")
     div
-      .padding-15 {{modalMsg}}
+      .padding-15 {{erpModalMsg}}
+  modal(v-model="modalShow", :title="modalTitle", :btns="modalBtns", @cb="modalCb")
+    .padding-sm(v-if="modalMsg == '1'")
+      div 恭喜您成为型云用户，您的商城体验天数还剩
+        sapn(style="color: red;font-size: 16px;font-weight: 600;") {{trial}}
+          sapn(style="color: #000;font-size: 14px;font-weight: 400;") 天，请尽快完善信息哦！
+    .padding-sm(v-else-if="modalMsg == '2'")
+      div 尊敬的用户，您的商城体验权限时间已经结束，如需继续查看商城物资详情，请尽快完善个人信息并等待审核通过
+    .padding-sm(v-else)
+      div 恭喜您成为型云用户，您的信息正在审核中，请耐心等待
+  modal(v-model="fillModalShow", :title="modalTitle", @cb="fillModalCb")
+    .padding-sm {{fillModalMsg}}
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
@@ -159,9 +170,16 @@ export default {
       swiperFirst: 0,
       prevIdx: null,
       modalShow: false,
-      modalTitle: '超时未提货物收费标准',
-      modalMsg: '对于在库物资，买方在平台上购买物资并支付货款后，应在约定的时间内（系统默认时间为5天）制作提单并提货。超过约定时间未提的合同物资将被判定为违约（超期未提），买方须承担未及时提货而产生的仓储管理费，并于提货时自行与仓库管理方结算。卖方有权对违约合同物资进行处置，进行合同取消并退还对应货款。',
-      btn: [{ label: '确定', flag: 'confirm', className: 'main-btn' }]
+      erpModalShow: false,
+      erpModalTitle: '超时未提货物收费标准',
+      erpModalMsg: '对于在库物资，买方在平台上购买物资并支付货款后，应在约定的时间内（系统默认时间为5天）制作提单并提货。超过约定时间未提的合同物资将被判定为违约（超期未提），买方须承担未及时提货而产生的仓储管理费，并于提货时自行与仓库管理方结算。卖方有权对违约合同物资进行处置，进行合同取消并退还对应货款。',
+      btn: [{ label: '确定', flag: 'confirm', className: 'main-btn' }],
+      modalTitle: '提示',
+      modalBtns: [{ label: '确定', flag: 'confirm', className: 'main-btn' }],
+      modalMsg: '1',
+      fillModalShow: false,
+      fillModalMsg: '',
+      trial: -1
     }
   },
   computed: {
@@ -196,6 +214,52 @@ export default {
   },
   onShow () {
     this.isload = true
+    if (this.currentUser.type === 'buyer') {
+      let isAuditing = 0 // 账号是否正在审核中
+      let lastExperienceDay = mpvue.getStorageSync('lastExperienceDay') || ''
+      let isAuditingReminder = mpvue.getStorageSync('isAuditingReminder') || ''
+      let overdueReminder = mpvue.getStorageSync('overdueReminder') || ''
+      this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(data => {
+        if (data.returncode === '0') {
+          this.trial = data.trial
+          isAuditing = data.is_auditing
+          this.currentUser.isnew = data.isnew
+          if (this.trial > 0) {
+            if (data.isnew === 1) { // 新用户
+              if (lastExperienceDay !== this.trial) {
+                this.modalMsg = '1'
+                this.modalShow = true
+                mpvue.setStorageSync('lastExperienceDay', this.trial)
+              }
+            } else if (data.isnew === 0 && isAuditing === 1) { // 已完善未审核过
+              if (isAuditingReminder !== this.getDate()) {
+                this.modalMsg = '3'
+                this.modalShow = true
+                mpvue.setStorageSync('isAuditingReminder', this.getDate())
+              }
+            }
+          } else if (this.trial === 0) { // 超过体验期限
+            if (overdueReminder !== this.getDate()) {
+              this.modalMsg = '2'
+              this.modalShow = true
+              mpvue.setStorageSync('lastExperienceDay', this.trial)
+              mpvue.setStorageSync('overdueReminder', this.getDate())
+              // 超过体验时间，商城显示未登录状态页面
+            }
+          } else {
+            mpvue.setStorageSync('lastExperienceDay', this.trial)
+          }
+        } else {
+          this.showMsg(data.errormsg)
+          this.exitUser()
+        }
+      }).catch(e => {
+        console.log('mall.vue_queryProfile_catch=====>', JSON.stringify(e))
+        // this.showMsg(e)
+        this.isLogin = false
+      })
+    }
+
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 285
     if (this.tempObject.fromPage === 'home') {
       // 首页
@@ -247,7 +311,9 @@ export default {
         if (res.returncode === '0') {
           console.log('mall.vue_接口返回_rule=====>' + res.rule)
           if (this.currentUser.type === 'buyer' && res.rule === 0) {
-            this.modalShow = true
+            this.erpModalShow = true
+          } else {
+            this.erpModalShow = false
           }
         }
       })
@@ -259,6 +325,12 @@ export default {
     if (this.modalShow) {
       this.modalShow = false
     }
+    if (this.fillModalShow) {
+      this.fillModalShow = false
+    }
+    if (this.erpModalShow) {
+      this.erpModalShow = false
+    }
   },
   mounted () {
     this.$nextTick(() => {
@@ -266,11 +338,27 @@ export default {
     })
   },
   methods: {
-    ...mapActions([
-      'configVal'
-    ]),
+    ...mapActions(['configVal', 'exitUser']),
     ballCb () {
       console.log('ball cb')
+    },
+    getDate () {
+      let date = new Date()
+      let year = date.getFullYear()
+      let month = date.getMonth() + 1
+      let day = date.getDate()
+      date = year + '-' + month + '-' + day
+      return date
+    },
+    modalCb () {
+      this.modalShow = false
+    },
+    fillModalCb (flag) {
+      console.log(flag)
+      this.fillModalShow = false
+      if (flag.toString() === 'confirm') {
+        this.jump('/pages/account/companyUpdate/main?type=2')
+      }
     },
     cleanSearch () {
       delete this.queryObject.search
@@ -402,21 +490,27 @@ export default {
             if (type === 'cart') {
               this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_add_cart_seller' }, true) : this.statisticRequest({ event: 'click_app_mall_add_cart' })
             }
-            if (!this.btnDisable) {
-              this.btnDisable = true
-              this.addCart(obj, type, this.currentUser.user_id).then(
-                rt => {
-                  // me.ballValue = evt
-                  me.showMsg(rt.msg, '', 1000)
-                  if (type === 'cart') me.setCartCount(me.currentUser.user_id)
-                  me.btnDisable = false
-                },
-                err => {
-                  me.showMsg(err === '该商品已经存在于购物车中' ? '该商品已加入购物车' : err)
-                  me.btnDisable = false
-                }
-              )
+            if (this.currentUser.isnew === 1) {
+              this.fillModalMsg = '请先完善信息'
+              this.fillModalShow = true
+            } else {
+              if (!this.btnDisable) {
+                this.btnDisable = true
+                this.addCart(obj, type, this.currentUser.user_id).then(
+                  rt => {
+                    // me.ballValue = evt
+                    me.showMsg(rt.msg, '', 1000)
+                    if (type === 'cart') me.setCartCount(me.currentUser.user_id)
+                    me.btnDisable = false
+                  },
+                  err => {
+                    me.showMsg(err === '该商品已经存在于购物车中' ? '该商品已加入购物车' : err)
+                    me.btnDisable = false
+                  }
+                )
+              }
             }
+
             break
           default:
             break
@@ -541,7 +635,7 @@ export default {
         this.showMsg(err)
       }
     },
-    modalCb (flag) {
+    erpModalCb (flag) {
       this.ironRequest(this.apiList.xy.updateRule.url, {user_id: this.currentUser.user_id}, this.apiList.xy.updateRule.method).then(res => {
         if (res.returncode === '0') {
           console.log('updateRule_res=====>' + JSON.stringify(res))
@@ -549,7 +643,7 @@ export default {
       }).catch(e => {
         console.log('updateRule_e=====>' + e)
       })
-      this.modalShow = false
+      this.erpModalShow = false
     }
   }
 }

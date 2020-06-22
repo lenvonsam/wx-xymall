@@ -98,7 +98,7 @@ export default {
           console.log('qrParams:>>', qrParams)
           if (qrParams !== '-1') {
             const arr = qrParams.split('|')
-            const q = this.qrCodeForGoodsName[arr[0]] + '_' + arr[1]
+            const q = arr[1] + '_' + this.qrCodeForGoodsName[arr[0]]
             body.promotion = q
           }
           const data = await this.ironRequest(this.apiList.xy.userRegister.url, body, this.apiList.xy.userRegister.method)

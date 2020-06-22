@@ -54,6 +54,9 @@ export default {
     this.canClick = true
     if (this.$root.$mp.query.type) this.backType = Number(this.$root.$mp.query.type)
     else this.backType = 1
+    mpvue.setStorageSync('lastExperienceDay', '')
+    mpvue.setStorageSync('overdueReminder', '')
+    mpvue.setStorageSync('isAuditingReminder', '')
   },
   onLoad (options) {
     if (options.back) this.wxBack = Number(options.back)

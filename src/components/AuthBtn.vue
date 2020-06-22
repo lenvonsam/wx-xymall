@@ -67,12 +67,6 @@ export default {
         })
       }
     },
-    showErrMsg (errMsg) {
-      this.clearTime()
-      this.btnTxt = '获取验证码'
-      this.canGetCode = true
-      this.showMsg(errMsg)
-    },
     timeDown () {
       const me = this
       let timeTxt = me.timeCount
@@ -86,6 +80,12 @@ export default {
           me.canGetCode = true
         }
       }, 1000)
+    },
+    showErrMsg (errMsg) {
+      this.clearTime()
+      this.btnTxt = '获取验证码'
+      this.canGetCode = true
+      this.showMsg(errMsg)
     },
     clearTime () {
       if (this.timeInterval) {
