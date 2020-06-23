@@ -26,7 +26,10 @@ div
                   .col
                     .flex.align-center
                       .ft-16.padding-right-sm {{auditType[item.audit_type]}} - {{item.tstc_no}}
-                  .text-red {{item.audit_type === 3 ? '待退款' : statusList[item.status] && item.audit_type === 1 ? statusList[item.status] : '待审核'}}
+                  //- .text-red {{item.audit_type === 3 ? '待退款' : statusList[item.status] && item.audit_type === 1 ? statusList[item.status] : '待审核'}}
+                  .text-red(v-if="item.audit_type === 3") 待退款
+                  .text-red(v-else-if="item.audit_type === 1 || item.audit_type === 4") {{statusList[item.status]}}
+                  .text-red(v-else) 待审核
                 .text-gray
                   .flex.justify-between.padding-bottom-xs 
                     span {{item.oper_name}}

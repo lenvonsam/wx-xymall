@@ -548,7 +548,6 @@ export default {
           }
           const data = await this.ironRequest(this.apiList.xy.auditDxCheck.url, params, this.apiList.xy.auditDxCheck.method)
           if (data.returncode === '0') {
-            debugger
             this.flag = flag
             this.dxFilterArray = filterArray
             this.modalMsg = data.errormsg

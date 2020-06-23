@@ -92,6 +92,9 @@ div
                 span.padding-left-xs 费用：￥{{item.cost_price}}
                 span.padding-left-xs 价差：
                 span.text-red ￥{{item.diff}}
+              span.text-black 销售定价：
+              span.text-orange ￥{{item.xs_price}}
+              span.padding-left-xs.text-grey.delete-style 原定价：￥{{item.order_price}}
             template(v-else)
               .row.justify-between.text-gray.padding-bottom-xs
                 .col 
@@ -201,6 +204,7 @@ export default {
       if (this.disabled) return false
       this.disabled = true
       let params = {}
+      debugger
       switch (this.tempObject.auditType) {
         case '退货':
           this.disabled = false
@@ -233,6 +237,13 @@ export default {
           params.id = this.tempObject.return_id
           this.confirmAudit(params, this.apiList.xy.orderDelayAudit)
           break
+        case 'erp议价':
+          params = {
+            deal_no: this.detailData.billNo,
+            flag: flag === 'cancel' ? '0' : '1'
+          }
+          this.confirmAudit(params, this.apiList.xy.dxAudit)
+          break
         // default:
         //   console.log('default')
       }
@@ -262,7 +273,6 @@ export default {
       try {
         let url = ''
         const modules = this.modules
-        debugger
         switch (this.tempObject.auditType) {
           case '定向':
             const sellerDxAudit = this.apiList.xy.sellerDxAudit
@@ -281,9 +291,9 @@ export default {
             const sellerOrderDelayAudit = this.apiList.xy.sellerOrderDelayAudit
             url = `${sellerOrderDelayAudit.url}?tstc_no=${this.tempObject.tstc_no}`
             break
-          case 'erp议价':
-            url = `${this.apiList.xy.sellerBargainAudit.url}?user_id=${this.currentUser.user_id}&id=${this.tempObject.tstc_no}`
-            break
+          // case 'erp议价':
+          //   url = `${this.apiList.xy.sellerBargainAudit.url}?user_id=${this.currentUser.user_id}&id=${this.tempObject.tstc_no}`
+          //   break
           default:
             console.log('default')
             break
@@ -331,7 +341,6 @@ export default {
               }
               break
             case 'erp议价':
-              debugger
               console.log(data.data.sbillBargainingDto)
               this.detailData = {
                 liftStatus: 1,
@@ -378,4 +387,6 @@ export default {
   input
     height 40px
     width 100%
+.delete-style
+  text-decoration line-through
 </style>

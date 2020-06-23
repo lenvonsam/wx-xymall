@@ -114,14 +114,14 @@ export default {
         mpvue.setStorageSync(
           'qrp',
           JSON.stringify({
-            id: arr[1],
+            id: decodeURIComponent(arr[1]),
             source: arr[2],
             time: new Date().getTime()
           })
         )
         // 自动跳转到商城页面
         if (arr[1] !== '999') {
-          this.configVal({ key: 'tempObject', val: { name: arr[1], fromPage: 'home' } })
+          this.configVal({ key: 'tempObject', val: { name: decodeURIComponent(arr[1]), fromPage: 'home' } })
           this.tab('/pages/mall/main')
         }
       }
@@ -142,6 +142,12 @@ export default {
             this.modalShow = true
           }
         }
+      })
+      this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(data => {
+        console.log('index.vue_queryProfile_data=====>', JSON.stringify(data))
+      }).catch(e => {
+        console.log('index.vue_queryProfile_catch=====>', JSON.stringify(e))
+        this.showMsg(e)
       })
     } else {
       this.tabDot(0)
