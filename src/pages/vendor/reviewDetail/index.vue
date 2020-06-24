@@ -205,6 +205,7 @@ export default {
       this.disabled = true
       let params = {}
       debugger
+      console.log(this.tempObject)
       switch (this.tempObject.auditType) {
         case '退货':
           this.disabled = false
@@ -239,10 +240,15 @@ export default {
           break
         case 'erp议价':
           params = {
-            deal_no: this.detailData.billNo,
-            flag: flag === 'cancel' ? '0' : '1'
+            id: this.detailData.billNo,
+            stage: 1, // 1初审 2复审
+            flag: flag === 'cancel' ? '0' : '1',
+            reson: '',
+            cust_name: '',
+            employee_name: '',
+            dept_name: ''
           }
-          this.confirmAudit(params, this.apiList.xy.dxAudit)
+          this.confirmAudit(params, this.apiList.xy.sellerBargainAudit)
           break
         // default:
         //   console.log('default')
@@ -291,14 +297,15 @@ export default {
             const sellerOrderDelayAudit = this.apiList.xy.sellerOrderDelayAudit
             url = `${sellerOrderDelayAudit.url}?tstc_no=${this.tempObject.tstc_no}`
             break
-          // case 'erp议价':
-          //   url = `${this.apiList.xy.sellerBargainAudit.url}?user_id=${this.currentUser.user_id}&id=${this.tempObject.tstc_no}`
-          //   break
+          case 'erp议价':
+            url = `${this.apiList.xy.sellerBargainAudit.url}?user_id=${this.currentUser.user_id}&id=${this.tempObject.tstc_no}`
+            break
           default:
             console.log('default')
             break
         }
         const data = await this.ironRequest(url, '', 'get')
+        debugger
         console.log('data', data)
         if (data.returncode === '0') {
           switch (this.tempObject.auditType) {
