@@ -216,6 +216,7 @@ export default {
       const reqUrl = `orderList.shtml?user_id=${me.currentUser.user_id}&status=${this.tabName}&current_page=${this.currentPage}&page_size=${this.pageSize}&order_no=${this.billNo}&start_date=${this.startDate}&end_date=${this.endDate}`
       this.ironRequest(reqUrl, {}, 'get').then(resp => {
         const idx = me.swiperCount
+        me.billTab[idx].data = []
         this.serverTime = resp.server_time
         if (resp.returncode === '0') {
           let arr = resp.orders
@@ -225,6 +226,7 @@ export default {
               itm.choosed = false
               list.push(itm)
             })
+            debugger
             me.billTab[idx].data = list
             me.listData = list
             me.isLoad = false
@@ -364,11 +366,14 @@ export default {
             })
             me.isload = false
           } else if (arr.length > 0 && me.currentPage > 0) {
-            arr.map(item => {
-              item.choosed = false
-              me.listData.push(item)
-              this.billTab[idx].data.push(item)
-            })
+            // arr.map(item => {
+            //   item.choosed = false
+            //   me.listData.push(item)
+            //   this.billTab[idx].data.push(item)
+            // })
+            me.listData = me.listData.concat(arr)
+            this.billTab[idx].data = this.billTab[idx].data.concat(arr)
+            debugger
             me.isload = false
           } else {
             me.isload = false
