@@ -53,7 +53,7 @@ export default {
       method: 'get'
     },
     // ERP议价提单审核详情
-    sellerBargainAudit: { url: 'seller/bargainAudit.shtml', method: 'get' },
+    sellerBargainAudit: { url: 'seller/bargainAudit.shtml', method: 'post' },
     returnGoodsAudit: { url: 'seller/returnGoodsAudit.shtml', method: 'post' },
     dxAudit: { url: 'seller/dxAudit.shtml', method: 'post' },
     orderDelayAudit: { url: 'seller/orderDelayAudit.shtml', method: 'post' },

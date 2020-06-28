@@ -65,7 +65,7 @@ div
             .solid-top.padding-top-xs.padding-bottom-xs.text-black
               span 销售定价：
               span.text-blue ￥{{item.saleMakeprice}}
-              span.padding-left-xs 原价：￥{{item.sbillDetailInprice}}
+              span.padding-left-xs.delete-style.text-grey ￥{{item.sbillDetailInprice}}
               span.padding-left-xs 定价差：
               span.text-red ￥{{item.saleMakepriceCale}}
       div(v-else)
@@ -104,21 +104,30 @@ div
               .text-gray 
                 span 退款重量：{{item.weight}}吨  
                 span.padding-left-xs 退款金额：{{item.money}}元
-  .footer.row.bg-white.text-center.text-white.padding-sm(:style="{height: isIpx ? '188rpx' : '120rpx', 'padding-bottom': isIpx ? '68rpx' : '20rpx'}", v-if="btnShow && tempObject.fromPage !== 'reviewHistory'")
+  .footer.row.bg-white.text-center.text-white.padding-sm(:style="{height: isIpx ? '188rpx' : '120rpx', 'padding-bottom': isIpx ? '68rpx' : '20rpx'}",
+   v-if="btnShow && tempObject.fromPage !== 'reviewHistory'")
     .col.foot-cancel(@click="confirm('cancel')") {{tempObject.auditType === '退货' ? '驳回' : '拒绝'}}
-    .col.foot-confirm.margin-left-sm(@click="confirm") {{tempObject.auditType === '退货' ? '退货' : '通过'}}
+    .col.foot-confirm.margin-left-sm(@click="confirm('confirm')") {{tempObject.auditType === '退货' ? '退货' : '通过'}}
   modal-input(v-model="modalShow", :title="modalInputTitle", confirmText="确定", type="customize", :cb="modalHandler")
     .padding-sm
       .bg-gray.input-box
         input(:placeholder="'请填写'+modalInputTitle", v-model="modalVal", :disabled="modalInputTitle === '退款金额'")
       .text-red.text-left.padding-top-sm(v-if="modalInputTitle === '驳回原因'") 注：一旦驳回，此单将被删除，必须重新申请，请与销售沟通，并告知客户！  
+  modal(v-model="erpModalShow1", @cb="erpModalCb", :title="erpModalTitle")
+    .padding-sm {{erpModalMsg}}
+  modal-input(v-model="erpModalShow2", :title="erpModalTitle", confirmText="确定", type="customize", :cb="erpModalCbInput")
+    .padding-sm {{erpModalMsg}}
+      .bg-gray.input-box
+        input(placeholder="请输入审核通过原因", v-model="erpModalVal")
 </template>
 <script>
 import { mapState } from 'vuex'
 import modalInput from '@/components/ModalInput.vue'
+import modal from '@/components/Modal.vue'
 export default {
   components: {
-    modalInput
+    modalInput,
+    modal
   },
   data () {
     return {
@@ -139,7 +148,12 @@ export default {
         '3': '开平免吊费'
       },
       btnShow: false,
-      tempObject: {}
+      tempObject: {},
+      erpModalShow1: false,
+      erpModalTitle: '提示',
+      erpModalMsg: '此单存在销售定价变更，注意查看明细定价，是否继续审核通过？',
+      erpModalShow2: false,
+      erpModalVal: ''
     }
   },
   computed: {
@@ -206,52 +220,128 @@ export default {
       let params = {}
       debugger
       console.log(this.tempObject)
-      switch (this.tempObject.auditType) {
-        case '退货':
-          this.disabled = false
-          this.modalShow = true
-          if (flag === 'cancel') {
-            this.modalInputTitle = '驳回原因'
-            this.modalVal = ''
-          } else {
-            this.modalInputTitle = '退款金额'
-            this.modalVal = this.detailData.totalMoeny
+      if (flag === 'confirm') {
+        switch (this.tempObject.auditType) {
+          case '退货':
+            this.disabled = false
+            this.modalShow = true
+            if (flag === 'cancel') {
+              this.modalInputTitle = '驳回原因'
+              this.modalVal = ''
+            } else {
+              this.modalInputTitle = '退款金额'
+              this.modalVal = this.detailData.totalMoeny
+            }
+            break
+          case '定向':
+            if (this.tempObject.statusStr === '定向初审') {
+              this.erpModalShow1 = true
+            } else if (this.tempObject.statusStr === '定向复审') {
+              this.erpModalShow2 = true
+            }
+            break
+          case '延时':
+            if (flag === 'cancel') {
+              params.status = '2'
+            } else {
+              params.status = '1'
+            }
+            params.id = this.tempObject.return_id
+            this.confirmAudit(params, this.apiList.xy.orderDelayAudit)
+            break
+          case 'erp议价':
+            if (this.tempObject.statusStr === 'erp议价初审') {
+              this.erpModalShow1 = true
+            } else if (this.tempObject.statusStr === 'erp议价复审') {
+              this.erpModalShow2 = true
+            }
+            break
+        // default:
+        //   console.log('default')
+        }
+      } else if (flag === 'cancel') {
+        if (this.tempObject.statusStr === 'erp议价复审') { // erp议价复审驳回
+          let params = {
+            id: this.detailData.billNo,
+            stage: 2, // 1初审 2复审
+            flag: '0',
+            cust_name: this.detailData.custName,
+            employee_name: this.detailData.employeeName,
+            dept_name: this.detailData.deptName
           }
-          break
-        case '定向':
-          params = {
+          console.log('入参====>', params)
+          this.confirmAudit(params, this.apiList.xy.sellerBargainAudit)
+        } else if (this.tempObject.statusStr === '定向复审') { // 定向订单待复审驳回
+          let params = {
+            user_id: this.currentUser.user_id,
             deal_no: this.detailData.billNo,
-            flag: flag === 'cancel' ? '0' : '1'
+            flag: '0'
           }
+          console.log('入参====>', params)
           this.confirmAudit(params, this.apiList.xy.dxAudit)
-          break
-        case '延时':
-          if (flag === 'cancel') {
-            params.status = '2'
-          } else {
-            params.status = '1'
-          }
-          // const ids = []
-          // this.detailData.list.map(item => {
-          //   ids.push(item.discussid)
-          // })
-          params.id = this.tempObject.return_id
-          this.confirmAudit(params, this.apiList.xy.orderDelayAudit)
-          break
-        case 'erp议价':
-          params = {
+        } else {
+          this.back()
+        }
+      }
+    },
+    erpModalCb (flag) { // 初审弹框
+      if (flag === 'confirm') {
+        if (this.tempObject.statusStr === 'erp议价初审') { // erp议价初审确定
+          let params = {
             id: this.detailData.billNo,
             stage: 1, // 1初审 2复审
             flag: flag === 'cancel' ? '0' : '1',
-            reson: '',
-            cust_name: '',
-            employee_name: '',
-            dept_name: ''
+            cust_name: this.detailData.custName,
+            employee_name: this.detailData.employeeName,
+            dept_name: this.detailData.deptName
           }
+          console.log('入参====>', params)
           this.confirmAudit(params, this.apiList.xy.sellerBargainAudit)
-          break
-        // default:
-        //   console.log('default')
+        } else if (this.tempObject.statusStr === '定向初审') { // 定向订单待初审确定
+          let params = {
+            user_id: this.currentUser.user_id,
+            deal_no: this.detailData.billNo,
+            flag: flag === 'cancel' ? '0' : '1'
+          }
+          console.log('入参====>', params)
+          this.confirmAudit(params, this.apiList.xy.dxAudit)
+        }
+        this.erpModalShow1 = false
+      } else {
+        this.erpModalShow1 = false
+      }
+    },
+    erpModalCbInput (flag) { // 复审输入弹框
+      if (flag.type === 'confirm') {
+        if (!this.erpModalVal) {
+          this.showMsg('请输入审核通过原因！')
+          return false
+        }
+        if (this.tempObject.statusStr === 'erp议价复审') { // erp议价复审确定
+          let params = {
+            id: this.detailData.billNo,
+            stage: 2, // 1初审 2复审
+            flag: flag === 'cancel' ? '0' : '1',
+            reson: this.erpModalVal,
+            cust_name: this.detailData.custName,
+            employee_name: this.detailData.employeeName,
+            dept_name: this.detailData.deptName
+          }
+          console.log('入参====>', params)
+          this.confirmAudit(params, this.apiList.xy.sellerBargainAudit)
+        } else if (this.tempObject.statusStr === '定向复审') { // 定向订单待复审确定
+          let params = {
+            user_id: this.currentUser.user_id,
+            deal_no: this.detailData.billNo,
+            flag: flag === 'cancel' ? '0' : '1',
+            pw_reson: this.erpModalVal
+          }
+          console.log('入参====>', params)
+          this.confirmAudit(params, this.apiList.xy.dxAudit)
+        }
+        this.erpModalShow2 = false
+      } else {
+        this.erpModalShow2 = false
       }
     },
     async confirmAudit (params, api) {
@@ -298,6 +388,8 @@ export default {
             url = `${sellerOrderDelayAudit.url}?tstc_no=${this.tempObject.tstc_no}`
             break
           case 'erp议价':
+            debugger
+            this.btnShow = modules.delay_audit
             url = `${this.apiList.xy.sellerBargainAudit.url}?user_id=${this.currentUser.user_id}&id=${this.tempObject.tstc_no}`
             break
           default:
@@ -305,7 +397,6 @@ export default {
             break
         }
         const data = await this.ironRequest(url, '', 'get')
-        debugger
         console.log('data', data)
         if (data.returncode === '0') {
           switch (this.tempObject.auditType) {
@@ -359,9 +450,12 @@ export default {
                 endTime: data.data.sbillBargainingDto.dataSystemdate,
                 status: data.data.sbillBargainingDto.bargainingAuditStatus,
                 operName: data.data.sbillBargainingDto.operatorName,
-                list: data.data.list
+                list: data.data.list,
+                deptName: data.data.sbillBargainingDto.deptName,
+                employeeName: data.data.sbillBargainingDto.employeeName
+
               }
-              this.btnShow = (data.data.sbillBargainingDto.bargainingAuditStatus === '未审' && modules.audit) || (data.data.sbillBargainingDto.bargainingAuditStatus === '已审' && modules.re_audit)
+              this.btnShow = (data.data.sbillBargainingDto.bargainingAuditStatus === '待初审' && modules.audit) || (data.data.sbillBargainingDto.bargainingAuditStatus === '待复审' && modules.re_audit)
               break
             default:
               console.log('default')
