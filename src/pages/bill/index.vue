@@ -226,7 +226,6 @@ export default {
               itm.choosed = false
               list.push(itm)
             })
-            debugger
             me.billTab[idx].data = list
             me.listData = list
             me.isLoad = false
@@ -373,7 +372,6 @@ export default {
             // })
             me.listData = me.listData.concat(arr)
             this.billTab[idx].data = this.billTab[idx].data.concat(arr)
-            debugger
             me.isload = false
           } else {
             me.isload = false

@@ -57,7 +57,8 @@ export default {
       auditType: {
         '1': '定向',
         '2': '延时',
-        '3': '退货'
+        '3': '退货',
+        '4': 'erp议价'
       },
       statusList: {
         '0': '已拒绝',
@@ -168,7 +169,7 @@ export default {
           if (resp.returncode === '0') {
             let arr = resp.resultlist
             arr.map(item => {
-              if (item.audit_type === 1) {
+              if (item.audit_type === 1 || item.audit_type === 4) {
                 if (item.status === 1 && item.audit_num === 1) {
                   item.statusStr = '已初审'
                 } else if (item.status === 1 && item.audit_num === 2) {
@@ -222,6 +223,10 @@ export default {
       }
       if (item.audit_type === 3) {
         this.jump(`/pages/vendor/returnApplicationDetail/main?subsNo=${item.tstc_no}`)
+        return false
+      }
+      if (item.audit_type === 4) {
+        this.jump(`/pages/vendor/reviewDetail/main?auditType=erp议价&statusStr=${item.statusStr}&tstc_no=${item.tstc_no}&return_id=${item.tstc_no}`)
         return false
       }
       // item.auditType = this.auditType[item.audit_type]
