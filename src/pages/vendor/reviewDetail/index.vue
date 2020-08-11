@@ -1,121 +1,136 @@
 <template lang="pug">
 div
   nav-bar(title="待审核", isBack)
-  .padding-sm(:style="{'margin-bottom': isIpx ? '188rpx' : '120rpx'}")
-    template(v-if="tempObject.auditType === '延时'")
-      .bg-white.card(v-for="(item, idx) in detailData.list", :key="idx")
-        .row.justify-between.padding-bottom-xs
-          .col.text-blue(@click="jumpBillDetail(item)") {{item.deal_no}}
-          .text-red {{statusList[item.status] || '待审核'}}
-        .row.justify-between.padding-bottom-xs
-          .text-gray.col {{item.cust_name}}
-          .text-black ¥ {{item.price}}
-        .row.justify-between.text-gray.padding-bottom-xs
-          .col 共{{item.amount}}支，{{item.weight}}吨
-          span 操作员：{{item.opt_name}}
-        .text-gray.padding-bottom-xs(v-if="item.delay_text")
-          span 延时理由：{{item.delay_text}}
-        .solid-top.padding-top-xs.padding-bottom-xs
-          span 付款截止时间：
-          span.text-red.padding-left-xs {{item.order_end_time}}
-    template(v-else)
-      .bg-white.card
-        .row.justify-between.padding-bottom-xs
-          .col.text-blue {{detailData.billNo}}
-          .text-red {{tempObject.auditType === '退货' ? '待退款' : detailData.status}}
-        .row.justify-between.padding-bottom-xs
-          .text-gray.col {{detailData.custName}}
-          .text-black ¥ {{detailData.totalMoeny}}
-        template(v-if="tempObject.auditType === '退货'")
-          .text-gray.padding-bottom-xs.row.justify-between
-            .col 发票状态：{{detailData.invoiceStatus}}
-            span 操作员：{{detailData.operName}}
-        template(v-else)
+  .padding-sm
+    div(:style="{'margin-bottom': isIpx ? '188rpx' : '120rpx'}")
+      template(v-if="tempObject.auditType === '延时'")
+        .bg-white.card(v-for="(item, idx) in detailData.list", :key="idx")
+          .row.justify-between.padding-bottom-xs
+            .col.text-blue(@click="jumpBillDetail(item)") {{item.deal_no}}
+            .text-red {{statusList[item.status] || '待审核'}}
+          .row.justify-between.padding-bottom-xs
+            .text-gray.col {{item.cust_name}}
+            .text-black ¥ {{item.price}}
           .row.justify-between.text-gray.padding-bottom-xs
-            .col 共{{detailData.totalAmount}}支，{{detailData.totalWeight}}吨
-            span 操作员：{{detailData.operName}}
-        .solid-top.padding-top-xs.padding-bottom-xs.row.justify-between
-          template(v-if="tempObject.auditType !== '退货'")
-            .col
-              span {{tempObject.auditType==='定向' ? '' : '付款'}}截止时间：
-              span.text-red.padding-left-xs {{detailData.endTime}}
-            span(v-if="tempObject.auditType==='定向'") {{liftStatus[detailData.liftStatus]}}
+            .col 共{{item.amount}}支，{{item.weight}}吨
+            span 操作员：{{item.opt_name}}
+          .text-gray.padding-bottom-xs(v-if="item.delay_text")
+            span 延时理由：{{item.delay_text}}
+          .solid-top.padding-top-xs.padding-bottom-xs
+            span 付款截止时间：
+            span.text-red.padding-left-xs {{item.order_end_time}}
+      template(v-else)
+        .bg-white.card
+          .row.justify-between.padding-bottom-xs
+            .col.text-blue {{detailData.billNo}}
+            .text-red {{tempObject.auditType === '退货' ? '待退款' : detailData.status}}
+          .row.justify-between.padding-bottom-xs
+            .text-gray.col {{detailData.custName}}
+            .text-black ¥ {{detailData.totalMoeny}}
+          template(v-if="tempObject.auditType === '退货'")
+            .text-gray.padding-bottom-xs.row.justify-between
+              .col 发票状态：{{detailData.invoiceStatus}}
+              span 操作员：{{detailData.operName}}
           template(v-else)
-            .col.text-black {{detailData.endTime}}
-            span(v-if="detailData.totalLiftCharge") 吊费：{{detailData.totalLiftCharge}}元
-      //- template(v-if="auditType !== '延时'")
-      .ft-18.padding-top-sm.padding-bottom-sm 商品信息
-      div( v-if="tempObject.auditType === 'erp议价'")
-        .bg-white.card(v-for="(item, index) in dataList", :key="index")
-          .row.justify-between.padding-bottom-xs
-            .text-black.col {{item.scontractDetailPartsname}} {{item.scontractDetailSpec}}
-            .text-blue ¥ {{item.sbillDetailInprice}}
-          .text-gray
-            .row.justify-between.padding-bottom-xs
+            .row.justify-between.text-gray.padding-bottom-xs
+              .col 共{{detailData.totalAmount}}支，{{detailData.totalWeight}}吨
+              span 操作员：{{detailData.operName}}
+          .solid-top.padding-top-xs.padding-bottom-xs.row.justify-between
+            template(v-if="tempObject.auditType !== '退货'")
               .col
-                span.padding-right-xs {{item.scontractDetailMaterial}}
-                span.padding-right-xs {{item.goodsProperty1}}
-                span.padding-right-xs {{item.warehouseName}}
-                span.sub-mark.ml-5 {{item.scontractDetailProareaname}}
-              span ({{item.goodsMetering}})
-            .padding-bottom-xs {{item.goodsNum}}支/{{item.goodsWeight}}吨
-            .padding-bottom-xs
-              span.padding-right-xs(v-if="item.goodsProperty5") 公差范围 {{item.goodsProperty5}}
-              span(v-if="item.goodsProperty4") 重量范围 {{item.goodsProperty4}}
-            .solid-top.padding-top-xs.padding-bottom-xs.text-black
-              span 销售定价：
-              span.text-blue ￥{{item.saleMakeprice}}
-              span.padding-left-xs 原价：￥{{item.sbillDetailInprice}}
-              span.padding-left-xs 定价差：
-              span.text-red ￥{{item.saleMakepriceCale}}
-      div(v-else)
-        .bg-white.card(v-for="(item, idx) in dataList", :key="idx")
-          .row.justify-between.padding-bottom-xs
-            .text-black.col {{item.name}} {{item.standard}}
-            .text-blue ¥ {{tempObject.auditType === '定向' ? item.order_price : item.price}}
-          .text-gray
-            template(v-if="tempObject.auditType === '定向'")  
+                span {{tempObject.auditType==='定向' ? '' : '付款'}}截止时间：
+                span.text-red.padding-left-xs {{detailData.endTime}}
+              span(v-if="tempObject.auditType==='定向'") {{liftStatus[detailData.liftStatus]}}
+            template(v-else)
+              .col.text-black {{detailData.endTime}}
+              span(v-if="detailData.totalLiftCharge") 吊费：{{detailData.totalLiftCharge}}元
+        //- template(v-if="auditType !== '延时'")
+        .ft-18.padding-top-sm.padding-bottom-sm 商品信息
+        div( v-if="tempObject.auditType === 'erp议价'")
+          .bg-white.card(v-for="(item, index) in dataList", :key="index")
+            .row.justify-between.padding-bottom-xs
+              .text-black.col {{item.scontractDetailPartsname}} {{item.scontractDetailSpec}}
+              .text-blue ¥ {{item.sbillDetailInprice}}
+            .text-gray
               .row.justify-between.padding-bottom-xs
                 .col
-                  span.padding-right-xs {{item.material}}
-                  span.padding-right-xs {{item.length}}
-                  span.padding-right-xs {{item.warehouse}}
-                  span.sub-mark.ml-5 {{item.supply}}
-                span ({{item.metering_way}})
-              .padding-bottom-xs {{item.amount}}支/{{item.weight}}吨
+                  span.padding-right-xs {{item.scontractDetailMaterial}}
+                  span.padding-right-xs {{item.goodsProperty1}}
+                  span.padding-right-xs {{item.warehouseName}}
+                  span.sub-mark.ml-5 {{item.scontractDetailProareaname}}
+                span ({{item.goodsMetering}})
+              .padding-bottom-xs {{item.goodsNum}}支/{{item.goodsWeight}}吨
               .padding-bottom-xs
-                span.padding-right-xs(v-if="item.tolerance_range") 公差范围 {{item.tolerance_range}}
-                span(v-if="item.weight_range") 重量范围 {{item.weight_range}}
-              .solid-top.padding-top-xs.padding-bottom-xs.text-black
-                span 定向价：
-                span.text-blue ￥{{item.dx_price}}
-                span.padding-left-xs 费用：￥{{item.cost_price}}
-                span.padding-left-xs 价差：
-                span.text-red ￥{{item.diff}}
-            template(v-else)
-              .row.justify-between.text-gray.padding-bottom-xs
-                .col 
-                  span.padding-right-xs {{item.material}}
-                  span 退款支数：{{item.amount}}支
-                span ({{item.metering_way_str}})
-              .text-gray 
-                span 退款重量：{{item.weight}}吨  
-                span.padding-left-xs 退款金额：{{item.money}}元
-  .footer.row.bg-white.text-center.text-white.padding-sm(:style="{height: isIpx ? '188rpx' : '120rpx', 'padding-bottom': isIpx ? '68rpx' : '20rpx'}", v-if="btnShow && tempObject.fromPage !== 'reviewHistory'")
-    .col.foot-cancel(@click="confirm('cancel')") {{tempObject.auditType === '退货' ? '驳回' : '拒绝'}}
-    .col.foot-confirm.margin-left-sm(@click="confirm") {{tempObject.auditType === '退货' ? '退货' : '通过'}}
+                span.padding-right-xs(v-if="item.goodsProperty5") 公差范围 {{item.goodsProperty5}}
+                span(v-if="item.goodsProperty4") 重量范围 {{item.goodsProperty4}}
+              .solid-top.padding-top-xs.padding-bottom-xs.text-black(v-if="item.saleMakepriceCale != 0")
+                span 销售定价：
+                span.text-blue ￥{{item.saleMakeprice}}
+                span.padding-left-xs.delete-style.text-grey ￥{{item.oldSaleMakeprice}}
+                span.padding-left-xs 定价差：
+                span.text-red ￥{{item.saleMakepriceCale}}
+        div(v-else)
+          .bg-white.card(v-for="(item, idx) in dataList", :key="idx")
+            .row.justify-between.padding-bottom-xs
+              .text-black.col {{item.name}} {{item.standard}}
+              .text-blue ¥ {{tempObject.auditType === '定向' ? item.order_price : item.price}}
+            .text-gray
+              template(v-if="tempObject.auditType === '定向'")  
+                .row.justify-between.padding-bottom-xs
+                  .col
+                    span.padding-right-xs {{item.material}}
+                    span.padding-right-xs {{item.length}}
+                    span.padding-right-xs {{item.warehouse}}
+                    span.sub-mark.ml-5 {{item.supply}}
+                  span ({{item.metering_way}})
+                .padding-bottom-xs {{item.amount}}支/{{item.weight}}吨
+                .padding-bottom-xs
+                  span.padding-right-xs(v-if="item.tolerance_range") 公差范围 {{item.tolerance_range}}
+                  span(v-if="item.weight_range") 重量范围 {{item.weight_range}}
+                .solid-top.padding-top-xs.padding-bottom-xs.text-black
+                  span 定向价：
+                  span.text-blue ￥{{item.dx_price}}
+                  span.padding-left-xs 费用：￥{{item.cost_price}}
+                  span.padding-left-xs 价差：
+                  span.text-red ￥{{item.diff}}
+                span.text-black(v-if="detailData.is_talk_price == 1 && item.xs_price != item.order_price") 销售定价：
+                span.text-orange(v-if="detailData.is_talk_price == 1 && item.xs_price != item.order_price") ￥{{item.xs_price}}
+                //- span.text-black(v-if="item.xs_price == item.order_price") ￥{{item.xs_price}}
+                span.padding-left-xs.text-grey.delete-style(v-if="detailData.is_talk_price == 1 && item.xs_price != item.order_price") 原定价：￥{{item.order_price}}
+              template(v-else)
+                .row.justify-between.text-gray.padding-bottom-xs
+                  .col 
+                    span.padding-right-xs {{item.material}}
+                    span 退款支数：{{item.amount}}支
+                  span ({{item.metering_way_str}})
+                .text-gray 
+                  span 退款重量：{{item.weight}}吨  
+                  span.padding-left-xs 退款金额：{{item.money}}元
+  .footer.row.bg-white.text-center.text-white.padding-sm(:style="{height: isIpx ? '188rpx' : '120rpx', 'padding-bottom': isIpx ? '68rpx' : '20rpx'}",
+   v-if="btnShow && tempObject.fromPage !== 'reviewHistory'")
+    .col.foot-cancel(@click="confirm('cancel')", v-if="tempObject.statusStr === '待初审'") 取消
+    .col.foot-cancel(@click="confirm('cancel')", v-else) {{tempObject.auditType === '退货' ? '驳回' : '拒绝'}}
+    .col.foot-confirm.margin-left-sm(@click="confirm('confirm')") {{tempObject.auditType === '退货' ? '退货' : '通过'}}
   modal-input(v-model="modalShow", :title="modalInputTitle", confirmText="确定", type="customize", :cb="modalHandler")
     .padding-sm
       .bg-gray.input-box
         input(:placeholder="'请填写'+modalInputTitle", v-model="modalVal", :disabled="modalInputTitle === '退款金额'")
       .text-red.text-left.padding-top-sm(v-if="modalInputTitle === '驳回原因'") 注：一旦驳回，此单将被删除，必须重新申请，请与销售沟通，并告知客户！  
+  modal(v-model="erpModalShow1", @cb="erpModalCb", :title="erpModalTitle")
+    .padding-sm {{erpModalMsg}}
+  modal-input(v-model="erpModalShow2", :title="erpModalTitle", confirmText="确定", type="customize", :cb="erpModalCbInput")
+    .padding-sm {{erpModalMsg}}
+      .bg-gray.input-box
+        input(placeholder="请输入审核通过原因", v-model="erpModalVal")
 </template>
 <script>
 import { mapState } from 'vuex'
 import modalInput from '@/components/ModalInput.vue'
+import modal from '@/components/Modal.vue'
 export default {
   components: {
-    modalInput
+    modalInput,
+    modal
   },
   data () {
     return {
@@ -136,13 +151,19 @@ export default {
         '3': '开平免吊费'
       },
       btnShow: false,
-      tempObject: {}
+      tempObject: {},
+      erpModalShow1: false,
+      erpModalTitle: '提示',
+      erpModalMsg: '此单存在销售定价变更，注意查看明细定价，是否继续审核通过？',
+      erpModalShow2: false,
+      erpModalVal: ''
     }
   },
   computed: {
     ...mapState({
       isIpx: state => state.isIpx,
-      modules: state => state.modules
+      modules: state => state.modules,
+      screenHeight: state => state.screenHeight
     }),
     dataList () {
       return this.detailData.list.filter(item => {
@@ -169,6 +190,11 @@ export default {
       this.showLoading()
       this.loadData()
     }
+  },
+  onHide () {
+    this.erpModalShow1 = false
+    this.erpModalShow2 = false
+    this.erpModalVal = ''
   },
   methods: {
     jumpBillDetail (item) {
@@ -198,43 +224,156 @@ export default {
       }
     },
     confirm (flag) {
-      if (this.disabled) return false
+      if (this.disabled) {
+        return false
+      }
       this.disabled = true
       let params = {}
-      switch (this.tempObject.auditType) {
-        case '退货':
-          this.disabled = false
-          this.modalShow = true
-          if (flag === 'cancel') {
-            this.modalInputTitle = '驳回原因'
-            this.modalVal = ''
-          } else {
-            this.modalInputTitle = '退款金额'
-            this.modalVal = this.detailData.totalMoeny
+      if (flag === 'confirm') {
+        switch (this.tempObject.auditType) {
+          case '退货':
+            this.disabled = false
+            this.modalShow = true
+            if (flag === 'cancel') {
+              this.modalInputTitle = '驳回原因'
+              this.modalVal = ''
+            } else {
+              this.modalInputTitle = '退款金额'
+              this.modalVal = this.detailData.totalMoeny
+            }
+            break
+          case '定向':
+            this.disabled = false
+            if (this.tempObject.statusStr === '定向初审') {
+              if (this.detailData.is_talk_price) {
+                this.erpModalShow1 = true
+              } else {
+                let params = {
+                  user_id: this.currentUser.user_id,
+                  deal_no: this.detailData.billNo,
+                  flag: flag === 'cancel' ? '0' : '1'
+                }
+                console.log('入参====>', params)
+                this.confirmAudit(params, this.apiList.xy.dxAudit)
+              }
+            } else if (this.tempObject.statusStr === '定向复审') {
+              if (this.detailData.is_talk_price) {
+                this.erpModalShow2 = true
+              } else {
+                let params = {
+                  user_id: this.currentUser.user_id,
+                  deal_no: this.detailData.billNo,
+                  flag: flag === 'cancel' ? '0' : '1',
+                  pw_reason: this.erpModalVal
+                }
+                console.log('入参====>', params)
+                this.confirmAudit(params, this.apiList.xy.dxAudit)
+              }
+            }
+            break
+          case '延时':
+            if (flag === 'cancel') {
+              params.status = '2'
+            } else {
+              params.status = '1'
+            }
+            params.id = this.tempObject.return_id
+            this.confirmAudit(params, this.apiList.xy.orderDelayAudit)
+            break
+          case 'erp议价':
+            this.disabled = false
+            if (this.tempObject.statusStr === '待初审') {
+              this.erpModalShow1 = true
+            } else if (this.tempObject.statusStr === '待复审') {
+              this.erpModalShow2 = true
+            }
+            break
+          // default:
+          //   console.log('default')
+        }
+      } else if (flag === 'cancel') {
+        if (this.tempObject.statusStr === '待复审') { // erp议价复审驳回
+          let params = {
+            id: this.detailData.billNo,
+            stage: 2, // 1初审 2复审
+            flag: '0',
+            cust_name: this.detailData.custName,
+            employee_name: this.detailData.employeeName,
+            dept_name: this.detailData.deptName,
+            nickname: this.currentUser.nickname
           }
-          break
-        case '定向':
-          params = {
+          console.log('入参====>', params)
+          this.confirmAudit(params, this.apiList.xy.sellerBargainAudit)
+        } else if (this.tempObject.statusStr === '定向复审' || this.tempObject.statusStr === '定向初审') { // 定向订单待初审、待复审驳回
+          let params = {
+            user_id: this.currentUser.user_id,
+            deal_no: this.detailData.billNo,
+            flag: '0'
+          }
+          console.log('入参====>', params)
+          this.confirmAudit(params, this.apiList.xy.dxAudit)
+        } else {
+          this.back()
+        }
+      }
+    },
+    erpModalCb (flag) { // 初审弹框
+      this.erpModalShow1 = false
+      if (flag === 'confirm') {
+        if (this.tempObject.statusStr === '待初审') { // erp议价初审确定
+          let params = {
+            id: this.detailData.billNo,
+            stage: 1, // 1初审 2复审
+            flag: flag === 'cancel' ? '0' : '1',
+            cust_name: this.detailData.custName,
+            employee_name: this.detailData.employeeName,
+            dept_name: this.detailData.deptName,
+            nickname: this.currentUser.nickname
+          }
+          console.log('入参====>', params)
+          this.confirmAudit(params, this.apiList.xy.sellerBargainAudit)
+        } else if (this.tempObject.statusStr === '定向初审') { // 定向订单待初审确定
+          let params = {
+            user_id: this.currentUser.user_id,
             deal_no: this.detailData.billNo,
             flag: flag === 'cancel' ? '0' : '1'
           }
+          console.log('入参====>', params)
           this.confirmAudit(params, this.apiList.xy.dxAudit)
-          break
-        case '延时':
-          if (flag === 'cancel') {
-            params.status = '2'
-          } else {
-            params.status = '1'
+        }
+        this.erpModalShow1 = false
+      }
+    },
+    erpModalCbInput (flag) { // 复审输入弹框
+      if (flag.type === 'confirm') {
+        if (!this.erpModalVal) {
+          this.showMsg('请输入审核通过原因！')
+        } else {
+          if (this.tempObject.statusStr === '待复审') { // erp议价复审确定
+            let params = {
+              id: this.detailData.billNo,
+              stage: 2, // 1初审 2复审
+              flag: flag === 'cancel' ? '0' : '1',
+              reason: this.erpModalVal,
+              cust_name: this.detailData.custName,
+              employee_name: this.detailData.employeeName,
+              dept_name: this.detailData.deptName,
+              nickname: this.currentUser.nickname
+            }
+            console.log('入参====>', params)
+            this.confirmAudit(params, this.apiList.xy.sellerBargainAudit)
+          } else if (this.tempObject.statusStr === '定向复审') { // 定向订单待复审确定
+            let params = {
+              user_id: this.currentUser.user_id,
+              deal_no: this.detailData.billNo,
+              flag: flag === 'cancel' ? '0' : '1',
+              pw_reason: this.erpModalVal
+            }
+            console.log('入参====>', params)
+            this.confirmAudit(params, this.apiList.xy.dxAudit)
           }
-          // const ids = []
-          // this.detailData.list.map(item => {
-          //   ids.push(item.discussid)
-          // })
-          params.id = this.tempObject.return_id
-          this.confirmAudit(params, this.apiList.xy.orderDelayAudit)
-          break
-        // default:
-        //   console.log('default')
+          this.erpModalShow2 = false
+        }
       }
     },
     async confirmAudit (params, api) {
@@ -249,8 +388,10 @@ export default {
             me.back()
             this.disabled = false
           }, 1000)
+          this.erpModalVal = ''
         } else {
           this.disabled = false
+          this.erpModalVal = ''
         }
       } catch (err) {
         this.hideLoading()
@@ -281,6 +422,7 @@ export default {
             url = `${sellerOrderDelayAudit.url}?tstc_no=${this.tempObject.tstc_no}`
             break
           case 'erp议价':
+            this.btnShow = modules.delay_audit
             url = `${this.apiList.xy.sellerBargainAudit.url}?user_id=${this.currentUser.user_id}&id=${this.tempObject.tstc_no}`
             break
           default:
@@ -302,7 +444,8 @@ export default {
                 endTime: data.end_time,
                 status: data.status,
                 operName: data.oper_name,
-                list: data.list
+                list: data.list,
+                is_talk_price: data.is_talk_price
               }
               this.btnShow = (data.status === '待初审' && modules.audit) || (data.status === '待复审' && modules.re_audit)
               break
@@ -330,7 +473,6 @@ export default {
               }
               break
             case 'erp议价':
-              console.log(data.data.sbillBargainingDto)
               this.detailData = {
                 liftStatus: 1,
                 billNo: data.data.sbillBargainingDto.sbillBillcode,
@@ -341,9 +483,11 @@ export default {
                 endTime: data.data.sbillBargainingDto.dataSystemdate,
                 status: data.data.sbillBargainingDto.bargainingAuditStatus,
                 operName: data.data.sbillBargainingDto.operatorName,
-                list: data.data.list
+                list: data.data.list,
+                deptName: data.data.sbillBargainingDto.deptName,
+                employeeName: data.data.sbillBargainingDto.employeeName
               }
-              this.btnShow = (data.data.sbillBargainingDto.bargainingAuditStatus === '未审' && modules.audit) || (data.data.sbillBargainingDto.bargainingAuditStatus === '已审' && modules.re_audit)
+              this.btnShow = (data.data.sbillBargainingDto.bargainingAuditStatus === '待初审' && modules.audit) || (data.data.sbillBargainingDto.bargainingAuditStatus === '待复审' && modules.re_audit)
               break
             default:
               console.log('default')
@@ -376,4 +520,6 @@ export default {
   input
     height 40px
     width 100%
+.delete-style
+  text-decoration line-through
 </style>

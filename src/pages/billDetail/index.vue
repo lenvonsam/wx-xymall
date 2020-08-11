@@ -32,6 +32,10 @@ div
           span.padding-right-sm(v-if="item.tolerance_range") 公差范围 {{item.tolerance_range}}
           span(v-if="item.weight_range") 重量范围 {{item.weight_range}}
         //- .bill-item-line(v-if="idx < (billDetail.order_items.length - 1)") 
+        .solid-top.padding-top-xs.padding-bottom-xs.text-black(v-if="currentUser.type == 'seller' && item.xs_price != item.order_price && item.xs_price != 0")
+          span.text-black 销售定价：
+          span.text-orange ￥{{item.xs_price}}
+          span(v-if="item.order_price").padding-left-xs.text-grey.delete-style 原定价：￥{{item.order_price}}
     template(v-if="billDetail.status_desc !== '待付款'")     
       .bg-white.mt-half-rem
         .text-black.padding-sm.text-bold.solid-bottom 合同基本信息
@@ -221,4 +225,6 @@ export default {
   height 50px
   background-size cover
   background-position center
+.delete-style
+  text-decoration line-through
 </style>

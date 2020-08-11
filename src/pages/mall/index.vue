@@ -645,6 +645,16 @@ export default {
       })
       this.erpModalShow = false
     }
+    // modalCb (flag) {
+    //   this.ironRequest(this.apiList.xy.updateRule.url, {user_id: this.currentUser.user_id}, this.apiList.xy.updateRule.method).then(res => {
+    //     if (res.returncode === '0') {
+    //       console.log('updateRule_res=====>' + JSON.stringify(res))
+    //     }
+    //   }).catch(e => {
+    //     console.log('updateRule_e=====>' + e)
+    //   })
+    //   this.modalShow = false
+    // }
   }
 }
 </script>

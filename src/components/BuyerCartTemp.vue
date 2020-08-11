@@ -504,6 +504,7 @@ export default {
           }
         }).catch(err => {
           self.btnDisable = false
+          this.modalShow = false
           this.hideLoading()
           // me.showMsg(err || '网络异常')
           this.alertText = err || '网络异常'

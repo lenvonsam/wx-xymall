@@ -409,7 +409,6 @@ const wxMixins = {
       }
       weight = one * parseFloat(opt.amount)
       weight = this.$toFixed(weight, 3)
-
       price = weight * parseFloat(opt.price)
       price = this.$toFixed(price, 2)
 

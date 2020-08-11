@@ -352,7 +352,7 @@ export default {
         price: item.order_price,
         amount: item.count,
         goods_id: item.goods_id,
-        juanban: item.juanban
+        juanban: item.max_weight
       }
       const result = this.calc(options)
       const money = Number(this.$toFixed(result.price, 2))

@@ -80,6 +80,7 @@ export default {
     // }
     // 检查userid合法性
     // const currentUser = mpvue.getStorageSync('currentUser')
+
     // 微信登录
     this.wxAuthLogin()
     const me = this
