@@ -226,7 +226,7 @@ export default {
         return false
       }
       if (item.audit_type === 4) {
-        this.jump(`/pages/vendor/reviewDetail/main?auditType=erp议价&statusStr=${item.statusStr}&tstc_no=${item.tstc_no}&return_id=${item.tstc_no}`)
+        this.jump(`/pages/vendor/reviewDetail/main?auditType=erp议价&statusStr=${item.statusStr}&tstc_no=${item.tstc_no}&return_id=${item.tstc_no}&fromPage=reviewHistory`)
         return false
       }
       // item.auditType = this.auditType[item.audit_type]

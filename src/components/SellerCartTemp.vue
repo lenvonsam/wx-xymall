@@ -708,6 +708,8 @@ export default {
     },
     // 卖家方法
     async dx () {
+      this.noticeClientModalShow = false
+      this.showLoading()
       try {
         if (this.btnDisable) return false
         this.btnDisable = true
@@ -749,18 +751,19 @@ export default {
           params,
           this.apiList.xy.dx.method
         )
+        this.hideLoading()
         this.showMsg(data.errormsg)
         this.btnDisable = false
         this.modalShow = false
         this.refresher()
         this.dxFilterArray = []
       } catch (err) {
+        this.hideLoading()
         this.showMsg(err)
         this.modalShow = false
         this.btnDisable = false
         this.dxFilterArray = []
       }
-      this.noticeClientModalShow = false
     },
     generateQuotation () {
       const filterArray = this.carts.filter(itm => {

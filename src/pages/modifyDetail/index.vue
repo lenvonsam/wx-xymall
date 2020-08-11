@@ -354,7 +354,6 @@ export default {
         goods_id: item.goods_id,
         juanban: item.max_weight
       }
-      debugger
       const result = this.calc(options)
       const money = Number(this.$toFixed(result.price, 2))
       // const oldLift = isLift === '1' ? this.$toFixed(Number(item.weight) * lift, 2) : 0
