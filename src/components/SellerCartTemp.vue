@@ -69,7 +69,7 @@
                     .padding-left-xs 元
                     .padding-left-xs.text-black 费用：
                     .col.ml-5.padding-xs.solid.line-gray
-                      z-input(inputType="digit", type="price", maxlength="8", v-model="cart.cost_prices", inputSty="font-weight: bold")
+                      z-input(:textType="inputZero", inputType="digit", type="price", maxlength="8", v-model="cart.cost_prices", inputSty="font-weight: bold")
                       //- input(type="digit", v-model="cart.cost_prices", maxlength="8", @blur="inputFormat(cart, 'cost_prices')")
                     .padding-left-xs 元
                   .row.padding-sm.justify-end.align-end
@@ -154,6 +154,7 @@ import zInput from '@/components/ZInput.vue'
 export default {
   data () {
     return {
+      inputZero: true,
       height: 0,
       customerName: '',
       modalShow: false,
