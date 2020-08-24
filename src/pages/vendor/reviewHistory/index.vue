@@ -58,7 +58,8 @@ export default {
         '1': '定向',
         '2': '延时',
         '3': '退货',
-        '4': 'erp议价'
+        '4': 'ERP议价',
+        '5': 'ERP销售定价'
       },
       statusList: {
         '0': '已拒绝',
@@ -226,7 +227,11 @@ export default {
         return false
       }
       if (item.audit_type === 4) {
-        this.jump(`/pages/vendor/reviewDetail/main?auditType=erp议价&statusStr=${item.statusStr}&tstc_no=${item.tstc_no}&return_id=${item.tstc_no}&fromPage=reviewHistory`)
+        this.jump(`/pages/vendor/reviewDetail/main?auditType=ERP议价&statusStr=${item.statusStr}&tstc_no=${item.tstc_no}&return_id=${item.tstc_no}&fromPage=reviewHistory`)
+        return false
+      }
+      if (item.audit_type === 5) {
+        this.jump(`/pages/vendor/reviewDetail/main?auditType=ERP销售定价&statusStr=${item.statusStr}&tstc_no=${item.tstc_no}&fromPage=reviewHistory&time=${item.audit_time}&partsname_name=${item.tstc_no}&oper_name=${item.emp_name}`)
         return false
       }
       // item.auditType = this.auditType[item.audit_type]

@@ -35,6 +35,10 @@ export default {
     inputSty: {
       type: String,
       default: ''
+    },
+    textType: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -72,7 +76,11 @@ export default {
       switch (type) {
         case 'price':
           if (val === 0) { // 未输入/输入值为0，回写为原值
-            val = this.value
+            if (this.textType && this.getValue === '0') {
+              this.value = 0
+            } else {
+              val = this.value
+            }
           } else {
             val = val < this.minVal ? this.minVal : val
             let newVal = this.numberFormat(val).toString().match(/\d+\.\d{2}/)

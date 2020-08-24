@@ -21,21 +21,30 @@ div
             span.text-red.padding-left-xs {{item.order_end_time}}
       template(v-else)
         .bg-white.card
-          .row.justify-between.padding-bottom-xs
-            .col.text-blue {{detailData.billNo}}
-            .text-red {{tempObject.auditType === '退货' ? '待退款' : detailData.status}}
-          .row.justify-between.padding-bottom-xs
-            .text-gray.col {{detailData.custName}}
-            .text-black ¥ {{detailData.totalMoeny}}
+          div(v-if="tempObject.auditType !== 'ERP销售定价'")
+            .row.justify-between.padding-bottom-xs
+              .col.text-blue {{detailData.billNo}}
+              .text-red {{tempObject.auditType === '退货' ? '待退款' : detailData.status}}
+            .row.justify-between.padding-bottom-xs
+              .text-gray.col {{detailData.custName}}
+              .text-black ¥ {{detailData.totalMoeny}}
+          div(v-else)
+            .row.justify-between.padding-bottom-xs
+              .col.text-black {{tempObject.partsname_name}}
+              .text-red {{tempObject.statusStr}}
           template(v-if="tempObject.auditType === '退货'")
             .text-gray.padding-bottom-xs.row.justify-between
               .col 发票状态：{{detailData.invoiceStatus}}
               span 操作员：{{detailData.operName}}
+          template(v-if="tempObject.auditType === 'ERP销售定价'")
+            .text-gray.padding-bottom-xs.row.justify-between
+              .col {{tempObject.time}}
+              span 操作员：{{tempObject.oper_name}}
           template(v-else)
             .row.justify-between.text-gray.padding-bottom-xs
               .col 共{{detailData.totalAmount}}支，{{detailData.totalWeight}}吨
               span 操作员：{{detailData.operName}}
-          .solid-top.padding-top-xs.padding-bottom-xs.row.justify-between
+          .solid-top.padding-top-xs.padding-bottom-xs.row.justify-between(v-if="tempObject.auditType !== 'ERP销售定价'")
             template(v-if="tempObject.auditType !== '退货'")
               .col
                 span {{tempObject.auditType==='定向' ? '' : '付款'}}截止时间：
@@ -46,7 +55,7 @@ div
               span(v-if="detailData.totalLiftCharge") 吊费：{{detailData.totalLiftCharge}}元
         //- template(v-if="auditType !== '延时'")
         .ft-18.padding-top-sm.padding-bottom-sm 商品信息
-        div( v-if="tempObject.auditType === 'erp议价'")
+        div( v-if="tempObject.auditType === 'ERP议价'")
           .bg-white.card(v-for="(item, index) in dataList", :key="index")
             .row.justify-between.padding-bottom-xs
               .text-black.col {{item.scontractDetailPartsname}} {{item.scontractDetailSpec}}
@@ -69,6 +78,27 @@ div
                 span.padding-left-xs.delete-style.text-grey ￥{{item.oldSaleMakeprice}}
                 span.padding-left-xs 定价差：
                 span.text-red ￥{{item.saleMakepriceCale}}
+        div( v-else-if="tempObject.auditType === 'ERP销售定价'")
+          .bg-white.card(v-for="(item, index) in dataList", :key="index")
+            .row.justify-between.padding-bottom-xs
+              .text-black.col {{item.partsnameName}} {{item.goodsSpec}}
+              .col.text-right.text-grey ¥{{item.goodsInprice}}/¥{{item.goodsInfeeprice}}
+            .text-gray
+              .row.justify-between.padding-bottom-xs
+                .col(style="position: relative;")
+                  span.padding-right-xs {{item.goodsMaterial}}
+                  span.padding-right-xs {{item.goodsProperty1}}米
+                  span.padding-right-xs {{item.warehouseName}}
+                  span.sub-mark.ml-5 {{item.productareaName}}
+                  span.text-grey.right-0 （材料价/费用）
+              .padding-bottom-xs
+                span.padding-right-xs(v-if="item.goodsProperty5") 公差范围 {{item.goodsProperty5}}
+                span(v-if="item.goodsProperty4") 重量范围 {{item.goodsProperty4}}
+              .solid-top.padding-top-xs.padding-bottom-xs.text-black(v-if="item.saleMakepriceCale != 0")
+                span 定价：
+                span.text-blue.text-bold ￥{{item.ajuPricesetMakeprice}}/￥{{item.pricesetMakeprice}}
+                span.padding-left-xs.delete-style.text-grey ￥{{item.ajuPricesetOldmakeprice}}/￥{{item.pricesetOldmakeprice}}
+                span.text-grey.font-24.right-0 （理计/磅计）
         div(v-else)
           .bg-white.card(v-for="(item, idx) in dataList", :key="idx")
             .row.justify-between.padding-bottom-xs
@@ -108,7 +138,7 @@ div
                   span.padding-left-xs 退款金额：{{item.money}}元
   .footer.row.bg-white.text-center.text-white.padding-sm(:style="{height: isIpx ? '188rpx' : '120rpx', 'padding-bottom': isIpx ? '68rpx' : '20rpx'}",
    v-if="btnShow && tempObject.fromPage !== 'reviewHistory'")
-    .col.foot-cancel(@click="confirm('cancel')", v-if="tempObject.statusStr === '待初审'") 取消
+    .col.foot-cancel(@click="confirm('cancel')", v-if="tempObject.statusStr === '待初审' || tempObject.statusStr === '待审核'") 取消
     .col.foot-cancel(@click="confirm('cancel')", v-else) {{tempObject.auditType === '退货' ? '驳回' : '拒绝'}}
     .col.foot-confirm.margin-left-sm(@click="confirm('confirm')") {{tempObject.auditType === '退货' ? '退货' : '通过'}}
   modal-input(v-model="modalShow", :title="modalInputTitle", confirmText="确定", type="customize", :cb="modalHandler")
@@ -280,13 +310,19 @@ export default {
             params.id = this.tempObject.return_id
             this.confirmAudit(params, this.apiList.xy.orderDelayAudit)
             break
-          case 'erp议价':
+          case 'ERP议价':
             this.disabled = false
             if (this.tempObject.statusStr === '待初审') {
               this.erpModalShow1 = true
             } else if (this.tempObject.statusStr === '待复审') {
               this.erpModalShow2 = true
             }
+            break
+          case 'ERP销售定价':
+            this.disabled = false
+            params.user_id = this.currentUser.user_id
+            params.id = this.tempObject.tstc_no
+            this.confirmAudit(params, this.apiList.xy.salePriceAudit)
             break
           // default:
           //   console.log('default')
@@ -421,9 +457,13 @@ export default {
             const sellerOrderDelayAudit = this.apiList.xy.sellerOrderDelayAudit
             url = `${sellerOrderDelayAudit.url}?tstc_no=${this.tempObject.tstc_no}`
             break
-          case 'erp议价':
+          case 'ERP议价':
             this.btnShow = modules.delay_audit
             url = `${this.apiList.xy.sellerBargainAudit.url}?user_id=${this.currentUser.user_id}&id=${this.tempObject.tstc_no}`
+            break
+          case 'ERP销售定价':
+            this.btnShow = modules.delay_audit
+            url = `${this.apiList.xy.salePriceAudit.url}?user_id=${this.currentUser.user_id}&id=${this.tempObject.tstc_no}`
             break
           default:
             console.log('default')
@@ -472,7 +512,7 @@ export default {
                 list: data.data.resultlist
               }
               break
-            case 'erp议价':
+            case 'ERP议价':
               this.detailData = {
                 liftStatus: 1,
                 billNo: data.data.sbillBargainingDto.sbillBillcode,
@@ -488,6 +528,11 @@ export default {
                 employeeName: data.data.sbillBargainingDto.employeeName
               }
               this.btnShow = (data.data.sbillBargainingDto.bargainingAuditStatus === '待初审' && modules.audit) || (data.data.sbillBargainingDto.bargainingAuditStatus === '待复审' && modules.re_audit)
+              break
+            case 'ERP销售定价':
+              this.detailData = {
+                list: data.data
+              }
               break
             default:
               console.log('default')
@@ -522,4 +567,11 @@ export default {
     width 100%
 .delete-style
   text-decoration line-through
+.font-24
+  font-size 24rpx
+.right-0
+  position absolute
+  right 0
+.text-right
+  text-align right
 </style>

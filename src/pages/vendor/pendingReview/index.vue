@@ -23,9 +23,10 @@ div
             .bg-white.box
               .padding-sm
                 .flex.justify-between.padding-bottom-sm
-                  .col
+                  .col(style="width: 80%;")
                     .flex.align-center
-                      .ft-16.padding-right-sm {{auditType[item.audit_type]}} - {{item.tstc_no}}
+                      .ft-16.pr-40.white-nowrap(v-if="item.audit_type === 5") {{auditType[item.audit_type]}} - {{item.partsname_name}}
+                      .ft-16.padding-right-sm(v-else) {{auditType[item.audit_type]}} - {{item.tstc_no}}
                   //- .text-red {{item.audit_type === 3 ? '待退款' : statusList[item.status] && item.audit_type === 1 ? statusList[item.status] : '待审核'}}
                   .text-red(v-if="item.audit_type === 3") 待退款
                   .text-red(v-else-if="item.audit_type === 1 || item.audit_type === 4") {{statusList[item.status]}}
@@ -59,7 +60,8 @@ export default {
         '1': '定向',
         '2': '延时',
         '3': '退货',
-        '4': 'erp议价'
+        '4': 'ERP议价',
+        '5': 'ERP销售定价'
       },
       statusList: {
         '5': '定向初审',
@@ -204,7 +206,11 @@ export default {
       item.statusStr = this.statusList[item.status] || '待审核'
       // this.configVal({ key: 'tempObject', val: item })
       if (item.auditType) {
-        this.jump(`/pages/vendor/reviewDetail/main?auditType=${item.auditType}&statusStr=${item.statusStr}&tstc_no=${item.tstc_no}&return_id=${item.return_id}`)
+        if (item.auditType === 'ERP销售定价') {
+          this.jump(`/pages/vendor/reviewDetail/main?auditType=${item.auditType}&statusStr=${'待审核'}&tstc_no=${item.tstc_no}&return_id=${item.return_id}&time=${item.time_}&partsname_name=${item.partsname_name}&oper_name=${item.oper_name}`)
+        } else {
+          this.jump(`/pages/vendor/reviewDetail/main?auditType=${item.auditType}&statusStr=${item.statusStr}&tstc_no=${item.tstc_no}&return_id=${item.return_id}`)
+        }
       }
     }
   }
@@ -254,4 +260,10 @@ export default {
 .dingjin-icon
   width 35px
   height 20px
+.pr-40
+  padding-right 40rpx
+.white-nowrap
+  overflow hidden
+  text-overflow ellipsis
+  white-space nowrap
 </style>
