@@ -183,14 +183,14 @@ export default {
                 const resData = res.list
                 self.rowCountObj.waitAudit = 0
                 const modules = {}
-                const auditName = ['audit', 're_audit', 'return_audit', 'delay_audit']
+                // const auditName = ['audit', 're_audit', 'return_audit', 'delay_audit']
                 resData.map(item => {
                   modules[item.memu_name] = item.flag
                   if (item.flag) {
                     self.rowCountObj[item.memu_name] = item.count
-                    if (auditName.indexOf(item.memu_name) !== -1) {
-                      self.rowCountObj.waitAudit += Number(item.count)
-                    }
+                    // if (auditName.indexOf(item.memu_name) !== -1) {
+                    self.rowCountObj.waitAudit += Number(item.count)
+                    // }
                   }
                 })
                 self.featuresModules = self.featuresIcons.filter(item => {
