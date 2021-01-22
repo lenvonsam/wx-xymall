@@ -54,7 +54,8 @@ export default {
       if (this.canGetCode) {
         this.canGetCode = false
         const me = this
-        this.ironRequest(this.apiList.xy.captcha.url + '?user_phone=' + this.phone + (this.codeType === -1 ? '' : '&type=' + this.codeType), {}, this.apiList.xy.captcha.method).then((resp) => {
+        this.httpGet(me.apiList.zf.getSmsVerifyCode + '?phone=' + me.phone + '&type=' + me.codeType, {}).then((resp) => {
+        // this.ironRequest(this.apiList.xy.captcha.url + '?user_phone=' + this.phone + (this.codeType === -1 ? '' : '&type=' + this.codeType), {}, this.apiList.xy.captcha.method).then((resp) => {
           me.timeDown()
           if (me.cb) me.cb(resp)
         }).catch((e) => {

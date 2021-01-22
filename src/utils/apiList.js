@@ -174,5 +174,19 @@ export default {
 
     // 手机信息
     phoneInfo: { url: 'wechat/miniAuth/phone', method: 'post' }
+  },
+  zf: {
+    // 获取图片验证码
+    getVerifyCode: 'base/online/getVerifyCode',
+    // 账号密码登录 手机短信登录
+    login: 'base/online/login',
+    // 获取短信验证码
+    getSmsVerifyCode: 'base/online/sms',
+    // 用户注册
+    userRegister: 'base/online/userRegister',
+    // 找回密码
+    resetPassword: 'base/online/resetPassword',
+    // 获取商城列表
+    shopMallList: 'xingyun/shopMall/queryPage'
   }
 }

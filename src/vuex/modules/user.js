@@ -15,6 +15,7 @@ export default {
   state: {
     currentUser: {},
     isLogin: false,
+    token: '',
     protocol: [
       {
         content:
@@ -78,12 +79,13 @@ export default {
     ]
   },
   mutations: {
-    SETUSER (state, usr) {
+    SETUSER (state, data) {
       try {
-        mpvue.setStorageSync('currentUser', usr)
-        mpvue.setStorageSync('loginTime', usr.server_time)
-        state.currentUser = usr
+        mpvue.setStorageSync('currentUser', data.user)
+        // mpvue.setStorageSync('loginTime', usr.server_time)
+        state.currentUser = data.user
         state.isLogin = true
+        state.token = data.token
       } catch (e) {
         console.error('setuser:>>', e)
         state.currentUser = {}

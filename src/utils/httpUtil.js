@@ -1,7 +1,8 @@
 import UTF8 from 'utf8'
 import BASE64 from 'base-64'
-// const BASICURL = 'https://mobileapp.xingyun361.com/quasarserverdev' // 测试环境地址
-const BASICURL = 'https://mobileapp.xingyun361.com/quasarserverstage' // 预上线环境地址
+const zfBASICURL = 'http://47.103.130.166:8008/api/' // zf测试环境地址
+const BASICURL = 'https://mobileapp.xingyun361.com/quasarserverdev' // 测试环境地址
+// const BASICURL = 'https://mobileapp.xingyun361.com/quasarserverstage' // 预上线环境地址
 // const BASICURL = 'https://mobileapp.xingyun361.com/quasarserver'
 // const BASICURL = 'https://47.97.195.16/quasarserver'
 // const BASICURL = 'http://localhost:8077'
@@ -155,8 +156,101 @@ function ironRequest (reqUrl, param, type) {
     mpvue.request(body)
   })
 }
+function httpGet (url, params) {
+  url = zfBASICURL + url
+  let header = {
+    'PlatformId': 'ZF',
+    'Authorization': this.token
+  }
+  return new Promise((resolve, reject) => {
+    mpvue.request({
+      url: url,
+      data: params,
+      header: header,
+      method: 'GET',
+      success (res) {
+        if (res.code === 'TK01' || res.code === 'TK02' || res.code === 'TK03' || res.code === 'TK04' || res.code === 'TC001') {
+          this.confirm({ content: '登录已失效，请重新登录' }).then((r) => {
+            if (r === 'confirm') {
+              this.jump('/pages/account/login')
+            }
+          })
+        } else {
+          resolve(res.data)
+        }
+      },
+      fial (error) {
+        reject(error)
+      }
+    })
+  })
+}
+
+function httpPost (url, params) {
+  url = zfBASICURL + url
+  let header = {
+    'PlatformId': 'ZF',
+    'Authorization': this.token
+  }
+  return new Promise((resolve, reject) => {
+    mpvue.request({
+      url: url,
+      data: params,
+      header: header,
+      method: 'POST',
+      success (res) {
+        if (res.code === 'TK01' || res.code === 'TK02' || res.code === 'TK03' || res.code === 'TK04' || res.code === 'TC001') {
+          this.confirm({ content: '登录已失效，请重新登录' }).then((r) => {
+            if (r === 'confirm') {
+              this.jump('/pages/account/login')
+            }
+          })
+        } else {
+          resolve(res.data)
+        }
+      },
+      fial (error) {
+        reject(error)
+      }
+    })
+  })
+}
+
+function httpPostForm (url, params) {
+  url = zfBASICURL + url
+  let header = {
+    'Content-Type': 'multipart/form-data',
+    'PlatformId': 'ZF',
+    'Authorization': this.token
+  }
+  return new Promise((resolve, reject) => {
+    mpvue.request({
+      url: url,
+      data: params,
+      header: header,
+      method: 'POST',
+      success (res) {
+        if (res.code === 'TK01' || res.code === 'TK02' || res.code === 'TK03' || res.code === 'TK04' || res.code === 'TC001') {
+          this.confirm({ content: '登录已失效，请重新登录' }).then((r) => {
+            if (r === 'confirm') {
+              this.jump('/pages/account/login')
+            }
+          })
+        } else {
+          resolve(res.data)
+        }
+      },
+      fial (error) {
+        reject(error)
+      }
+    })
+  })
+}
 
 export default {
+  httpGet,
+  httpPost,
+  httpPostForm,
   proxy: {
     // 开发
     // erp: 'http://192.168.80.147:8980/eep/interfacesAjax!',
@@ -177,9 +271,9 @@ export default {
     // prod
     // dr: 'http://appadmin.xingyun361.com/driver-bk/api/',
     // dev
-    // crm: 'http://crm-admin-test.xingyun361.com/crmserver/api/v1/wxmini/', // 测试环境地址
+    crm: 'http://crm-admin-test.xingyun361.com/crmserver/api/v1/wxmini/', // 测试环境地址
     // stage
-    crm: 'http://crm-admin-pro.xingyun361.com/crmserver/api/v1/wxmini/', // 预上线环境地址
+    // crm: 'http://crm-admin-pro.xingyun361.com/crmserver/api/v1/wxmini/', // 预上线环境地址
     // prod
     // crm: 'http://crmadmin.xingyun361.com/api/v1/wxmini/'
     // dev

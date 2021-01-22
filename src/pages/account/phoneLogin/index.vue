@@ -14,9 +14,9 @@
       .col
         input.no-border.ft-16(placeholder="请输入验证码", type="number", v-model="code")
       .flex-90.text-center(style="border-left: 1rpx solid #888", v-show="pageType == 'smsLogin'")
-        auth-btn(:phone="phone", :codeType="7", v-if="pageType == 'smsLogin' && codeBtnShow")
+        auth-btn(:phone="phone", :codeType="3", v-if="pageType == 'smsLogin' && codeBtnShow", :timeCount="90")
       .flex-90.text-center(style="border-left: 1rpx solid #888", v-show="pageType == 'forgetPwd'")
-        auth-btn(:phone="phone", :codeType="2", v-if="pageType == 'forgetPwd' && codeBtnShow")
+        auth-btn(:phone="phone", :codeType="1", v-if="pageType == 'forgetPwd' && codeBtnShow")
     .row.padding-tb-sm.margin-top-xl.border-bottom-line(v-if="pageType === 'forgetPwd'")
       .flex-30
         icon.ft-18.adjust.cuIcon-lock.text-gray
@@ -68,6 +68,9 @@ export default {
     }
     this.pageType === 'smsLogin' ? this.pageTitle = '手机登录' : this.pageTitle = '找回密码'
     console.log('pageType:>>', this.pageType)
+    this.httpGet(this.apiList.zf.getVerifyCode).then((res) => {
+      this.randomKey = res.data.randomKey
+    })
   },
   onUnload () {
     this.codeBtnShow = false
@@ -128,22 +131,28 @@ export default {
           this.showMsg('请输入6-12位密码，只能是数字、字母和下划线')
           return
         }
-        const params = {}
+        let params = {}
+        let url = ''
         if (this.pageType === 'forgetPwd') {
-          params.user_pwd = this.base64Str(this.pwd)
-          params.user_phone = this.phone
-          params.msg_code = this.code
-        } else {
+          url = this.apiList.zf.resetPassword
           params.phone = this.phone
-          params.valid_code = this.code
+          params.verifyCode = this.code
+          params.password = this.pwd
+          params.confirmPassword = this.pwd
+        } else {
+          url = this.apiList.zf.login
+          params.randomKey = this.randomKey
+          params.phone = this.phone
+          params.verifyCode = this.code
         }
         if (this.canClick) {
           this.canClick = false
-          // 18015816879
-          // TODO 接口正在修改
-          const data = await this.ironRequest(this.apiList.xy[this.pageType].url, params, this.apiList.xy[this.pageType].method)
+
+          const data = await this.httpPost(url, params)
+          debugger
+          // data.data.user
           const me = this
-          console.log('phoneLogin.vue=====>', JSON.stringify(data))
+          // console.log('phoneLogin.vue=====>', JSON.stringify(data.data.user))
           if (me.pageType === 'smsLogin') {
             me.showMsg('登录成功')
             me.statisticRequest({ event: 'click_app_login' })
@@ -151,7 +160,7 @@ export default {
           setTimeout(function () {
             if (me.pageType === 'smsLogin') {
               me.resetVal()
-              me.setUser(data)
+              me.setUser(data.data)
               me.configVal({ key: 'oldVersion', val: me.currentVersion })
               me.getRemoteSearchHistory(data)
               if (data.isnew) {

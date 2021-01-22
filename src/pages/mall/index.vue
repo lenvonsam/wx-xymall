@@ -417,6 +417,7 @@ export default {
       list.map(item => {
         item.data = []
       })
+      debugger
       this.goodsNameList = list
       this.btnDisable = false
       // this.refresher()
@@ -450,6 +451,7 @@ export default {
         this.refresher()
       }
     },
+    // 切换商城排版格式
     selectMall (flag) {
       console.log(flag)
       this.mallFlag = flag
@@ -539,81 +541,89 @@ export default {
         const me = this
         this.queryObject.current_page = this.currentPage
         this.queryObject.page_size = this.pageSize
-        const data = await this.ironRequest(
-          this.apiList.xy.mallList.url,
-          this.queryObject,
-          this.apiList.xy.mallList.method
-        )
-        const res = data
-        const resData = data.products
-        // const userType = this.currentUser.type
-        if (res.returncode === '0') {
-          const idx = this.swiperCount
-          resData.map(item => {
-            const weightMark = []
-            const price = []
-
-            if (Number(item.lj_price) > 0) {
-              item.wayId = 2
-              weightMark.push('理计')
-              price.push(item.lj_price)
-            }
-            if (Number(item.bj_price) > 0) {
-              weightMark.push('磅计')
-              item.wayId = 1
-              price.push(item.bj_price)
-            }
-            if (Number(item.lj_price16) > 0) {
-              price.push(item.lj_price16)
-              item.wayId = 3
-              weightMark.push('理计')
-              // weightMark.push(userType === 'seller' ? '16理计' : '理计')
-            }
-            // if (Number(item.lj_price10) > 0 && userType === 'seller') {
-            //   // item.wayId = 4
-            //   price.push(item.lj_price10)
-            //   weightMark.push('10理计')
-            // }
-            if (price.length === 0) {
-              price.push('--')
-              item.wayId = 2
-              weightMark.push('理计')
-            }
-            item.weightMark = weightMark.toString().replace(/,/g, '/')
-            item.price = price.toString().replace(/,/g, '/')
-          })
-          if (me.isRefresh === 'refresh') {
-            if (resData.length > 0 && me.currentPage === 0) {
-              me.goodsNameList[idx].data = resData
-              me.isload = false
-              if (me.goodsNameList[idx].data.length < 10) me.loadFinish = 2
-            } else if (resData.length === 0 && me.currentPage === 0) {
-              me.goodsNameList[idx].data = []
-              me.isload = false
-            }
-          } else {
-            if (resData.length > 0) {
-              me.goodsNameList[idx].data.push(...resData)
-              if (resData.length < 10) me.loadFinish = 2
-            } else {
-              me.currentPage--
-              if (me.currentPage > 0 && me.goodsNameList[idx].data.length > 10) me.loadFinish = 2
-            }
-          }
-          me.$forceUpdate()
-          // me.hideLoading()
-          if (me.prevIdx !== null && me.prevIdx !== -1) {
-            me.goodsNameList[me.prevIdx].data = []
-            me.prevIdx = null
-          }
-          if (me.goodsNameList[idx].data.length < 10) me.loadFinish = 3
-          // me.goodsNameList.mp((item, index) => {
-          //   if (Math.abs(index - idx) > 1) {
-          //     item.data = []
-          //   }
-          // })
-          // this.isload = true
+        // const data = await this.ironRequest(
+        //   this.apiList.xy.mallList.url,
+        //   this.queryObject,
+        //   this.apiList.xy.mallList.method
+        // )
+        let paramsObj = {
+          pageNum: 1,
+          pageSize: 20
         }
+        const data = await this.httpPost(this.apiList.zf.shopMallList, paramsObj)
+        const res = data
+        // const resData = data.products
+        const resData = res.data.stocks
+        // const userType = this.currentUser.type
+        // if (res.returncode === '0') {
+        debugger
+        const idx = this.swiperCount
+        resData.map(item => {
+          const weightMark = []
+          const price = []
+
+          if (Number(item.lj_price) > 0) {
+            item.wayId = 2
+            weightMark.push('理计')
+            price.push(item.lj_price)
+          }
+          if (Number(item.bj_price) > 0) {
+            weightMark.push('磅计')
+            item.wayId = 1
+            price.push(item.bj_price)
+          }
+          if (Number(item.lj_price16) > 0) {
+            price.push(item.lj_price16)
+            item.wayId = 3
+            weightMark.push('理计')
+            // weightMark.push(userType === 'seller' ? '16理计' : '理计')
+          }
+          // if (Number(item.lj_price10) > 0 && userType === 'seller') {
+          //   // item.wayId = 4
+          //   price.push(item.lj_price10)
+          //   weightMark.push('10理计')
+          // }
+          if (price.length === 0) {
+            price.push('--')
+            item.wayId = 2
+            weightMark.push('理计')
+          }
+          item.weightMark = weightMark.toString().replace(/,/g, '/')
+          item.price = price.toString().replace(/,/g, '/')
+        })
+        if (me.isRefresh === 'refresh') {
+          debugger
+          if (resData.length > 0 && me.currentPage === 0) {
+            me.goodsNameList[idx].data = resData
+            me.isload = false
+            if (me.goodsNameList[idx].data.length < 10) me.loadFinish = 2
+          } else if (resData.length === 0 && me.currentPage === 0) {
+            me.goodsNameList[idx].data = []
+            me.isload = false
+          }
+        } else {
+          if (resData.length > 0) {
+            me.goodsNameList[idx].data.push(...resData)
+            if (resData.length < 10) me.loadFinish = 2
+          } else {
+            me.currentPage--
+            if (me.currentPage > 0 && me.goodsNameList[idx].data.length > 10) me.loadFinish = 2
+          }
+        }
+        me.$forceUpdate()
+        // me.hideLoading()
+        if (me.prevIdx !== null && me.prevIdx !== -1) {
+          me.goodsNameList[me.prevIdx].data = []
+          me.prevIdx = null
+        }
+        if (me.goodsNameList[idx].data.length < 10) me.loadFinish = 3
+        // me.goodsNameList.mp((item, index) => {
+        //   if (Math.abs(index - idx) > 1) {
+        //     item.data = []
+        //   }
+        // })
+        // this.isload = true
+        // }
         console.log('loadfinish:>>', this.loadFinish)
         if (this.swiperFirst === 1) {
           this.configVal({ key: 'tempObject', val: '' })

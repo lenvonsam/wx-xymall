@@ -15,8 +15,8 @@ const wxMixins = {
       appKey: 'XingYunMallMini',
       imgProxy: 'http://xymobile.xingyun361.com/',
       // 型云图片访问地址
-      // imgOuterUrl: 'http://web-test.xingyun361.com', // 测试环境图片地址
-      imgOuterUrl: 'http://xyweb-pro.xingyun361.com', // 预上线环境图片地址
+      imgOuterUrl: 'http://web-test.xingyun361.com', // 测试环境图片地址
+      // imgOuterUrl: 'http://xyweb-pro.xingyun361.com', // 预上线环境图片地址
       // imgOuterUrl: 'https://www.xingyun361.com',
       phoneReg: /^1[3-9]\d{9}$/,
       // 6-12为字母数字下划线
@@ -35,10 +35,14 @@ const wxMixins = {
       screenHeight: state => state.screenHeight,
       currentUser: state => state.user.currentUser,
       isLogin: state => state.user.isLogin,
+      token: state => state.user.token,
       customBar: state => state.customBar
     })
   },
   methods: {
+    httpGet: httpUtil.httpGet,
+    httpPost: httpUtil.httpPost,
+    httpPostForm: httpUtil.httpPostForm,
     statisticRequest: httpUtil.statisticRequest,
     ironRequest: httpUtil.ironRequest,
     request: httpUtil.request,

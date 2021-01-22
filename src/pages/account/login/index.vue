@@ -57,6 +57,10 @@ export default {
     mpvue.setStorageSync('lastExperienceDay', '')
     mpvue.setStorageSync('overdueReminder', '')
     mpvue.setStorageSync('isAuditingReminder', '')
+
+    this.httpGet(this.apiList.zf.getVerifyCode).then((res) => {
+      this.randomKey = res.data.randomKey
+    })
   },
   onLoad (options) {
     if (options.back) this.wxBack = Number(options.back)
@@ -95,12 +99,19 @@ export default {
         if (this.canClick) {
           this.canClick = false
           const encrptPwd = this.base64Str(this.upwd.trim())
-          const data = await this.ironRequest(this.apiList.xy.login.url, { user_mark: this.uname.trim(), user_pwd: encrptPwd }, this.apiList.xy.login.method)
+
+          const paramsObj = {
+            randomKey: this.randomKey,
+            username: this.uname.trim(),
+            password: this.upwd
+          }
+          const data = await this.httpPost(this.apiList.zf.login, paramsObj)
           console.log('user login', data)
+          debugger
           data.pwd = encrptPwd
           this.setUser(data)
           this.configVal({ key: 'oldVersion', val: this.currentVersion })
-          this.getRemoteSearchHistory(data)
+          // this.getRemoteSearchHistory(data)
           data.type === 'seller' ? this.statisticRequest({ event: 'click_app_login_seller' }, true) : this.statisticRequest({ event: 'click_app_login' })
           if (data.isnew) {
             this.canClick = true
