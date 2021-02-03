@@ -86,26 +86,44 @@ export default {
     const me = this
     me.autoUser()
     if (me.isLogin) {
-      me.getQueryProfile()
+      // me.getQueryProfile()
       me.showLoading()
-      const uid = me.currentUser.user_id
-      console.log('App.vue_uid=====>', uid)
-      this.ironRequest(`${this.apiList.xy.checkUUID.url}?user_id=${uid}`, {}, this.apiList.xy.checkUUID.method).then(resp => {
-        console.log('checkUUID未失效')
+      // const uid = me.currentUser.user_id
+      // console.log('App.vue_uid=====>', uid)
+      me.httpPost(me.apiList.zf.getPersonInfo, {}).then(res => {
+        me.setUser({token: me.token, user: res.data})
+        if (res.data.status === 1) {
+          me.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
+            if (res === 'confirm') {
+              me.jump('/pages/account/companyUpdate/main')
+            }
+          })
+        }
+      }).finally(() => {
         me.hideLoading()
-        // 自动登录
-      }).catch((e) => {
-        me.hideLoading()
-        console.log('App.vue_已失效currentUser_catch========>' + JSON.stringify(e))
+      }).catch(e => {
         me.showMsg('登录已失效，请重新登录')
-        const localSearch = me.currentUser.localSearchs
-        me.ironRequest(me.apiList.xy.searchHistory.url, { user_id: me.currentUser.user_id, history: localSearch }, me.apiList.xy.searchHistory.method, me)
-        me.ironRequest(`${me.apiList.xy.loginOut.url}?user_id=${me.currentUser.user_id}`, {}, me.apiList.xy.loginOut.method)
         setTimeout(() => {
           me.exitUser()
           me.jump('/pages/account/login/main')
         }, 500)
       })
+      // this.ironRequest(`${this.apiList.xy.checkUUID.url}?user_id=${uid}`, {}, this.apiList.xy.checkUUID.method).then(resp => {
+      //   console.log('checkUUID未失效')
+      //   me.hideLoading()
+      //   // 自动登录：token是否失效
+      // }).catch((e) => {
+      //   me.hideLoading()
+      //   console.log('App.vue_已失效currentUser_catch========>' + JSON.stringify(e))
+      //   me.showMsg('登录已失效，请重新登录')
+      //   const localSearch = me.currentUser.localSearchs
+      //   me.ironRequest(me.apiList.xy.searchHistory.url, { user_id: me.currentUser.user_id, history: localSearch }, me.apiList.xy.searchHistory.method, me)
+      //   me.ironRequest(`${me.apiList.xy.loginOut.url}?user_id=${me.currentUser.user_id}`, {}, me.apiList.xy.loginOut.method)
+      //   setTimeout(() => {
+      //     me.exitUser()
+      //     me.jump('/pages/account/login/main')
+      //   }, 500)
+      // })
       // if (me.currentUser.type === 'buyer') { // 判断用户type,buyer不需要调接口判断checkUUID失效与否
       //   console.log('App.vue_me.currentUser.type========>' + me.currentUser.type)
       //   me.hideLoading()
@@ -129,6 +147,7 @@ export default {
       // }
     } else {
       console.log('未登录me.isLogin======>' + me.isLogin)
+      me.showMsg('登录已失效，请重新登录')
     }
 
     // 设置自定义customer bar

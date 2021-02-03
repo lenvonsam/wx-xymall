@@ -179,14 +179,24 @@ export default {
     // 获取图片验证码
     getVerifyCode: 'base/online/getVerifyCode',
     // 账号密码登录 手机短信登录
-    login: 'base/online/login',
+    login: 'base/online/appletLogin',
     // 获取短信验证码
     getSmsVerifyCode: 'base/online/sms',
     // 用户注册
-    userRegister: 'base/online/userRegister',
+    userRegister: 'base/online/appletRegister',
+    // 微信绑定
+    wxBind: 'base/online/appletBinding',
+    // 微信登录
+    wxLogin: 'base/online/wxLogin',
     // 找回密码
     resetPassword: 'base/online/resetPassword',
     // 获取商城列表
-    shopMallList: 'xingyun/shopMall/queryPage'
+    shopMallList: 'xingyun/shopMall/queryPage',
+    // 基础管理-个人资料管理-获取个人资料
+    getPersonInfo: 'xingyun/base/getPersonInfo',
+    // 用户中心数据
+    queryUserCenterContractInfo: 'xingyun/contract/queryUserCenterContractInfo',
+    // 合同列表
+    contractList: 'xingyun/contract/queryContractPage'
   }
 }

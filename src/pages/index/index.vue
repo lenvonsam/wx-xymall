@@ -133,22 +133,22 @@ export default {
     // this.getTrends()
     this.loadNotice()
     if (this.isLogin) {
-      this.setCartCount(this.currentUser.user_id)
+      // this.setCartCount(this.currentUser.user_id)
       console.log('index_state.currentUser======>' + JSON.stringify(this.currentUser))
-      this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(res => {
-        if (res.returncode === '0') {
-          console.log('index.vue_接口返回_rule=====>' + res.rule)
-          if (this.currentUser.type === 'buyer' && res.rule === 0) {
-            this.modalShow = true
-          }
-        }
-      })
-      this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(data => {
-        console.log('index.vue_queryProfile_data=====>', JSON.stringify(data))
-      }).catch(e => {
-        console.log('index.vue_queryProfile_catch=====>', JSON.stringify(e))
-        this.showMsg(e)
-      })
+      // this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(res => {
+      //   if (res.returncode === '0') {
+      //     console.log('index.vue_接口返回_rule=====>' + res.rule)
+      //     if (this.currentUser.type === 'buyer' && res.rule === 0) {
+      //       this.modalShow = true
+      //     }
+      //   }
+      // })
+      // this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(data => {
+      //   console.log('index.vue_queryProfile_data=====>', JSON.stringify(data))
+      // }).catch(e => {
+      //   console.log('index.vue_queryProfile_catch=====>', JSON.stringify(e))
+      //   this.showMsg(e)
+      // })
     } else {
       this.tabDot(0)
     }

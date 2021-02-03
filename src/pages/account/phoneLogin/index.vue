@@ -14,7 +14,7 @@
       .col
         input.no-border.ft-16(placeholder="请输入验证码", type="number", v-model="code")
       .flex-90.text-center(style="border-left: 1rpx solid #888", v-show="pageType == 'smsLogin'")
-        auth-btn(:phone="phone", :codeType="3", v-if="pageType == 'smsLogin' && codeBtnShow", :timeCount="90")
+        auth-btn(:phone="phone", :codeType="2", v-if="pageType == 'smsLogin' && codeBtnShow", :timeCount="90")
       .flex-90.text-center(style="border-left: 1rpx solid #888", v-show="pageType == 'forgetPwd'")
         auth-btn(:phone="phone", :codeType="1", v-if="pageType == 'forgetPwd' && codeBtnShow")
     .row.padding-tb-sm.margin-top-xl.border-bottom-line(v-if="pageType === 'forgetPwd'")
@@ -50,7 +50,8 @@ export default {
   computed: {
     ...mapState({
       currentVersion: state => state.currentVersion,
-      tempObject: state => state.tempObject
+      tempObject: state => state.tempObject,
+      token: state => state.user.token
     })
   },
   components: {
@@ -68,9 +69,6 @@ export default {
     }
     this.pageType === 'smsLogin' ? this.pageTitle = '手机登录' : this.pageTitle = '找回密码'
     console.log('pageType:>>', this.pageType)
-    this.httpGet(this.apiList.zf.getVerifyCode).then((res) => {
-      this.randomKey = res.data.randomKey
-    })
   },
   onUnload () {
     this.codeBtnShow = false
@@ -87,15 +85,15 @@ export default {
       'configVal'
     ]),
     jumpBack () {
-      this.statisticRequest({ event: 'click_app_login_pwd' })
+      // this.statisticRequest({ event: 'click_app_login_pwd' })
       this.back()
     },
     jumpReg () {
-      this.statisticRequest({ event: 'click_app_register' })
+      // this.statisticRequest({ event: 'click_app_register' })
       this.jump('/pages/account/register/main')
     },
     jumpToChildPwd () {
-      this.statisticRequest({ event: 'click_app_forgetpwd' })
+      // this.statisticRequest({ event: 'click_app_forgetpwd' })
       this.configVal({ key: 'tempObject', val: { action: 'pageForward' } })
       this.jump('/pages/account/phoneLogin/main?type=forgetPwd')
     },
@@ -141,48 +139,48 @@ export default {
           params.confirmPassword = this.pwd
         } else {
           url = this.apiList.zf.login
-          params.randomKey = this.randomKey
+          params.loginType = '01'
           params.phone = this.phone
           params.verifyCode = this.code
         }
         if (this.canClick) {
           this.canClick = false
-
           const data = await this.httpPost(url, params)
           debugger
-          // data.data.user
-          const me = this
-          // console.log('phoneLogin.vue=====>', JSON.stringify(data.data.user))
-          if (me.pageType === 'smsLogin') {
-            me.showMsg('登录成功')
-            me.statisticRequest({ event: 'click_app_login' })
+          this.setUser(data.data)
+          const self = this
+          if (self.pageType === 'smsLogin') {
+            self.showMsg('登录成功')
+            // self.statisticRequest({ event: 'click_app_login' })
           }
           setTimeout(function () {
-            if (me.pageType === 'smsLogin') {
-              me.resetVal()
-              me.setUser(data.data)
-              me.configVal({ key: 'oldVersion', val: me.currentVersion })
-              me.getRemoteSearchHistory(data)
-              if (data.isnew) {
-                me.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
-                  if (res === 'confirm') {
-                    me.jump('/pages/account/companyUpdate/main')
-                  } else {
-                    me.tab('/pages/index/main')
-                  }
-                })
-              } else {
-                me.tab('/pages/index/main')
-              }
+            if (self.pageType === 'smsLogin') {
+              self.resetVal()
+              self.httpPost(self.apiList.zf.getPersonInfo, {}).then(res => {
+                self.setUser({token: self.token, user: res.data})
+                if (res.data.status === 1) {
+                  self.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
+                    if (res === 'confirm') {
+                      self.jump('/pages/account/companyUpdate/main')
+                    } else {
+                      self.tab('/pages/self/main')
+                    }
+                  })
+                } else {
+                  self.tab('/pages/self/main')
+                }
+              })
+              self.configVal({ key: 'oldVersion', val: self.currentVersion })
+              // self.getRemoteSearchHistory(data)
             } else {
-              me.confirm({ title: '友情提示', content: '登录密码修改成功，请重新登录' }).then(res => {
+              self.confirm({ title: '友情提示', content: '登录密码修改成功，请重新登录' }).then(res => {
                 if (res === 'confirm') {
-                  me.resetVal()
-                  if (me.tempObject.action && me.tempObject.action === 'pageForward') {
-                    me.configVal({ key: 'tempObject', val: {} })
-                    me.back(2)
+                  self.resetVal()
+                  if (self.tempObject.action && self.tempObject.action === 'pageForward') {
+                    self.configVal({ key: 'tempObject', val: {} })
+                    self.back(2)
                   } else {
-                    me.back()
+                    self.back()
                   }
                 }
               })

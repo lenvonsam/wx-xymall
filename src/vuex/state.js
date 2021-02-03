@@ -105,7 +105,7 @@ export default {
   billIcons: [
     {
       icon: '/static/images/dfk.png',
-      dotKey: 'topay',
+      dotKey: 'totalPaymentAmount',
       name: '待付款',
       url: {
         path: '/pages/bill/main?tabName=1'
@@ -114,7 +114,7 @@ export default {
     {
       icon: '/static/images/submit_orders_icon.png',
       name: '待确认',
-      dotKey: 'to_confirm_lad',
+      dotKey: 'ladingConfirmNumber',
       url: {
         path: '/pages/ladbillConfirm/main'
       }
@@ -122,7 +122,7 @@ export default {
     {
       icon: '/static/images/wait_pick_icon.png',
       name: '待提货',
-      dotKey: 'to_delivery',
+      dotKey: 'updateNumber',
       url: {
         path: '/pages/bill/main?tabName=6'
       }
@@ -130,7 +130,7 @@ export default {
     {
       icon: '/static/images/billing_Infor.png',
       name: '待开票',
-      dotKey: 'toinvoice',
+      dotKey: 'notInvoicedNum',
       url: {
         path: '/pages/invoice/main?tabName=0'
       }

@@ -57,10 +57,6 @@ export default {
     mpvue.setStorageSync('lastExperienceDay', '')
     mpvue.setStorageSync('overdueReminder', '')
     mpvue.setStorageSync('isAuditingReminder', '')
-
-    this.httpGet(this.apiList.zf.getVerifyCode).then((res) => {
-      this.randomKey = res.data.randomKey
-    })
   },
   onLoad (options) {
     if (options.back) this.wxBack = Number(options.back)
@@ -98,43 +94,65 @@ export default {
         }
         if (this.canClick) {
           this.canClick = false
-          const encrptPwd = this.base64Str(this.upwd.trim())
+          // const encrptPwd = this.base64Str(this.upwd.trim())
 
           const paramsObj = {
-            randomKey: this.randomKey,
-            username: this.uname.trim(),
+            loginType: '02',
+            userName: this.uname.trim(),
             password: this.upwd
           }
           const data = await this.httpPost(this.apiList.zf.login, paramsObj)
-          console.log('user login', data)
-          debugger
-          data.pwd = encrptPwd
-          this.setUser(data)
+          // console.log('user login', data)
+          this.canClick = true
+          this.setUser({token: data.data.token, user: data.data.user})
+          // data.pwd = encrptPwd
+          const self = this
+          self.httpPost(self.apiList.zf.getPersonInfo, {}).then(res => {
+            self.setUser({user: res.data})
+            if (res.data.status === 1) {
+              self.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
+                if (res === 'confirm') {
+                  self.jump('/pages/account/companyUpdate/main')
+                } else {
+                  self.tab('/pages/me/main')
+                }
+              })
+            } else {
+              this.showMsg('登录成功')
+              setTimeout(function () {
+                self.canClick = true
+                if (self.backType === 1) {
+                  self.back()
+                } else {
+                  self.tab('/pages/index/main')
+                }
+              }, 500)
+            }
+          })
           this.configVal({ key: 'oldVersion', val: this.currentVersion })
           // this.getRemoteSearchHistory(data)
-          data.type === 'seller' ? this.statisticRequest({ event: 'click_app_login_seller' }, true) : this.statisticRequest({ event: 'click_app_login' })
-          if (data.isnew) {
-            this.canClick = true
-            const me = this
-            this.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
-              if (res === 'confirm') {
-                me.jump('/pages/account/companyUpdate/main')
-              } else {
-                me.tab('/pages/index/main')
-              }
-            })
-          } else {
-            this.showMsg('登录成功')
-            const me = this
-            setTimeout(function () {
-              me.canClick = true
-              if (me.backType === 1) {
-                me.back()
-              } else {
-                me.tab('/pages/index/main')
-              }
-            }, 500)
-          }
+          // data.type === 'seller' ? this.statisticRequest({ event: 'click_app_login_seller' }, true) : this.statisticRequest({ event: 'click_app_login' })
+          // if (data.isnew) {
+          //   this.canClick = true
+          //   this.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
+          //     if (res === 'confirm') {
+          //       self.jump('/pages/account/companyUpdate/main')
+          //     } else {
+          //       self.tab('/pages/index/main')
+          //     }
+          //   })
+          // } else {
+          //   this.showMsg('登录成功')
+          //   const self = this
+          //   setTimeout(function () {
+          //     self.canClick = true
+          //     if (self.backType === 1) {
+          //       self.back()
+          //     } else {
+          //       self.tab('/pages/index/main')
+          //     }
+          //   }, 500)
+          // }
         }
       } catch (e) {
         console.log('err', e)

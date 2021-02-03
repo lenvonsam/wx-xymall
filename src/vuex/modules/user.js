@@ -83,13 +83,18 @@ export default {
       try {
         mpvue.setStorageSync('currentUser', data.user)
         // mpvue.setStorageSync('loginTime', usr.server_time)
+        if (data.token) {
+          mpvue.setStorageSync('token', data.token)
+          state.token = data.token
+        }
         state.currentUser = data.user
+        state.currentUser.type = 'buyer'
         state.isLogin = true
-        state.token = data.token
       } catch (e) {
         console.error('setuser:>>', e)
         state.currentUser = {}
         state.isLogin = false
+        state.token = ''
       }
     },
     EXITUSER (state) {
@@ -98,6 +103,7 @@ export default {
         mpvue.setStorageSync('lastExperienceDay', '')
         mpvue.setStorageSync('overdueReminder', '')
         mpvue.setStorageSync('isAuditingReminder', '')
+        mpvue.removeStorageSync('token')
       } catch (e) {
         console.error('exituser:>>', e)
       }
@@ -105,38 +111,47 @@ export default {
         type: 'buyer'
       }
       state.isLogin = false
+      state.token = ''
     },
     AUTOUSER (state) {
       try {
-        const value = mpvue.getStorageSync('currentUser')
-        console.log('value:>>', value)
-        if (value.user_mark) {
-          const time = mpvue.getStorageSync('loginTime') || -1
-          if (time > 0) {
-            const now = new Date().getTime()
-            if ((now - time) / (1000 * 3600 * 24) > 30) {
-              state.isLogin = false
-              state.currentUser = {
-                expired: true
-              }
-            } else {
-              mpvue.setStorageSync('loginTime', now)
-              state.currentUser = value
-              state.isLogin = true
-            }
-          } else {
-            state.currentUser = value
-            mpvue.setStorageSync('loginTime', state.currentUser.server_time)
-            state.isLogin = true
-          }
-        } else {
-          state.currentUser = {}
-          state.isLogin = false
+        const currentUser = mpvue.getStorageSync('currentUser')
+        console.log('currentUser:>>', currentUser)
+        const token = mpvue.getStorageSync('token')
+        if (token) {
+          state.currentUser = currentUser
+          state.currentUser.type = 'buyer'
+          state.token = token
+          state.isLogin = true
         }
+        // if (value.user_mark) {
+        //   const time = mpvue.getStorageSync('loginTime') || -1
+        //   if (time > 0) {
+        //     const now = new Date().getTime()
+        //     if ((now - time) / (1000 * 3600 * 24) > 30) {
+        //       state.isLogin = false
+        //       state.currentUser = {
+        //         expired: true
+        //       }
+        //     } else {
+        //       mpvue.setStorageSync('loginTime', now)
+        //       state.currentUser = value
+        //       state.isLogin = true
+        //     }
+        //   } else {
+        //     state.currentUser = value
+        //     mpvue.setStorageSync('loginTime', state.currentUser.server_time)
+        //     state.isLogin = true
+        //   }
+        // } else {
+        //   state.currentUser = {}
+        //   state.isLogin = false
+        // }
       } catch (e) {
         console.error('autouser:>>', e)
         state.currentUser = {}
         state.isLogin = false
+        state.token = ''
       }
     }
   }

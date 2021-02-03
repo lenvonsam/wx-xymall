@@ -169,14 +169,19 @@ function httpGet (url, params) {
       header: header,
       method: 'GET',
       success (res) {
-        if (res.code === 'TK01' || res.code === 'TK02' || res.code === 'TK03' || res.code === 'TK04' || res.code === 'TC001') {
-          this.confirm({ content: '登录已失效，请重新登录' }).then((r) => {
-            if (r === 'confirm') {
-              this.jump('/pages/account/login')
-            }
-          })
+        if (res.data.success) {
+          if (res.code === 'TK01' || res.code === 'TK02' || res.code === 'TK03' || res.code === 'TK04' || res.code === 'TC001') {
+            this.confirm({ content: '登录已失效，请重新登录' }).then((r) => {
+              if (r === 'confirm') {
+                this.jump('/pages/account/login')
+              }
+            })
+          } else {
+            resolve(res.data)
+          }
         } else {
-          resolve(res.data)
+          reject(res.data)
+          showMsg(res.data.message)
         }
       },
       fial (error) {
@@ -199,14 +204,19 @@ function httpPost (url, params) {
       header: header,
       method: 'POST',
       success (res) {
-        if (res.code === 'TK01' || res.code === 'TK02' || res.code === 'TK03' || res.code === 'TK04' || res.code === 'TC001') {
-          this.confirm({ content: '登录已失效，请重新登录' }).then((r) => {
-            if (r === 'confirm') {
-              this.jump('/pages/account/login')
-            }
-          })
+        if (res.data.success) {
+          if (res.code === 'TK01' || res.code === 'TK02' || res.code === 'TK03' || res.code === 'TK04' || res.code === 'TC001') {
+            this.confirm({ content: '登录已失效，请重新登录' }).then((r) => {
+              if (r === 'confirm') {
+                this.jump('/pages/account/login')
+              }
+            })
+          } else {
+            resolve(res.data)
+          }
         } else {
-          resolve(res.data)
+          reject(res.data)
+          showMsg(res.data.message)
         }
       },
       fial (error) {

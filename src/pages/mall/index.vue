@@ -121,17 +121,17 @@ export default {
       ballValue: null,
       mallTypeObject: {
         'product': {
-          name: 'name',
-          supply: 'supply',
+          name: 'onlineProductBrandName',
+          supply: 'prodAreaName',
           price: 'price',
-          standard: 'standard',
-          material: 'material',
-          wh_name: 'wh_name',
-          max_count: 'max_count',
+          standard: 'specification',
+          material: 'productTextureName',
+          wh_name: 'stockZoneName',
+          max_count: 'ratioAvailableAmount',
           max_weight: 'max_weight',
-          tolerance: 'tolerance_range',
+          tolerance: 'toleranceRange',
           length: 'length',
-          weightRange: 'weight_range'
+          weightRange: 'weightRange'
         },
         'trove': {
           name: 'product_name',
@@ -179,7 +179,11 @@ export default {
       modalMsg: '1',
       fillModalShow: false,
       fillModalMsg: '',
-      trial: -1
+      trial: -1,
+      queryObj: {
+        pageNum: 1,
+        pageSize: 20
+      }
     }
   },
   computed: {
@@ -305,7 +309,7 @@ export default {
     }
     // this.refresher()
     if (this.isLogin) {
-      this.setCartCount(this.currentUser.user_id)
+      // this.setCartCount(this.currentUser.user_id)
       console.log('mall_state.currentUser======>' + JSON.stringify(this.currentUser))
       this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(res => {
         if (res.returncode === '0') {
@@ -424,6 +428,7 @@ export default {
       this.onRefresh()
     },
     multipleFilter (filter) {
+      debugger
       console.log('filter', filter)
       const obj = {}
       Object.keys(filter).forEach((key) => {
@@ -445,7 +450,6 @@ export default {
       // }
       this.queryObject.current_page = this.currentPage
       this.queryObject.name = this.mallTabVal
-      // this.filterObj = obj
       Object.assign(this.queryObject, obj)
       if (!this.tempObject.standards) {
         this.refresher()
@@ -468,6 +472,8 @@ export default {
         search: val,
         only_available: 1
       }
+      debugger
+      this.queryObj.keyword = val
       this.refresher()
     },
     mallItemCb (obj, type, evt) {
@@ -502,7 +508,7 @@ export default {
                   rt => {
                     // me.ballValue = evt
                     me.showMsg(rt.msg, '', 1000)
-                    if (type === 'cart') me.setCartCount(me.currentUser.user_id)
+                    // if (type === 'cart') me.setCartCount(me.currentUser.user_id)
                     me.btnDisable = false
                   },
                   err => {
@@ -546,53 +552,29 @@ export default {
         //   this.queryObject,
         //   this.apiList.xy.mallList.method
         // )
-        let paramsObj = {
-          pageNum: 1,
-          pageSize: 20
-        }
-        const data = await this.httpPost(this.apiList.zf.shopMallList, paramsObj)
+        const data = await this.httpPost(this.apiList.zf.shopMallList, this.queryObj)
         const res = data
         // const resData = data.products
         const resData = res.data.stocks
         // const userType = this.currentUser.type
         // if (res.returncode === '0') {
-        debugger
         const idx = this.swiperCount
         resData.map(item => {
           const weightMark = []
           const price = []
-
-          if (Number(item.lj_price) > 0) {
-            item.wayId = 2
-            weightMark.push('理计')
-            price.push(item.lj_price)
-          }
-          if (Number(item.bj_price) > 0) {
+          if (item.quantityType === '02') {
             weightMark.push('磅计')
-            item.wayId = 1
-            price.push(item.bj_price)
-          }
-          if (Number(item.lj_price16) > 0) {
-            price.push(item.lj_price16)
-            item.wayId = 3
+            price.push(item.ratioPricePound)
+            item.max_weight = item.ratioAvailablePoundWeight
+          } else {
             weightMark.push('理计')
-            // weightMark.push(userType === 'seller' ? '16理计' : '理计')
-          }
-          // if (Number(item.lj_price10) > 0 && userType === 'seller') {
-          //   // item.wayId = 4
-          //   price.push(item.lj_price10)
-          //   weightMark.push('10理计')
-          // }
-          if (price.length === 0) {
-            price.push('--')
-            item.wayId = 2
-            weightMark.push('理计')
+            price.push(item.ratioPriceManager)
+            item.max_weight = item.ratioAvailableManagerWeight
           }
           item.weightMark = weightMark.toString().replace(/,/g, '/')
           item.price = price.toString().replace(/,/g, '/')
         })
         if (me.isRefresh === 'refresh') {
-          debugger
           if (resData.length > 0 && me.currentPage === 0) {
             me.goodsNameList[idx].data = resData
             me.isload = false

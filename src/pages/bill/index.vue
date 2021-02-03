@@ -28,18 +28,18 @@ div
                     .flex.justify-between.padding-bottom-sm
                       .col
                         .flex.align-center
-                          .ft-16.padding-right-sm {{item.no}}
+                          .ft-16.padding-right-sm {{item.saleContractNo}}
                           img.ding-icon(src="/static/images/ding.png", v-if="item.is_dx")
                       .text-gray(v-if="item.status === '已完成' || item.status === '违约' || item.status === '已取消'") {{item.status}}
                       .text-red(v-else-if="item.status !== '待补款'") {{item.status}}
                       
                     .text-gray
-                      .padding-bottom-xs {{item.supply_name}}
+                      .padding-bottom-xs {{item.orgName}}
                       .flex.justify-between.padding-bottom-xs 
-                        span 共{{item.total_count}}支，{{item.total_weight}}吨
-                        .ft-18.text-black ￥{{item.fact_price}}
+                        span 共{{item.contractAmount}}支，{{item.estimatedTonnage}}吨
+                        .ft-18.text-black ￥{{item.inTaxReceiveMoney}}
                       .flex.justify-between.padding-bottom-xs
-                        span 吊费：¥{{item.lift_charge}}
+                        span 吊费：¥{{item.liftingFeeMoney}}
                         span(v-if="item.status === '待制作提单'", style="display: flex;")
                           span(v-if="item.status === '待制作提单' && !item.overdue") 提货倒计时：
                           span(v-else) 提货已超时：
@@ -94,7 +94,13 @@ export default {
       scrollHeight: '0px',
       timeInterval: '',
       serverTime: '',
-      loadFinish: 0
+      loadFinish: 0,
+      queryObj: {
+        contractStateType: '',
+        xingyunContractStatus: '',
+        pageSize: 10,
+        pageNum: 1
+      }
     }
   },
   computed: {
@@ -173,7 +179,7 @@ export default {
       this.refresher(done)
     },
     searchOrder () {
-      this.statisticRequest({ event: 'click_app_order_search' })
+      // this.statisticRequest({ event: 'click_app_order_search' })
       this.startDate = ''
       this.endDate = ''
       this.listData = []
@@ -210,33 +216,56 @@ export default {
     },
     refresher (done) {
       this.loadFinish = 1
-      const me = this
+      const self = this
       this.isLoad = true
       this.currentPage = 0
-      const reqUrl = `orderList.shtml?user_id=${me.currentUser.user_id}&status=${this.tabName}&current_page=${this.currentPage}&page_size=${this.pageSize}&order_no=${this.billNo}&start_date=${this.startDate}&end_date=${this.endDate}`
-      this.ironRequest(reqUrl, {}, 'get').then(resp => {
-        const idx = me.swiperCount
-        me.billTab[idx].data = []
-        this.serverTime = resp.server_time
-        if (resp.returncode === '0') {
-          let arr = resp.orders
-          if (arr.length > 0 && me.currentPage === 0) {
-            const list = []
-            arr.map(itm => {
-              itm.choosed = false
-              list.push(itm)
-            })
-            me.billTab[idx].data = list
-            me.listData = list
-            me.isLoad = false
-          } else if (arr.length === 0 && me.currentPage === 0) {
-            me.listData = []
-            this.billTab[idx].data = []
-            me.isload = false
-          }
+      // const reqUrl = `orderList.shtml?user_id=${me.currentUser.user_id}&status=${this.tabName}&current_page=${this.currentPage}&page_size=${this.pageSize}&order_no=${this.billNo}&start_date=${this.startDate}&end_date=${this.endDate}`
+      // this.ironRequest(reqUrl, {}, 'get').then(resp => {
+      //   const idx = me.swiperCount
+      //   me.billTab[idx].data = []
+      //   this.serverTime = resp.server_time
+      //   if (resp.returncode === '0') {
+      //     let arr = resp.orders
+      //     if (arr.length > 0 && me.currentPage === 0) {
+      //       const list = []
+      //       arr.map(itm => {
+      //         itm.choosed = false
+      //         list.push(itm)
+      //       })
+      //       me.billTab[idx].data = list
+      //       me.listData = list
+      //       me.isLoad = false
+      //     } else if (arr.length === 0 && me.currentPage === 0) {
+      //       me.listData = []
+      //       this.billTab[idx].data = []
+      //       me.isload = false
+      //     }
+      //   }
+      //   me.isTabDisabled = false
+      //   if (me.billTab[idx].data.length < 10) me.loadFinish = 3
+      //   if (done) done()
+      // })
+      self.httpPost(self.apiList.zf.contractList, self.queryObj).then(res => {
+        const idx = self.swiperCount
+        self.billTab[idx].data = []
+        this.serverTime = res.currentDate
+        let arr = res.data
+        if (arr.length > 0 && self.currentPage === 0) {
+          const list = []
+          arr.map(item => {
+            item.choosed = false
+            list.push(item)
+          })
+          self.billTab[idx].data = list
+          self.listData = list
+          self.isLoad = false
+        } else if (arr.length === 0 && self.currentPage === 0) {
+          self.listData = []
+          this.billTab[idx].data = []
+          self.isload = false
         }
-        me.isTabDisabled = false
-        if (me.billTab[idx].data.length < 10) me.loadFinish = 3
+        self.isTabDisabled = false
+        if (self.billTab[idx].data.length < 10) self.loadFinish = 3
         if (done) done()
       })
     },

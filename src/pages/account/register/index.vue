@@ -14,7 +14,7 @@
       .col
         input.ft-16.no-border(placeholder="请输入验证码", type="number", v-model="code")
       .flex-90.text-center(style="border-left: 1rpx solid #888")
-        auth-btn(:phone="phone", v-if="codeBtnShow")
+        auth-btn(:phone="phone", v-if="codeBtnShow", :codeType="2" )
     .row.margin-top.ft-12
       .flex-20(@click="acceptProtocol = !acceptProtocol")
         icon.cuIcon-squarecheck.text-blue.ft-18(v-if="acceptProtocol", style="margin-top: -8rpx")
@@ -90,44 +90,47 @@ export default {
         }
         if (this.canClick) {
           this.canClick = false
-          const body = {
-            user_phone: this.phone,
-            msg_code: this.code
+          const paramsObj = {
+            phone: this.phone,
+            verifyCode: this.code
           }
           const qrParams = this.getQrParams()
           console.log('qrParams:>>', qrParams)
           if (qrParams !== '-1') {
             const arr = qrParams.split('|')
             const q = arr[1] + '_' + this.qrCodeForGoodsName[arr[0]]
-            body.promotion = q
+            paramsObj.promotion = q
           }
-          const data = await this.ironRequest(this.apiList.xy.userRegister.url, body, this.apiList.xy.userRegister.method)
-          this.removeStoreKey('qrp')
-          console.log('data', data)
-          const me = this
-          const newUser = {
-            account_balance: 0,
-            avatar: '/webpage/gzql/for-etrade/images/default_logo.png',
-            contact_phone: this.phone,
-            credit_balance: 0,
-            isnew: 1,
-            message_switch: '1',
-            nickname: this.phone,
-            phone: this.phone,
-            user_id: data.user_id,
-            user_mark: data.emp_acct,
-            server_time: data.server_time,
-            type: 'buyer'
-          }
-          this.setUser(newUser)
-          this.confirm({ content: '注册成功，但您是新用户，请先完成公司信息' }).then(res => {
-            me.canClick = true
-            me.resetVal()
-            if (res === 'confirm') {
-              me.jump('/pages/account/companyUpdate/main?type=3')
-            } else {
-              me.tab('/pages/index/main')
+          // const data = await this.ironRequest(this.apiList.xy.userRegister.url, paramsObj, this.apiList.xy.userRegister.method)
+          await this.httpGet(this.apiList.zf.userRegister, paramsObj).then(res => {
+            debugger
+            this.removeStoreKey('qrp')
+            console.log('res', res)
+            const me = this
+            const newUser = {
+              account_balance: 0,
+              avatar: '/webpage/gzql/for-etrade/images/default_logo.png',
+              contact_phone: this.phone,
+              credit_balance: 0,
+              isnew: 1,
+              message_switch: '1',
+              nickname: this.phone,
+              phone: this.phone,
+              user_id: res.user_id,
+              user_mark: res.emp_acct,
+              server_time: res.server_time,
+              type: 'buyer'
             }
+            this.setUser(newUser)
+            this.confirm({ content: '注册成功，但您是新用户，请先完成公司信息' }).then(res => {
+              me.canClick = true
+              me.resetVal()
+              if (res === 'confirm') {
+                me.jump('/pages/account/companyUpdate/main?type=3')
+              } else {
+                me.tab('/pages/index/main')
+              }
+            })
           })
         }
       } catch (e) {

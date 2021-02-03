@@ -176,8 +176,9 @@ export default {
     bindAndLogin () {
       let self = this
       let canHttp = true
-      const body = {
-        openid: self.openId, unionid: self.unionId
+      const paramsObj = {
+        openId: self.openId,
+        unionId: self.unionId
       }
       if (self.selectTabId === 0) {
         if (self.userName.trim().length === 0) {
@@ -190,9 +191,10 @@ export default {
           canHttp = false
           return
         }
-        let userPwd = self.base64Str(self.password.trim())
-        body.user_mark = self.userName.trim()
-        body.user_pwd = userPwd
+        // let userPwd = self.base64Str(self.password.trim())
+        paramsObj.userName = self.userName.trim()
+        paramsObj.password = self.password.trim()
+        paramsObj.bindingType = '01'
       } else {
         if (self.phone.trim().length === 0) {
           self.showMsg('手机号码不能为空')
@@ -204,10 +206,10 @@ export default {
           canHttp = false
           return
         }
-        body.phone = self.phone.trim()
-        body.valid_code = self.code.trim()
+        paramsObj.phone = self.phone.trim()
+        paramsObj.verifyCode = self.code.trim()
+        paramsObj.bindingType = '02'
       }
-
       if (self.selectTabId === 1 && self.isNew) {
         self.modalShow = true
         canHttp = false
@@ -218,17 +220,18 @@ export default {
           this.onpresscTime = Date.now()
           const qrParams = self.getQrParams()
           console.log('qrParams:>>', qrParams)
-          if (qrParams !== '-1') {
-            const arr = qrParams.split('|')
-            const q = arr[1] + '_' + self.qrCodeForGoodsName[arr[0]]
-            body.promotion = q
-          }
-          self.ironRequest(self.apiList.xy.wxBind.url, body, self.apiList.xy.wxBind.method).then((res) => {
-            console.log('page_wxBind_res===>' + JSON.stringify(res))
+          // if (qrParams !== '-1') {
+          //   const arr = qrParams.split('|')
+          //   const q = arr[1] + '_' + self.qrCodeForGoodsName[arr[0]]
+          //   paramsObj.promotion = q
+          // }
+          // self.ironRequest(self.apiList.xy.wxBind.url, paramsObj, self.apiList.xy.wxBind.method).then((res) => {
+          self.httpPost(self.apiList.zf.wxBind, paramsObj).then(res => {
+            debugger
             if (res.returncode.toString() === '0') {
               if (qrParams !== '-1') self.removeStoreKey('qrp')
-              self.setUser(res)
-              self.showMsg(res.errormsg)
+              // self.setUser(res)
+              self.showMsg('绑定成功！')
               // 微信绑定手机号注册成功，新用户res.isnew == 1跳转完善信息页面
               setTimeout(function () {
                 if (res.isnew === 1) {
