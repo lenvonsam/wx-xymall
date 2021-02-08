@@ -72,19 +72,35 @@ export default {
       }
       if (!this.btnDisable) {
         this.btnDisable = true
-        const me = this
-        this.ironRequest('needBuy.shtml', { user_id: this.currentUser.user_id, name: this.name, material: this.material, supply: this.supply, standard: this.standard, contact_no: this.phone, remark: this.demand }, 'post').then(resp => {
-          if (resp && resp.returncode === '0') {
-            this.showMsg('求购发布成功')
-            setTimeout(() => {
-              me.btnDisable = false
-              me.back()
-            }, 1000)
-          } else {
-            this.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
-            this.btnDisable = false
-          }
+        const self = this
+        let paramsObj = {
+          productBrandName: this.name,
+          prodAreaName: this.supply,
+          productTextureName: this.material,
+          specification: this.standard,
+          specialRequire: this.demand,
+          contactPhone: this.phone
+        }
+        self.httpPost(self.apiList.zf.addOnlineRequireBuy, paramsObj).then(res => {
+          self.showMsg('求购发布成功')
+          setTimeout(() => {
+            self.back()
+          }, 1000)
+        }).finally(() => {
+          self.btnDisable = false
         })
+        // this.ironRequest('needBuy.shtml', { user_id: this.currentUser.user_id, name: this.name, material: this.material, supply: this.supply, standard: this.standard, contact_no: this.phone, remark: this.demand }, 'post').then(resp => {
+        //   if (resp && resp.returncode === '0') {
+        //     this.showMsg('求购发布成功')
+        //     setTimeout(() => {
+        //       self.btnDisable = false
+        //       self.back()
+        //     }, 1000)
+        //   } else {
+        //     this.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
+        //     this.btnDisable = false
+        //   }
+        // })
       }
     }
   }

@@ -70,11 +70,11 @@ export default {
     return {
       swiperCount: 0,
       billTab: [
-        { title: '全部', status: '0', data: [], isActive: true },
-        { title: '待付款', status: '1', data: [], isActive: false },
-        { title: '待补款', status: '7', data: [], isActive: false },
-        { title: '待提货', status: '6', data: [], isActive: false },
-        { title: '已完成', status: '5', data: [], isActive: false }
+        { title: '全部', status: '', data: [], isActive: true },
+        { title: '待付款', status: '01', data: [], isActive: false },
+        { title: '待补款', status: '10', data: [], isActive: false },
+        { title: '待提货', status: '02', data: [], isActive: false },
+        { title: '已完成', status: '04', data: [], isActive: false }
       ],
       tabName: '0',
       currentPage: 0,
@@ -105,7 +105,8 @@ export default {
   },
   computed: {
     ...mapState({
-      tempObject: state => state.tempObject
+      tempObject: state => state.tempObject,
+      contractStatus: state => state.contractStatus
     })
   },
   onShow () {
@@ -113,7 +114,7 @@ export default {
     // this.scrollHeight = this.screenHeight - this.customBar - 98
   },
   beforeMount () {
-    this.tabName = this.$root.$mp.query.tabName || '0'
+    this.tabName = this.$root.$mp.query.tabName || ''
     const idx = this.billTab.findIndex(item => item.status === this.tabName)
 
     if (this.tempObject.startDate) this.startDate = this.tempObject.startDate
@@ -122,6 +123,7 @@ export default {
     if (this.tempObject.billTabName) this.tabName = this.tempObject.billTabName.toString()
     this.pageHeight = this.tabName === '1' ? 150 : 100
     this.billTab[idx].data = []
+    debugger
     if (this.swiperCount !== idx) {
       this.swiperCount = idx
     } else {
@@ -254,6 +256,9 @@ export default {
           const list = []
           arr.map(item => {
             item.choosed = false
+            item.status = self.contractStatus.find(c => {
+              return c.id === item.xingyunContractStatus
+            }).name
             list.push(item)
           })
           self.billTab[idx].data = list
@@ -270,6 +275,14 @@ export default {
       })
     },
     selectTabs (item, idx) {
+      debugger
+      if (item.status === '10') {
+        this.queryObj.contractStateType = ''
+        this.queryObj.xingyunContractStatus = '02'
+      } else {
+        this.queryObj.contractStateType = item.status
+        this.queryObj.xingyunContractStatus = ''
+      }
       this.tabName = item.status
       // this.scrollLeft = (index - 1) * 60
       this.swiperCount = idx
@@ -375,44 +388,74 @@ export default {
       } else {
         this.isload = false
       }
-      let reqUrl = `orderList.shtml?user_id=${this.currentUser.user_id}&status=${this.tabName}&current_page=${this.currentPage}&page_size=${this.pageSize}&order_no=${this.billNo}&start_date=${this.startDate}&end_date=${this.endDate}`
-      const me = this
-      this.ironRequest(reqUrl, {}, 'get').then(resp => {
-        const idx = me.swiperCount
-        this.serverTime = resp.server_time
-        if (resp && resp.returncode === '0') {
-          let arr = resp.orders
-          if (arr.length === 0 && me.currentPage === 0) {
-            me.listData = []
-            this.billTab[idx].data = []
-            me.isload = false
-          } else if (arr.length > 0 && me.currentPage === 0) {
-            arr.map(itm => {
-              itm.choosed = false
-              me.listData.push(itm)
-              this.billTab[idx].data.push(itm)
-            })
-            me.isload = false
-          } else if (arr.length > 0 && me.currentPage > 0) {
-            // arr.map(item => {
-            //   item.choosed = false
-            //   me.listData.push(item)
-            //   this.billTab[idx].data.push(item)
-            // })
-            me.listData = me.listData.concat(arr)
-            this.billTab[idx].data = this.billTab[idx].data.concat(arr)
-            me.isload = false
-          } else {
-            me.isload = false
-            me.currentPage--
-            if (me.billTab[idx].data.length >= 10) me.loadFinish = 2
-          }
+      const self = this
+      self.httpPost(self.apiList.zf.contractList, self.queryObj).then(res => {
+        const idx = self.swiperCount
+        self.billTab[idx].data = []
+        this.serverTime = res.currentDate
+        let arr = res.data
+        if (arr.length > 0 && self.currentPage === 0) {
+          const list = []
+          arr.map(item => {
+            item.choosed = false
+            item.status = self.contractStatus.find(c => {
+              return c.id === item.xingyunContractStatus
+            }).name
+            list.push(item)
+          })
+          self.billTab[idx].data = list
+          self.listData = list
+          self.isLoad = false
+        } else if (arr.length === 0 && self.currentPage === 0) {
+          self.listData = []
+          this.billTab[idx].data = []
+          self.isload = false
         }
-        me.isTabDisabled = false
-        me.hideLoading()
-        if (me.billTab[idx].data.length < 10) me.loadFinish = 3
+        self.isTabDisabled = false
+        if (self.billTab[idx].data.length < 10) self.loadFinish = 3
         if (done) done()
+      }).finally(() => {
+        self.isload = false
+        self.hideLoading()
       })
+      // let reqUrl = `orderList.shtml?user_id=${this.currentUser.user_id}&status=${this.tabName}&current_page=${this.currentPage}&page_size=${this.pageSize}&order_no=${this.billNo}&start_date=${this.startDate}&end_date=${this.endDate}`
+      // const me = this
+      // this.ironRequest(reqUrl, {}, 'get').then(resp => {
+      //   const idx = me.swiperCount
+      //   this.serverTime = resp.server_time
+      //   if (resp && resp.returncode === '0') {
+      //     let arr = resp.orders
+      //     if (arr.length === 0 && me.currentPage === 0) {
+      //       me.listData = []
+      //       this.billTab[idx].data = []
+      //       me.isload = false
+      //     } else if (arr.length > 0 && me.currentPage === 0) {
+      //       arr.map(itm => {
+      //         itm.choosed = false
+      //         me.listData.push(itm)
+      //         this.billTab[idx].data.push(itm)
+      //       })
+      //       me.isload = false
+      //     } else if (arr.length > 0 && me.currentPage > 0) {
+      //       // arr.map(item => {
+      //       //   item.choosed = false
+      //       //   me.listData.push(item)
+      //       //   this.billTab[idx].data.push(item)
+      //       // })
+      //       me.listData = me.listData.concat(arr)
+      //       this.billTab[idx].data = this.billTab[idx].data.concat(arr)
+      //       me.isload = false
+      //     } else {
+      //       me.isload = false
+      //       me.currentPage--
+      //       if (me.billTab[idx].data.length >= 10) me.loadFinish = 2
+      //     }
+      //   }
+      //   me.isTabDisabled = false
+      //   me.hideLoading()
+      //   if (me.billTab[idx].data.length < 10) me.loadFinish = 3
+      //   if (done) done()
+      // })
     },
     loadMore () {
       if (!this.isLoad) {
@@ -428,7 +471,7 @@ export default {
     //   this.jump({ path: '/bill/search' })
     // },
     jumpDetail (item) {
-      this.jump(`/pages/billDetail/main?id=${item.no}`)
+      this.jump(`/pages/billDetail/main?contractId=${item.saleContractId}`)
     },
     billCancel (item) {
       // if (this.tabName === '0') this.statisticRequest({ event: 'click_app_myorder_all_cancel' })

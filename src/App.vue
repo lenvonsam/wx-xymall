@@ -5,7 +5,8 @@ export default {
     ...mapActions([
       'configVal',
       'autoUser',
-      'exitUser'
+      'exitUser',
+      'setUser'
     ]),
     wxAuthLogin () {
       const me = this
@@ -92,7 +93,7 @@ export default {
       // console.log('App.vue_uid=====>', uid)
       me.httpPost(me.apiList.zf.getPersonInfo, {}).then(res => {
         me.setUser({token: me.token, user: res.data})
-        if (res.data.status === 1) {
+        if (res.data.userStatus === '01') {
           me.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
             if (res === 'confirm') {
               me.jump('/pages/account/companyUpdate/main')

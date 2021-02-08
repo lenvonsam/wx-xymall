@@ -2,7 +2,7 @@
 .s-layout.bg-white
   nav-bar(title="购物车")
   template(v-if="showCartContent")
-    seller-cart-temp(v-if="currentUser.type === 'seller' && isLogin")
+    //- seller-cart-temp(v-if="currentUser.type === 'seller' && isLogin")
     buyer-cart-temp(v-if="currentUser.type === 'buyer' && isLogin")
   noData(v-if="alertShow")
   //- modal(v-model="alertShow", @cb="modalCb")
@@ -14,14 +14,14 @@
 </template>
 
 <script>
-import SellerCartTemp from '@/components/SellerCartTemp.vue'
+// import SellerCartTemp from '@/components/SellerCartTemp.vue'
 import buyerCartTemp from '@/components/BuyerCartTemp.vue'
 import modal from '@/components/Modal.vue'
 import noData from '@/components/NoData'
 import { mapState, mapActions } from 'vuex'
 export default {
   components: {
-    SellerCartTemp,
+    // SellerCartTemp,
     buyerCartTemp,
     modal,
     noData
@@ -54,7 +54,7 @@ export default {
     // const uid = self.currentUser.user_id
     if (self.isLogin) {
       console.log('cart_state.currentUser======>' + JSON.stringify(this.currentUser))
-      // self.showCartContent = true
+      self.showCartContent = true
       // self.alertShow = false
       // if (typeof self.currentUser.type !== 'undefined') {
       //   if (self.currentUser.type === 'seller') {

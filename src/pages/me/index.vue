@@ -394,14 +394,14 @@ export default {
         this.modalMsg = '您未登录,请先登录'
         this.modalShow = true
       } else {
-        if (this.currentUser.type === 'seller') {
-          this.statisticRequest({ event: icon.event }, true)
-        } else {
-          if (icon.url.path === '/pages/bill/main?tabName=1') this.statisticRequest({ event: 'click_app_me_to_pay' })
-          if (icon.url.path === '/pages/ladbillConfirm/main') this.statisticRequest({ event: 'click_app_me_to_confirm' })
-          if (icon.url.path === '/pages/bill/main?tabName=6') this.statisticRequest({ event: 'click_app_me_to_lad' })
-          if (icon.url.path === '/pages/invoice/main?tabName=0') this.statisticRequest({ event: 'click_app_me_to_invoice' })
-        }
+        // if (this.currentUser.type === 'seller') {
+        //   this.statisticRequest({ event: icon.event }, true)
+        // } else {
+        //   if (icon.url.path === '/pages/bill/main?tabName=1') this.statisticRequest({ event: 'click_app_me_to_pay' })
+        //   if (icon.url.path === '/pages/ladbillConfirm/main') this.statisticRequest({ event: 'click_app_me_to_confirm' })
+        //   if (icon.url.path === '/pages/bill/main?tabName=6') this.statisticRequest({ event: 'click_app_me_to_lad' })
+        //   if (icon.url.path === '/pages/invoice/main?tabName=0') this.statisticRequest({ event: 'click_app_me_to_invoice' })
+        // }
         this.jump(icon.url.path)
       }
     },

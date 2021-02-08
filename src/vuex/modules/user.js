@@ -81,6 +81,7 @@ export default {
   mutations: {
     SETUSER (state, data) {
       try {
+        data.user.type = 'buyer'
         mpvue.setStorageSync('currentUser', data.user)
         // mpvue.setStorageSync('loginTime', usr.server_time)
         if (data.token) {

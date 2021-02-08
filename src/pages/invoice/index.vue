@@ -21,17 +21,17 @@ div
                       img.choose-icon(src="/static/images/blue_check.png", v-if="item.checked")
                       img.choose-icon(src="/static/images/btn_ck_n.png", v-else)
                     .col.ft-14(:class="{'pl-5': tabName == '0' || tabName == '2'}")                      
-                      .pb-half-rem.c-gray.ft-14 {{item.contract_no}}
+                      .pb-half-rem.c-gray.ft-14 {{item.saleLadingNo}}
                       .pb-half-rem {{item.title}}
                       .text-gray
                         span 重量：
-                        span.ml-5 {{item.weight}}吨
+                        span.ml-5 {{item.settlementWeight}}吨
                         span.ml-5 数量：
-                        span.ml-5 {{item.amount}}支
+                        span.ml-5 {{item.settlementAmount}}支
                   .text-right.flex.flex-direction.align-end(:class="tabName !== '3' ? 'justify-between' : 'justify-center'")
-                    .text-blue.ft-18 ￥{{item.price}}
-                    .invoice-detail-btn.margin-top-sm(v-if="tabName != '0' && item.price > 0", @click="jumpDetail(item)") 查看详情
-                    .text-gray(v-if="tabName !== '3'") 吊费：￥{{item.lift_price}}
+                    .text-blue.ft-18 ￥{{item.settleTotalMoney}}
+                    .invoice-detail-btn.margin-top-sm(v-if="tabName != '0' && item.settleTotalMoney > 0", @click="jumpDetail(item)") 查看详情
+                    .text-gray(v-if="tabName !== '3'") 吊费：￥{{item.lifttingFee}}
             .padding.text-gray.ft-13.text-center(v-if="loading") 努力加载中... 
             .padding.text-gray.ft-13.text-center(v-if="finished") 加载完成 
         .text-center.c-gray.pt-100(v-else)
@@ -76,7 +76,12 @@ export default {
       queryObject: {},
       pageHeight: 0,
       isTabDisabled: false,
-      disabledBtn: false
+      disabledBtn: false,
+      queryObj: {
+        pageNum: 1,
+        pageSize: 10
+      },
+      postUrl: ''
     }
   },
   computed: {
@@ -93,7 +98,7 @@ export default {
           let filterArray = newVal.filter(item => item.checked === true)
           this.totalPriceAll = 0
           filterArray.map(fltem => {
-            this.totalPriceAll += fltem.price
+            this.totalPriceAll += fltem.settleTotalMoney
           })
           this.allChecked = filterArray.length === newVal.length
           this.totalPriceAll = this.$toFixed(Number(this.totalPriceAll), 2)
@@ -152,6 +157,9 @@ export default {
       this.loadData()
     }
   },
+  onLoad () {
+    this.postUrl = this.apiList.zf.invoiceUnApply
+  },
   methods: {
     ...mapActions([
       'configVal'
@@ -169,7 +177,7 @@ export default {
       }
     },
     refresher () {
-      const me = this
+      const self = this
       this.currentPage = 0
       this.queryObject = {
         current_page: this.currentPage,
@@ -180,22 +188,22 @@ export default {
       this.isLoad = true
       this.ironRequest('invoiceList.shtml', this.queryObject, 'post').then(resp => {
         if (resp && resp.returncode === '0') {
-          if (resp.invoices.length > 0 && me.currentPage === 0) {
+          if (resp.invoices.length > 0 && self.currentPage === 0) {
             this.listData = []
             resp.invoices.map(itm => {
               let temp = itm
               temp.checked = false
               this.listData.push(temp)
             })
-            me.isLoad = false
-            me.finished = false
-          } else if (resp.invoices.length === 0 && me.currentPage === 0) {
-            me.listData = []
-            me.finished = true
-            me.isLoad = false
+            self.isLoad = false
+            self.finished = false
+          } else if (resp.invoices.length === 0 && self.currentPage === 0) {
+            self.listData = []
+            self.finished = true
+            self.isLoad = false
           }
         } else {
-          me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
+          self.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
         }
       })
     },
@@ -209,7 +217,7 @@ export default {
     chooseSameInvoiceNo (item) {
       item.checked = !item.checked
       this.listData.map(itm => {
-        if (itm.contract_no === item.contract_no) itm.checked = item.checked
+        if (itm.saleLadingNo === item.saleLadingNo) itm.checked = item.checked
       })
       this.$forceUpdate()
     },
@@ -254,7 +262,7 @@ export default {
     invoiceAction () {
       if (this.disabledBtn) return false
       let filterArray = this.listData.filter(item => item.checked === true)
-      const me = this
+      const self = this
       this.disabledBtn = true
       if (filterArray.length > 0) {
         let ids = filterArray.map(item => item.id).join(',')
@@ -263,9 +271,9 @@ export default {
           let title = filterArray[0].title
           let type = filterArray[0].type
           // 发票编号
-          let nos = filterArray.map(item => item.contract_no).join(',')
+          let nos = filterArray.map(item => item.saleLadingNo).join(',')
           // 总金额
-          let totalPrice = filterArray.map(item => item.price).reduce((a, b) => a + b)
+          let totalPrice = filterArray.map(item => item.settleTotalMoney).reduce((a, b) => a + b)
           totalPrice = this.$toFixed(totalPrice, 2)
           // 货款金额
           let goodsPrice = filterArray.map(item => item.goods_price).reduce((a, b) => a + b).toFixed(2)
@@ -281,21 +289,25 @@ export default {
             type
           }
           if (nos.split(',').length === 1) {
-            this.ironRequest('invoiceDetail.shtml?id=' + filterArray[0].id, {}, 'get').then(resp => {
-              if (resp.returncode === '0') {
-                obj.goods_price = resp.goods_price
-                obj.lift_price = resp.lift_price
-                obj.invoice_no = resp.invoice_no
-                // me.showMsg('申请成功')
-                me.configVal({ key: 'tempObject', val: obj })
-                // me.back(-1)
-                me.jump('/pages/invoiceDetail/main?id=' + me.tabName)
-              } else {
-                me.showMsg(resp ? resp.errormsg : '网络错误')
-                me.disabledBtn = false
-              }
-              me.allChecked = false
+            self.httpPost(self.apiList.zf.invoiceAdd, obj).then(res => {
+              debugger
+              console.log(res)
             })
+            // this.ironRequest('invoiceDetail.shtml?id=' + filterArray[0].id, {}, 'get').then(resp => {
+            //   if (resp.returncode === '0') {
+            //     obj.goods_price = resp.goods_price
+            //     obj.lift_price = resp.lift_price
+            //     obj.invoice_no = resp.invoice_no
+            //     // self.showMsg('申请成功')
+            //     self.configVal({ key: 'tempObject', val: obj })
+            //     // self.back(-1)
+            //     self.jump('/pages/invoiceDetail/main?id=' + self.tabName)
+            //   } else {
+            //     self.showMsg(resp ? resp.errormsg : '网络错误')
+            //     self.disabledBtn = false
+            //   }
+            //   self.allChecked = false
+            // })
           } else {
             this.configVal({ key: 'tempObject', val: obj })
             this.jump('/pages/invoiceDetail/main?id=' + this.tabName)
@@ -306,16 +318,16 @@ export default {
           // 发票确认
           this.ironRequest('confirmInvoice.shtml', { user_id: this.currentUser.user_id, id: ids }, 'post').then(resp => {
             if (resp && resp.returncode === '0') {
-              me.showMsg('发票确认成功')
-              me.listData = []
-              me.loadData()
-              me.disabledBtn = false
+              self.showMsg('发票确认成功')
+              self.listData = []
+              self.loadData()
+              self.disabledBtn = false
             }
           })
         }
       } else {
         this.showMsg('请选择需开发票')
-        me.disabledBtn = false
+        self.disabledBtn = false
       }
     },
     loadData () {
@@ -325,44 +337,78 @@ export default {
         this.isLoad = false
       }
       this.queryObject.status = this.tabName
-      const me = this
+      const self = this
       this.loading = true
-      this.ironRequest('invoiceList.shtml', this.queryObject, 'post').then(resp => {
-        if (resp && resp.returncode === '0') {
-          if (resp.invoices.length > 0 && me.currentPage === 0) {
-            me.listData = []
-            resp.invoices.map(itm => {
-              let temp = itm
-              temp.checked = me.allChecked
-              temp.price = Number(itm.price)
-              me.listData.push(temp)
-            })
-            me.isLoad = false
-            me.finished = false
-          } else if (resp.invoices.length === 0 && me.currentPage === 0) {
-            me.listData = []
-            me.finished = true
-            me.isLoad = false
-          } else if (resp.invoices.length === 0 && me.currentPage > 0) {
-            me.finished = true
-            me.currentPage--
-            me.queryObject.current_page = me.currentPage
-          } else {
-            resp.invoices.map(itm => {
-              let temp = itm
-              temp.checked = me.allChecked
-              temp.price = Number(itm.price)
-              me.listData.push(temp)
-            })
-            this.finished = false
-          }
+      self.httpPost(self.postUrl, self.queryObj).then(res => {
+        if (res.data.length > 0 && self.currentPage === 0) {
+          self.listData = []
+          res.data.map(itm => {
+            let temp = itm
+            temp.checked = self.allChecked
+            temp.price = Number(itm.price)
+            self.listData.push(temp)
+          })
+          self.isLoad = false
+          self.finished = false
+        } else if (res.data.length === 0 && self.currentPage === 0) {
+          self.listData = []
+          self.finished = true
+          self.isLoad = false
+        } else if (res.data.length === 0 && self.currentPage > 0) {
+          self.finished = true
+          self.currentPage--
+          self.queryObj.pageNum = self.currentPage
+        } else {
+          res.data.map(itm => {
+            let temp = itm
+            temp.checked = self.allChecked
+            temp.price = Number(itm.price)
+            self.listData.push(temp)
+          })
+          this.finished = false
         }
-        this.loading = false
-        this.isTabDisabled = false
-      }).catch(err => {
-        this.isTabDisabled = false
-        me.showMsg(err || '网络异常')
+      }).finally(() => {
+        self.loading = false
+        self.isload = false
+        self.finished = false
+        self.hideLoading()
       })
+      // this.ironRequest('invoiceList.shtml', this.queryObject, 'post').then(resp => {
+      //   if (resp && resp.returncode === '0') {
+      //     if (resp.invoices.length > 0 && self.currentPage === 0) {
+      //       self.listData = []
+      //       resp.invoices.map(itm => {
+      //         let temp = itm
+      //         temp.checked = self.allChecked
+      //         temp.price = Number(itm.price)
+      //         self.listData.push(temp)
+      //       })
+      //       self.isLoad = false
+      //       self.finished = false
+      //     } else if (resp.invoices.length === 0 && self.currentPage === 0) {
+      //       self.listData = []
+      //       self.finished = true
+      //       self.isLoad = false
+      //     } else if (resp.invoices.length === 0 && self.currentPage > 0) {
+      //       self.finished = true
+      //       self.currentPage--
+      //       self.queryObject.current_page = self.currentPage
+      //     } else {
+      //       resp.invoices.map(itm => {
+      //         let temp = itm
+      //         temp.checked = self.allChecked
+      //         temp.price = Number(itm.price)
+      //         self.listData.push(temp)
+      //       })
+      //       this.finished = false
+      //     }
+      //   }
+      //   this.loading = false
+      //   this.isTabDisabled = false
+      // }).catch(err => {
+      //   this.isTabDisabled = false
+      //   self.showMsg(err || '网络异常')
+      // })
     },
     selectTabs (item, idx) {
       this.tabName = item.status
@@ -370,6 +416,15 @@ export default {
     },
     swiperChange (e) {
       const idx = e.mp.detail.current
+      if (idx === 0) {
+        this.postUrl = this.apiList.zf.invoiceUnApply
+      } else if (idx === 1) {
+        this.postUrl = this.apiList.zf.invoiceApplied
+      } else if (idx === 2) {
+        this.postUrl = this.apiList.zf.confirmReceiptDetails
+      } else {
+        this.postUrl = this.apiList.zf.invoiceInvoiced
+      }
       console.log(idx)
       this.swiperCount = idx
       this.tabName = this.tabList[idx].status
@@ -392,6 +447,10 @@ export default {
         current_page: this.currentPage,
         user_id: this.currentUser.user_id,
         page_size: this.pageSize
+      }
+      this.queryObj = {
+        pageNum: this.currentPage + 1,
+        pageSize: this.pageSize
       }
       this.loadData()
     }

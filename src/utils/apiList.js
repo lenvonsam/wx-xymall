@@ -197,6 +197,50 @@ export default {
     // 用户中心数据
     queryUserCenterContractInfo: 'xingyun/contract/queryUserCenterContractInfo',
     // 合同列表
-    contractList: 'xingyun/contract/queryContractPage'
+    contractList: 'xingyun/contract/queryContractPage',
+    // 合同详情
+    saleContractDetail: 'xingyun/contract/saleContractDetail',
+    // 加工跟踪
+    onlineProcessTrack: 'xingyun/onlineProcess/queryPage',
+    // 我的加工-新增加工
+    addOnlineProcess: 'xingyun/onlineProcess/add',
+    // 我的加工-查询详情
+    onlineProcessDetail: 'xingyun/onlineProcess/get',
+    // 我的加工-删除加工
+    deleteOnlineProcess: 'xingyun/onlineProcess/delete',
+    // 求购发布
+    addOnlineRequireBuy: 'xingyun/onlineRequireBuy/add',
+    // 求购管理
+    onlineRequireBuyManage: 'xingyun/onlineRequireBuy/queryPage',
+    // 求购详情
+    // onlineRequireBuyDetail: 'xingyun/onlineRequireBuy/get',
+    // 提单管理
+    billLading: 'xingyun/billLading/queryPage',
+    // 查询提单详情
+    billLadingDetail: 'xingyun/billLading/selectBillLadingDetail',
+    // 发票-未申请提单-分页查询
+    invoiceUnApply: 'finance/arStatementList/customerSearch',
+    // 发票-已申请提单的-分页查询
+    invoiceApplied: 'finance/arInvoice/customerAppliedSearch',
+    // 发票-已开票提单
+    invoiceInvoiced: 'finance/arInvoice/customerInvoicedSearch',
+    // 发票-申请开票
+    invoiceAdd: 'finance/arStatementList/createInvoice',
+    // 用户中心-确认收票明细
+    confirmReceiptDetails: 'finance/arInvoice/search',
+    // 添加购物车
+    addCartItem: 'xingyun/cart/appendCartItem',
+    // 获取购物车
+    getCurrentUserCartItems: 'xingyun/cart/getCurrentUserCartItems',
+    // 改变购物车商品数量
+    changeNum: 'xingyun/cart/changeNum',
+    // 购物车删除商品信息
+    deleteItem: 'xingyun/cart/deleteItem',
+    // 购物车改变计量方式
+    changeQuantityType: 'xingyun/cart/changeQuantityType',
+    // 购物车清空失效物资
+    failureMaterial: 'xingyun/cart/failureMaterial',
+    // 生成合同
+    generateContract: 'xingyun/shopMall/generateContract'
   }
 }
