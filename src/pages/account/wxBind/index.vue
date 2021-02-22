@@ -227,7 +227,6 @@ export default {
           // }
           // self.ironRequest(self.apiList.xy.wxBind.url, paramsObj, self.apiList.xy.wxBind.method).then((res) => {
           self.httpPost(self.apiList.zf.wxBind, paramsObj).then(res => {
-            debugger
             if (res.returncode.toString() === '0') {
               if (qrParams !== '-1') self.removeStoreKey('qrp')
               // self.setUser(res)

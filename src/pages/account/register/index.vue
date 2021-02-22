@@ -103,7 +103,6 @@ export default {
           }
           // const data = await this.ironRequest(this.apiList.xy.userRegister.url, paramsObj, this.apiList.xy.userRegister.method)
           await this.httpGet(this.apiList.zf.userRegister, paramsObj).then(res => {
-            debugger
             this.removeStoreKey('qrp')
             console.log('res', res)
             const me = this

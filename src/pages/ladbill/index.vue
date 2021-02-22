@@ -43,7 +43,7 @@ div
                         .col
                           span.ft-14 {{itm.productBrandName}}
                           span.padding-left-xs {{itm.specification}}
-                        .text-blue.text-bold ￥{{itm.inTaxPrice}}  
+                        .text-blue.text-bold ￥{{itm.inTaxPrice}}
                     .row.padding-bottom-xs
                       .col
                         span.ml-0 {{itm.productTextureName}}
@@ -155,7 +155,6 @@ export default {
       const idx = e.mp.detail.current
       this.swiperCount = idx
       this.tabName = this.billTab[idx].status
-      debugger
       if (this.tabName === '-2') {
         this.queryObj.billLadingStatus = ''
       } else if (this.tabName === '0') {

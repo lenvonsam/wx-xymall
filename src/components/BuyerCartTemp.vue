@@ -34,6 +34,9 @@
                   .col(@click="cart.choosed = !cart.choosed")
                     span {{cart.onlineProductBrandName}}
                     span.padding-left-xs {{cart.specification}}
+                  .text-blue ￥{{cart.price}}/吨
+                    span {{cart.onlineProductBrandName}}
+                    span.padding-left-xs {{cart.specification}}
                   .text-blue ￥{{cart.radios[0].price}}/吨
                 .content.ft-13
                   .flex.flex-center.justify-between
@@ -52,11 +55,11 @@
                         span.ml-10.mr-10(v-if="cart.toleranceRange") {{cart.toleranceRange}}
                       .pt-5
                         span(v-if="cart.weightRange") 重量范围:
-                        span.ml-10(v-if="cart.weightRange") {{cart.weightRange}} 
+                        span.ml-10(v-if="cart.weightRange") {{cart.weightRange}}
                     .text-right
                       .flex.flex-direction.justify-between
                         z-radio(@checkHander="weightChoose(r.m_way, cart)", v-for="(r, rIdx) in cart.radios", :key="rIdx", :label="r.label", :checked="cart.measure_way_id === r.m_way")
-                        
+
                   .row.padding-xs.justify-end.align-end
                     .col
                     .col(style="flex: 0 0 60px;")
@@ -314,7 +317,6 @@ export default {
     clearCarts () {
       // this.statisticRequest({ event: 'click_app_cart_del_all' })
       const self = this
-      debugger
       console.log(this.carts)
       this.confirm({ content: '确定清空购物车？' }).then((res) => {
         if (res === 'confirm') {
@@ -479,15 +481,16 @@ export default {
           body.end_addr = self.pwAddr + ' ' + self.pwAddrDetail
         }
         this.showLoading()
-        debugger
         await self.httpPost(this.apiList.zf.generateContract, {cartItem: filterArray, deliveryType: '01'}).then(res => {
-          debugger
+          self.showMsg('生成合同成功！')
+          self.$forceUpdate()
         }).catch(e => {
           console.log(e)
         }).finally(() => {
           this.modalShow = false
           this.hideLoading()
           self.btnDisable = false
+          self.$forceUpdate()
         })
         // self.ironRequest('generateOrder.shtml', body, 'post').then(resp => {
         //   this.modalShow = false
@@ -523,7 +526,6 @@ export default {
     // 选择计量方式
     weightChoose (val, rowItem) {
       rowItem.measure_way_id = val
-      debugger
       if (val === '01') {
         rowItem.weight = rowItem.radios[0].weight
         rowItem.price = rowItem.radios[0].price

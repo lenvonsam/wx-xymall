@@ -21,7 +21,7 @@ div
       template(v-else)
         template(v-if="billTab[swiperIdx].data.length > 0")
           div(:style="{height: scrollHeight+'rpx'}")
-            iron-scroll(:swiperIdx="swiperIdx", @scrolltolower="loadMore", heightUnit="rpx", :height="scrollHeight", :refresh="true", @onRefresh="onRefresh", :loadFinish="loadFinish")          
+            iron-scroll(:swiperIdx="swiperIdx", @scrolltolower="loadMore", heightUnit="rpx", :height="scrollHeight", :refresh="true", @onRefresh="onRefresh", :loadFinish="loadFinish")
               .bill-list(v-for="(item, itemIdx) in billTab[swiperIdx].data", :key="itemIdx", @click="jumpDetail(item)")
                 .bg-white.box
                   .padding-sm
@@ -32,10 +32,10 @@ div
                           img.ding-icon(src="/static/images/ding.png", v-if="item.is_dx")
                       .text-gray(v-if="item.status === '已完成' || item.status === '违约' || item.status === '已取消'") {{item.status}}
                       .text-red(v-else-if="item.status !== '待补款'") {{item.status}}
-                      
+
                     .text-gray
                       .padding-bottom-xs {{item.orgName}}
-                      .flex.justify-between.padding-bottom-xs 
+                      .flex.justify-between.padding-bottom-xs
                         span 共{{item.contractAmount}}支，{{item.estimatedTonnage}}吨
                         .ft-18.text-black ￥{{item.inTaxReceiveMoney}}
                       .flex.justify-between.padding-bottom-xs
@@ -43,25 +43,25 @@ div
                         span(v-if="item.status === '待制作提单'", style="display: flex;")
                           span(v-if="item.status === '待制作提单' && !item.overdue") 提货倒计时：
                           span(v-else) 提货已超时：
-                          span.text-blue(v-if="item.status === '待制作提单' && !item.overdue") {{item.timeDown}}                        
+                          span.text-blue(v-if="item.status === '待制作提单' && !item.overdue") {{item.timeDown}}
                           span.text-red(v-else) {{item.timeDown}}
-                  .solid-top.text-black.ft-15.padding-sm.row(v-if="item.status === '待补款' || item.status === '待付款'")
+                  .solid-top.text-black.ft-15.padding-sm.row(v-if="item.status === '待补款' || item.status === '待支付'")
                     .col
-                      template(v-if="item.status === '待付款'")
+                      template(v-if="item.status === '待支付'")
                         span 倒计时：
                         span.padding-left-xs.text-red {{item.timeDown}}
                       template(v-if="item.status === '待补款'")
                         span 待补款：
                         span.padding-left-xs.text-red ￥{{item.paid_price}}
                     .flex
-                      template(v-if="item.  status === '待付款'")
+                      template(v-if="item.status === '待支付'")
                         .bill-btn.round(@click.stop="payBill(item)") 去付款
                         .bill-red-btn.round.margin-left-sm(@click.stop="billCancel(item)") 取消
                       template(v-if="item.status === '待补款'")
                         .bill-btn.round 待补款
         .text-center.c-gray.pt-100(v-else)
           empty-image(url="bill_empty.png", className="img-empty")
-          .empty-content 您暂时没有相关合同        
+          .empty-content 您暂时没有相关合同
 </template>
 <script>
 import { mapState } from 'vuex'
@@ -77,7 +77,7 @@ export default {
         { title: '已完成', status: '04', data: [], isActive: false }
       ],
       tabName: '0',
-      currentPage: 0,
+      currentPage: 1,
       listData: [],
       triggered: false,
       isload: false,
@@ -123,7 +123,6 @@ export default {
     if (this.tempObject.billTabName) this.tabName = this.tempObject.billTabName.toString()
     this.pageHeight = this.tabName === '1' ? 150 : 100
     this.billTab[idx].data = []
-    debugger
     if (this.swiperCount !== idx) {
       this.swiperCount = idx
     } else {
@@ -154,7 +153,7 @@ export default {
     allChoosed (newVal, oldVal) {
       if (newVal) {
         this.listData.map(itm => {
-          if (itm.status === '待付款') itm.choosed = true
+          if (itm.status === '待支付') itm.choosed = true
         })
       } else {
         this.listData.map(itm => {
@@ -177,7 +176,7 @@ export default {
   },
   methods: {
     onRefresh (done) {
-      this.currentPage = 0
+      this.currentPage = 1
       this.refresher(done)
     },
     searchOrder () {
@@ -202,7 +201,7 @@ export default {
       this.swiperCount = idx
       this.tabName = this.billTab[idx].status
       this.billTab[idx].data = []
-      this.currentPage = 0
+      this.currentPage = 1
       this.startDate = ''
       // this.billNo = ''
       this.endDate = ''
@@ -220,7 +219,7 @@ export default {
       this.loadFinish = 1
       const self = this
       this.isLoad = true
-      this.currentPage = 0
+      this.currentPage = 1
       // const reqUrl = `orderList.shtml?user_id=${me.currentUser.user_id}&status=${this.tabName}&current_page=${this.currentPage}&page_size=${this.pageSize}&order_no=${this.billNo}&start_date=${this.startDate}&end_date=${this.endDate}`
       // this.ironRequest(reqUrl, {}, 'get').then(resp => {
       //   const idx = me.swiperCount
@@ -247,12 +246,13 @@ export default {
       //   if (me.billTab[idx].data.length < 10) me.loadFinish = 3
       //   if (done) done()
       // })
+      self.queryObj.pageNum = this.currentPage
       self.httpPost(self.apiList.zf.contractList, self.queryObj).then(res => {
         const idx = self.swiperCount
         self.billTab[idx].data = []
-        this.serverTime = res.currentDate
+        this.serverTime = new Date(res.data[0].currentDate).getTime()
         let arr = res.data
-        if (arr.length > 0 && self.currentPage === 0) {
+        if (arr.length > 0 && self.currentPage === 1) {
           const list = []
           arr.map(item => {
             item.choosed = false
@@ -264,7 +264,7 @@ export default {
           self.billTab[idx].data = list
           self.listData = list
           self.isLoad = false
-        } else if (arr.length === 0 && self.currentPage === 0) {
+        } else if (arr.length === 0 && self.currentPage === 1) {
           self.listData = []
           this.billTab[idx].data = []
           self.isload = false
@@ -275,7 +275,6 @@ export default {
       })
     },
     selectTabs (item, idx) {
-      debugger
       if (item.status === '10') {
         this.queryObj.contractStateType = ''
         this.queryObj.xingyunContractStatus = '02'
@@ -315,7 +314,7 @@ export default {
     batchPay () {
       let filterArr = this.listData.filter(itm => itm.choosed === true)
       if (filterArr.length > 0) {
-        let orderNos = filterArr.map(itm => itm.no).join(',')
+        let orderNos = filterArr.map(itm => itm.saleContractId).join(',')
         this.jump({ path: '/mall/pay', query: { pageType: 'offlinePay', orderNo: orderNos, price: this.totalPrice } })
       }
     },
@@ -323,9 +322,11 @@ export default {
       const idx = this.swiperCount
       const arr = this.billTab[idx].data
       arr.map(item => {
-        if (item.status === '待付款' || item.status === '待制作提单') {
+        if (item.status === '待支付' || item.status === '待制作提单') {
           const nowTime = this.serverTime
-          const endTimeFormat = item.status === '待制作提单' ? item.end_pack_time.replace(/-/g, '/') : item.end_pay_time.replace(/-/g, '/')
+          // const endTimeFormat = item.status === '待制作提单' ? item.end_pack_time.replace(/-/g, '/') : item.end_pay_time.replace(/-/g, '/')
+          // const nowTime = item.currentDate
+          const endTimeFormat = item.invalidDate
           const endTime = new Date(endTimeFormat).getTime()
           const leftTime = endTime - nowTime
           let d = 0
@@ -349,11 +350,15 @@ export default {
               h = Math.floor(leftTime / 1000 / 60 / 60)
               m = Math.floor(leftTime / 1000 / 60 % 60)
               s = Math.floor(leftTime / 1000 % 60)
+              h = h < 10 ? '0' + h : h
+              m = m < 10 ? '0' + m : m
+              s = s < 10 ? '0' + s : s
+              item.timeDown = `${h}:${m}:${s}`
             }
           } else {
+            let overTime = Math.abs(leftTime)
             if (item.status === '待制作提单') {
               item.overdue = true
-              let overTime = Math.abs(leftTime)
               d = Math.floor(overTime / (24 * 3600 * 1000))
               let leave1 = overTime % (24 * 3600 * 1000) // 计算天数后剩余的毫秒数
               h = Math.floor(leave1 / (3600 * 1000))
@@ -363,38 +368,48 @@ export default {
               s = Math.round(leave3 / 1000)
               console.log(d + h + m + s)
               item.timeDown = `${d}天${h}小时${m}分`
-            }
-          }
-          if (h + m + s === 0) {
-            if (item.status === '待付款') {
+            } else {
               item.status = '违约'
-            }
-          } else {
-            if (item.status === '待付款') {
+              h = Math.floor(overTime / 1000 / 60 / 60)
+              m = Math.floor(overTime / 1000 / 60 % 60)
+              s = Math.floor(overTime / 1000 % 60)
               h = h < 10 ? '0' + h : h
               m = m < 10 ? '0' + m : m
               s = s < 10 ? '0' + s : s
               item.timeDown = `${h}:${m}:${s}`
             }
           }
+          // if (h + m + s === 0) {
+          //   if (item.status === '待支付') {
+          //     item.status = '违约'
+          //   }
+          // } else {
+          //   if (item.status === '待支付') {
+          //     h = h < 10 ? '0' + h : h
+          //     m = m < 10 ? '0' + m : m
+          //     s = s < 10 ? '0' + s : s
+          //     item.timeDown = `${h}:${m}:${s}`
+          //   }
+          // }
         }
       })
       this.$forceUpdate()
     },
     loadData (done) {
       this.loadFinish = 1
-      if (this.currentPage === 0) {
+      if (this.currentPage === 1) {
         this.isload = true
       } else {
         this.isload = false
       }
       const self = this
+      self.queryObj.pageNum = this.currentPage
       self.httpPost(self.apiList.zf.contractList, self.queryObj).then(res => {
         const idx = self.swiperCount
         self.billTab[idx].data = []
-        this.serverTime = res.currentDate
+        this.serverTime = new Date(res.data[0].currentDate).getTime()
         let arr = res.data
-        if (arr.length > 0 && self.currentPage === 0) {
+        if (arr.length > 0 && self.currentPage === 1) {
           const list = []
           arr.map(item => {
             item.choosed = false
@@ -406,7 +421,7 @@ export default {
           self.billTab[idx].data = list
           self.listData = list
           self.isLoad = false
-        } else if (arr.length === 0 && self.currentPage === 0) {
+        } else if (arr.length === 0 && self.currentPage === 1) {
           self.listData = []
           this.billTab[idx].data = []
           self.isload = false
@@ -505,8 +520,8 @@ export default {
     payBill (item) {
       // if (this.tabName === '0') this.statisticRequest({ event: 'click_app_myorder_all_pay' })
       // if (this.tabName === '1') this.statisticRequest({ event: 'click_app_myorder_needpay_pay' })
-      this.statisticRequest({ event: 'click_app_order_to_pay' })
-      this.jump(`/pages/pay/main?pageType=offlinePay&orderNo=${item.no}&price=${item.fact_price}`)
+      // this.statisticRequest({ event: 'click_app_order_to_pay' })
+      this.jump(`/pages/pay/main?pageType=offlinePay&orderNo=${item.saleContractId}`)
     }
   }
 }

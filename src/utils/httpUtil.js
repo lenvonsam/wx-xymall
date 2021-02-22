@@ -192,11 +192,18 @@ function httpGet (url, params) {
 }
 
 function httpPost (url, params) {
-  url = zfBASICURL + url
-  let header = {
-    'PlatformId': 'ZF',
-    'Authorization': this.token
+  let header = {}
+  if (url !== 'base/online/appletLogin') {
+    header = {
+      'PlatformId': 'ZF',
+      'Authorization': this.token
+    }
+  } else {
+    header = {
+      'PlatformId': 'ZF'
+    }
   }
+  url = zfBASICURL + url
   return new Promise((resolve, reject) => {
     mpvue.request({
       url: url,

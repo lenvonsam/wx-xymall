@@ -20,20 +20,20 @@ div
                     .col.flex-25.flex.flex-center(v-if="tabName == '0' || tabName == '2'")
                       img.choose-icon(src="/static/images/blue_check.png", v-if="item.checked")
                       img.choose-icon(src="/static/images/btn_ck_n.png", v-else)
-                    .col.ft-14(:class="{'pl-5': tabName == '0' || tabName == '2'}")                      
+                    .col.ft-14(:class="{'pl-5': tabName == '0' || tabName == '2'}")
                       .pb-half-rem.c-gray.ft-14 {{item.saleLadingNo}}
                       .pb-half-rem {{item.title}}
                       .text-gray
                         span 重量：
-                        span.ml-5 {{item.settlementWeight}}吨
+                        span.ml-5 {{tabName == '0' ? item.settlementWeight : item.invoiceWeight}}吨
                         span.ml-5 数量：
-                        span.ml-5 {{item.settlementAmount}}支
+                        span.ml-5 {{tabName == '0' ? item.settlementAmount : item.invoiceAmount}}支
                   .text-right.flex.flex-direction.align-end(:class="tabName !== '3' ? 'justify-between' : 'justify-center'")
-                    .text-blue.ft-18 ￥{{item.settleTotalMoney}}
+                    .text-blue.ft-18 ￥{{tabName == '0' ? item.settleTotalMoney : item.invoiceTotalMoney}}
                     .invoice-detail-btn.margin-top-sm(v-if="tabName != '0' && item.settleTotalMoney > 0", @click="jumpDetail(item)") 查看详情
-                    .text-gray(v-if="tabName !== '3'") 吊费：￥{{item.lifttingFee}}
-            .padding.text-gray.ft-13.text-center(v-if="loading") 努力加载中... 
-            .padding.text-gray.ft-13.text-center(v-if="finished") 加载完成 
+                    .text-gray(v-if="tabName !== '3'") 吊费：￥{{item.hangingFeeMoney}}
+            .padding.text-gray.ft-13.text-center(v-if="loading") 努力加载中...
+            .padding.text-gray.ft-13.text-center(v-if="finished") 加载完成
         .text-center.c-gray.pt-100(v-else)
           empty-image(url="bill_empty.png", className="img-empty")
           .empty-content 您暂时没有相关发票
@@ -47,9 +47,9 @@ div
       div(style="box-sizing: border-box; padding-right: .3rem;")
           span 合计：
           span.text-red ￥ {{totalPriceAll}}
-      //- .col.apply.flex-100.flex.flex-center(@click="invoiceAction") {{tabName == '0' ? '批量申请' : '批量确认'}}  
-      .main-btn.margin-right-sm(@click="invoiceAction") {{tabName == '0' ? '批量申请' : '批量确认'}}      
-  //- alert(:title="alertTitle", :cb="alertCb", v-model="alertShow" )  
+      //- .col.apply.flex-100.flex.flex-center(@click="invoiceAction") {{tabName == '0' ? '批量申请' : '批量确认'}}
+      .main-btn.margin-right-sm(@click="invoiceAction") {{tabName == '0' ? '批量申请' : '批量确认'}}
+  //- alert(:title="alertTitle", :cb="alertCb", v-model="alertShow" )
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
@@ -265,34 +265,35 @@ export default {
       const self = this
       this.disabledBtn = true
       if (filterArray.length > 0) {
-        let ids = filterArray.map(item => item.id).join(',')
+        let ids = filterArray.map(item => item.arSettlementListId).join(',')
         if (this.tabName === '0') {
+          this.jump('/pages/invoiceDetail/main?tabName=' + this.tabName + '&ids=' + ids)
           // 发票申请
-          let title = filterArray[0].title
-          let type = filterArray[0].type
+          // let title = filterArray[0].title
+          // let type = filterArray[0].type
           // 发票编号
           let nos = filterArray.map(item => item.saleLadingNo).join(',')
-          // 总金额
-          let totalPrice = filterArray.map(item => item.settleTotalMoney).reduce((a, b) => a + b)
-          totalPrice = this.$toFixed(totalPrice, 2)
-          // 货款金额
-          let goodsPrice = filterArray.map(item => item.goods_price).reduce((a, b) => a + b).toFixed(2)
-          // 吊费金额
-          let liftPrice = filterArray.map(item => item.lift_price).reduce((a, b) => a + b).toFixed(2)
-          let obj = {
-            contract_no: nos,
-            id: ids,
-            price: totalPrice,
-            goods_price: goodsPrice,
-            lift_price: liftPrice,
-            title,
-            type
-          }
+          // // 总金额
+          // let totalPrice = filterArray.map(item => item.settleTotalMoney).reduce((a, b) => a + b)
+          // totalPrice = this.$toFixed(totalPrice, 2)
+          // // 货款金额
+          // let goodsPrice = filterArray.map(item => item.goods_price).reduce((a, b) => a + b).toFixed(2)
+          // // 吊费金额
+          // let liftPrice = filterArray.map(item => item.lift_price).reduce((a, b) => a + b).toFixed(2)
+          // let obj = {
+          //   contract_no: nos,
+          //   id: ids,
+          //   price: totalPrice,
+          //   goods_price: goodsPrice,
+          //   lift_price: liftPrice,
+          //   title,
+          //   type
+          // }
           if (nos.split(',').length === 1) {
-            self.httpPost(self.apiList.zf.invoiceAdd, obj).then(res => {
-              debugger
-              console.log(res)
-            })
+            // self.httpPost(self.apiList.zf.invoiceAdd, obj).then(res => {
+            //   debugger
+            //   console.log(res)
+            // })
             // this.ironRequest('invoiceDetail.shtml?id=' + filterArray[0].id, {}, 'get').then(resp => {
             //   if (resp.returncode === '0') {
             //     obj.goods_price = resp.goods_price
@@ -309,7 +310,7 @@ export default {
             //   self.allChecked = false
             // })
           } else {
-            this.configVal({ key: 'tempObject', val: obj })
+            // this.configVal({ key: 'tempObject', val: obj })
             this.jump('/pages/invoiceDetail/main?id=' + this.tabName)
             this.allChecked = false
           }

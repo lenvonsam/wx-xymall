@@ -105,7 +105,7 @@ export default {
   billIcons: [
     {
       icon: '/static/images/dfk.png',
-      dotKey: 'totalPaymentAmount',
+      dotKey: 'paymentNumber',
       name: '待付款',
       url: {
         path: '/pages/bill/main?tabName=01'

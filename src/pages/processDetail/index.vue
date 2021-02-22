@@ -5,43 +5,43 @@ div
     template(v-if="processId")
       .row.solid-bottom.padding
         .title.padding-left-xs 客户名称
-        .col.text-right.text-gray {{pObj['customerUnitName']}} 
+        .col.text-right.text-gray {{pObj['customerUnitName']}}
       .row.solid-bottom.padding
         .title.padding-left-xs 联系电话
-        .col.text-right.text-gray {{pObj['contactsPhone']}}  
+        .col.text-right.text-gray {{pObj['contactsPhone']}}
     .row.solid-bottom.padding
       .title
         span.text-red(v-if="processId") *
         span.padding-left-xs 加工类型
-      .col.text-right.text-gray(v-if="processId") {{processType}} 
+      .col.text-right.text-gray(v-if="processId") {{processType}}
       picker.col(@change="processTypeCb", :range="pTypeArray", v-else)
         .text-right.text-gray {{processType}}
     .row.solid-bottom.padding
-      .title    
+      .title
         span.text-red(v-if="processId") *
         span.padding-left-xs 交货时间
-      .col.text-right.text-gray(v-if="processId") {{pObj['deliveryDate']}}   
+      .col.text-right.text-gray(v-if="processId") {{pObj['deliveryDate']}}
       picker.col(@change="dateCb", mode="date", v-else)
         .text-right.text-gray {{dateVal}}
     .row.solid-bottom.padding
-      .title    
+      .title
         span.text-red(v-if="processId") *
         span.padding-left-xs 材质
       .col.text-right.padding-left-xs
         span(v-if="processId") {{pObj['productTextureName']}}
         input(v-else, type="text", placeholder="请输入材质", v-model="material")
     .row.solid-bottom.padding
-      .title    
+      .title
         span.padding-left-xs 备注
       .col.text-right.padding-left-xs
         span(v-if="processId") {{pObj.remarks}}
         input(v-else, type="text", placeholder="请输入备注", v-model="remark")
   .process(v-if="rowCount.length > 0" :style="{'padding-bottom': isIpx ? '218rpx' : '150rpx'}")
-    process-item(v-if="i", :pno="processId", :ref="`processItem_${idx}`", v-for="(i,idx) in rowCount", :row="i", :key="idx", :process-type="processType", :cb="pickerItemCb", :rowidx="idx")  
+    process-item(v-if="i", :pno="processId", :ref="`processItem_${idx}`", v-for="(i,idx) in rowCount", :row="i", :key="idx", :process-type="processType", :cb="pickerItemCb", :rowidx="idx")
   .bottom-footer.bg-white.padding-sm(:style="{'padding-bottom': isIpx ? '98rpx' : '20rpx'}")
     .main-btn.bg-red(@click="delProcess", v-if="processId") 删除
     .main-btn(@click="createProcess", v-else) 提交
-    
+
 </template>
 <script>
 import { mapState } from 'vuex'
@@ -89,7 +89,6 @@ export default {
         id: this.processId
       }
       this.httpGet(this.apiList.zf.onlineProcessDetail, paramsObj).then(res => {
-        debugger
         this.pObj = res.data
         const list = []
         this.processType = this.pObj['processType'] === '01' ? '开平' : '镀锌'

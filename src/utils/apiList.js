@@ -188,8 +188,6 @@ export default {
     wxBind: 'base/online/appletBinding',
     // 微信登录
     wxLogin: 'base/online/wxLogin',
-    // 找回密码
-    resetPassword: 'base/online/resetPassword',
     // 获取商城列表
     shopMallList: 'xingyun/shopMall/queryPage',
     // 基础管理-个人资料管理-获取个人资料
@@ -200,6 +198,10 @@ export default {
     contractList: 'xingyun/contract/queryContractPage',
     // 合同详情
     saleContractDetail: 'xingyun/contract/saleContractDetail',
+    // 合同订单详情
+    contractOrderDetail: 'xingyun/order/contractOrderDetail',
+    // 合同付款
+    contractOrderPayment: 'xingyun/order/contractOrderPayment',
     // 加工跟踪
     onlineProcessTrack: 'xingyun/onlineProcess/queryPage',
     // 我的加工-新增加工
@@ -220,6 +222,8 @@ export default {
     billLadingDetail: 'xingyun/billLading/selectBillLadingDetail',
     // 发票-未申请提单-分页查询
     invoiceUnApply: 'finance/arStatementList/customerSearch',
+    // 发票-未申请提单详情
+    invoiceUnApplyDetail: 'finance/arStatementList/getArStatementList',
     // 发票-已申请提单的-分页查询
     invoiceApplied: 'finance/arInvoice/customerAppliedSearch',
     // 发票-已开票提单
@@ -241,6 +245,20 @@ export default {
     // 购物车清空失效物资
     failureMaterial: 'xingyun/cart/failureMaterial',
     // 生成合同
-    generateContract: 'xingyun/shopMall/generateContract'
+    generateContract: 'xingyun/shopMall/generateContract',
+    // 基础管理-支付密码管理
+    updatePaymentCode: 'xingyun/base/updatePaymentCode',
+    // 基础管理-登录密码管理
+    updateLoginPassword: 'xingyun/base/updateLoginPassword',
+    // 找回密码
+    resetPassword: 'base/online/resetPassword',
+    // 图片ocr
+    ocrImage: 'base/ocrImage',
+    // 上传图片
+    uploadImage: 'foundation/attach/upload',
+    // 完善公司信息
+    addAuthentication: 'xingyun/unitAuthentication/add',
+    // 商城分类
+    appletQuerySpecificationList: 'xingyun/shopMall/appletQuerySpecificationList'
   }
 }

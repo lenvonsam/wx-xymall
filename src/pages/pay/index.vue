@@ -103,7 +103,8 @@ export default {
       frontPrice: 0,
       payMountInfo: 0,
       payMountBalance: 0,
-      frontBalance: 0
+      frontBalance: 0,
+      paymentType: '01' // 支付方式：01全款支付,02定向支付,03白条支付
     }
   },
   computed: {
@@ -125,34 +126,52 @@ export default {
   beforeMount () {
     this.pageType = this.$root.$mp.query.pageType
     if (this.$root.$mp.query.orderNo && (this.pageType === 'offlinePay' || this.pageType === 'ladPay')) {
-      this.orderNos = this.$root.$mp.query.orderNo.split(',')
+      // this.orderNos = this.$root.$mp.query.orderNo.split(',')
+      this.saleContractId = this.$root.$mp.query.orderNo
     }
     this.showLoading()
-    this.ironRequest('balanceList.shtml?type=0&only_all=1&user_id=' + this.currentUser.user_id, {}, 'get').then(res => {
-      if (res.returncode === '0') {
-        this.freezeMoney = res.freeze_money
-        console.log(this.chooseType)
+    let paramsObj = {
+      // contractIdList: this.orderNos
+      contractIdList: [this.saleContractId]
+    }
+    this.httpPost(this.apiList.zf.contractOrderDetail, paramsObj).then(res => {
+      console.log(res.data)
+      this.currentBalance = res.data.deposit
+      this.payMountInfo = res.data.contractMoney
+      if (Number(this.currentBalance) < this.payMountInfo) {
+        this.chooseType = 'offpay'
+      } else {
+        this.chooseType = 'balance'
       }
+      if (this.pageType === 'balance') this.chooseType = 'offpay'
+    }).finally(() => {
       this.hideLoading()
     })
-    console.log('this.$route.query.orderNo', this.$root.$mp.query.orderNo)
-    this.ironRequest('orderPayDetail.shtml?tstc_nos=' + this.$root.$mp.query.orderNo, {}, 'get').then(res => {
-      const resData = res
-      if (res.returncode === '0') {
-        this.currentBalance = resData.desposit_can
-        this.payMountInfo = resData.total_money
-        this.percent = this.$toFixed(resData.percent * 100, 2) + '%'
-        this.frontPrice = resData.front_price
-        if (Number(this.currentBalance) < this.payMountInfo) {
-          this.chooseType = 'offpay'
-        } else {
-          this.chooseType = 'balance'
-        }
-        if (this.pageType === 'balance') this.chooseType = 'offpay'
-      }
-    }).catch(err => {
-      this.showMsg(err || '网络异常')
-    })
+    // this.ironRequest('balanceList.shtml?type=0&only_all=1&user_id=' + this.currentUser.user_id, {}, 'get').then(res => {
+    //   if (res.returncode === '0') {
+    //     this.freezeMoney = res.freeze_money
+    //     console.log(this.chooseType)
+    //   }
+    //   this.hideLoading()
+    // })
+    // console.log('this.$route.query.orderNo', this.$root.$mp.query.orderNo)
+    // this.ironRequest('orderPayDetail.shtml?tstc_nos=' + this.$root.$mp.query.orderNo, {}, 'get').then(res => {
+    //   const resData = res
+    //   if (res.returncode === '0') {
+    //     this.currentBalance = resData.desposit_can
+    //     this.payMountInfo = resData.total_money
+    //     this.percent = this.$toFixed(resData.percent * 100, 2) + '%'
+    //     this.frontPrice = resData.front_price
+    //     if (Number(this.currentBalance) < this.payMountInfo) {
+    //       this.chooseType = 'offpay'
+    //     } else {
+    //       this.chooseType = 'balance'
+    //     }
+    //     if (this.pageType === 'balance') this.chooseType = 'offpay'
+    //   }
+    // }).catch(err => {
+    //   this.showMsg(err || '网络异常')
+    // })
   },
   onUnload () {
     this.payPwd = ''
@@ -187,7 +206,7 @@ export default {
       })
     },
     billPay () {
-      const me = this
+      const self = this
       if (this.pageType === 'offlinePay' || (this.pageType === 'ladPay' && (this.currentBalance > this.payMountInfo))) {
         if (this.payPwd.toString().trim().length === 0) {
           this.showMsg('请输入支付密码')
@@ -200,144 +219,158 @@ export default {
         }
       }
       if (!this.btnDisable) {
-        let ordernos = this.orderNos.join(',')
-        let encyptPwd = me.base64Str(this.payPwd)
+        // let ordernos = this.orderNos.join(',')
+        // let encyptPwd = me.base64Str(this.payPwd)
         const msgs = '磅计物资提货时，如需实提补款，平台将从余额扣取相应金额'
         console.log('1')
         this.confirm({ content: msgs }).then((res) => {
           if (res !== 'confirm') return false
-          console.log(this.chooseType)
-          if (this.chooseType === 'offpay') {
-            // 线下转账/或预约支付
-            this.btnDisable = true
-            let body = {}
-            if (this.pageType === 'offlinePay' || this.pageType === 'ladPay') {
-              body = {
-                order_nos: ordernos,
-                bank_no: '10613501040017200',
-                pay_type: 1,
-                user_id: this.currentUser.user_id,
-                pay_pass: encyptPwd,
-                remark: '',
-                credent_pics: ''
-              }
-              if (this.pageType === 'offlinePay') {
-                // body.pay_type = 3
-                body.is_appoint_pay = 1
-                body.need_fund_in = this.$toFixed(Number(this.payMountInfo - this.currentBalance), 2)
-              }
-              if (this.payTabsActive === '定金支付') {
-                body.pay_type = 2
-              }
-              let reqUrl = 'offlinePay.shtml'
-              if (this.pageType === 'ladPay') {
-                reqUrl = 'contractPay.shtml'
-                body.contract_no = this.$route.query.contractNo
-              }
-              this.ironRequest(reqUrl, body, 'post').then(resp => {
-                console.log('res', resp)
-                if (resp.returncode === '0') {
-                  this.confirm({ content: '银行转账信息提交成功，请耐心等待审批' }).then((res) => {
-                    // if (res !== 'confirm') return false
-                    me.btnDisable = false
-                    me.back()
-                  })
-                } else {
-                  me.btnDisable = false
-                  me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
-                }
-              }).catch(err => {
-                this.btnDisable = false
-                me.showMsg(err || '网络异常')
-              })
-            } else {
-              // 余额充值
-              body = {
-                bank_no: '10613501040017200',
-                user_id: this.currentUser.user_id,
-                remark: this.remark,
-                price: this.pBalance,
-                credent_pics: ''
-              }
-              this.showLoading()
-              this.ironRequest('recharge.shtml', body, 'post').then(resp => {
-                if (resp.returncode === '0') {
-                  this.confirm({ content: '银行转账信息提交成功，请耐心等待审批' }).then((res) => {
-                    this.hideLoading()
-                    if (res === 'confirm') {
-                      me.back()
-                    }
-                    me.btnDisable = false
-                  })
-                } else {
-                  me.btnDisable = false
-                  me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
-                }
-              }).catch(err => {
-                this.btnDisable = false
-                this.hideLoading()
-                me.showMsg(err || '网络异常')
-              })
-            }
-          } else {
-            // 余额支付(订单/合同余额充足的情况)
-            me.btnDisable = true
-            let body = {
-              order_nos: ordernos,
-              user_id: me.currentUser.user_id,
-              pay_pass: encyptPwd,
-              pay_type: 1,
-              remark: ''
-            }
-            let reqUrl = 'offlinePay.shtml'
-            if (me.pageType === 'ladPay') {
-              reqUrl = 'contractPay.shtml'
-              body.contract_no = me.$root.$mp.query.contractNo
-            }
-            if (this.payTabsActive === '定金支付') {
-              body.pay_type = 2
-            }
-            if (this.smsNotify) body.sms_notify = 1
-            this.showLoading()
-            me.ironRequest(reqUrl, body, 'post', me).then(res => {
-              me.hideLoading()
-              if (res && res.returncode === '0') {
-                if (me.pageType === 'offlinePay') {
-                  this.alertTitle = '支付成功！请联系司机去平台仓库提货!'
-                  this.alertFlag = 1
-                  this.alertShow = true
-
-                  // me.confirm({ content: '支付成功！请联系司机去平台仓库提货!' }).then((res) => {
-                  //   me.showLoading()
-                  //   if (res === 'confirm') {
-                  //     setTimeout(() => {
-                  //       me.hideLoading()
-                  //       me.redirect('/pages/bill/main?tabName=6')
-                  //     }, 3000)
-                  //   }
-                  //   me.btnDisable = false
-                  // })
-                } else {
-                  me.alertTitle = '支付成功'
-                  me.alertFlag = 2
-                  me.alertShow = true
-                  // me.confirm('支付成功!').then((res) => {
-                  //   if (res === 'confirm') {
-                  //     me.redirect('/pages/bill/main?tabName=0')
-                  //   }
-                  //   me.btnDisable = false
-                  // })
-                }
-              } else {
-                me.btnDisable = false
-                me.showMsg(res === undefined ? '网络异常' : res.errormsg)
-              }
-            }).catch(err => {
-              me.hideLoading()
-              me.showMsg(err)
-              me.btnDisable = false
-            })
+          let paramsOnj = {
+            contractIdList: [self.saleContractId],
+            paymentType: self.paymentType,
+            paymentPassword: self.payPwd
           }
+          console.log(this.chooseType)
+          self.httpPost(this.apiList.zf.contractOrderPayment, paramsOnj)
+            .then(() => {
+              self.showMsg('支付成功！')
+              setTimeout(() => {
+                self.back()
+              }, 1000)
+            }).catch((e) => {
+              self.showMsg(e.message)
+            })
+          // if (this.chooseType === 'offpay') {
+          //   // 线下转账/或预约支付
+          //   this.btnDisable = true
+          //   let body = {}
+          //   if (this.pageType === 'offlinePay' || this.pageType === 'ladPay') {
+          //     body = {
+          //       order_nos: ordernos,
+          //       bank_no: '10613501040017200',
+          //       pay_type: 1,
+          //       user_id: this.currentUser.user_id,
+          //       pay_pass: encyptPwd,
+          //       remark: '',
+          //       credent_pics: ''
+          //     }
+          //     if (this.pageType === 'offlinePay') {
+          //       // body.pay_type = 3
+          //       body.is_appoint_pay = 1
+          //       body.need_fund_in = this.$toFixed(Number(this.payMountInfo - this.currentBalance), 2)
+          //     }
+          //     if (this.payTabsActive === '定金支付') {
+          //       body.pay_type = 2
+          //     }
+          //     let reqUrl = 'offlinePay.shtml'
+          //     if (this.pageType === 'ladPay') {
+          //       reqUrl = 'contractPay.shtml'
+          //       body.contract_no = this.$route.query.contractNo
+          //     }
+          //     this.ironRequest(reqUrl, body, 'post').then(resp => {
+          //       console.log('res', resp)
+          //       if (resp.returncode === '0') {
+          //         this.confirm({ content: '银行转账信息提交成功，请耐心等待审批' }).then((res) => {
+          //           // if (res !== 'confirm') return false
+          //           me.btnDisable = false
+          //           me.back()
+          //         })
+          //       } else {
+          //         me.btnDisable = false
+          //         me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
+          //       }
+          //     }).catch(err => {
+          //       this.btnDisable = false
+          //       me.showMsg(err || '网络异常')
+          //     })
+          //   } else {
+          //     // 余额充值
+          //     body = {
+          //       bank_no: '10613501040017200',
+          //       user_id: this.currentUser.user_id,
+          //       remark: this.remark,
+          //       price: this.pBalance,
+          //       credent_pics: ''
+          //     }
+          //     this.showLoading()
+          //     this.ironRequest('recharge.shtml', body, 'post').then(resp => {
+          //       if (resp.returncode === '0') {
+          //         this.confirm({ content: '银行转账信息提交成功，请耐心等待审批' }).then((res) => {
+          //           this.hideLoading()
+          //           if (res === 'confirm') {
+          //             me.back()
+          //           }
+          //           me.btnDisable = false
+          //         })
+          //       } else {
+          //         me.btnDisable = false
+          //         me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
+          //       }
+          //     }).catch(err => {
+          //       this.btnDisable = false
+          //       this.hideLoading()
+          //       me.showMsg(err || '网络异常')
+          //     })
+          //   }
+          // } else {
+          //   // 余额支付(订单/合同余额充足的情况)
+          //   me.btnDisable = true
+          //   let body = {
+          //     order_nos: ordernos,
+          //     user_id: me.currentUser.user_id,
+          //     pay_pass: encyptPwd,
+          //     pay_type: 1,
+          //     remark: ''
+          //   }
+          //   let reqUrl = 'offlinePay.shtml'
+          //   if (me.pageType === 'ladPay') {
+          //     reqUrl = 'contractPay.shtml'
+          //     body.contract_no = me.$root.$mp.query.contractNo
+          //   }
+          //   if (this.payTabsActive === '定金支付') {
+          //     body.pay_type = 2
+          //   }
+          //   if (this.smsNotify) body.sms_notify = 1
+          //   this.showLoading()
+          //   me.ironRequest(reqUrl, body, 'post', me).then(res => {
+          //     me.hideLoading()
+          //     if (res && res.returncode === '0') {
+          //       if (me.pageType === 'offlinePay') {
+          //         this.alertTitle = '支付成功！请联系司机去平台仓库提货!'
+          //         this.alertFlag = 1
+          //         this.alertShow = true
+
+          //         // me.confirm({ content: '支付成功！请联系司机去平台仓库提货!' }).then((res) => {
+          //         //   me.showLoading()
+          //         //   if (res === 'confirm') {
+          //         //     setTimeout(() => {
+          //         //       me.hideLoading()
+          //         //       me.redirect('/pages/bill/main?tabName=6')
+          //         //     }, 3000)
+          //         //   }
+          //         //   me.btnDisable = false
+          //         // })
+          //       } else {
+          //         me.alertTitle = '支付成功'
+          //         me.alertFlag = 2
+          //         me.alertShow = true
+          //         // me.confirm('支付成功!').then((res) => {
+          //         //   if (res === 'confirm') {
+          //         //     me.redirect('/pages/bill/main?tabName=0')
+          //         //   }
+          //         //   me.btnDisable = false
+          //         // })
+          //       }
+          //     } else {
+          //       me.btnDisable = false
+          //       me.showMsg(res === undefined ? '网络异常' : res.errormsg)
+          //     }
+          //   }).catch(err => {
+          //     me.hideLoading()
+          //     me.showMsg(err)
+          //     me.btnDisable = false
+          //   })
+          // }
         })
       }
     },

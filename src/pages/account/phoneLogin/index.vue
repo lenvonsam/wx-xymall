@@ -146,7 +146,6 @@ export default {
         if (this.canClick) {
           this.canClick = false
           const data = await this.httpPost(url, params)
-          debugger
           this.setUser(data.data)
           const self = this
           if (self.pageType === 'smsLogin') {
