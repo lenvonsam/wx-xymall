@@ -34,9 +34,9 @@
                   .col(@click="cart.choosed = !cart.choosed")
                     span {{cart.onlineProductBrandName}}
                     span.padding-left-xs {{cart.specification}}
-                  .text-blue ￥{{cart.price}}/吨
-                    span {{cart.onlineProductBrandName}}
-                    span.padding-left-xs {{cart.specification}}
+                  //- .text-blue ￥{{cart.price}}/吨
+                  //-   span {{cart.onlineProductBrandName}}
+                  //-   span.padding-left-xs {{cart.specification}}
                   .text-blue ￥{{cart.radios[0].price}}/吨
                 .content.ft-13
                   .flex.flex-center.justify-between
@@ -655,6 +655,7 @@ export default {
               price: itm.ratioPriceManager,
               originPrice: itm.lj_origin_price
             })
+            itm.price = itm.ratioPriceManager
             prArr.push(itm.ratioPriceManager)
             wtArr.push(itm.ratioAvailableManagerWeight)
             oldPrArr.push(itm.lj_origin_price)
@@ -668,6 +669,7 @@ export default {
               price: itm.ratioPricePound,
               originPrice: itm.bj_origin_price
             })
+            itm.price = itm.ratioPricePound
             prArr.push(itm.ratioPricePound)
             wtArr.push(itm.ratioAvailablePoundWeight)
             oldPrArr.push(itm.bj_origin_price)
@@ -678,6 +680,7 @@ export default {
           } else {
             itm.measure_way_id = itm.cartQuantityType
           }
+
           // } else if (itm.trade_type === 2) {
           //   // H型钢
           //   itm.radios = [{

@@ -470,7 +470,6 @@ export default {
         search: val,
         only_available: 1
       }
-      debugger
       this.queryObj.keyword = val
       this.refresher()
     },
@@ -502,7 +501,6 @@ export default {
             } else {
               if (!this.btnDisable) {
                 this.btnDisable = true
-                debugger
                 obj.num = 1
                 this.addCartItem(obj)
                 // this.addCart(obj, type, this.currentUser.user_id).then(

@@ -259,6 +259,14 @@ export default {
     // 完善公司信息
     addAuthentication: 'xingyun/unitAuthentication/add',
     // 商城分类
-    appletQuerySpecificationList: 'xingyun/shopMall/appletQuerySpecificationList'
+    appletQuerySpecificationList: 'xingyun/shopMall/appletQuerySpecificationList',
+    // 账户收支明细（往来账）
+    customerFundFlows: 'finance/unitFundFlow/searchCustomerFundFlows',
+    // 账户收支明细
+    fundDetail: 'finance/unitFundFlow/searchInAndOutDetail',
+    // 账户收支明细-数量统计
+    fundDetailSummary: 'finance/unitFundFlow/getUnitFundFlowResult',
+    // 资金管理 账户信息-账户余额
+    getUnitMoney: 'finance/unit-fund/getUnitMoney'
   }
 }

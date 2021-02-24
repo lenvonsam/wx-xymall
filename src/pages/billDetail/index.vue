@@ -47,7 +47,7 @@ div
             .col 付款截止时间
             .col.text-black.text-right {{billDetail.invalidDate}}
       .bg-white.solid-top.padding-sm.flex
-        .col 共{{billDetail.amount}}支，{{billDetail.weight}}吨
+        .col 共{{billDetail.contractAmount}}支，{{billDetail.contractManagerWeight}}吨
         .col.text-right 
           .ft-12 吊费: {{billDetail.liftingFeeMoney}}
           .padding-top-xs

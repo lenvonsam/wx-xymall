@@ -27,10 +27,53 @@ div
 <script>
 export default {
   data () {
-    return {}
+    return {
+      queryObj: {
+        pageNum: 1,
+        pageSize: 10,
+        busiEventDateS: '',
+        busiEventDateE: '',
+        busiEventType: '',
+        saleContractNo: ''
+      }
+    }
   },
   onShow () {
-    this.whiteStatusBar()
+    // this.whiteStatusBar()
+    this.loadData()
+  },
+  methods: {
+    loadData () {
+      this.httpPost(this.apiList.zf.fundDetail, this.queryObj)
+        .then((res) => {
+          this.tableValue.pagination.total = res.total
+          this.tableValue.tableData = res.data
+          this.totalNumber = res.data.length
+          this.loading(false)
+        }).finally(() => {
+          this.loading(false)
+        })
+      this.httpPost(this.apiList.zf.fundDetailSummary, this.queryObj)
+        .then((res) => {
+          this.summary = {
+            contractMoney: res.data.contractPaymentMoney || 0,
+            contractNum: res.data.contractNum || 0,
+            refundMoney: res.data.refundMoney || 0,
+            fundInMoney: res.data.rechargeMoney || 0,
+            fundOutMoney: res.data.withdrawableMoney || 0
+          }
+        })
+      // this
+      //   .httpGet(this.apiList.zf.getUnitMoney)
+      //   .then((res) => {
+      //     console.log(res)
+      //     this.accountBalanceMoney = res.data
+      //   })
+      //   .catch((e) => {
+      //     console.log(e)
+      //     this.msgShow({ msg: e.message })
+      //   })
+    }
   }
 }
 </script>
