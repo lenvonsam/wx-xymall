@@ -38,7 +38,7 @@ export default {
   },
   methods: {
     getCode () {
-      console.log('phone val', this.phone)
+      // console.log('phone val', this.phone)
       if (this.phone.trim().length === 0) {
         this.showMsg('手机号不能为空')
         return

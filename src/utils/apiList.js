@@ -220,6 +220,10 @@ export default {
     billLading: 'xingyun/billLading/queryPage',
     // 查询提单详情
     billLadingDetail: 'xingyun/billLading/selectBillLadingDetail',
+    // 确认/取消提单
+    ladingConfirmation: 'xingyun/billLading/ladingConfirmation',
+    // 查询待确认提单
+    queryLadingPage: 'xingyun/contract/queryLadingPage',
     // 发票-未申请提单-分页查询
     invoiceUnApply: 'finance/arStatementList/customerSearch',
     // 发票-未申请提单详情
@@ -260,6 +264,8 @@ export default {
     addAuthentication: 'xingyun/unitAuthentication/add',
     // 商城分类
     appletQuerySpecificationList: 'xingyun/shopMall/appletQuerySpecificationList',
+    // 商城筛选获取所有品名
+    searchBrand: 'xingyun/shopMall/queryProductBrandNamePage',
     // 账户收支明细（往来账）
     customerFundFlows: 'finance/unitFundFlow/searchCustomerFundFlows',
     // 账户收支明细

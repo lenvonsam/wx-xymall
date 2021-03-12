@@ -121,15 +121,16 @@ export default {
               type: 'buyer'
             }
             this.setUser(newUser)
-            this.confirm({ content: '注册成功，但您是新用户，请先完成公司信息' }).then(res => {
-              me.canClick = true
-              me.resetVal()
-              if (res === 'confirm') {
-                me.jump('/pages/account/companyUpdate/main?type=3')
-              } else {
-                me.tab('/pages/index/main')
-              }
-            })
+            me.jump('/pages/login/main')
+            // this.confirm({ content: '注册成功，但您是新用户，请先完成公司信息' }).then(res => {
+            //   me.canClick = true
+            //   me.resetVal()
+            //   if (res === 'confirm') {
+            //     me.jump('/pages/account/companyUpdate/main?type=3')
+            //   } else {
+            //     me.tab('/pages/index/main')
+            //   }
+            // })
           })
         }
       } catch (e) {

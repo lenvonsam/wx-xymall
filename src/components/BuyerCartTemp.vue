@@ -37,7 +37,7 @@
                   //- .text-blue ￥{{cart.price}}/吨
                   //-   span {{cart.onlineProductBrandName}}
                   //-   span.padding-left-xs {{cart.specification}}
-                  .text-blue ￥{{cart.radios[0].price}}/吨
+                  .text-blue ￥{{cart.price}}/吨
                 .content.ft-13
                   .flex.flex-center.justify-between
                     div
@@ -49,7 +49,7 @@
                       .pt-5
                         span {{cart.ratioAvailableAmount}}支 / {{cart.ratioAvailableManagerWeight}}吨
                         span.padding-left-xs 吊费:
-                        span.ml-10 {{cart.price === '--' ? '--' : cart.lift_charge > 0 ? '￥' + cart.lift_charge + '/吨' : cart.lift_charge == 0 ? '无' : '线下结算'}}
+                        span.ml-10 {{cart.price === '--' ? '--' : cart.liftingFee > 0 ? '￥' + cart.liftingFee + '/吨' : cart.liftingFee == 0 ? '无' : '线下结算'}}
                       .pt-5(v-if="cart.toleranceRange || cart.weightRange")
                         span(v-if="cart.toleranceRange") 公差范围:
                         span.ml-10.mr-10(v-if="cart.toleranceRange") {{cart.toleranceRange}}
@@ -376,7 +376,7 @@ export default {
       let canSellArray = filterArray.filter(itm => String(itm.price).indexOf('--') >= 0)
       // const self = this
       if (this.isEdit) {
-        this.statisticRequest({ event: 'click_app_cart_del' })
+        // this.statisticRequest({ event: 'click_app_cart_del' })
         if (filterArray.length === 0) {
           this.showMsg('请选择所需删除的商品')
           return false
@@ -393,7 +393,6 @@ export default {
         // let heFeiArray = filterArray.filter(itm => itm.wh_name.indexOf('合肥') >= 0)
         // let dongGangArray = filterArray.filter(itm => itm.wh_name.indexOf('常州东港') >= 0)
         // let msgs = ''
-        // debugger
         // if (heFeiArray.length > 0 && dongGangArray.length > 0) {
         //   msgs = '所选物资包含合肥仓库,常州东港库物资最快次日可提'
         // } else if (heFeiArray.length > 0) {
@@ -480,17 +479,23 @@ export default {
           body.mobile = self.pwPhone
           body.end_addr = self.pwAddr + ' ' + self.pwAddrDetail
         }
+        filterArray.map(item => {
+          item.num = item.count
+        })
         this.showLoading()
-        await self.httpPost(this.apiList.zf.generateContract, {cartItem: filterArray, deliveryType: '01'}).then(res => {
+        self.httpPost(this.apiList.zf.generateContract, {cartItem: filterArray, deliveryType: '01'}).then(res => {
           self.showMsg('生成合同成功！')
-          self.$forceUpdate()
+          setTimeout(() => {
+            // self.jump('/pages/bill/main?tabName=01')
+            // self.jump(`/pages/pay/main?pageType=offlinePay&orderNo=${res.saleContractId}`)
+            self.tab('/pages/me/main')
+          }, 500)
         }).catch(e => {
           console.log(e)
         }).finally(() => {
           this.modalShow = false
           this.hideLoading()
           self.btnDisable = false
-          self.$forceUpdate()
         })
         // self.ironRequest('generateOrder.shtml', body, 'post').then(resp => {
         //   this.modalShow = false
@@ -551,7 +556,16 @@ export default {
     },
     rowCartCount (obj) {
       console.log(obj.count)
-      this.ironRequest('cartUpdate.shtml', { cart_id: obj.cart_id, user_id: this.currentUser.user_id, measure_way: obj.measure_way_id, count: obj.count }, 'post').then(res => {
+      let params = {
+        skuId: obj.skuId,
+        num: obj.count,
+        stockZoneId: obj.stockZoneId
+      }
+      debugger
+      this.httpGet(this.apiList.zf.changeNum, params).then(res => {
+        console.log(res)
+      }).catch(e => {
+        console.log(e)
       })
     },
     delCartRow (row) {
@@ -564,16 +578,26 @@ export default {
         this.confirm({ content: '您确定要删除吗?' }).then((res) => {
           if (res === 'confirm') {
             self.btnDisable = true
-            self.ironRequest('cartDel.shtml', { cart_ids: idsList.toString() }, 'post', self).then(res => {
-              if (res.returncode === '0') {
-                this.showMsg('删除成功')
-                self.carts = self.carts.filter(item => {
-                  return idsList.indexOf(item.cart_id) === -1
-                })
-                self.tabDot(self.carts.length)
-                self.btnDisable = false
-              }
+            self.httpPost(this.apiList.zf.deleteItem, row).then(res => {
+              this.showMsg('删除成功')
+              this.carts = []
+              this.soldCarts = []
+              this.loadCartData()
+              this.tabDot(this.carts.length + this.soldCarts.length)
+            }).finally(() => {
+              self.hideLoading()
+              self.btnDisable = false
             })
+            // self.ironRequest('cartDel.shtml', { cart_ids: idsList.toString() }, 'post', self).then(res => {
+            //   if (res.returncode === '0') {
+            //     this.showMsg('删除成功')
+            //     self.carts = self.carts.filter(item => {
+            //       return idsList.indexOf(item.cart_id) === -1
+            //     })
+            //     self.tabDot(self.carts.length)
+            //     self.btnDisable = false
+            //   }
+            // })
           }
         })
       }
@@ -648,30 +672,60 @@ export default {
           itm.radios = []
           // if (Number(itm.ratioPriceManager) > 0) {
           if (itm.onlineQuantityType === '00' || itm.onlineQuantityType === '01') {
+            let temp = self.calcWeight(
+              '01',
+              itm.num,
+              itm.meterWeight,
+              itm.length,
+              itm.tolerance,
+              itm.floatingRatio
+            )
             itm.radios.push({
               label: '理计',
               m_way: '01',
-              weight: itm.ratioAvailableManagerWeight,
+              weight: temp,
               price: itm.ratioPriceManager,
               originPrice: itm.lj_origin_price
             })
             itm.price = itm.ratioPriceManager
             prArr.push(itm.ratioPriceManager)
-            wtArr.push(itm.ratioAvailableManagerWeight)
+            wtArr.push(self.calcWeight(
+              itm.cartQuantityType,
+              itm.num,
+              itm.meterWeight,
+              itm.length,
+              itm.tolerance,
+              itm.floatingRatio
+            ))
             oldPrArr.push(itm.lj_origin_price)
           }
           // if (Number(itm.ratioPricePound) > 0) {
           if (itm.onlineQuantityType === '00' || itm.onlineQuantityType === '02') {
+            let temp = self.calcWeight(
+              '02',
+              itm.num,
+              itm.meterWeight,
+              itm.length,
+              itm.tolerance,
+              itm.floatingRatio
+            )
             itm.radios.push({
               label: '磅计',
               m_way: '02',
-              weight: itm.ratioAvailablePoundWeight,
+              weight: temp,
               price: itm.ratioPricePound,
               originPrice: itm.bj_origin_price
             })
             itm.price = itm.ratioPricePound
             prArr.push(itm.ratioPricePound)
-            wtArr.push(itm.ratioAvailablePoundWeight)
+            wtArr.push(self.calcWeight(
+              itm.cartQuantityType,
+              itm.num,
+              itm.meterWeight,
+              itm.length,
+              itm.tolerance,
+              itm.floatingRatio
+            ))
             oldPrArr.push(itm.bj_origin_price)
           }
           // if (!itm.measure_way_id) itm.measure_way_id = '01'
@@ -694,7 +748,15 @@ export default {
           // }
           itm.choosed = false
           itm.count = Number(itm.num)
-          itm.weight = itm.onlineQuantityType === '02' ? itm.ratioAvailablePoundWeight : itm.ratioAvailableManagerWeight
+          itm.weight = self.calcWeight(
+            itm.cartQuantityType ? itm.cartQuantityType : '01',
+            itm.num,
+            itm.meterWeight,
+            itm.length,
+            itm.tolerance,
+            itm.floatingRatio
+          )
+          itm.price = itm.cartQuantityType === '02' ? itm.ratioPricePound : itm.ratioPriceManager
           this.carts.push(itm)
           // const idx = itm.radios.findIndex(item => {
           //   return item.m_way === itm.measure_way_id

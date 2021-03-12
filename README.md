@@ -26,6 +26,40 @@
 |--project.config.json //项目库文件(请勿修改!!!)
 |--project.swan.json //项目库文件(请勿修改!!!)
 ```
+## 组件描述
+```
+Alert.vue --- 弹框
+AuthBtn.vue --- 验证码
+BuyerCartTemp.vue --- 买家购物车
+countStep.vue --- 计数器
+MallHead.vue --- 商城头部
+Modal.vue --- 提示框
+NoDAta.vue --- 无数据提示
+WxLogin.vue --- 微信登录按钮
+Zinput.vue --- 封装输入框
+ZRadios.vue --- 封装选择项
+invoiceModal.vue --- 认证三方图片提示
+```
+## 页面描述
+```
+mall --- 商城
+cart --- 购物车（BuyerCartTemp.vue）
+me --- 我的
+login --- 账号密码登录
+phoneLogin --- 验证码登录，找回密码
+register --- 注册
+companyUpdate --- 认证
+wxBind --- 微信绑定
+bill --- 合同列表
+pay --- 合同付款
+ladbill --- 提单
+invoice --- 发票
+invoiceDetail --- 申请发票
+process --- 加工
+processDetail --- 发布加工
+askBuy --- 求购
+askBuyCreate --- 发布求购
+```
 
 > 注释事项
 

@@ -255,7 +255,8 @@ export default {
         body.status = this.tabName
       }
       if (this.search.trim().length > 0) {
-        body.search = this.search
+        // body.search = this.search
+        self.queryObj.search = this.search
       }
 
       // if (this.tdNo.trim().length > 0) {

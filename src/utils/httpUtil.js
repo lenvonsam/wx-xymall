@@ -268,6 +268,7 @@ export default {
   httpGet,
   httpPost,
   httpPostForm,
+  zfBASICURL,
   proxy: {
     // 开发
     // erp: 'http://192.168.80.147:8980/eep/interfacesAjax!',

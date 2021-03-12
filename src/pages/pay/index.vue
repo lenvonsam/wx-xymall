@@ -122,6 +122,9 @@ export default {
   },
   onShow () {
     this.whiteStatusBar()
+    this.httpPost(this.apiList.zf.queryUserCenterContractInfo, {}).then(res => {
+      this.currentBalance = res.data.unitFundBalance
+    })
   },
   beforeMount () {
     this.pageType = this.$root.$mp.query.pageType
@@ -135,8 +138,6 @@ export default {
       contractIdList: [this.saleContractId]
     }
     this.httpPost(this.apiList.zf.contractOrderDetail, paramsObj).then(res => {
-      console.log(res.data)
-      this.currentBalance = res.data.deposit
       this.payMountInfo = res.data.contractMoney
       if (Number(this.currentBalance) < this.payMountInfo) {
         this.chooseType = 'offpay'
@@ -235,7 +236,7 @@ export default {
             .then(() => {
               self.showMsg('支付成功！')
               setTimeout(() => {
-                self.back()
+                this.back(2)
               }, 1000)
             }).catch((e) => {
               self.showMsg(e.message)

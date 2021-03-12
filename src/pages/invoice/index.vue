@@ -72,7 +72,7 @@ export default {
       allChecked: false,
       isload: false,
       finished: false,
-      currentPage: 0,
+      currentPage: 1,
       queryObject: {},
       pageHeight: 0,
       isTabDisabled: false,
@@ -140,7 +140,7 @@ export default {
     if (this.tabName === '1' || this.tabName === '3') {
       this.pageHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 98 - isPhoneHeight + 'rpx'
     } else {
-      this.currentPage = 0
+      this.currentPage = 1
       this.queryObject = {
         current_page: this.currentPage,
         page_size: this.pageSize
@@ -149,7 +149,7 @@ export default {
       this.pageHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 198 - isPhoneHeight + 'rpx'
     }
     if (this.listData.length === 0) {
-      this.currentPage = 0
+      this.currentPage = 1
       this.queryObject = {
         current_page: this.currentPage,
         page_size: this.pageSize
@@ -178,7 +178,7 @@ export default {
     },
     refresher () {
       const self = this
-      this.currentPage = 0
+      this.currentPage = 1
       this.queryObject = {
         current_page: this.currentPage,
         user_id: this.currentUser.user_id,
@@ -188,7 +188,7 @@ export default {
       this.isLoad = true
       this.ironRequest('invoiceList.shtml', this.queryObject, 'post').then(resp => {
         if (resp && resp.returncode === '0') {
-          if (resp.invoices.length > 0 && self.currentPage === 0) {
+          if (resp.invoices.length > 0 && self.currentPage === 1) {
             this.listData = []
             resp.invoices.map(itm => {
               let temp = itm
@@ -197,7 +197,7 @@ export default {
             })
             self.isLoad = false
             self.finished = false
-          } else if (resp.invoices.length === 0 && self.currentPage === 0) {
+          } else if (resp.invoices.length === 0 && self.currentPage === 1) {
             self.listData = []
             self.finished = true
             self.isLoad = false
@@ -211,6 +211,7 @@ export default {
       if (!this.isLoad) {
         this.currentPage++
         this.queryObject.current_page = this.currentPage
+        this.queryObj.pageNum = this.currentPage
         this.loadData()
       }
     },
@@ -332,7 +333,7 @@ export default {
       }
     },
     loadData () {
-      if (this.currentPage === 0) {
+      if (this.currentPage === 1) {
         this.isLoad = true
       } else {
         this.isLoad = false
@@ -340,8 +341,9 @@ export default {
       this.queryObject.status = this.tabName
       const self = this
       this.loading = true
+      this.queryObj.pageNum = this.currentPage
       self.httpPost(self.postUrl, self.queryObj).then(res => {
-        if (res.data.length > 0 && self.currentPage === 0) {
+        if (res.data.length > 0 && self.currentPage === 1) {
           self.listData = []
           res.data.map(itm => {
             let temp = itm
@@ -351,11 +353,11 @@ export default {
           })
           self.isLoad = false
           self.finished = false
-        } else if (res.data.length === 0 && self.currentPage === 0) {
+        } else if (res.data.length === 0 && self.currentPage === 1) {
           self.listData = []
           self.finished = true
           self.isLoad = false
-        } else if (res.data.length === 0 && self.currentPage > 0) {
+        } else if (res.data.length === 0 && self.currentPage > 1) {
           self.finished = true
           self.currentPage--
           self.queryObj.pageNum = self.currentPage
@@ -432,7 +434,7 @@ export default {
       console.log('name', this.tabName)
       const name = this.tabName
       this.tabList[idx].data = []
-      this.currentPage = 0
+      this.currentPage = 1
       this.isload = false
       this.finished = false
       this.listData = []

@@ -115,8 +115,20 @@ export default {
   },
   beforeMount () {
     this.tabName = this.$root.$mp.query.tabName || ''
+    if (this.tabName === '01') {
+      this.queryObj.contractStateType = '01'
+      this.queryObj.xingyunContractStatus = ''
+    } else if (this.tabName === '02') {
+      this.queryObj.contractStateType = '02'
+      this.queryObj.xingyunContractStatus = ''
+    } else if (this.tabName === '10') {
+      this.queryObj.contractStateType = ''
+      this.queryObj.xingyunContractStatus = '02'
+    } else if (this.tabName === '04') {
+      this.queryObj.contractStateType = '04'
+      this.queryObj.xingyunContractStatus = ''
+    }
     const idx = this.billTab.findIndex(item => item.status === this.tabName)
-
     if (this.tempObject.startDate) this.startDate = this.tempObject.startDate
     if (this.tempObject.endDate) this.endDate = this.tempObject.endDate
     if (this.tempObject.billNo) this.billNo = this.tempObject.billNo
@@ -250,7 +262,7 @@ export default {
       self.httpPost(self.apiList.zf.contractList, self.queryObj).then(res => {
         const idx = self.swiperCount
         self.billTab[idx].data = []
-        this.serverTime = new Date(res.data[0].currentDate).getTime()
+        this.serverTime = new Date(res.data[0].currentDate.replace(/-/g, '/')).getTime()
         let arr = res.data
         if (arr.length > 0 && self.currentPage === 1) {
           const list = []
@@ -327,8 +339,8 @@ export default {
           // const endTimeFormat = item.status === '待制作提单' ? item.end_pack_time.replace(/-/g, '/') : item.end_pay_time.replace(/-/g, '/')
           // const nowTime = item.currentDate
           const endTimeFormat = item.invalidDate
-          const endTime = new Date(endTimeFormat).getTime()
-          const leftTime = endTime - nowTime
+          const endTime = new Date(endTimeFormat.replace(/-/g, '/')).getTime()
+          const leftTime = Number(endTime - nowTime)
           let d = 0
           let h = 0
           let m = 0
@@ -406,11 +418,11 @@ export default {
       self.queryObj.pageNum = this.currentPage
       self.httpPost(self.apiList.zf.contractList, self.queryObj).then(res => {
         const idx = self.swiperCount
-        self.billTab[idx].data = []
-        this.serverTime = new Date(res.data[0].currentDate).getTime()
+        // self.billTab[idx].data = []
+        this.serverTime = new Date(res.data[0].currentDate.replace(/-/g, '/')).getTime()
         let arr = res.data
         if (arr.length > 0 && self.currentPage === 1) {
-          const list = []
+          let list = []
           arr.map(item => {
             item.choosed = false
             item.status = self.contractStatus.find(c => {
@@ -425,6 +437,20 @@ export default {
           self.listData = []
           this.billTab[idx].data = []
           self.isload = false
+        } else if (arr.length > 0 && self.currentPage > 1) {
+          let list = []
+          arr.map(item => {
+            item.choosed = false
+            item.status = self.contractStatus.find(c => {
+              return c.id === item.xingyunContractStatus
+            }).name
+            list.push(item)
+          })
+          this.billTab[idx].data = this.billTab[idx].data.concat(list)
+          self.listData = self.listData.concat(list)
+          self.isLoad = false
+        } else {
+          self.currentPage--
         }
         self.isTabDisabled = false
         if (self.billTab[idx].data.length < 10) self.loadFinish = 3

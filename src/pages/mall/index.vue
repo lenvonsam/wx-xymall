@@ -27,7 +27,7 @@ div
                     .text-right.ft-16
                       span.text-red.ft-13(v-if="item.price === '--'") 开售时间:{{item.show_time}}
                       span.text-blue(v-else-if="isLogin") ￥{{item.price}}
-                      .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)") 查看价格1
+                      .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)") 查看价格
                   .row.pt-5.flex-center.ft-12
                     .col.c-gray
                       span {{item[mallTypeObject[itemType].material]}}
@@ -71,9 +71,12 @@ div
                   .text-gray.flex
                     .ft-11.col ({{item.weightMark}})
                     .text-right
+                      //- .blue-buy(v-if="item.max_count == 0 && isLogin",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
+                      //- .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="item.show_price") 购买
+                      //- .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)", style="padding-top: 2rpx") 查看价格1
                       .blue-buy(v-if="item.max_count == 0 && isLogin",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
-                      .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="item.show_price") 购买
-                      .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)", style="padding-top: 2rpx") 查看价格
+                      .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="isLogin") 购买
+                      .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)") 查看价格
             //- .padding.text-gray.ft-13.text-center(v-if="loading") 努力加载中...
             //- .padding.text-gray.ft-13.text-center(v-if="goodsNameList[tabIdx].finished") 加载完成
             //- span(v-for="(item,idx) in mallItems", :key="idx") {{idx}}
@@ -517,7 +520,6 @@ export default {
                 // )
               }
             }
-
             break
           default:
             break
@@ -533,6 +535,7 @@ export default {
       }
     },
     async addCartItem (obj) {
+      obj.cartQuantityType = obj.onlineQuantityType
       const self = this
       await self.httpPost(this.apiList.zf.addCartItem, obj).then(res => {
         console.log(res)
@@ -572,11 +575,12 @@ export default {
         resData.map(item => {
           const weightMark = []
           const price = []
-          if (item.quantityType === '02') {
+          if (item.onlineQuantityType === '02' || item.onlineQuantityType === '00') {
             weightMark.push('磅计')
             price.push(item.ratioPricePound)
             item.max_weight = item.ratioAvailablePoundWeight
-          } else {
+          }
+          if (item.onlineQuantityType === '01' || item.onlineQuantityType === '00') {
             weightMark.push('理计')
             price.push(item.ratioPriceManager)
             item.max_weight = item.ratioAvailableManagerWeight
