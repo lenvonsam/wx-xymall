@@ -81,7 +81,6 @@ export default {
   mutations: {
     SETUSER (state, data) {
       try {
-        data.user.type = 'buyer'
         mpvue.setStorageSync('currentUser', data.user)
         // mpvue.setStorageSync('loginTime', usr.server_time)
         if (data.token) {
@@ -89,7 +88,10 @@ export default {
           state.token = data.token
         }
         state.currentUser = data.user
+        // TODO 待后端接口完善字段，区分当前账号是买家还是卖家
         state.currentUser.type = 'buyer'
+        // TODO 搜索历史
+        state.currentUser.localSearchs = []
         state.isLogin = true
       } catch (e) {
         console.error('setuser:>>', e)

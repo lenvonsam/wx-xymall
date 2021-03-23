@@ -1,5 +1,5 @@
 <template lang="pug">
-div 
+div
   nav-bar(title="我的", :bgClass="'bg-blue text-white'", leftMenu)
     div(slot="leftMenu")
       .relative(@click="jumpNoticeList", v-if="showNoticeIcon")
@@ -15,7 +15,7 @@ div
             .col.padding-left-sm
               .ft-15.padding-bottom-sm {{currentUser.user_mark}}
               .ft-12 {{currentUser.type === 'seller' ? currentUser.nickname : currentUser.phone}}
-        .cuIcon-right.ft-25   
+        .cuIcon-right.ft-25
       .account.vendor.bg-white.contract
         .row
           .ft-16.text-bold 合同跟踪
@@ -26,9 +26,9 @@ div
           .col(v-for="(bicon, biconIdx) in billTrackIcons", :key="biconIdx", @click="jumpBicon(bicon)")
             .relative.contract-img
               img(:src="bicon.icon", mode="widthFix")
-              .dot(v-if="rowCountObj[bicon.dotKey] > 0", :class="{'max': rowCountObj[bicon.dotKey] > 9}") 
+              .dot(v-if="rowCountObj[bicon.dotKey] > 0", :class="{'max': rowCountObj[bicon.dotKey] > 9}")
                 label {{rowCountObj[bicon.dotKey] > 99 ? '99+' : rowCountObj[bicon.dotKey]}}
-            .padding-top-xs.ft-15 {{bicon.name}} 
+            .padding-top-xs.ft-15 {{bicon.name}}
     .padding-sm
       .bg-white.features
         .ft-18.text-bold.padding-sm.padding-top.padding-bottom 功能列表
@@ -36,7 +36,7 @@ div
           .features-card(v-for="(ficon, fIdx) in featuresModules", :key="fIdx", @click="jumpModules(ficon)")
             .relative.contract-img(v-if="ficon.icon")
               img(:src="ficon.icon", mode="widthFix")
-              .dot(v-if="rowCountObj[ficon.dotKey] > 0", :class="{'max': rowCountObj[ficon.dotKey] > 9}") 
+              .dot(v-if="rowCountObj[ficon.dotKey] > 0", :class="{'max': rowCountObj[ficon.dotKey] > 9}")
                 label {{rowCountObj[ficon.dotKey] > 99 ? '99+' : rowCountObj[ficon.dotKey]}}
             .padding-top-xs.ft-15 {{ficon.name}}
   template(v-else)
@@ -73,7 +73,7 @@ div
           .col(v-for="(bicon, biconIdx) in billIcons", :key="biconIdx", @click="jumpBicon(bicon)")
             .relative.contract-img
               img(:src="bicon.icon", mode="widthFix")
-              .dot(v-if="rowCountObj[bicon.dotKey] > 0", :class="{'max': rowCountObj[bicon.dotKey] > 9}") 
+              .dot(v-if="rowCountObj[bicon.dotKey] > 0", :class="{'max': rowCountObj[bicon.dotKey] > 9}")
                 label {{rowCountObj[bicon.dotKey] > 99 ? '99+' : rowCountObj[bicon.dotKey]}}
             .padding-top-xs.ft-15 {{bicon.name}}
       .margin-top-sm.me-icon.bg-white.ft-15(v-for="(cardItem, index) in cardList", :key="index", style="overflow:hidden;border-radius: 10rpx")
@@ -170,7 +170,7 @@ export default {
       /** 判断账号状态
        * 已完善信息账号可打开“我的”
        * 未完善信息账号点击“我的”提示去完善信息 */
-      if (self.currentUser.state === 1) {
+      if (self.currentUser.userStatus === '01') {
         setTimeout(() => {
           self.jump('/pages/account/companyUpdate/main')
         }, 1000)
@@ -307,18 +307,20 @@ export default {
     },
     async refreshUser () {
       try {
-        const data = await this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method)
-        data.pwd = this.currentUser.pwd
-        data.type = this.currentUser.type || 'buyer'
-        data.localSearchs = this.currentUser.localSearchs || []
-        if (data.avatar) data.avatar = data.avatar.indexOf('webpage/') > 0 ? data.avatar : '/filepool' + data.avatar
-        else data.avatar = this.currentUser.avatar
-        data.user_id = this.currentUser.user_id
-        this.setUser(data)
-        // if (this.currentUser.isnew) {
-        //   this.alertText = '您还需要完善公司信息才能正常工作'
-        //   this.alertShow = true
-        // }
+        // const data = await this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method)
+        // data.pwd = this.currentUser.pwd
+        // data.type = this.currentUser.type || 'buyer'
+        // data.localSearchs = this.currentUser.localSearchs || []
+        // if (data.avatar) data.avatar = data.avatar.indexOf('webpage/') > 0 ? data.avatar : '/filepool' + data.avatar
+        // else data.avatar = this.currentUser.avatar
+        // data.user_id = this.currentUser.user_id
+
+        const res = await this.httpPost(this.apiList.zf.getPersonInfo, {})
+        this.setUser(res.data)
+        if (this.currentUser.userStatus === '01') {
+          this.alertText = '您还需要完善公司信息才能正常工作'
+          this.alertShow = true
+        }
       } catch (e) {
         console.error(e)
         this.showMsg(e)
@@ -326,12 +328,12 @@ export default {
       }
     },
     async getUserRule () {
-      // await this.refreshUser()
+      await this.refreshUser()
       console.log('me_rule======>' + this.currentUser.rule)
       if (this.currentUser.type === 'buyer' && this.currentUser.rule === 0) {
         this.modalShow = false
         this.ruleModalShow = true
-      } else if (this.currentUser.isnew) {
+      } else if (this.currentUser.userStatus === '01') {
         this.alertText = '您还需要完善公司信息才能正常工作'
         this.alertShow = true
       } else {
@@ -380,14 +382,14 @@ export default {
       }
     },
     jumpBillMore () {
-      // if (!this.isLogin) {
-      //   this.modalMsg = '您未登录,请先登录'
-      //   this.modalShow = true
-      // } else {
-      //   // this.statisticRequest({ event: 'click_app_me_myorder_more' })
-      //   // this.statisticRequest({ event: 'click_app_me_order_all' })
-      // }
-      this.jump('/pages/bill/main')
+      if (!this.isLogin) {
+        this.modalMsg = '您未登录,请先登录'
+        this.modalShow = true
+      } else {
+        // this.statisticRequest({ event: 'click_app_me_myorder_more' })
+        // this.statisticRequest({ event: 'click_app_me_order_all' })
+        this.jump('/pages/bill/main')
+      }
     },
     jumpBicon (icon) {
       if (!this.isLogin) {
@@ -423,7 +425,7 @@ export default {
         console.log('updateRule_e=====>' + e)
       })
       this.ruleModalShow = false
-      if (this.currentUser.isnew) {
+      if (this.currentUser.userStatus === '01') {
         this.alertText = '您还需要完善公司信息才能正常工作'
         this.alertShow = true
       }

@@ -484,18 +484,17 @@ export default {
         })
         this.showLoading()
         self.httpPost(this.apiList.zf.generateContract, {cartItem: filterArray, deliveryType: '01'}).then(res => {
-          self.showMsg('生成合同成功！')
-          setTimeout(() => {
-            // self.jump('/pages/bill/main?tabName=01')
-            // self.jump(`/pages/pay/main?pageType=offlinePay&orderNo=${res.saleContractId}`)
-            self.tab('/pages/me/main')
-          }, 500)
-        }).catch(e => {
-          console.log(e)
-        }).finally(() => {
           this.modalShow = false
           this.hideLoading()
           self.btnDisable = false
+          this.jump(`/pages/pay/main?pageType=offlinePay&orderNo=${res.data.saleContractId}`)
+        }).catch(e => {
+          self.btnDisable = false
+          this.modalShow = false
+          this.hideLoading()
+          this.alertText = e.message || '网络异常'
+          this.alertShow = true
+          console.log(e)
         })
         // self.ironRequest('generateOrder.shtml', body, 'post').then(resp => {
         //   this.modalShow = false

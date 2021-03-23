@@ -16,7 +16,7 @@
       .flex-90.text-center(style="border-left: 1rpx solid #888", v-show="pageType == 'smsLogin'")
         auth-btn(:phone="phone", :codeType="2", v-if="pageType == 'smsLogin' && codeBtnShow", :timeCount="90")
       .flex-90.text-center(style="border-left: 1rpx solid #888", v-show="pageType == 'forgetPwd'")
-        auth-btn(:phone="phone", :codeType="1", v-if="pageType == 'forgetPwd' && codeBtnShow")
+        auth-btn(:phone="phone", :codeType="3", v-if="pageType == 'forgetPwd' && codeBtnShow")
     .row.padding-tb-sm.margin-top-xl.border-bottom-line(v-if="pageType === 'forgetPwd'")
       .flex-30
         icon.ft-18.adjust.cuIcon-lock.text-gray
