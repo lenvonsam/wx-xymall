@@ -2,46 +2,46 @@
 div
   nav-bar(title="发布加工", isBack)
   .bg-white.padding-top-sm.padding-left-sm.padding-right-sm
-    template(v-if="pno")
+    template(v-if="processId")
       .row.solid-bottom.padding
         .title.padding-left-xs 客户名称
-        .col.text-right.text-gray {{pObj['customer_name']}} 
+        .col.text-right.text-gray {{pObj['customerUnitName']}}
       .row.solid-bottom.padding
         .title.padding-left-xs 联系电话
-        .col.text-right.text-gray {{pObj['link_phone']}}  
+        .col.text-right.text-gray {{pObj['contactsPhone']}}
     .row.solid-bottom.padding
       .title
-        span.text-red(v-if="pno") *
+        span.text-red(v-if="processId") *
         span.padding-left-xs 加工类型
-      .col.text-right.text-gray(v-if="pno") {{pObj['type']}} 
+      .col.text-right.text-gray(v-if="processId") {{processType}}
       picker.col(@change="processTypeCb", :range="pTypeArray", v-else)
         .text-right.text-gray {{processType}}
     .row.solid-bottom.padding
-      .title    
-        span.text-red(v-if="pno") *
+      .title
+        span.text-red(v-if="processId") *
         span.padding-left-xs 交货时间
-      .col.text-right.text-gray(v-if="pno") {{pObj['appoint_time']}}   
+      .col.text-right.text-gray(v-if="processId") {{pObj['deliveryDate']}}
       picker.col(@change="dateCb", mode="date", v-else)
         .text-right.text-gray {{dateVal}}
     .row.solid-bottom.padding
-      .title    
-        span.text-red(v-if="pno") *
+      .title
+        span.text-red(v-if="processId") *
         span.padding-left-xs 材质
       .col.text-right.padding-left-xs
-        span(v-if="pno") {{pObj['material']}}
+        span(v-if="processId") {{pObj['productTextureName']}}
         input(v-else, type="text", placeholder="请输入材质", v-model="material")
     .row.solid-bottom.padding
-      .title    
+      .title
         span.padding-left-xs 备注
       .col.text-right.padding-left-xs
-        span(v-if="pno") {{pObj.remark}}
+        span(v-if="processId") {{pObj.remarks}}
         input(v-else, type="text", placeholder="请输入备注", v-model="remark")
   .process(v-if="rowCount.length > 0" :style="{'padding-bottom': isIpx ? '218rpx' : '150rpx'}")
-    process-item(v-if="i", :pno="pno", :ref="`processItem_${idx}`", v-for="(i,idx) in rowCount", :row="i", :key="idx", :process-type="processType", :cb="pickerItemCb", :rowidx="idx")  
+    process-item(v-if="i", :pno="processId", :ref="`processItem_${idx}`", v-for="(i,idx) in rowCount", :row="i", :key="idx", :process-type="processType", :cb="pickerItemCb", :rowidx="idx")
   .bottom-footer.bg-white.padding-sm(:style="{'padding-bottom': isIpx ? '98rpx' : '20rpx'}")
-    .main-btn.bg-red(@click="delProcess", v-if="pno") 删除
+    .main-btn.bg-red(@click="delProcess", v-if="processId") 删除
     .main-btn(@click="createProcess", v-else) 提交
-    
+
 </template>
 <script>
 import { mapState } from 'vuex'
@@ -61,7 +61,7 @@ export default {
       remark: '',
       btnDisable: false,
       rowObj: {},
-      pno: '',
+      processId: '',
       pObj: {}
     }
   },
@@ -75,35 +75,53 @@ export default {
   },
   watch: {
     processType (newVal, oldVal) {
-      if (!this.pno) {
+      if (!this.processId) {
         this.rowCount = [{ height: '', width: '', length: '', sheet_count: '' }]
       }
     }
   },
   onShow () {
-    this.pno = this.$root.$mp.query.pno
+    this.processId = this.$root.$mp.query.processId
     this.dateVal = this.date2Str(new Date())
-    if (this.pno) {
+    if (this.processId) {
       this.rowCount = []
-      this.ironRequest('processDetail.shtml?process_no=' + this.pno, {}, 'get').then(resp => {
-        if (resp.returncode === '0') {
-          this.pObj = resp.process
-          const list = []
-          this.processType = this.pObj['type']
-          this.pObj.items.map(item => {
-            const obj = {
-              height: item.weight,
-              width: item.width,
-              length: item.length,
-              sheet_count: item.sheet
-            }
-            list.push(obj)
-          })
-          this.rowCount = list
-        }
-      }).catch(err => {
-        this.showMsg(err || '网络错误')
+      const paramsObj = {
+        id: this.processId
+      }
+      this.httpGet(this.apiList.zf.onlineProcessDetail, paramsObj).then(res => {
+        this.pObj = res.data
+        const list = []
+        this.processType = this.pObj['processType'] === '01' ? '开平' : '镀锌'
+        this.pObj.onlineProcessDetailList.map(item => {
+          const obj = {
+            height: item.thickness,
+            width: item.width,
+            length: item.length,
+            sheet_count: item.pieces
+          }
+          list.push(obj)
+        })
+        this.rowCount = list
       })
+      // this.ironRequest('processDetail.shtml?process_no=' + this.pno, {}, 'get').then(resp => {
+      //   if (resp.returncode === '0') {
+      //     this.pObj = resp.process
+      //     const list = []
+      //     this.processType = this.pObj['type']
+      //     this.pObj.items.map(item => {
+      //       const obj = {
+      //         height: item.weight,
+      //         width: item.width,
+      //         length: item.length,
+      //         sheet_count: item.sheet
+      //       }
+      //       list.push(obj)
+      //     })
+      //     this.rowCount = list
+      //   }
+      // }).catch(err => {
+      //   this.showMsg(err || '网络错误')
+      // })
     } else {
       this.rowCount = [{ height: '', width: '', length: '', sheet_count: '' }]
     }
@@ -122,7 +140,7 @@ export default {
     this.remark = ''
     this.btnDisable = false
     this.rowObj = {}
-    this.pno = ''
+    this.processId = ''
     this.pObj = {}
   },
   methods: {
@@ -131,25 +149,17 @@ export default {
       this.dateVal = e.mp.detail.value
     },
     delProcess () {
-      const me = this
+      const self = this
       if (!this.btnDisable) {
-        this.confirm({ content: '您确定要删除吗?' }).then((res) => {
+        self.confirm({ content: '您确定要删除吗?' }).then((res) => {
           if (res !== 'confirm') return false
-          me.btnDisable = true
-          me.ironRequest('processDel.shtml', { process_no: this.pno }, 'post', me).then(resp => {
-            if (resp && resp.returncode === '0') {
-              me.showMsg('删除成功')
-              setTimeout(() => {
-                me.btnDisable = false
-                me.back()
-              })
-            } else {
-              me.btnDisable = false
-              me.showMsg(resp === undefined ? '网路异常' : resp.errormsg)
-            }
-          }).catch(err => {
-            me.showMsg(err || '网络异常')
-            me.btnDisable = false
+          self.btnDisable = true
+          self.httpGet(self.apiList.zf.deleteOnlineProcess, {id: self.processId}).then(res => {
+            self.showMsg('删除成功')
+            setTimeout(() => {
+              self.btnDisable = false
+              self.back()
+            })
           })
         })
       }
@@ -190,17 +200,17 @@ export default {
         }
         if (!this.btnDisable) {
           this.btnDisable = true
-          const me = this
+          const self = this
           this.ironRequest('process.shtml', body, 'post').then(resp => {
             if (resp && resp.returncode === '0') {
-              me.showMsg('加工发布成功')
+              self.showMsg('加工发布成功')
               setTimeout(() => {
-                me.btnDisable = false
-                me.back()
+                self.btnDisable = false
+                self.back()
               })
             } else {
-              me.btnDisable = false
-              me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
+              self.btnDisable = false
+              self.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
             }
           })
         }
@@ -232,18 +242,18 @@ export default {
           length: [],
           sheet_count: []
         }
-        const me = this
+        const self = this
         this.rowCount.map((item, index) => {
           if (item) {
-            const row = me.$refs[`processItem_${index}`][0].copyRow
+            const row = self.$refs[`processItem_${index}`][0].copyRow
             Object.keys(row).forEach((key) => {
               if (row[key].trim().length === 0) {
-                me.showMsg('必填项不能为空')
+                self.showMsg('必填项不能为空')
                 result = false
                 throw Error('必填项不能为空')
               } else {
                 // this.originVal.push(row)
-                me.rowObj[key].push(row[key].trim())
+                self.rowObj[key].push(row[key].trim())
               }
             })
           }

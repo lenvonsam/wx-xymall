@@ -105,16 +105,16 @@ export default {
   billIcons: [
     {
       icon: '/static/images/dfk.png',
-      dotKey: 'topay',
+      dotKey: 'paymentNumber',
       name: '待付款',
       url: {
-        path: '/pages/bill/main?tabName=1'
+        path: '/pages/bill/main?tabName=01'
       }
     },
     {
       icon: '/static/images/submit_orders_icon.png',
       name: '待确认',
-      dotKey: 'to_confirm_lad',
+      dotKey: 'ladingConfirmNumber',
       url: {
         path: '/pages/ladbillConfirm/main'
       }
@@ -122,18 +122,29 @@ export default {
     {
       icon: '/static/images/wait_pick_icon.png',
       name: '待提货',
-      dotKey: 'to_delivery',
+      dotKey: 'updateNumber',
       url: {
-        path: '/pages/bill/main?tabName=6'
+        path: '/pages/bill/main?tabName=02'
       }
     },
     {
       icon: '/static/images/billing_Infor.png',
       name: '待开票',
-      dotKey: 'toinvoice',
+      dotKey: 'notInvoicedNum',
       url: {
         path: '/pages/invoice/main?tabName=0'
       }
     }
+  ],
+  contractStatus: [
+    { id: '01', name: '待支付' },
+    { id: '02', name: '待补款' },
+    { id: '03', name: '已付款' },
+    { id: '04', name: '支付中' },
+    { id: '05', name: '待确认' },
+    { id: '06', name: '修改中' },
+    { id: '07', name: '已完成' },
+    { id: '08', name: '违约' },
+    { id: '09', name: '已取消' }
   ]
 }

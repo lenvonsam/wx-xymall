@@ -10,7 +10,7 @@ div
       .row.padding.border-bottom-line
         .col {{phone}}
         .flex-90.text-center
-          auth-btn(:phone="currentUser.phone", :codeType="3", v-if="tabIndex === 1 && codeBtnShow")
+          auth-btn(:phone="currentUser.phone", :codeType="6", v-if="tabIndex === 1 && codeBtnShow")
       .padding
         input(placeholder="请输入验证码", v-model="code1", type="number")
     .margin-top-xl.padding
@@ -21,13 +21,13 @@ div
         .col
           input(placeholder="请输入新手机号", v-model="newPhone", type="number", :maxlength="11")
         .flex-90.text-center
-          auth-btn(:phone="newPhone", :codeType="4", v-if="tabIndex === 2", type="number")
+          auth-btn(:phone="newPhone", :codeType="7", v-if="tabIndex === 2", type="number")
       .row.padding
         .col
           input(placeholder="请输入验证码", v-model="code2", type="number")
     .padding.margin-top-xl
       .main-btn(hover-class="hover-gray", @click="bindPhone") 确认
-  alert(msg="手机号更改成功，请重新登录", v-model="alertShow", :cb="alertCb")      
+  alert(msg="手机号更改成功，请重新登录", v-model="alertShow", :cb="alertCb")
 </template>
 
 <script>

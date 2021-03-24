@@ -174,5 +174,105 @@ export default {
 
     // 手机信息
     phoneInfo: { url: 'wechat/miniAuth/phone', method: 'post' }
+  },
+  zf: {
+    // 获取图片验证码
+    getVerifyCode: 'base/online/getVerifyCode',
+    // 账号密码登录 手机短信登录
+    login: 'base/online/appletLogin',
+    // 获取短信验证码
+    getSmsVerifyCode: 'base/online/sms',
+    // 用户注册
+    userRegister: 'base/online/appletRegister',
+    // 微信绑定
+    wxBind: 'base/online/appletBinding',
+    // 微信登录
+    wxLogin: 'base/online/wxLogin',
+    // 获取商城列表
+    shopMallList: 'xingyun/shopMall/queryPage',
+    // 基础管理-个人资料管理-获取个人资料
+    getPersonInfo: 'xingyun/base/getPersonInfo',
+    // 用户中心数据
+    queryUserCenterContractInfo: 'xingyun/contract/queryUserCenterContractInfo',
+    // 合同列表
+    contractList: 'xingyun/contract/queryContractPage',
+    // 合同详情
+    saleContractDetail: 'xingyun/contract/saleContractDetail',
+    // 合同订单详情
+    contractOrderDetail: 'xingyun/order/contractOrderDetail',
+    // 合同付款
+    contractOrderPayment: 'xingyun/order/contractOrderPayment',
+    // 加工跟踪
+    onlineProcessTrack: 'xingyun/onlineProcess/queryPage',
+    // 我的加工-新增加工
+    addOnlineProcess: 'xingyun/onlineProcess/add',
+    // 我的加工-查询详情
+    onlineProcessDetail: 'xingyun/onlineProcess/get',
+    // 我的加工-删除加工
+    deleteOnlineProcess: 'xingyun/onlineProcess/delete',
+    // 求购发布
+    addOnlineRequireBuy: 'xingyun/onlineRequireBuy/add',
+    // 求购管理
+    onlineRequireBuyManage: 'xingyun/onlineRequireBuy/queryPage',
+    // 求购详情
+    // onlineRequireBuyDetail: 'xingyun/onlineRequireBuy/get',
+    // 提单管理
+    billLading: 'xingyun/billLading/queryPage',
+    // 查询提单详情
+    billLadingDetail: 'xingyun/billLading/selectBillLadingDetail',
+    // 确认/取消提单
+    ladingConfirmation: 'xingyun/billLading/ladingConfirmation',
+    // 查询待确认提单
+    queryLadingPage: 'xingyun/contract/queryLadingPage',
+    // 发票-未申请提单-分页查询
+    invoiceUnApply: 'finance/arStatementList/customerSearch',
+    // 发票-未申请提单详情
+    invoiceUnApplyDetail: 'finance/arStatementList/getArStatementList',
+    // 发票-已申请提单的-分页查询
+    invoiceApplied: 'finance/arInvoice/customerAppliedSearch',
+    // 发票-已开票提单
+    invoiceInvoiced: 'finance/arInvoice/customerInvoicedSearch',
+    // 发票-申请开票
+    invoiceAdd: 'finance/arStatementList/createInvoice',
+    // 用户中心-确认收票明细
+    confirmReceiptDetails: 'finance/arInvoice/search',
+    // 添加购物车
+    addCartItem: 'xingyun/cart/appendCartItem',
+    // 获取购物车
+    getCurrentUserCartItems: 'xingyun/cart/getCurrentUserCartItems',
+    // 改变购物车商品数量
+    changeNum: 'xingyun/cart/changeNum',
+    // 购物车删除商品信息
+    deleteItem: 'xingyun/cart/deleteItem',
+    // 购物车改变计量方式
+    changeQuantityType: 'xingyun/cart/changeQuantityType',
+    // 购物车清空失效物资
+    failureMaterial: 'xingyun/cart/failureMaterial',
+    // 生成合同
+    generateContract: 'xingyun/shopMall/generateContract',
+    // 基础管理-支付密码管理
+    updatePaymentCode: 'xingyun/base/updatePaymentCode',
+    // 基础管理-登录密码管理
+    updateLoginPassword: 'xingyun/base/updateLoginPassword',
+    // 找回密码
+    resetPassword: 'base/online/resetPassword',
+    // 图片ocr
+    ocrImage: 'base/ocrImage',
+    // 上传图片
+    uploadImage: 'foundation/attach/upload',
+    // 完善公司信息
+    addAuthentication: 'xingyun/unitAuthentication/add',
+    // 商城分类
+    appletQuerySpecificationList: 'xingyun/shopMall/appletQuerySpecificationList',
+    // 商城筛选获取所有品名
+    searchBrand: 'xingyun/shopMall/queryProductBrandNamePage',
+    // 账户收支明细（往来账）
+    customerFundFlows: 'finance/unitFundFlow/searchCustomerFundFlows',
+    // 账户收支明细
+    fundDetail: 'finance/unitFundFlow/searchInAndOutDetail',
+    // 账户收支明细-数量统计
+    fundDetailSummary: 'finance/unitFundFlow/getUnitFundFlowResult',
+    // 资金管理 账户信息-账户余额
+    getUnitMoney: 'finance/unit-fund/getUnitMoney'
   }
 }

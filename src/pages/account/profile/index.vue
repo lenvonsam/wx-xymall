@@ -10,7 +10,7 @@ div
         icon.adjust.cuIcon-right
     .bg-white.row.padding.border-bottom-line(@click="jump('/pages/account/companyInfo/main')", :class="{'margin-top-sm': currentUser.type === 'buyer'}")
       .col 公司信息
-      .col.text-right.text-gray.text-autohide {{currentUser.cust_name}}
+      .col.text-right.text-gray.text-autohide {{currentUser.companyName}}
       .col.flex-25.text-gray.text-right
         icon.adjust.cuIcon-right
     //- .bg-white.row.padding.ft-16.border-bottom-line
@@ -18,10 +18,10 @@ div
       .col.text-right.text-gray {{currentUser.user_mark}}
     .bg-white.row.padding.border-bottom-line
       .col 登录账号
-      .col.text-right.text-gray {{currentUser.user_mark}}
+      .col.text-right.text-gray {{currentUser.username}}
     .bg-white.row.padding
       .col 姓名
-      .col.text-right.text-gray {{currentUser.type === 'buyer' ? currentUser.linkman : currentUser.nickname}}
+      .col.text-right.text-gray {{currentUser.type === 'buyer' ? currentUser.name : currentUser.nickname}}
     .bg-white.row.ft-16.padding(v-for="(item,idx) in jumpArray", :key="idx", :class="{'margin-top-sm': idx === 0, 'border-bottom-line': (idx < (jumpArray.length - 1))}", @click="jump(item.url)", v-if="currentUser.type === 'buyer'")
       .col {{item.name}}
       .col.text-right.text-gray(v-if="idx == (jumpArray.length - 1)") {{currentUser.phone}}
@@ -48,17 +48,22 @@ export default {
       }]
     }
   },
-  onShow () {
-    var me = this
-    if (this.currentUser.type === 'buyer') {
-      this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(resp => {
-        let obj = me.currentUser
-        obj.cust_name = resp.cust_name
-        obj.user_id = me.currentUser.user_id
-        me.setUser(obj)
-      })
-    }
-  },
+  // onShow () {
+  //   if (this.currentUser.type === 'buyer') {
+  //     this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(resp => {
+  //       let obj = me.currentUser
+  //       obj.cust_name = resp.cust_name
+  //       obj.user_id = me.currentUser.user_id
+  //       me.setUser(obj)
+  //     })
+  //     const self = this
+  //     self.httpPost(self.apiList.zf.getPersonInfo, {}).then(res => {
+  //       self.setUser({user: res.data})
+  //     }).catch(e => {
+  //       console.log(e)
+  //     })
+  //   }
+  // },
   methods: {
     ...mapActions([
       'setUser',
@@ -68,9 +73,9 @@ export default {
       const me = this
       this.confirm({ title: '友情提示', content: '您确定要退出吗？' }).then(res => {
         if (res === 'confirm') {
-          const localSearch = me.currentUser.localSearchs
-          me.ironRequest(me.apiList.xy.searchHistory.url, { user_id: me.currentUser.user_id, history: localSearch }, me.apiList.xy.searchHistory.method, me)
-          me.ironRequest(`${me.apiList.xy.loginOut.url}?user_id=${me.currentUser.user_id}`, {}, me.apiList.xy.loginOut.method)
+          // const localSearch = me.currentUser.localSearchs
+          // me.ironRequest(me.apiList.xy.searchHistory.url, { user_id: me.currentUser.user_id, history: localSearch }, me.apiList.xy.searchHistory.method, me)
+          // me.ironRequest(`${me.apiList.xy.loginOut.url}?user_id=${me.currentUser.user_id}`, {}, me.apiList.xy.loginOut.method)
           me.exitUser()
           me.redirect('/pages/account/login/main')
         }

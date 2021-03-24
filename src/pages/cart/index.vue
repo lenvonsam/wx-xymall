@@ -2,7 +2,7 @@
 .s-layout.bg-white
   nav-bar(title="购物车")
   template(v-if="showCartContent")
-    seller-cart-temp(v-if="currentUser.type === 'seller' && isLogin")
+    //- seller-cart-temp(v-if="currentUser.type === 'seller' && isLogin")
     buyer-cart-temp(v-if="currentUser.type === 'buyer' && isLogin")
   noData(v-if="alertShow")
   //- modal(v-model="alertShow", @cb="modalCb")
@@ -14,14 +14,14 @@
 </template>
 
 <script>
-import SellerCartTemp from '@/components/SellerCartTemp.vue'
+// import SellerCartTemp from '@/components/SellerCartTemp.vue'
 import buyerCartTemp from '@/components/BuyerCartTemp.vue'
 import modal from '@/components/Modal.vue'
 import noData from '@/components/NoData'
 import { mapState, mapActions } from 'vuex'
 export default {
   components: {
-    SellerCartTemp,
+    // SellerCartTemp,
     buyerCartTemp,
     modal,
     noData
@@ -51,46 +51,46 @@ export default {
   },
   onShow () {
     const self = this
-    const uid = self.currentUser.user_id
+    // const uid = self.currentUser.user_id
     if (self.isLogin) {
       console.log('cart_state.currentUser======>' + JSON.stringify(this.currentUser))
       self.showCartContent = true
-      self.alertShow = false
-      if (typeof self.currentUser.type !== 'undefined') {
-        if (self.currentUser.type === 'seller') {
-          self.showLoading()
-          self.ironRequest(`${self.apiList.xy.checkUUID.url}?user_id=${uid}`, {}, self.apiList.xy.checkUUID.method).then(resp => {
-            console.log('page_cart_checkoutuuid=======>' + JSON.stringify(resp))
-            self.hideLoading()
-            if (resp.returncode === 0) {
-              self.alertShow = false
-            } else {
-              self.showCartContent = false
-              self.alertShow = true
-              self.exitUser()
-            }
-          }).catch(e => {
-            self.hideLoading()
-            console.log('page_cart_checkoutuuid_已失效catch=======>' + e)
-            self.showMsg('登录已失效，请重新登录')
-            self.showCartContent = false
-            self.alertShow = true
-            self.exitUser()
-            self.tabDot(0)
-          })
-        } else if (self.currentUser.type === 'buyer') {
-          this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(res => {
-            if (res.returncode === '0') {
-              console.log('cart.vue_接口返回_rule=====>' + res.rule)
-              if (res.rule === 0) {
-                this.modalShow = true
-              }
-            }
-          })
-        }
-      } else {
-        console.log('self.currentUser.type======>' + self.currentUser.type)
-      }
+      // self.alertShow = false
+      // if (typeof self.currentUser.type !== 'undefined') {
+      //   if (self.currentUser.type === 'seller') {
+      //     self.showLoading()
+      //     self.ironRequest(`${self.apiList.xy.checkUUID.url}?user_id=${uid}`, {}, self.apiList.xy.checkUUID.method).then(resp => {
+      //       console.log('page_cart_checkoutuuid=======>' + JSON.stringify(resp))
+      //       self.hideLoading()
+      //       if (resp.returncode === 0) {
+      //         self.alertShow = false
+      //       } else {
+      //         self.showCartContent = false
+      //         self.alertShow = true
+      //         self.exitUser()
+      //       }
+      //     }).catch(e => {
+      //       self.hideLoading()
+      //       console.log('page_cart_checkoutuuid_已失效catch=======>' + e)
+      //       self.showMsg('登录已失效，请重新登录')
+      //       self.showCartContent = false
+      //       self.alertShow = true
+      //       self.exitUser()
+      //       self.tabDot(0)
+      //     })
+      //   } else if (self.currentUser.type === 'buyer') {
+      //     this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(res => {
+      //       if (res.returncode === '0') {
+      //         console.log('cart.vue_接口返回_rule=====>' + res.rule)
+      //         if (res.rule === 0) {
+      //           this.modalShow = true
+      //         }
+      //       }
+      //     })
+      //   }
+      // } else {
+      //   console.log('self.currentUser.type======>' + self.currentUser.type)
+      // }
     } else {
       self.showCartContent = false
       self.alertShow = true

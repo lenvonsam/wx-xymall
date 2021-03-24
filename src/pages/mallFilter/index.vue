@@ -85,14 +85,14 @@ export default {
         fromPage: 'mallFilter',
         noBack: true
       }
-      this.statisticRequest({ event: 'app_mall_category', goods_name: res.name, standard: res.standards })
+      // this.statisticRequest({ event: 'app_mall_category', goods_name: res.name, standard: res.standards })
       this.configVal({ key: 'tempObject', val: res })
       this.back(-1)
     },
     searchChange () {
       this.statisticRequest({ event: 'click_app_mall_category_search' })
       this.supplyList = []
-      this.queryObject.search = this.searchVal
+      this.queryObject.specification = this.searchVal
       this.currentPage = 0
       this.getStandardList()
     },
@@ -101,27 +101,46 @@ export default {
         item.isActive = false
       })
       this.filterNameList[idx].isActive = true
-      this.queryObject.name = item.id
+      this.queryObject.productBrandName = item.name
       this.getStandardList()
     },
     getGoods () {
-      this.ironRequest(this.apiList.xy.goodsList.url, {}, this.apiList.xy.goodsList.method).then((res) => {
+      // this.ironRequest(this.apiList.xy.goodsList.url, {}, this.apiList.xy.goodsList.method).then((res) => {
+      //   const nameId = this.$root.$mp.query.name
+      //   this.queryObject = {
+      //     current_page: this.currentPage,
+      //     page_size: this.pageSize,
+      //     search: '',
+      //     name: nameId,
+      //     only_available: 1
+      //   }
+      //   this.getStandardList()
+      //   this.filterNameList = res.goods
+      //   this.filterNameList.unshift({ name: '全部', id: '', isActive: false })
+      //   const tempObject = {
+      //     name: nameId,
+      //     standards: ''
+      //   }
+      //   this.configVal({ key: 'tempObject', val: tempObject })
+      //   this.filterNameList.map(item => {
+      //     if (item.id === nameId) {
+      //       item.isActive = true
+      //     } else {
+      //       item.isActive = false
+      //     }
+      //   })
+      // })
+      this.httpPost(this.apiList.zf.searchBrand, {}).then(res => {
         const nameId = this.$root.$mp.query.name
         this.queryObject = {
-          current_page: this.currentPage,
-          page_size: this.pageSize,
-          search: '',
-          name: nameId,
-          only_available: 1
+          'productBrandName': nameId,
+          'specification': ''
         }
         this.getStandardList()
-        this.filterNameList = res.goods
+        this.filterNameList = res.data.productBrandNameList.map(item => ({
+          name: item
+        }))
         this.filterNameList.unshift({ name: '全部', id: '', isActive: false })
-        const tempObject = {
-          name: nameId,
-          standards: ''
-        }
-        this.configVal({ key: 'tempObject', val: tempObject })
         this.filterNameList.map(item => {
           if (item.id === nameId) {
             item.isActive = true
@@ -133,14 +152,29 @@ export default {
     },
     getStandardList () {
       this.isLoad = false
-      this.ironRequest(this.apiList.xy.standardList.url, this.queryObject, this.apiList.xy.standardList.method).then((res) => {
-        console.log('getStandardList', res)
+      // this.ironRequest(this.apiList.xy.standardList.url, this.queryObject, this.apiList.xy.standardList.method).then((res) => {
+      //   debugger
+      //   console.log('getStandardList', res)
+      //   this.searchIdx = 1
+      //   res.standards.map(item => {
+      //     item.first = item.name.substr(0, 1)
+      //   })
+      //   this.standardList = res.standards
+      //   this.isLoad = true
+      // })
+      this.httpPost(this.apiList.zf.appletQuerySpecificationList, this.queryObject).then(res => {
         this.searchIdx = 1
-        res.standards.map(item => {
+        this.standardList = res.data.specificationList.map(item => ({
+          name: item
+          // item.first = item.substr(0, 1)
+        }))
+        this.standardList.map(item => {
           item.first = item.name.substr(0, 1)
         })
-        this.standardList = res.standards
+        // this.standardList = res.data.specificationList
         this.isLoad = true
+      }).catch(e => {
+        this.showMsg(e.message)
       })
     },
     selectTag (idx) {

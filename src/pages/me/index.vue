@@ -1,5 +1,5 @@
 <template lang="pug">
-div 
+div
   nav-bar(title="我的", :bgClass="'bg-blue text-white'", leftMenu)
     div(slot="leftMenu")
       .relative(@click="jumpNoticeList", v-if="showNoticeIcon")
@@ -15,7 +15,7 @@ div
             .col.padding-left-sm
               .ft-15.padding-bottom-sm {{currentUser.user_mark}}
               .ft-12 {{currentUser.type === 'seller' ? currentUser.nickname : currentUser.phone}}
-        .cuIcon-right.ft-25   
+        .cuIcon-right.ft-25
       .account.vendor.bg-white.contract
         .row
           .ft-16.text-bold 合同跟踪
@@ -26,9 +26,9 @@ div
           .col(v-for="(bicon, biconIdx) in billTrackIcons", :key="biconIdx", @click="jumpBicon(bicon)")
             .relative.contract-img
               img(:src="bicon.icon", mode="widthFix")
-              .dot(v-if="rowCountObj[bicon.dotKey] > 0", :class="{'max': rowCountObj[bicon.dotKey] > 9}") 
+              .dot(v-if="rowCountObj[bicon.dotKey] > 0", :class="{'max': rowCountObj[bicon.dotKey] > 9}")
                 label {{rowCountObj[bicon.dotKey] > 99 ? '99+' : rowCountObj[bicon.dotKey]}}
-            .padding-top-xs.ft-15 {{bicon.name}} 
+            .padding-top-xs.ft-15 {{bicon.name}}
     .padding-sm
       .bg-white.features
         .ft-18.text-bold.padding-sm.padding-top.padding-bottom 功能列表
@@ -36,7 +36,7 @@ div
           .features-card(v-for="(ficon, fIdx) in featuresModules", :key="fIdx", @click="jumpModules(ficon)")
             .relative.contract-img(v-if="ficon.icon")
               img(:src="ficon.icon", mode="widthFix")
-              .dot(v-if="rowCountObj[ficon.dotKey] > 0", :class="{'max': rowCountObj[ficon.dotKey] > 9}") 
+              .dot(v-if="rowCountObj[ficon.dotKey] > 0", :class="{'max': rowCountObj[ficon.dotKey] > 9}")
                 label {{rowCountObj[ficon.dotKey] > 99 ? '99+' : rowCountObj[ficon.dotKey]}}
             .padding-top-xs.ft-15 {{ficon.name}}
   template(v-else)
@@ -48,11 +48,11 @@ div
               img(:src="imgOuterUrl + (currentUser.avatar == undefined ? '/webpage/zhd/images/img.png' : currentUser.avatar)", v-if="imgOuterUrl")
             .col.padding-left-sm
               template(v-if="isLogin")
-                .ft-15.padding-bottom-sm {{currentUser.user_mark}}
+                .ft-15.padding-bottom-sm {{currentUser.username}}
                 .ft-12 {{currentUser.phone}}
               template(v-else)
                 .ft-16.padding-bottom-xs
-                  span() 登录
+                  span 登录
                   span.padding-left-xs.padding-right-xs /
                   span 注册
                 .ft-12(style="color: rgba(255,255,255,0.5)") 您未登录哦，登录后查看信息。
@@ -60,7 +60,7 @@ div
       .account.bg-white.flex.align-center(@click="jumpBalance")
         .ft-16.text-bold 账户余额
         .col.ft-16.text-right
-          span(v-if="isLogin").text-blue.text-bold ￥ {{currentUser.account_balance}}
+          span(v-if="isLogin").text-blue.text-bold ￥ {{rowCountObj.unitFundBalance}}
           span(v-else).text-blue.text-bold ￥--
           span.text-gray.cuIcon-right
     .padding-sm
@@ -73,7 +73,7 @@ div
           .col(v-for="(bicon, biconIdx) in billIcons", :key="biconIdx", @click="jumpBicon(bicon)")
             .relative.contract-img
               img(:src="bicon.icon", mode="widthFix")
-              .dot(v-if="rowCountObj[bicon.dotKey] > 0", :class="{'max': rowCountObj[bicon.dotKey] > 9}") 
+              .dot(v-if="rowCountObj[bicon.dotKey] > 0", :class="{'max': rowCountObj[bicon.dotKey] > 9}")
                 label {{rowCountObj[bicon.dotKey] > 99 ? '99+' : rowCountObj[bicon.dotKey]}}
             .padding-top-xs.ft-15 {{bicon.name}}
       .margin-top-sm.me-icon.bg-white.ft-15(v-for="(cardItem, index) in cardList", :key="index", style="overflow:hidden;border-radius: 10rpx")
@@ -161,108 +161,116 @@ export default {
   },
   onShow () {
     const self = this
-    const uid = self.currentUser.user_id
+    // const uid = self.currentUser.user_id
     if (self.isLogin) {
+      self.httpPost(self.apiList.zf.queryUserCenterContractInfo, {}).then(res => {
+        console.log(res.data)
+        this.rowCountObj = res.data
+      })
       /** 判断账号状态
        * 已完善信息账号可打开“我的”
        * 未完善信息账号点击“我的”提示去完善信息 */
-      console.log('me_state.currentUser======>' + JSON.stringify(this.currentUser))
-      self.showNoticeIcon = self.currentUser.message_switch === '1'
-      if (self.currentUser.type === 'seller') {
-        self.ironRequest(`${self.apiList.xy.checkUUID.url}?user_id=${uid}`, {}, self.apiList.xy.checkUUID.method).then(resp => {
-          console.log('page_me_checkoutuuid=======>' + JSON.stringify(resp))
-          if (resp.returncode.toString() === '0') {
-            self.whiteStatusBar()
-            // self.showNoticeIcon = false
-            // self.rowCountObj = {}
-            self.setCartCount(self.currentUser.user_id)
-            self.alertShow = false
-            // self.showNoticeIcon = self.currentUser.message_switch === '1'
-            if (self.currentUser.type === 'seller') {
-              self.ironRequest(self.apiList.xy.modules.url, { user_id: self.currentUser.user_id }, self.apiList.xy.modules.method).then(res => {
-                const resData = res.list
-                self.rowCountObj.waitAudit = 0
-                const modules = {}
-                // const auditName = ['audit', 're_audit', 'return_audit', 'delay_audit']
-                resData.map(item => {
-                  modules[item.memu_name] = item.flag
-                  if (item.flag) {
-                    self.rowCountObj[item.memu_name] = item.count
-                    // if (auditName.indexOf(item.memu_name) !== -1) {
-                    self.rowCountObj.waitAudit += Number(item.count)
-                    // }
-                  }
-                })
-                self.featuresModules = self.featuresIcons.filter(item => {
-                  return !item.dotKey || (item.dotKey && self.rowCountObj.hasOwnProperty(item.dotKey)) || item.dotKey === 'waitAudit'
-                })
-                self.configVal({ key: 'modules', val: modules })
-              }).catch((e) => {
-                self.showMsg(e)
-                self.featuresModules = []
-              })
-              const orderCount = self.apiList.xy.orderCount
-              self.ironRequest(orderCount.url, '', orderCount.method).then(resp => {
-                console.log('resp', resp)
-                if (resp.returncode === '0') {
-                  // self.rowCountObj = resp.data
-                  Object.assign(self.rowCountObj, resp.data)
-                  self.$forceUpdate()
-                }
-              })
-            } else {
-              self.refreshUser()
-              self.ironRequest('toOperCounts.shtml?user_id=' + this.currentUser.user_id, {}, 'get').then(resp => {
-                if (resp && resp.returncode === '0') {
-                  self.rowCountObj = resp
-                  self.$forceUpdate()
-                }
-              })
-              self.ironRequest('balanceList.shtml?type=0&only_all=1&user_id=' + this.currentUser.user_id, {}, 'get').then(resp => {
-                if (resp && resp.returncode === '0') {
-                  let obj = self.currentUser
-                  obj.account_balance = resp.balance
-                  self.currentUser.account_balance = resp.balance
-                  self.setUser(obj)
-                  self.$forceUpdate()
-                }
-              })
-            }
-          } else {
-            self.exitUser()
-            self.tabDot(0)
-          }
-        }).catch(e => {
-          console.log('page_me_checkoutuuid_已失效catch=======>' + e)
-          self.showMsg('登录已失效，请重新登录')
-          self.exitUser()
-          self.tabDot(0)
-        })
-      } else {
-        self.getUserRule()
-        self.ironRequest('toOperCounts.shtml?user_id=' + self.currentUser.user_id, {}, 'get').then(resp => {
-          if (resp && resp.returncode === '0') {
-            self.rowCountObj = resp
-            self.$forceUpdate()
-          }
-        })
-        self.ironRequest('balanceList.shtml?type=0&only_all=1&user_id=' + self.currentUser.user_id, {}, 'get').then(resp => {
-          if (resp && resp.returncode === '0') {
-            let obj = self.currentUser
-            obj.account_balance = resp.balance
-            self.currentUser.account_balance = resp.balance
-            self.setUser(obj)
-            self.$forceUpdate()
-          }
-        })
+      if (self.currentUser.userStatus === '01') {
+        setTimeout(() => {
+          self.jump('/pages/account/companyUpdate/main')
+        }, 1000)
       }
+      //  else {
+      //   self.httpPost(self.apiList.zf.queryUserCenterContractInfo, {}).then(res => {
+      //     debugger
+      //     console.log(res)
+      //   })
+      // }
+      // console.log('me_state.currentUser======>' + JSON.stringify(this.currentUser))
+      // self.showNoticeIcon = self.currentUser.message_switch === '1'
+      // if (self.currentUser.type === 'seller') {
+      //   self.ironRequest(`${self.apiList.xy.checkUUID.url}?user_id=${uid}`, {}, self.apiList.xy.checkUUID.method).then(resp => {
+      //     console.log('page_me_checkoutuuid=======>' + JSON.stringify(resp))
+      //     if (resp.returncode.toString() === '0') {
+      //       self.whiteStatusBar()
+      //       self.setCartCount(self.currentUser.user_id)
+      //       self.alertShow = false
+      //       if (self.currentUser.type === 'seller') {
+      //         self.ironRequest(self.apiList.xy.modules.url, { user_id: self.currentUser.user_id }, self.apiList.xy.modules.method).then(res => {
+      //           const resData = res.list
+      //           self.rowCountObj.waitAudit = 0
+      //           const modules = {}
+      //           resData.map(item => {
+      //             modules[item.memu_name] = item.flag
+      //             if (item.flag) {
+      //               self.rowCountObj[item.memu_name] = item.count
+      //               self.rowCountObj.waitAudit += Number(item.count)
+      //             }
+      //           })
+      //           self.featuresModules = self.featuresIcons.filter(item => {
+      //             return !item.dotKey || (item.dotKey && self.rowCountObj.hasOwnProperty(item.dotKey)) || item.dotKey === 'waitAudit'
+      //           })
+      //           self.configVal({ key: 'modules', val: modules })
+      //         }).catch((e) => {
+      //           self.showMsg(e)
+      //           self.featuresModules = []
+      //         })
+      //         const orderCount = self.apiList.xy.orderCount
+      //         self.ironRequest(orderCount.url, '', orderCount.method).then(resp => {
+      //           console.log('resp', resp)
+      //           if (resp.returncode === '0') {
+      //             Object.assign(self.rowCountObj, resp.data)
+      //             self.$forceUpdate()
+      //           }
+      //         })
+      //       } else {
+      //         self.refreshUser()
+      //         self.ironRequest('toOperCounts.shtml?user_id=' + this.currentUser.user_id, {}, 'get').then(resp => {
+      //           if (resp && resp.returncode === '0') {
+      //             self.rowCountObj = resp
+      //             self.$forceUpdate()
+      //           }
+      //         })
+      //         self.ironRequest('balanceList.shtml?type=0&only_all=1&user_id=' + this.currentUser.user_id, {}, 'get').then(resp => {
+      //           if (resp && resp.returncode === '0') {
+      //             let obj = self.currentUser
+      //             obj.account_balance = resp.balance
+      //             self.currentUser.account_balance = resp.balance
+      //             self.setUser(obj)
+      //             self.$forceUpdate()
+      //           }
+      //         })
+      //       }
+      //     } else {
+      //       self.exitUser()
+      //       self.tabDot(0)
+      //     }
+      //   }).catch(e => {
+      //     console.log('page_me_checkoutuuid_已失效catch=======>' + e)
+      //     self.showMsg('登录已失效，请重新登录')
+      //     self.exitUser()
+      //     self.tabDot(0)
+      //   })
+      // } else {
+      //   self.getUserRule()
+      //   self.ironRequest('toOperCounts.shtml?user_id=' + self.currentUser.user_id, {}, 'get').then(resp => {
+      //     if (resp && resp.returncode === '0') {
+      //       self.rowCountObj = resp
+      //       self.$forceUpdate()
+      //     }
+      //   })
+      //   self.ironRequest('balanceList.shtml?type=0&only_all=1&user_id=' + self.currentUser.user_id, {}, 'get').then(resp => {
+      //     if (resp && resp.returncode === '0') {
+      //       let obj = self.currentUser
+      //       obj.account_balance = resp.balance
+      //       self.currentUser.account_balance = resp.balance
+      //       self.setUser(obj)
+      //       self.$forceUpdate()
+      //     }
+      //   })
+      // }
     } else {
       self.showNoticeIcon = false
       self.tabDot(0)
-      // this.modalMsg = '您未登录,请先登录'
-      // this.modalShow = true
-      // this.alertText = '您未登录,请先登录'
-      // this.alertShow = true
+      self.showMsg('登录已失效，请重新登录')
+      // setTimeout(() => {
+      //   self.jump('/pages/account/login/main')
+      // }, 1000)
     }
   },
   methods: {
@@ -299,18 +307,20 @@ export default {
     },
     async refreshUser () {
       try {
-        const data = await this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method)
-        data.pwd = this.currentUser.pwd
-        data.type = this.currentUser.type || 'buyer'
-        data.localSearchs = this.currentUser.localSearchs || []
-        if (data.avatar) data.avatar = data.avatar.indexOf('webpage/') > 0 ? data.avatar : '/filepool' + data.avatar
-        else data.avatar = this.currentUser.avatar
-        data.user_id = this.currentUser.user_id
-        this.setUser(data)
-        // if (this.currentUser.isnew) {
-        //   this.alertText = '您还需要完善公司信息才能正常工作'
-        //   this.alertShow = true
-        // }
+        // const data = await this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method)
+        // data.pwd = this.currentUser.pwd
+        // data.type = this.currentUser.type || 'buyer'
+        // data.localSearchs = this.currentUser.localSearchs || []
+        // if (data.avatar) data.avatar = data.avatar.indexOf('webpage/') > 0 ? data.avatar : '/filepool' + data.avatar
+        // else data.avatar = this.currentUser.avatar
+        // data.user_id = this.currentUser.user_id
+
+        const res = await this.httpPost(this.apiList.zf.getPersonInfo, {})
+        this.setUser(res.data)
+        if (this.currentUser.userStatus === '01') {
+          this.alertText = '您还需要完善公司信息才能正常工作'
+          this.alertShow = true
+        }
       } catch (e) {
         console.error(e)
         this.showMsg(e)
@@ -323,7 +333,7 @@ export default {
       if (this.currentUser.type === 'buyer' && this.currentUser.rule === 0) {
         this.modalShow = false
         this.ruleModalShow = true
-      } else if (this.currentUser.isnew) {
+      } else if (this.currentUser.userStatus === '01') {
         this.alertText = '您还需要完善公司信息才能正常工作'
         this.alertShow = true
       } else {
@@ -353,7 +363,7 @@ export default {
       if (!this.isLogin) {
         this.jump('/pages/account/login/main')
       } else {
-        this.statisticRequest({ event: 'click_app_me_profile' })
+        // this.statisticRequest({ event: 'click_app_me_profile' })
         this.jump('/pages/account/profile/main')
       }
     },
@@ -377,7 +387,7 @@ export default {
         this.modalShow = true
       } else {
         // this.statisticRequest({ event: 'click_app_me_myorder_more' })
-        this.statisticRequest({ event: 'click_app_me_order_all' })
+        // this.statisticRequest({ event: 'click_app_me_order_all' })
         this.jump('/pages/bill/main')
       }
     },
@@ -386,14 +396,14 @@ export default {
         this.modalMsg = '您未登录,请先登录'
         this.modalShow = true
       } else {
-        if (this.currentUser.type === 'seller') {
-          this.statisticRequest({ event: icon.event }, true)
-        } else {
-          if (icon.url.path === '/pages/bill/main?tabName=1') this.statisticRequest({ event: 'click_app_me_to_pay' })
-          if (icon.url.path === '/pages/ladbillConfirm/main') this.statisticRequest({ event: 'click_app_me_to_confirm' })
-          if (icon.url.path === '/pages/bill/main?tabName=6') this.statisticRequest({ event: 'click_app_me_to_lad' })
-          if (icon.url.path === '/pages/invoice/main?tabName=0') this.statisticRequest({ event: 'click_app_me_to_invoice' })
-        }
+        // if (this.currentUser.type === 'seller') {
+        //   this.statisticRequest({ event: icon.event }, true)
+        // } else {
+        //   if (icon.url.path === '/pages/bill/main?tabName=1') this.statisticRequest({ event: 'click_app_me_to_pay' })
+        //   if (icon.url.path === '/pages/ladbillConfirm/main') this.statisticRequest({ event: 'click_app_me_to_confirm' })
+        //   if (icon.url.path === '/pages/bill/main?tabName=6') this.statisticRequest({ event: 'click_app_me_to_lad' })
+        //   if (icon.url.path === '/pages/invoice/main?tabName=0') this.statisticRequest({ event: 'click_app_me_to_invoice' })
+        // }
         this.jump(icon.url.path)
       }
     },
@@ -415,7 +425,7 @@ export default {
         console.log('updateRule_e=====>' + e)
       })
       this.ruleModalShow = false
-      if (this.currentUser.isnew) {
+      if (this.currentUser.userStatus === '01') {
         this.alertText = '您还需要完善公司信息才能正常工作'
         this.alertShow = true
       }

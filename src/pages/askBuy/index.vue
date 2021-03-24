@@ -8,18 +8,18 @@ div
       div(:style="{'padding-bottom': isIpx ? '218rpx' : '150rpx'}")
         .text-content.bg-white.padding-sm.text-blue.margin-top-sm(v-for="(item, itemIdx) in listData", :key="itemIdx")
           .row
-            .col.text-blue.ft-15 {{item.no}}
-            span.text-gray {{item.publish_time}}
+            .col.text-blue.ft-15 {{item.requireNo}}
+            span.text-gray {{item.createDate}}
           .text-gray
             .row
               .col.ft-15 品名
-              span {{item.name}}
+              span {{item.productBrandName}}
             .row
               .col.ft-15 材质
-              span {{item.material}}
+              span {{item.productTextureName}}
             .row
               .col.ft-15 规格
-              span {{item.standard}}
+              span {{item.specification}}
     .text-center.pt-100(v-else)
       empty-image(url="bill_empty.png", className="img-empty")
       .empty-content 您暂时没有加工数据
@@ -42,18 +42,32 @@ export default {
     })
   },
   onShow () {
-    this.ironRequest('demandList.shtml?user_id=' + this.currentUser.user_id, {}, 'get').then(resp => {
-      this.isload = true
-      if (resp && resp.returncode === '0') {
-        this.listData = resp.demands
-      } else {
-        this.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
-      }
-      this.isload = false
-    }).catch(err => {
-      this.showMsg(err || '网络异常')
-      this.isload = false
+    const self = this
+    self.isload = true
+    let paramsObj = {
+      type: '01',
+      productTextureName: '',
+      processState: '',
+      pageNum: 1,
+      pageSize: 10
+    }
+    self.httpPost(self.apiList.zf.onlineRequireBuyManage, paramsObj).then(res => {
+      self.listData = res.data
+    }).finally(() => {
+      self.isload = false
     })
+    // this.ironRequest('demandList.shtml?user_id=' + this.currentUser.user_id, {}, 'get').then(resp => {
+    //   this.isload = true
+    //   if (resp && resp.returncode === '0') {
+    //     this.listData = resp.demands
+    //   } else {
+    //     this.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
+    //   }
+    //   this.isload = false
+    // }).catch(err => {
+    //   this.showMsg(err || '网络异常')
+    //   this.isload = false
+    // })
   }
 }
 </script>

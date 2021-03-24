@@ -30,7 +30,7 @@ div
         .col
           input(placeholder="请输入验证码", type="number", v-model="val2")
         .flex-90.text-center(style="border-left: 1rpx solid #ddd")
-          auth-btn(:phone="currentUser.phone", v-if="currentUser.phone", :codeType="type === 'loginPwd' ? 5 : 6")
+          auth-btn(:phone="currentUser.phone", v-if="currentUser.phone", :codeType="type === 'loginPwd' ? 4 : 5")
       .row.padding
         .flex-100 新密码
         .col
@@ -152,6 +152,7 @@ export default {
     },
     async loginPwdHandler () {
       this.canHttp = true
+      const self = this
       const queryObject = {
         user_id: this.currentUser.user_id,
         action_type: 1
@@ -180,10 +181,49 @@ export default {
         queryObject.capatcha = this.val2
         queryObject.user_phone = this.currentUser.phone
       }
+      let url = ''
+      let paramsObj = {}
+      if (self.type === 'loginPwd') {
+        if (self.tabName === 'tab1') {
+          url = self.apiList.zf.updateLoginPassword
+          paramsObj = {
+            originalPassword: self.val1,
+            newPassword: self.val2,
+            confirmPassword: self.val3
+          }
+        } else {
+          url = self.apiList.zf.resetPassword
+          paramsObj = {
+            phone: self.currentUser.phone,
+            verifyCode: self.val2,
+            password: self.val3,
+            confirmPassword: self.val3
+          }
+        }
+      } else {
+        url = self.apiList.zf.updatePaymentCode
+        if (self.tabName === 'tab1') {
+          paramsObj = {
+            updateType: '01',
+            originalPassword: self.val1,
+            newPassword: self.val2,
+            confirmPassword: self.val3
+          }
+        } else {
+          paramsObj = {
+            updateType: '02',
+            newPassword: self.val3,
+            confirmPassword: self.val3,
+            registerPhone: self.currentUser.phone,
+            verificationCode: self.val2
+          }
+        }
+      }
       try {
         if (this.canClick && this.canHttp) {
           this.canClick = false
-          await this.ironRequest(this.apiList.xy.resetPwd.url, queryObject, this.apiList.xy.resetPwd.method)
+          // await this.ironRequest(this.apiList.xy.resetPwd.url, queryObject, this.apiList.xy.resetPwd.method)
+          await self.httpPost(url, paramsObj)
           if (this.type === 'loginPwd') {
             this.exitUser()
             this.alertText = '登录密码修改成功，请重新登录'

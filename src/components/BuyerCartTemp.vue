@@ -32,35 +32,38 @@
                     img.choose-icon(src="/static/images/blue_check.png", v-if="cart.choosed")
                     img.choose-icon(src="/static/images/btn_ck_n.png", v-else)
                   .col(@click="cart.choosed = !cart.choosed")
-                    span {{cart.product_name}}
-                    span.padding-left-xs {{cart.product_standard}}
+                    span {{cart.onlineProductBrandName}}
+                    span.padding-left-xs {{cart.specification}}
+                  //- .text-blue ￥{{cart.price}}/吨
+                  //-   span {{cart.onlineProductBrandName}}
+                  //-   span.padding-left-xs {{cart.specification}}
                   .text-blue ￥{{cart.price}}/吨
                 .content.ft-13
                   .flex.flex-center.justify-between
                     div
                       div
-                        span {{cart.product_material}}
-                        span.ml-5 {{cart.product_length}}米
-                        span.ml-5 {{cart.wh_name}}
-                        span.sub-mark.ml-5 {{cart.product_supply}}
+                        span {{cart.productTextureName}}
+                        span.ml-5 {{cart.length}}米
+                        span.ml-5 {{cart.stockZoneName}}
+                        span.sub-mark.ml-5 {{cart.prodAreaName}}
                       .pt-5
-                        span {{cart.amount_left}}支 / {{cart.weight_left}}吨
+                        span {{cart.ratioAvailableAmount}}支 / {{cart.ratioAvailableManagerWeight}}吨
                         span.padding-left-xs 吊费:
-                        span.ml-10 {{cart.price === '--' ? '--' : cart.lift_charge > 0 ? '￥' + cart.lift_charge + '/吨' : cart.lift_charge == 0 ? '无' : '线下结算'}}
-                      .pt-5(v-if="cart.tolerance_range || cart.weight_range")
-                        span(v-if="cart.tolerance_range") 公差范围:
-                        span.ml-10.mr-10(v-if="cart.tolerance_range") {{cart.tolerance_range}}
+                        span.ml-10 {{cart.price === '--' ? '--' : cart.liftingFee > 0 ? '￥' + cart.liftingFee + '/吨' : cart.liftingFee == 0 ? '无' : '线下结算'}}
+                      .pt-5(v-if="cart.toleranceRange || cart.weightRange")
+                        span(v-if="cart.toleranceRange") 公差范围:
+                        span.ml-10.mr-10(v-if="cart.toleranceRange") {{cart.toleranceRange}}
                       .pt-5
-                        span(v-if="cart.weight_range") 重量范围:
-                        span.ml-10(v-if="cart.weight_range") {{cart.weight_range}} 
+                        span(v-if="cart.weightRange") 重量范围:
+                        span.ml-10(v-if="cart.weightRange") {{cart.weightRange}}
                     .text-right
                       .flex.flex-direction.justify-between
                         z-radio(@checkHander="weightChoose(r.m_way, cart)", v-for="(r, rIdx) in cart.radios", :key="rIdx", :label="r.label", :checked="cart.measure_way_id === r.m_way")
-                        
+
                   .row.padding-xs.justify-end.align-end
                     .col
                     .col(style="flex: 0 0 60px;")
-                      count-step(v-model="cart.count", @change="rowCartCount(cart)", :max="cart.amount_left")
+                      count-step(v-model="cart.count", @change="rowCartCount(cart)", :max="cart.ratioAvailableAmount")
                     .padding-left-xs {{cart.countWeight}}吨
             .margin-top-sm.padding-bottom-sm(v-if="soldCarts.length > 0", :class="{'padding-top-sm': carts.length === 0}")
               .bg-white
@@ -207,7 +210,7 @@ export default {
         if (filterArray.length > 0) {
           filterArray.map(itm => {
             totalCount += itm.count
-            if (itm.price.indexOf('--') < 0) {
+            if (String(itm.price).indexOf('--') < 0) {
               if (Number(itm.lift_charge) > 0) {
                 const countWeight = Number(this.$toFixed(itm.count * itm.weight, 3))
                 const countLiftWeight = countWeight * itm.lift_charge
@@ -302,56 +305,51 @@ export default {
       this.pickWayShow = !this.pickWayShow
     },
     refresher (done) {
-      const me = this
+      const self = this
       setTimeout(() => {
-        me.carts = []
-        me.soldCarts = []
-        me.allChoosed = false
-        me.loadCartData(done)
+        self.carts = []
+        self.soldCarts = []
+        self.allChoosed = false
+        self.loadCartData(done)
       }, 300)
     },
+    // 清空购物车
     clearCarts () {
-      this.statisticRequest({ event: 'click_app_cart_del_all' })
-      const me = this
+      // this.statisticRequest({ event: 'click_app_cart_del_all' })
+      const self = this
+      console.log(this.carts)
       this.confirm({ content: '确定清空购物车？' }).then((res) => {
         if (res === 'confirm') {
-          me.btnDisable = true
+          self.btnDisable = true
           this.showLoading()
-          me.ironRequest('cartEmpty.shtml', { user_id: me.currentUser.user_id }, 'post').then(resp => {
-            this.hideLoading()
-            if (resp && resp.returncode === '0') {
-              me.showMsg('清空成功')
-              me.btnDisable = false
-              me.carts = []
-              me.soldCarts = []
-              me.tabDot(0)
-            } else {
-              me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
-              me.btnDisable = false
-            }
-          }).catch(err => {
-            this.hideLoading()
-            me.showMsg(err || '网络异常')
-            me.btnDisable = false
+          self.httpPost(this.apiList.zf.deleteItem, this.carts).then(res => {
+            self.showMsg('清空成功')
+            self.carts = []
+            self.soldCarts = []
+            this.tabDot(this.carts.length + this.soldCarts.length)
+          }).catch(e => {
+            self.showMsg(e.message || '网络异常')
+          }).finally(() => {
+            self.hideLoading()
+            self.btnDisable = false
           })
         }
       })
     },
+    // 清空失效物资
     emptySoldItems () {
-      const me = this
+      const self = this
       if (!this.btnDisable) {
         this.confirm({ content: '您确定要清空失效物资吗？' }).then((res) => {
           if (res !== 'confirm') return false
-          me.btnDisable = true
-          me.ironRequest('cartEmpty.shtml', { user_id: me.currentUser.user_id, type: 1 }, 'post').then(resp => {
-            if (resp && resp.returncode === '0') {
-              me.showMsg('清空成功')
-              me.btnDisable = false
-              me.soldCarts = []
-            }
-          }).catch(err => {
-            me.showMsg(err || '网络异常')
-            me.btnDisable = false
+          self.btnDisable = true
+          self.httpPost(this.apiList.zf.failureMaterial, {}).then(res => {
+            self.showMsg('清空成功')
+            self.soldCarts = []
+          }).catch(e => {
+            self.showMsg(e.message || '网络异常')
+          }).finally(() => {
+            self.btnDisable = false
           })
         })
       }
@@ -375,10 +373,10 @@ export default {
     },
     goToSettle () {
       let filterArray = this.carts.filter(itm => itm.choosed === true)
-      let canSellArray = filterArray.filter(itm => itm.price.indexOf('--') >= 0)
-      // const me = this
+      let canSellArray = filterArray.filter(itm => String(itm.price).indexOf('--') >= 0)
+      // const self = this
       if (this.isEdit) {
-        this.statisticRequest({ event: 'click_app_cart_del' })
+        // this.statisticRequest({ event: 'click_app_cart_del' })
         if (filterArray.length === 0) {
           this.showMsg('请选择所需删除的商品')
           return false
@@ -395,7 +393,6 @@ export default {
         // let heFeiArray = filterArray.filter(itm => itm.wh_name.indexOf('合肥') >= 0)
         // let dongGangArray = filterArray.filter(itm => itm.wh_name.indexOf('常州东港') >= 0)
         // let msgs = ''
-        // debugger
         // if (heFeiArray.length > 0 && dongGangArray.length > 0) {
         //   msgs = '所选物资包含合肥仓库,常州东港库物资最快次日可提'
         // } else if (heFeiArray.length > 0) {
@@ -406,7 +403,7 @@ export default {
         this.modalShow = true
         // this.confirm({ content: msgs + '是否确认提交？' }).then((res) => {
         //   if (res === 'confirm') {
-        //     me.btnDisable = true
+        //     self.btnDisable = true
         //     let price = filterArray.map(i => i.price).join(',')
         //     let num = filterArray.map(i => `${i.count}`).join(',')
         //     let billId = filterArray.map(i => `${i.cart_id}`).join(',')
@@ -414,41 +411,41 @@ export default {
         //     // 增加重量字段，便于以后日志查询
         //     let weightStr = filterArray.map(i => `${i.weight}`).join(',')
         //     let body = {
-        //       user_id: me.currentUser.user_id,
+        //       user_id: self.currentUser.user_id,
         //       amount_s: num,
         //       o_priceStr: price,
         //       orderIdStr: billId,
         //       jl_types: measureId,
-        //       csg_way: me.pickway === 1 ? 51 : 1,
+        //       csg_way: self.pickway === 1 ? 51 : 1,
         //       weightStr: weightStr
         //     }
-        //     if (me.pickway === 1) {
-        //       body.mobile = me.pwPhone
-        //       body.end_addr = me.pwAddr + ' ' + me.pwAddrDetail
+        //     if (self.pickway === 1) {
+        //       body.mobile = self.pwPhone
+        //       body.end_addr = self.pwAddr + ' ' + self.pwAddrDetail
         //     }
         //     this.showLoading()
-        //     me.ironRequest('generateOrder.shtml', body, 'post').then(resp => {
+        //     self.ironRequest('generateOrder.shtml', body, 'post').then(resp => {
         //       this.hideLoading()
         //       if (resp && resp.returncode === '0') {
-        //         me.btnDisable = false
+        //         self.btnDisable = false
         //         if (resp.order_size > 1) {
-        //           me.confirm({ content: `您批量生成${resp.order_size}个合同，请到待付款依次支付` }).then((res) => {
+        //           self.confirm({ content: `您批量生成${resp.order_size}个合同，请到待付款依次支付` }).then((res) => {
         //             if (res === 'confirm') {
-        //               me.jump('/pages/bill/main?tabName=1')
+        //               self.jump('/pages/bill/main?tabName=1')
         //             }
         //           })
         //         } else {
         //           // 跳转到支付确认页面
-        //           me.jump(`/pages/pay/main?orderNo=${resp.order_no}&price=${resp.deal_price}&pageType=offlinePay`)
+        //           self.jump(`/pages/pay/main?orderNo=${resp.order_no}&price=${resp.deal_price}&pageType=offlinePay`)
         //         }
         //       } else {
-        //         me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
-        //         me.btnDisable = false
+        //         self.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
+        //         self.btnDisable = false
         //       }
         //     }).catch(err => {
-        //       me.btnDisable = false
+        //       self.btnDisable = false
         //       this.hideLoading()
-        //       // me.showMsg(err || '网络异常')
+        //       // self.showMsg(err || '网络异常')
         //       this.alertText = err || '网络异常'
         //       this.alertShow = true
         //     })
@@ -458,7 +455,7 @@ export default {
         this.showMsg('请选择结算商品', 'warn')
       }
     },
-    modalCb (flag) {
+    async modalCb (flag) {
       let self = this
       let filterArray = this.carts.filter(itm => itm.choosed === true)
       if (flag.toString() === 'confirm') {
@@ -482,78 +479,124 @@ export default {
           body.mobile = self.pwPhone
           body.end_addr = self.pwAddr + ' ' + self.pwAddrDetail
         }
+        filterArray.map(item => {
+          item.num = item.count
+        })
         this.showLoading()
-        self.ironRequest('generateOrder.shtml', body, 'post').then(resp => {
+        self.httpPost(this.apiList.zf.generateContract, {cartItem: filterArray, deliveryType: '01'}).then(res => {
           this.modalShow = false
           this.hideLoading()
-          if (resp && resp.returncode === '0') {
-            self.btnDisable = false
-            if (resp.order_size > 1) {
-              self.confirm({ content: `您批量生成${resp.order_size}个合同，请到待付款依次支付` }).then((res) => {
-                if (res === 'confirm') {
-                  self.jump('/pages/bill/main?tabName=1')
-                }
-              })
-            } else {
-              // 跳转到支付确认页面
-              self.jump(`/pages/pay/main?orderNo=${resp.order_no}&price=${resp.deal_price}&pageType=offlinePay`)
-            }
-          } else {
-            self.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
-            self.btnDisable = false
-          }
-        }).catch(err => {
+          self.btnDisable = false
+          this.jump(`/pages/pay/main?pageType=offlinePay&orderNo=${res.data.saleContractId}`)
+        }).catch(e => {
           self.btnDisable = false
           this.modalShow = false
           this.hideLoading()
-          // me.showMsg(err || '网络异常')
-          this.alertText = err || '网络异常'
+          this.alertText = e.message || '网络异常'
           this.alertShow = true
+          console.log(e)
         })
+        // self.ironRequest('generateOrder.shtml', body, 'post').then(resp => {
+        //   this.modalShow = false
+        //   this.hideLoading()
+        //   if (resp && resp.returncode === '0') {
+        //     self.btnDisable = false
+        //     if (resp.order_size > 1) {
+        //       self.confirm({ content: `您批量生成${resp.order_size}个合同，请到待付款依次支付` }).then((res) => {
+        //         if (res === 'confirm') {
+        //           self.jump('/pages/bill/main?tabName=1')
+        //         }
+        //       })
+        //     } else {
+        //       // 跳转到支付确认页面
+        //       self.jump(`/pages/pay/main?orderNo=${resp.order_no}&price=${resp.deal_price}&pageType=offlinePay`)
+        //     }
+        //   } else {
+        //     self.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
+        //     self.btnDisable = false
+        //   }
+        // }).catch(err => {
+        //   self.btnDisable = false
+        //   this.modalShow = false
+        //   this.hideLoading()
+        //   // self.showMsg(err || '网络异常')
+        //   this.alertText = err || '网络异常'
+        //   this.alertShow = true
+        // })
       } else {
         this.modalShow = false
       }
     },
+    // 选择计量方式
     weightChoose (val, rowItem) {
       rowItem.measure_way_id = val
-      if (val === 2) {
+      if (val === '01') {
         rowItem.weight = rowItem.radios[0].weight
         rowItem.price = rowItem.radios[0].price
-        rowItem.originPrice = rowItem.radios[0].originPrice
+        // rowItem.originPrice = rowItem.radios[0].originPrice
       } else {
         rowItem.weight = rowItem.radios[1].weight
         rowItem.price = rowItem.radios[1].price
-        rowItem.originPrice = rowItem.radios[1].price
+        // rowItem.originPrice = rowItem.radios[1].price
       }
-      this.ironRequest('cartUpdate.shtml', { cart_id: rowItem.cart_id, user_id: this.currentUser.user_id, measure_way: val, count: rowItem.count }, 'post').then(res => {
+      let paramsObj = {
+        batchNo: rowItem.batchNo || '',
+        skuId: rowItem.skuId,
+        cartQuantityType: val,
+        stockZoneId: rowItem.stockZoneId
+      }
+      this.httpGet(this.apiList.zf.changeQuantityType, paramsObj).then(res => {
+      }).catch(e => {
+        this.showMsg(e.message || '网络异常')
       })
+      // this.ironRequest('cartUpdate.shtml', { cart_id: rowItem.cart_id, user_id: this.currentUser.user_id, measure_way: val, count: rowItem.count }, 'post').then(res => {
+      // })
       this.$forceUpdate()
     },
     rowCartCount (obj) {
       console.log(obj.count)
-      this.ironRequest('cartUpdate.shtml', { cart_id: obj.cart_id, user_id: this.currentUser.user_id, measure_way: obj.measure_way_id, count: obj.count }, 'post').then(res => {
+      let params = {
+        skuId: obj.skuId,
+        num: obj.count,
+        stockZoneId: obj.stockZoneId
+      }
+      debugger
+      this.httpGet(this.apiList.zf.changeNum, params).then(res => {
+        console.log(res)
+      }).catch(e => {
+        console.log(e)
       })
     },
     delCartRow (row) {
       if (!this.btnDisable) {
-        const me = this
+        const self = this
         const idsList = []
         row.map(item => {
           idsList.push(item.cart_id)
         })
         this.confirm({ content: '您确定要删除吗?' }).then((res) => {
           if (res === 'confirm') {
-            me.btnDisable = true
-            me.ironRequest('cartDel.shtml', { cart_ids: idsList.toString() }, 'post', me).then(res => {
-              if (res.returncode === '0') {
-                this.showMsg('删除成功')
-                me.carts = me.carts.filter(item => {
-                  return idsList.indexOf(item.cart_id) === -1
-                })
-                me.tabDot(me.carts.length)
-                me.btnDisable = false
-              }
+            self.btnDisable = true
+            self.httpPost(this.apiList.zf.deleteItem, row).then(res => {
+              this.showMsg('删除成功')
+              this.carts = []
+              this.soldCarts = []
+              this.loadCartData()
+              this.tabDot(this.carts.length + this.soldCarts.length)
+            }).finally(() => {
+              self.hideLoading()
+              self.btnDisable = false
             })
+            // self.ironRequest('cartDel.shtml', { cart_ids: idsList.toString() }, 'post', self).then(res => {
+            //   if (res.returncode === '0') {
+            //     this.showMsg('删除成功')
+            //     self.carts = self.carts.filter(item => {
+            //       return idsList.indexOf(item.cart_id) === -1
+            //     })
+            //     self.tabDot(self.carts.length)
+            //     self.btnDisable = false
+            //   }
+            // })
           }
         })
       }
@@ -612,83 +655,200 @@ export default {
         this.showMsg(e)
       }
     },
-    loadCartData () {
+    async loadCartData () {
       this.isLoad = false
-      const me = this
-      this.ironRequest('cartList.shtml?data_source=0&user_id=' + me.currentUser.user_id, {}, 'get').then(resp => {
-        this.isLoad = true
-        if (resp.returncode === '0') {
-          let arr = resp.carts
-          this.soldCarts = resp.sold_out_carts
-          // const userType = this.currentUser.type
-          arr.map(itm => {
-            // const weightMark = []
-            const prArr = []
-            const wtArr = []
-            const oldPrArr = []
-            if (itm.trade_type === 1) {
-              // 非H型钢
-              itm.radios = []
-              if (Number(itm.lj_price) > 0) {
-                itm.radios.push({
-                  label: '理计',
-                  m_way: 2,
-                  weight: itm.lj_weight,
-                  price: itm.lj_price,
-                  originPrice: itm.lj_origin_price
-                })
-                prArr.push(itm.lj_price)
-                wtArr.push(itm.lj_weight)
-                oldPrArr.push(itm.lj_origin_price)
-              }
-              if (Number(itm.bj_price) > 0) {
-                itm.radios.push({
-                  label: '磅计',
-                  m_way: 1,
-                  weight: itm.bj_weight,
-                  price: itm.bj_price,
-                  originPrice: itm.bj_origin_price
-                })
-                prArr.push(itm.bj_price)
-                wtArr.push(itm.bj_weight)
-                oldPrArr.push(itm.bj_origin_price)
-              }
-              if (!itm.measure_way_id) itm.measure_way_id = 2
-            } else if (itm.trade_type === 2) {
-              // H型钢
-              itm.radios = [{
-                label: '理计',
-                m_way: itm.measure_way_id,
-                weight: itm.lj_weight16,
-                price: '--',
-                originPrice: itm.lj_origin_price16
-              }]
-              if (Number(itm.lj_price16) > 0) itm.radios[0].price = itm.lj_price16
-            }
-            itm.choosed = false
-            const idx = itm.radios.findIndex(item => {
-              return item.m_way === itm.measure_way_id
+      const self = this
+      await self.httpPost(this.apiList.zf.getCurrentUserCartItems, {}).then(res => {
+        let arr = res.data.items
+        this.soldCarts = []
+        arr.map(itm => {
+          // const weightMark = []
+          const prArr = []
+          const wtArr = []
+          const oldPrArr = []
+          // if (itm.trade_type === 1) {
+          // 非H型钢
+          itm.radios = []
+          // if (Number(itm.ratioPriceManager) > 0) {
+          if (itm.onlineQuantityType === '00' || itm.onlineQuantityType === '01') {
+            let temp = self.calcWeight(
+              '01',
+              itm.num,
+              itm.meterWeight,
+              itm.length,
+              itm.tolerance,
+              itm.floatingRatio
+            )
+            itm.radios.push({
+              label: '理计',
+              m_way: '01',
+              weight: temp,
+              price: itm.ratioPriceManager,
+              originPrice: itm.lj_origin_price
             })
-            if (idx !== -1) {
-              itm.weight = itm.radios[idx].weight
-              itm.price = itm.radios[idx].price
-              itm.originPrice = itm.radios[idx].originPrice
-              itm.dx_prices = itm.radios[idx].price
-              itm.allowedPrice = itm.radios[idx].allowedPrice
-              this.carts.push(itm)
-            }
-          })
-          this.tabDot(this.carts.length + this.soldCarts.length)
-        } else {
-          this.showMsg(resp ? '网络异常' : resp.errormsg)
-          this.carts = []
-          this.soldCarts = []
-          this.tabDot(0)
-        }
-      }).catch(err => {
+            itm.price = itm.ratioPriceManager
+            prArr.push(itm.ratioPriceManager)
+            wtArr.push(self.calcWeight(
+              itm.cartQuantityType,
+              itm.num,
+              itm.meterWeight,
+              itm.length,
+              itm.tolerance,
+              itm.floatingRatio
+            ))
+            oldPrArr.push(itm.lj_origin_price)
+          }
+          // if (Number(itm.ratioPricePound) > 0) {
+          if (itm.onlineQuantityType === '00' || itm.onlineQuantityType === '02') {
+            let temp = self.calcWeight(
+              '02',
+              itm.num,
+              itm.meterWeight,
+              itm.length,
+              itm.tolerance,
+              itm.floatingRatio
+            )
+            itm.radios.push({
+              label: '磅计',
+              m_way: '02',
+              weight: temp,
+              price: itm.ratioPricePound,
+              originPrice: itm.bj_origin_price
+            })
+            itm.price = itm.ratioPricePound
+            prArr.push(itm.ratioPricePound)
+            wtArr.push(self.calcWeight(
+              itm.cartQuantityType,
+              itm.num,
+              itm.meterWeight,
+              itm.length,
+              itm.tolerance,
+              itm.floatingRatio
+            ))
+            oldPrArr.push(itm.bj_origin_price)
+          }
+          // if (!itm.measure_way_id) itm.measure_way_id = '01'
+          if (!itm.cartQuantityType) {
+            itm.measure_way_id = '00'
+          } else {
+            itm.measure_way_id = itm.cartQuantityType
+          }
+
+          // } else if (itm.trade_type === 2) {
+          //   // H型钢
+          //   itm.radios = [{
+          //     label: '理计',
+          //     m_way: itm.measure_way_id,
+          //     weight: itm.lj_weight16,
+          //     price: '--',
+          //     originPrice: itm.lj_origin_price16
+          //   }]
+          //   if (Number(itm.lj_price16) > 0) itm.radios[0].price = itm.lj_price16
+          // }
+          itm.choosed = false
+          itm.count = Number(itm.num)
+          itm.weight = self.calcWeight(
+            itm.cartQuantityType ? itm.cartQuantityType : '01',
+            itm.num,
+            itm.meterWeight,
+            itm.length,
+            itm.tolerance,
+            itm.floatingRatio
+          )
+          itm.price = itm.cartQuantityType === '02' ? itm.ratioPricePound : itm.ratioPriceManager
+          this.carts.push(itm)
+          // const idx = itm.radios.findIndex(item => {
+          //   return item.m_way === itm.measure_way_id
+          // })
+          // if (idx !== -1) {
+          //   itm.weight = itm.radios[idx].weight
+          //   itm.price = itm.radios[idx].price
+          //   itm.originPrice = itm.radios[idx].originPrice
+          //   itm.dx_prices = itm.radios[idx].price
+          //   itm.allowedPrice = itm.radios[idx].allowedPrice
+          //   this.carts.push(itm)
+          // }
+        })
+        this.tabDot(this.carts.length + this.soldCarts.length)
+      }).catch(e => {
+        self.showMsg(e.message)
+      }).finally(() => {
         this.isLoad = true
-        me.showMsg(err || '网络异常')
       })
+      // this.ironRequest('cartList.shtml?data_source=0&user_id=' + self.currentUser.user_id, {}, 'get').then(resp => {
+      //   this.isLoad = true
+      //   if (resp.returncode === '0') {
+      //     let arr = resp.carts
+      //     this.soldCarts = resp.sold_out_carts
+      //     // const userType = this.currentUser.type
+      //     arr.map(itm => {
+      //       // const weightMark = []
+      //       const prArr = []
+      //       const wtArr = []
+      //       const oldPrArr = []
+      //       if (itm.trade_type === 1) {
+      //         // 非H型钢
+      //         itm.radios = []
+      //         if (Number(itm.lj_price) > 0) {
+      //           itm.radios.push({
+      //             label: '理计',
+      //             m_way: 2,
+      //             weight: itm.lj_weight,
+      //             price: itm.lj_price,
+      //             originPrice: itm.lj_origin_price
+      //           })
+      //           prArr.push(itm.lj_price)
+      //           wtArr.push(itm.lj_weight)
+      //           oldPrArr.push(itm.lj_origin_price)
+      //         }
+      //         if (Number(itm.bj_price) > 0) {
+      //           itm.radios.push({
+      //             label: '磅计',
+      //             m_way: 1,
+      //             weight: itm.bj_weight,
+      //             price: itm.bj_price,
+      //             originPrice: itm.bj_origin_price
+      //           })
+      //           prArr.push(itm.bj_price)
+      //           wtArr.push(itm.bj_weight)
+      //           oldPrArr.push(itm.bj_origin_price)
+      //         }
+      //         if (!itm.measure_way_id) itm.measure_way_id = 2
+      //       } else if (itm.trade_type === 2) {
+      //         // H型钢
+      //         itm.radios = [{
+      //           label: '理计',
+      //           m_way: itm.measure_way_id,
+      //           weight: itm.lj_weight16,
+      //           price: '--',
+      //           originPrice: itm.lj_origin_price16
+      //         }]
+      //         if (Number(itm.lj_price16) > 0) itm.radios[0].price = itm.lj_price16
+      //       }
+      //       itm.choosed = false
+      //       const idx = itm.radios.findIndex(item => {
+      //         return item.m_way === itm.measure_way_id
+      //       })
+      //       if (idx !== -1) {
+      //         itm.weight = itm.radios[idx].weight
+      //         itm.price = itm.radios[idx].price
+      //         itm.originPrice = itm.radios[idx].originPrice
+      //         itm.dx_prices = itm.radios[idx].price
+      //         itm.allowedPrice = itm.radios[idx].allowedPrice
+      //         this.carts.push(itm)
+      //       }
+      //     })
+      //     this.tabDot(this.carts.length + this.soldCarts.length)
+      //   } else {
+      //     this.showMsg(resp ? '网络异常' : resp.errormsg)
+      //     this.carts = []
+      //     this.soldCarts = []
+      //     this.tabDot(0)
+      //   }
+      // }).catch(err => {
+      //   this.isLoad = true
+      //   self.showMsg(err || '网络异常')
+      // })
     },
     // 卖家方法
     async dx (filterArray) {

@@ -39,8 +39,8 @@ div
           .col.row
             .flex-60 三证合一
             .col
-            .flex-30.row(v-if="pic1.length > 0")
-              img(:src="imgOuterUrl + '/filepool' + pic1", style="width: 40rpx; height: 60rpx", @click="previewImage(imgOuterUrl + '/filepool' + pic1)")
+            .flex-30.row(v-if="pic1")
+              img(:src="pic1", style="width: 40rpx; height: 60rpx", @click="previewImage(imgOuterUrl + '/filepool' + pic1)")
             .flex-30.row(@click="handlerImage('pic1')")
               img.add-icon(src="/static/images/add_icon.png")
         .row.padding.relative.h-50
@@ -49,8 +49,8 @@ div
           .col.row
             .flex-60 开票资料
             .col.text-right
-            .flex-30.row(v-if="pic2.length > 0")
-              img(:src="imgOuterUrl + '/filepool' + pic2", style="width: 40rpx; height: 60rpx", @click="previewImage(imgOuterUrl + '/filepool' + pic2)")
+            .flex-30.row(v-if="pic2")
+              img(:src="pic2", style="width: 40rpx; height: 60rpx", @click="previewImage(imgOuterUrl + '/filepool' + pic2)")
             .flex-30.row(@click="handlerImage('pic2')")
               img.add-icon(src="/static/images/add_icon.png")
       .bg-white(v-else)
@@ -60,8 +60,8 @@ div
             span.text-red *
           .col.row
             .col 营业执照
-            .flex-30.row(v-if="pic1.length > 0")
-              img(:src="imgOuterUrl + '/filepool' + pic1", style="width: 40rpx; height: 60rpx", @click="previewImage(imgOuterUrl + '/filepool' + pic1)")
+            .flex-30.row(v-if="pic1")
+              img(:src="pic1", style="width: 40rpx; height: 60rpx", @click="previewImage(imgOuterUrl + '/filepool' + pic1)")
             .flex-30.row(@click="handlerImage('pic1')")
               img.add-icon(src="/static/images/add_icon.png")
         .row.padding.relative.h-50
@@ -70,8 +70,8 @@ div
             span.text-red *
           .col.row
             .col 开票资料
-            .flex-30.row(v-if="pic2.length > 0")
-              img(:src="imgOuterUrl + '/filepool' + pic2", style="width: 40rpx; height: 60rpx", @click="previewImage(imgOuterUrl + '/filepool' + pic2)")
+            .flex-30.row(v-if="pic2")
+              img(:src="pic2", style="width: 40rpx; height: 60rpx", @click="previewImage(imgOuterUrl + '/filepool' + pic2)")
             .flex-30.row(@click="handlerImage('pic2')")
               img.add-icon(src="/static/images/add_icon.png")
         .row.padding.relative.h-50
@@ -80,8 +80,8 @@ div
             span.text-red *
           .col.row
             .col 税务登记证
-            .flex-30.row(v-if="pic3.length > 0")
-              img(:src="imgOuterUrl + '/filepool' + pic3", style="width: 40rpx; height: 60rpx", @click="previewImage(imgOuterUrl + '/filepool' + pic3)")
+            .flex-30.row(v-if="pic3")
+              img(:src="pic3", style="width: 40rpx; height: 60rpx", @click="previewImage(imgOuterUrl + '/filepool' + pic3)")
             .flex-30.row(@click="handlerImage('pic3')")
               img.add-icon(src="/static/images/add_icon.png")
         .row.padding.relative.h-50
@@ -89,8 +89,8 @@ div
             span.text-red *
           .col.row
             .col 组织机构代码证
-            .flex-30.row(v-if="pic4.length > 0")
-              img(:src="imgOuterUrl + '/filepool' + pic4", style="width: 40rpx; height: 60rpx", @click="previewImage(imgOuterUrl + '/filepool' + pic4)")
+            .flex-30.row(v-if="pic4")
+              img(:src="pic4", style="width: 40rpx; height: 60rpx", @click="previewImage(imgOuterUrl + '/filepool' + pic4)")
             .flex-30.row(@click="handlerImage('pic4')")
               img.add-icon(src="/static/images/add_icon.png")
     .margin-top.padding
@@ -157,7 +157,8 @@ export default {
       // 1 返回首页  2 不做惭怍
       backType: 1,
       // 1 非个人中心来 2 个人中心来 3 注册
-      fromType: 1
+      fromType: 1,
+      postForm: {}
     }
   },
   computed: {
@@ -208,12 +209,89 @@ export default {
       }
     },
     async pickImage (key) {
-      try {
-        const imgUrl = await this.ironFileUpload('commInfo')
-        this[key] = imgUrl
-      } catch (e) {
-        this.showMsg(e.message || e)
-      }
+      let self = this
+      wx.chooseImage({
+        count: 1,
+        sizeType: ['original', 'compressed'],
+        sourceType: ['album', 'camera'],
+        success (res) {
+          const tempFilePaths = res.tempFilePaths
+          let updateType = ''
+          let url = self.apiList.zf.uploadImage
+          switch (key) {
+            case 'pic1':
+              self.yyzzUrl = tempFilePaths[0]
+              updateType = '07'
+              url = self.apiList.zf.ocrImage
+              self.uploadFile(url, tempFilePaths[0], updateType, '02').then(res => {
+                console.log(res)
+                res.businessLicenseCode = res.creditCode
+                res.unitRegisterDate = res.unitRegisterDate.replace('年', '-').replace('月', '-').replace('日', '')
+                self.companyInfo.cust_name = res.unitName
+                // self.companyInfo.contact_phone = res.unitPhone
+                self.companyInfo.linkman = res.legalPerson
+                self[key] = res.fileAddress
+                self.postForm = Object.assign(self.postForm, res)
+              }).catch(e => {
+                console.log(e.message)
+              })
+              break
+            default:
+              self.dlyszUrl = tempFilePaths[0]
+              url = self.apiList.zf.uploadImage
+              self.uploadFile(url, tempFilePaths[0], updateType, '02').then(res => {
+                console.log(res)
+                self[key] = res.attachPath
+                self.postForm = Object.assign(self.postForm, res)
+              }).catch(e => {
+                console.log(e.message)
+              })
+              break
+          }
+        }
+      })
+      // try {
+      //   const imgUrl = await this.ironFileUpload('commInfo')
+      //   this[key] = imgUrl
+      // } catch (e) {
+      //   this.showMsg(e.message || e)
+      // }
+    },
+    uploadFile (url, imgUrl, updateType, isBack) {
+      let self = this
+      return new Promise((resolve, reject) => {
+        wx.uploadFile({
+          url: this.zfBASICURL + url,
+          filePath: imgUrl,
+          name: 'file',
+          header: {
+            'Authorization': self.token,
+            'PlatformId': 'ZF'
+          },
+          formData: {
+            'type': updateType,
+            'isBack': isBack
+          },
+          success (res) {
+            if (res.data) {
+              if (JSON.parse(res.data).success) {
+                const data = JSON.parse(res.data).data
+                resolve(data)
+              } else {
+                console.log('success.uploadFile.false====>', JSON.parse(res.data))
+                reject(JSON.parse(res.data))
+              }
+            } else {
+              self.showMsg('图片上传失败，请重试！')
+            }
+          },
+          fail (e) {
+            console.log('fail.uploadFile====>', e)
+            reject(e)
+            self.showMsg('图片上传失败，请重试！')
+          }
+        })
+      })
     },
     alertCb () {
       this.resetConfig()
@@ -265,19 +343,19 @@ export default {
           this.showMsg('请输入正确电话号码')
           return
         }
-        if (this.companyInfo.user_pwd.length > 0 && !this.pwdReg.test(this.companyInfo.user_pwd)) {
-          this.showMsg('请输入6-12位密码，只能是数字、字母和下划线')
-          return
-        }
+        // if (this.companyInfo.user_pwd.length > 0 && !this.pwdReg.test(this.companyInfo.user_pwd)) {
+        //   this.showMsg('请输入6-12位密码，只能是数字、字母和下划线')
+        //   return
+        // }
         if (this.tabName === '1') {
-          if (this.pic1.length === 0) {
-            this.showMsg('三证合一不能为空')
-            this.canHttp = false
-          }
-          if (this.pic2.length === 0) {
-            this.showMsg('开票资料不能为空')
-            this.canHttp = false
-          }
+          // if (this.pic1.length === 0) {
+          //   this.showMsg('三证合一不能为空')
+          //   this.canHttp = false
+          // }
+          // if (this.pic2.length === 0) {
+          //   this.showMsg('开票资料不能为空')
+          //   this.canHttp = false
+          // }
         } else {
           if (this.pic1.length === 0 || this.pic2.length === 0 || this.pic3.length === 0 || this.pic4.length === 0) {
             this.showMsg('图片资料不能为空')
@@ -291,23 +369,42 @@ export default {
       }
     },
     async remoteUpdateCompany () {
+      debugger
+      let paramsObj = Object.assign({}, this.postForm)
+      paramsObj.unitRegisterAddress = paramsObj.workAddress
       try {
         if (this.tabName === '1') {
+          paramsObj.isThreeCertificatesInOne = true
+          paramsObj.businessLicense = this.pic1
+          paramsObj.invoiceInformation = this.pic2
+          paramsObj.unitRegisterName = this.companyInfo.cust_name
+          paramsObj.unitRegisterContactsPhone = this.companyInfo.contact_phone
+          paramsObj.unitRegisterContacts = this.companyInfo.linkman
           this.companyInfo.license_pic = this.pic1
           this.companyInfo.invoice_pic = this.pic2
         } else {
+          paramsObj.isThreeCertificatesInOne = false
+          paramsObj.businessLicense = this.pic1
+          paramsObj.invoiceInformation = this.pic2
+          paramsObj.taxRegistrationCertificate = this.pic3
+          paramsObj.organizationCodeCertificate = this.pic4
+          paramsObj.unitRegisterName = this.companyInfo.cust_name
+          paramsObj.unitRegisterContactsPhone = this.companyInfo.contact_phone
+          paramsObj.unitRegisterContacts = this.companyInfo.linkman
           this.companyInfo.license_pic = this.pic1
           this.companyInfo.invoice_pic = this.pic2
           this.companyInfo.tax_pic = this.pic3
           this.companyInfo.orga_pic = this.pic4
         }
         this.companyInfo.user_pwd = this.base64Str(this.companyInfo.user_pwd)
-        await this.ironRequest(this.apiList.xy.companyUpdate.url, this.companyInfo, this.apiList.xy.companyUpdate.method)
+        // await this.ironRequest(this.apiList.xy.companyUpdate.url, this.companyInfo, this.apiList.xy.companyUpdate.method)
+        let data = await this.httpPost(this.apiList.zf.addAuthentication, paramsObj)
         // this.exitUser()
+        console.log(data)
         this.alertShow = true
       } catch (e) {
         this.canClick = true
-        this.showMsg(e)
+        // this.showMsg(e)
       }
     },
     validatePartOne () {

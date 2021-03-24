@@ -6,68 +6,68 @@ div
       span.text-orange 请按照补款金额，打款至供应商账户完成补款
     .bg-white.flex.padding-sm
       .col
-        span {{billDetail.tstc_no}}
-        copy-btn(:copyUrl="billDetail.tstc_no")
+        span {{billDetail.saleContractNo}}
+        copy-btn(:copyUrl="billDetail.saleContractNo")
       .col.text-right(v-if="billDetail.status_desc === '待补款'")
         span.text-blue 待补款:
         span.padding-left-sm.text-red.text-bold ￥{{billDetail.paid_price_desc}}  
       .col.flex-100.text-blue.text-right(v-else, :class="{'text-red': billDetail.status_desc == '违约'}") {{billDetail.status_desc}}        
     .bg-white.margin-top-sm.text-content
       .padding-sm.text-black.text-bold.solid-bottom.ft-15 商品信息
-      .ft-13.padding-sm.solid-bottom.relative(v-for="(item, idx) in billDetail.order_items", :key="idx")
+      .ft-13.padding-sm.solid-bottom.relative(v-for="(item, idx) in billDetail.contractDetailList", :key="idx")
         .flex
           .col
-            span.ft-15 {{item.name}}
-            span.ml-5 {{item.standard}}
-          .col.text-right.flex-100 ￥{{item.price}}元/吨
+            span.ft-15 {{item.productBrandName}}
+            span.ml-5 {{item.specification}}
+          .col.text-right.flex-100 ￥{{item.inTaxPrice}}元/吨
         .flex.padding-bottom-xs.padding-top-xs.text-gray
           .col
-            span {{item.material}}
+            span {{item.productTextureName}}
             span.padding-left-sm {{item.length}}米
-            span.padding-left-sm.padding-right-sm {{item.wh_name}}
-            span.sub-mark {{item.supply}}
-          .text-right （{{item.measure_way == '磅计' ? '磅计' : '理计'}}）
-        .text-gray {{item.amount}} 支 / {{item.weight}}吨
-        .text-gray(v-if="item.tolerance_range || item.weight_range")
-          span.padding-right-sm(v-if="item.tolerance_range") 公差范围 {{item.tolerance_range}}
-          span(v-if="item.weight_range") 重量范围 {{item.weight_range}}
+            span.padding-left-sm.padding-right-sm {{item.stockZoneName}}
+            span.sub-mark {{item.prodAreaName}}
+          .text-right （{{item.quantityType == '02' ? '磅计' : '理计'}}）
+        .text-gray {{item.amount}} 支 / {{item.quantityType == '02' ? item.outPoundWeight : item.outManagerWeight}}吨
+        .text-gray(v-if="item.toleranceRange || item.weightRange")
+          span.padding-right-sm(v-if="item.toleranceRange") 公差范围 {{item.toleranceRange}}
+          span(v-if="item.weightRange") 重量范围 {{item.weightRange}}
         //- .bill-item-line(v-if="idx < (billDetail.order_items.length - 1)") 
-        .solid-top.padding-top-xs.padding-bottom-xs.text-black(v-if="currentUser.type == 'seller' && item.xs_price != item.order_price && item.xs_price != 0")
-          span.text-black 销售定价：
-          span.text-orange ￥{{item.xs_price}}
-          span(v-if="item.order_price").padding-left-xs.text-grey.delete-style 原定价：￥{{item.order_price}}
+        //- .solid-top.padding-top-xs.padding-bottom-xs.text-black(v-if="currentUser.type == 'seller' && item.xs_price != item.order_price && item.xs_price != 0")
+        //-   span.text-black 销售定价：
+        //-   span.text-orange ￥{{item.xs_price}}
+        //-   span(v-if="item.order_price").padding-left-xs.text-grey.delete-style 原定价：￥{{item.order_price}}
     template(v-if="billDetail.status_desc !== '待付款'")     
       .bg-white.mt-half-rem
         .text-black.padding-sm.text-bold.solid-bottom 合同基本信息
         .ft-13.text-gray.padding-sm
           .flex.padding-bottom-xs
             .col 成交时间
-            .col.text-black.text-right {{billDetail.create_time_}}
+            .col.text-black.text-right {{billDetail.createDate}}
           .flex
             .col 付款截止时间
-            .col.text-black.text-right {{billDetail.end_pay_time}}
+            .col.text-black.text-right {{billDetail.invalidDate}}
       .bg-white.solid-top.padding-sm.flex
-        .col 共{{billDetail.amount}}支，{{billDetail.weight}}吨
+        .col 共{{billDetail.contractAmount}}支，{{billDetail.contractManagerWeight}}吨
         .col.text-right 
-          .ft-12 吊费: {{billDetail.lift_money}}
+          .ft-12 吊费: {{billDetail.liftingFeeMoney}}
           .padding-top-xs
             span 合同金额：
-            span.text-red ￥{{billDetail.total_money}}
+            span.text-red ￥{{billDetail.inTaxLadingMoney}}
       .bg-white.mt-half-rem(v-if="billDetail.status_desc !== '待补款' && billDetail.status_desc !== '违约'")
         .padding-sm.text-black.text-bold.solid-bottom 实发信息
         .text-gray.padding-sm
           .flex.padding-bottom-xs
             .col 实发总数量/总重量
-            .col.text-right.text-black {{billDetail.out_all_amount}}支，{{billDetail.out_all_weight}}吨
+            .col.text-right.text-black {{billDetail.outAmount}}支，{{billDetail.totalWeight}}吨
           .flex.padding-bottom-xs
             .col 实发货款
-            .col.text-right.text-black {{billDetail.out_all_goodsprice}}元
+            .col.text-right.text-black {{billDetail.totalPayment}}元
           .flex.padding-bottom-xs
             .col 实发吊费
-            .col.text-right.text-black {{billDetail.out_all_lift === '0.00' ? '0' : billDetail.out_all_lift}}元
+            .col.text-right.text-black {{billDetail.totalLiftCharge === '0.00' ? '0' : billDetail.totalLiftCharge}}元
           .flex
             .col 实发总金额
-            .col.text-right.text-black {{billDetail.out_all_price}}元    
+            .col.text-right.text-black {{billDetail.totalContractAmount}}元    
       //- .padding.c-orange.ft-12(style="background:#fefcee") 温馨提示：合同生成 120 分钟之后不可取消，逾期支付视为违约！ 请在合同支付后 5 天内提货，如出现多次延时提货，平台将酌情收取仓储费用！      
       .pt-half-rem(v-if="billDetail.status_desc !== '待补款' && billDetail.status_desc !== '违约'")
         .bg-white
@@ -75,19 +75,19 @@ div
           .ft-13.padding-sm.text-gray
             .flex.padding-bottom-xs
               .col 支付方式
-              .col.text-right.text-black {{billDetail.pay_type_desc}}
-                span(v-if="billDetail.status_desc === '待审核' && billDetail.pay_type_desc === '定金支付'") (预计定金: {{billDetail.pre_front_price}})
+              .col.text-right.text-black {{billDetail.payMethod === '01' ? '全款' : billDetail.payMethod === '02' ? '定金' : '白条'}}
+                span(v-if="billDetail.status_desc === '待审核' && billDetail.payMethod === '02'") (预计定金: {{billDetail.pre_front_price}})
             .flex.padding-bottom-xs
               .col 已支付
               .col.text-right.text-black
-                span.ft-12.pr-5(v-if="billDetail.pay_type_desc === '定金支付'") (定金支付：{{billDetail.front_price}}元)
-                span {{billDetail.payment_price}} 元
-            .flex.padding-bottom-xs(v-if="billDetail.pay_type_desc === '定金支付'")
+                span.ft-12.pr-5(v-if="billDetail.payMethod === '02'") (定金支付：{{billDetail.front_price}}元)
+                span {{billDetail.inTaxPayMoney}} 元
+            .flex.padding-bottom-xs(v-if="billDetail.payMethod === '02'")
               .col 定金抵扣
               .col.text-right.text-black {{billDetail.used_front_price}} 元       
             .flex
               .col 未支付
-              .col.text-right.text-black {{billDetail.no_paid_price}} 元
+              .col.text-right.text-black {{billDetail.unpaidAmount}} 元
     template(v-else)          
       .bg-white.solid-top.padding-sm.flex
         .col 共{{billDetail.amount}}支，{{billDetail.weight}}吨
@@ -99,10 +99,10 @@ div
       .ft-13.padding-sm.text-gray
         .padding-bottom-xs.flex.justify-between
           span 实发数量：
-          span.text-black {{billDetail.out_all_amount}}支
+          span.text-black {{billDetail.outAmount}}支
         .padding-bottom-xs.flex.justify-between           
           div 实发重量: 
-          .text-black {{billDetail.out_all_weight}}吨
+          .text-black {{billDetail.totalWeight}}吨
         .padding-bottom-xs.flex.align-center.justify-between
           div 需补款：
           .text-right
@@ -140,6 +140,7 @@ div
 </template>
 <script>
 import copyBtn from '@/components/CopyBtn.vue'
+import { mapState } from 'vuex'
 
 export default {
   data () {
@@ -152,26 +153,41 @@ export default {
   components: {
     copyBtn
   },
-  beforeMount () {
-    this.ironRequest('orderDetail.shtml?tstc_no=' + this.$root.$mp.query.id, {}, 'get').then(resp => {
-      if (resp && resp.returncode === '0') {
-        // resp.lift_money = resp.lift_money.toFixed(2)
-        // resp.total_money = resp.total_money.toFixed(2)
-        resp.out_all_lift = this.$toFixed(resp.out_all_lift, 2)
-        resp.lift_money = this.$toFixed(resp.lift_money, 2)
-        resp.total_money = this.$toFixed(resp.total_money, 2)
-        if (resp.status_desc === '待补款') {
-          resp.needTransfer = resp.paid_price_desc - resp.desposit_can > 0 ? this.$toFixed(Number(resp.paid_price_desc - resp.desposit_can), 2) : 0
-        }
-        this.billDetail = resp
-        // this.billDetail.status_desc = '待付款'
-        if (this.billDetail.status_desc === '待补款') {
-          this.navBarTitle = '待补款详情'
-        }
-      }
-    }).catch(err => {
-      this.showMsg(err || '网络异常')
+  computed: {
+    ...mapState({
+      contractStatus: state => state.contractStatus
     })
+  },
+  beforeMount () {
+    this.httpPost(this.apiList.zf.saleContractDetail, {contractId: this.$root.$mp.query.contractId}).then(res => {
+      console.log(res.data)
+      this.billDetail = res.data
+      this.billDetail.status_desc = this.contractStatus.find(c => {
+        return c.id === res.data.xingyunContractStatus
+      }).name
+      if (this.billDetail.status_desc === '待补款') {
+        this.navBarTitle = '待补款详情'
+      }
+    })
+    // this.ironRequest('orderDetail.shtml?tstc_no=' + this.$root.$mp.query.id, {}, 'get').then(resp => {
+    //   if (resp && resp.returncode === '0') {
+    //     // resp.lift_money = resp.lift_money.toFixed(2)
+    //     // resp.total_money = resp.total_money.toFixed(2)
+    //     resp.out_all_lift = this.$toFixed(resp.out_all_lift, 2)
+    //     resp.lift_money = this.$toFixed(resp.lift_money, 2)
+    //     resp.total_money = this.$toFixed(resp.total_money, 2)
+    //     if (resp.status_desc === '待补款') {
+    //       resp.needTransfer = resp.paid_price_desc - resp.desposit_can > 0 ? this.$toFixed(Number(resp.paid_price_desc - resp.desposit_can), 2) : 0
+    //     }
+    //     this.billDetail = resp
+    //     // this.billDetail.status_desc = '待付款'
+    //     if (this.billDetail.status_desc === '待补款') {
+    //       this.navBarTitle = '待补款详情'
+    //     }
+    //   }
+    // }).catch(err => {
+    //   this.showMsg(err || '网络异常')
+    // })
   },
   methods: {
     payBill () {

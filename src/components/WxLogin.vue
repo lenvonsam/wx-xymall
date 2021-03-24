@@ -42,25 +42,56 @@ export default {
         if (self.bindwx) {
           // 微信自动登录接口
           console.log('self.bindwx===>' + self.bindwx)
-          self.ironRequest(this.apiList.xy.wxLogin.url, { openid: self.openId }, this.apiList.xy.wxLogin.method).then((res) => {
-            console.log('res===>' + JSON.stringify(res))
-            self.setUser(res)
-            self.showMsg(res.errormsg)
-            setTimeout(function () {
-              if (self.backType === 1) {
-                self.back()
+          // self.ironRequest(this.apiList.xy.wxLogin.url, { openid: self.openId }, this.apiList.xy.wxLogin.method).then((res) => {
+          //   console.log('res===>' + JSON.stringify(res))
+          //   self.setUser(res)
+          //   self.showMsg(res.errormsg)
+          //   setTimeout(function () {
+          //     if (self.backType === 1) {
+          //       self.back()
+          //     } else {
+          //       if (res.isnew === 1) {
+          //         self.jump('/pages/account/companyUpdate/main?type=3')
+          //       } else {
+          //         self.tab('/pages/me/main')
+          //       }
+          //     }
+          //   }, 1500)
+          // }).catch(e => {
+          //   console.log('catch===>' + JSON.stringify(e))
+          //   self.jump('/pages/account/wxBind/main')
+          //   // modal提示是否绑定
+          // })
+          let paramsObj = {
+            openId: self.openId,
+            unionId: mpvue.getStorageSync('unionId')
+          }
+          self.httpGet(self.apiList.zf.wxLogin, paramsObj).then(data => {
+            self.setUser({token: data.data.token, user: data.data.user})
+            self.httpPost(self.apiList.zf.getPersonInfo, {}).then(res => {
+              self.setUser({user: res.data})
+              if (res.data.userStatus === '01') {
+                self.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
+                  if (res === 'confirm') {
+                    self.jump('/pages/account/companyUpdate/main')
+                  } else {
+                    self.tab('/pages/me/main')
+                  }
+                })
               } else {
-                if (res.isnew === 1) {
-                  self.jump('/pages/account/companyUpdate/main?type=3')
-                } else {
-                  self.tab('/pages/me/main')
-                }
+                this.showMsg('登录成功')
+                setTimeout(function () {
+                  self.canClick = true
+                  if (self.backType === 1) {
+                    self.back()
+                  } else {
+                    self.tab('/pages/index/main')
+                  }
+                }, 500)
               }
-            }, 1500)
+            })
           }).catch(e => {
-            console.log('catch===>' + JSON.stringify(e))
-            self.jump('/pages/account/wxBind/main')
-            // modal提示是否绑定
+            console.lgo(e)
           })
         }
       } else {

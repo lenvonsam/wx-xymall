@@ -9,13 +9,13 @@ div
       .bg-white.text-gray.padding-sm.margin-top-sm(v-for="(item, idx) in listData", :key="idx")
         .row.margin-bottom-sm
           .col
-            span.ft-15.text-blue.text-bold {{item.no}}
-            copy-btn(:copyUrl="item.no")
+            span.ft-15.text-blue.text-bold {{item.saleLadingNo}}
+            copy-btn(:copyUrl="item.saleLadingNo")
           .confirm-btn.text-blue(@click="jumpConfirm(item)") 确认提单
-        .padding-bottom-xs {{item.product_name}}
+        .padding-bottom-xs {{item.buyUnitName}}
         .padding-bottom-xs 
-          span 共{{item.total_count}}支，{{item.weight_csg}}吨
-        .padding-bottom-xs 生成时间：{{item.create_time}}
+          span 共{{item.outAmount}}支，{{item.outPoundWeight + item.outManagerWeight}}吨
+        .padding-bottom-xs 生成时间：{{item.createDate}}
   .text-center.text-gray.pt-100(v-else)
     empty-image(url="bill_empty.png", className="img-empty")
     .empty-content 您暂时没有相关提单  
@@ -27,9 +27,10 @@ export default {
   data () {
     return {
       listData: [],
-      currentPage: 0,
+      currentPage: 1,
       isload: true,
-      loadFinish: 0
+      loadFinish: 0,
+      queryObj: {}
     }
   },
   components: {
@@ -44,7 +45,7 @@ export default {
     this.showLoading()
     this.listData = []
     // this.isLoad = true
-    this.currentPage = 0
+    this.currentPage = 1
     this.onRefresh()
   },
   methods: {
@@ -56,51 +57,74 @@ export default {
       }, 300)
     },
     onRefresh (done) {
-      this.currentPage = 0
+      this.currentPage = 1
       this.loadData(done)
     },
     jumpConfirm (item) {
-      this.statisticRequest({ event: 'click_app_td_confirm' })
-      this.jump('/pages/ladbillConfirmDetail/main?no=' + item.no)
+      // this.statisticRequest({ event: 'click_app_td_confirm' })
+      this.jump('/pages/ladbillConfirmDetail/main?saleLadingId=' + item.saleLadingId)
     },
     loadData (done) {
-      const reqUrl = 'orderLadList.shtml'
-      const type = 'post'
-      const p = {
-        status: 6,
-        user_id: this.currentUser.user_id,
-        current_page: this.currentPage,
-        page_size: this.pageSize
-      }
+      // const reqUrl = 'orderLadList.shtml'
+      // const type = 'post'
+      // const p = {
+      //   status: 6,
+      //   user_id: this.currentUser.user_id,
+      //   current_page: this.currentPage,
+      //   page_size: this.pageSize
+      // }
       this.loadFinish = 1
       // if (this.currentPage > 0) this.loading = false
-      this.ironRequest(reqUrl, p, type).then(resp => {
-        if (resp.returncode === '0') {
-          console.log('resp', resp)
-          const me = this
-          // this.listData = resp.order_lads
-          const arr = resp.order_lads
-          if (arr.length === 0 && me.currentPage === 0) {
-            me.listData = []
-          } else if (arr.length > 0 && me.currentPage === 0) {
-            me.listData = arr
-          } else if (arr.length > 0 && me.currentPage > 0) {
-            me.listData.push(...arr)
-          } else {
-            me.currentPage--
-            if (me.listData.length >= 10) me.loadFinish = 2
-          }
+      // this.ironRequest(reqUrl, p, type).then(resp => {
+      //   if (resp.returncode === '0') {
+      //     console.log('resp', resp)
+      //     const me = this
+      //     // this.listData = resp.order_lads
+      //     const arr = resp.order_lads
+      //     if (arr.length === 0 && me.currentPage === 0) {
+      //       me.listData = []
+      //     } else if (arr.length > 0 && me.currentPage === 0) {
+      //       me.listData = arr
+      //     } else if (arr.length > 0 && me.currentPage > 0) {
+      //       me.listData.push(...arr)
+      //     } else {
+      //       me.currentPage--
+      //       if (me.listData.length >= 10) me.loadFinish = 2
+      //     }
+      //   }
+      //   this.hideLoading()
+      //   if (this.listData.length < 10) this.loadFinish = 3
+      //   this.isload = false
+      //   if (done) done()
+      // }).catch(err => {
+      //   this.hideLoading()
+      //   this.isload = false
+      //   this.loadFinish = 0
+      //   if (done) done()
+      //   this.showMsg(err || '网络错误')
+      // })
+      this.queryObj = {
+        pageNum: this.currentPage,
+        pageSize: this.pageSize
+      }
+      const me = this
+      this.httpPost(this.apiList.zf.queryLadingPage + '?pageNum=' + this.currentPage + '&pageSize=' + this.pageSize, this.queryObj).then(res => {
+        const arr = res.data
+        if (arr.length === 0 && me.currentPage === 1) {
+          me.listData = []
+        } else if (arr.length > 0 && me.currentPage === 1) {
+          me.listData = arr
+        } else if (arr.length > 0 && me.currentPage > 1) {
+          me.listData.push(...arr)
+        } else {
+          me.currentPage--
+          if (me.listData.length >= 10) me.loadFinish = 2
         }
-        this.hideLoading()
         if (this.listData.length < 10) this.loadFinish = 3
-        this.isload = false
         if (done) done()
-      }).catch(err => {
+      }).finally(() => {
+        this.isload = false
         this.hideLoading()
-        this.isload = false
-        this.loadFinish = 0
-        if (done) done()
-        this.showMsg(err || '网络错误')
       })
     }
   }

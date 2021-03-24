@@ -26,7 +26,7 @@ div
                       //- span.ml-5.ft-12(style="color:#666") ({{weightMark}})
                     .text-right.ft-16
                       span.text-red.ft-13(v-if="item.price === '--'") 开售时间:{{item.show_time}}
-                      span.text-blue(v-else-if="item.show_price === true") ￥{{item.price}}
+                      span.text-blue(v-else-if="isLogin") ￥{{item.price}}
                       .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)") 查看价格
                   .row.pt-5.flex-center.ft-12
                     .col.c-gray
@@ -46,7 +46,7 @@ div
                     .flex-120.relative.text-right.ft-14.row.justify-end
                       //- .mall-row(:class="{'notice': item.max_count === 0}")
                       .blue-buy(v-if="item.max_count == 0 && isLogin",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
-                      .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="item.show_price") 购买
+                      .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="isLogin") 购买
                 template(v-else)
                   .ft-15.row
                     span.text-bold {{item[mallTypeObject[itemType].name]}}
@@ -71,9 +71,12 @@ div
                   .text-gray.flex
                     .ft-11.col ({{item.weightMark}})
                     .text-right
+                      //- .blue-buy(v-if="item.max_count == 0 && isLogin",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
+                      //- .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="item.show_price") 购买
+                      //- .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)", style="padding-top: 2rpx") 查看价格1
                       .blue-buy(v-if="item.max_count == 0 && isLogin",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
-                      .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="item.show_price") 购买
-                      .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)", style="padding-top: 2rpx") 查看价格
+                      .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="isLogin") 购买
+                      .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)") 查看价格
             //- .padding.text-gray.ft-13.text-center(v-if="loading") 努力加载中...
             //- .padding.text-gray.ft-13.text-center(v-if="goodsNameList[tabIdx].finished") 加载完成
             //- span(v-for="(item,idx) in mallItems", :key="idx") {{idx}}
@@ -121,17 +124,17 @@ export default {
       ballValue: null,
       mallTypeObject: {
         'product': {
-          name: 'name',
-          supply: 'supply',
+          name: 'onlineProductBrandName',
+          supply: 'prodAreaName',
           price: 'price',
-          standard: 'standard',
-          material: 'material',
-          wh_name: 'wh_name',
-          max_count: 'max_count',
-          max_weight: 'max_weight',
-          tolerance: 'tolerance_range',
+          standard: 'specification',
+          material: 'productTextureName',
+          wh_name: 'stockZoneName',
+          max_count: 'ratioAvailableAmount',
+          max_weight: 'ratioAvailableManagerWeight',
+          tolerance: 'toleranceRange',
           length: 'length',
-          weightRange: 'weight_range'
+          weightRange: 'weightRange'
         },
         'trove': {
           name: 'product_name',
@@ -179,7 +182,11 @@ export default {
       modalMsg: '1',
       fillModalShow: false,
       fillModalMsg: '',
-      trial: -1
+      trial: -1,
+      queryObj: {
+        pageNum: 1,
+        pageSize: 20
+      }
     }
   },
   computed: {
@@ -215,49 +222,49 @@ export default {
   onShow () {
     this.isload = true
     if (this.currentUser.type === 'buyer') {
-      let isAuditing = 0 // 账号是否正在审核中
-      let lastExperienceDay = mpvue.getStorageSync('lastExperienceDay') || ''
-      let isAuditingReminder = mpvue.getStorageSync('isAuditingReminder') || ''
-      let overdueReminder = mpvue.getStorageSync('overdueReminder') || ''
-      this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(data => {
-        if (data.returncode === '0') {
-          this.trial = data.trial
-          isAuditing = data.is_auditing
-          this.currentUser.isnew = data.isnew
-          if (this.trial > 0) {
-            if (data.isnew === 1) { // 新用户
-              if (lastExperienceDay !== this.trial) {
-                this.modalMsg = '1'
-                this.modalShow = true
-                mpvue.setStorageSync('lastExperienceDay', this.trial)
-              }
-            } else if (data.isnew === 0 && isAuditing === 1) { // 已完善未审核过
-              if (isAuditingReminder !== this.getDate()) {
-                this.modalMsg = '3'
-                this.modalShow = true
-                mpvue.setStorageSync('isAuditingReminder', this.getDate())
-              }
-            }
-          } else if (this.trial === 0) { // 超过体验期限
-            if (overdueReminder !== this.getDate()) {
-              this.modalMsg = '2'
-              this.modalShow = true
-              mpvue.setStorageSync('lastExperienceDay', this.trial)
-              mpvue.setStorageSync('overdueReminder', this.getDate())
-              // 超过体验时间，商城显示未登录状态页面
-            }
-          } else {
-            mpvue.setStorageSync('lastExperienceDay', this.trial)
-          }
-        } else {
-          this.showMsg(data.errormsg)
-          this.exitUser()
-        }
-      }).catch(e => {
-        console.log('mall.vue_queryProfile_catch=====>', JSON.stringify(e))
-        // this.showMsg(e)
-        this.isLogin = false
-      })
+      // let isAuditing = 0 // 账号是否正在审核中
+      // let lastExperienceDay = mpvue.getStorageSync('lastExperienceDay') || ''
+      // let isAuditingReminder = mpvue.getStorageSync('isAuditingReminder') || ''
+      // let overdueReminder = mpvue.getStorageSync('overdueReminder') || ''
+      // this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(data => {
+      //   if (data.returncode === '0') {
+      //     this.trial = data.trial
+      //     isAuditing = data.is_auditing
+      //     this.currentUser.isnew = data.isnew
+      //     if (this.trial > 0) {
+      //       if (data.isnew === 1) { // 新用户
+      //         if (lastExperienceDay !== this.trial) {
+      //           this.modalMsg = '1'
+      //           this.modalShow = true
+      //           mpvue.setStorageSync('lastExperienceDay', this.trial)
+      //         }
+      //       } else if (data.isnew === 0 && isAuditing === 1) { // 已完善未审核过
+      //         if (isAuditingReminder !== this.getDate()) {
+      //           this.modalMsg = '3'
+      //           this.modalShow = true
+      //           mpvue.setStorageSync('isAuditingReminder', this.getDate())
+      //         }
+      //       }
+      //     } else if (this.trial === 0) { // 超过体验期限
+      //       if (overdueReminder !== this.getDate()) {
+      //         this.modalMsg = '2'
+      //         this.modalShow = true
+      //         mpvue.setStorageSync('lastExperienceDay', this.trial)
+      //         mpvue.setStorageSync('overdueReminder', this.getDate())
+      //         // 超过体验时间，商城显示未登录状态页面
+      //       }
+      //     } else {
+      //       mpvue.setStorageSync('lastExperienceDay', this.trial)
+      //     }
+      //   } else {
+      //     this.showMsg(data.errormsg)
+      //     this.exitUser()
+      //   }
+      // }).catch(e => {
+      //   console.log('mall.vue_queryProfile_catch=====>', JSON.stringify(e))
+      //   // this.showMsg(e)
+      //   this.isLogin = false
+      // })
     }
 
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 285
@@ -305,7 +312,7 @@ export default {
     }
     // this.refresher()
     if (this.isLogin) {
-      this.setCartCount(this.currentUser.user_id)
+      // this.setCartCount(this.currentUser.user_id)
       console.log('mall_state.currentUser======>' + JSON.stringify(this.currentUser))
       this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(res => {
         if (res.returncode === '0') {
@@ -370,13 +377,13 @@ export default {
       this.refresher(done)
     },
     loadMore () {
-      const me = this
+      const self = this
       this.throttle(function () {
-        me.isload = true
-        me.loadFinish = 1
-        me.currentPage++
-        me.isRefresh = 'reachBottom'
-        me.refresher()
+        self.isload = true
+        self.loadFinish = 1
+        self.currentPage++
+        self.isRefresh = 'reachBottom'
+        self.refresher()
       }, 300)
     },
     showShareMall () {
@@ -406,9 +413,9 @@ export default {
         delete this.queryObject.materials
         delete this.queryObject.supplys
         console.log('swiperFirst', this.swiperFirst)
-        const me = this
+        const self = this
         setTimeout(() => {
-          me.onRefresh()
+          self.onRefresh()
         }, 100)
         console.log('prevIdx', this.prevIdx)
       }
@@ -444,12 +451,12 @@ export default {
       // }
       this.queryObject.current_page = this.currentPage
       this.queryObject.name = this.mallTabVal
-      // this.filterObj = obj
       Object.assign(this.queryObject, obj)
       if (!this.tempObject.standards) {
         this.refresher()
       }
     },
+    // 切换商城排版格式
     selectMall (flag) {
       console.log(flag)
       this.mallFlag = flag
@@ -466,12 +473,13 @@ export default {
         search: val,
         only_available: 1
       }
+      this.queryObj.keyword = val
       this.refresher()
     },
     mallItemCb (obj, type, evt) {
       console.log('evt', evt)
-      const me = this
-      me.ballValue = evt
+      const self = this
+      self.ballValue = evt
       if (obj.name === 'H型钢' && obj.price === '--') {
         this.showMsg(`此商品会在${obj.show_time}后开售`)
         return
@@ -479,38 +487,39 @@ export default {
       if (this.isLogin) {
         switch (type) {
           case 'showPrice':
-            if (this.currentUser.type === 'seller') {
-              this.showMsg('登录已失效，请重新登录')
-              return false
-            }
+            // if (this.currentUser.type === 'seller') {
+            //   this.showMsg('登录已失效，请重新登录')
+            //   return false
+            // }
             this.showMsg('请完善信息，耐心等待审批通过')
             break
           case 'notice':
           case 'cart':
-            if (type === 'cart') {
-              this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_add_cart_seller' }, true) : this.statisticRequest({ event: 'click_app_mall_add_cart' })
-            }
-            if (this.currentUser.isnew === 1) {
+            // if (type === 'cart') {
+            //   this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_add_cart_seller' }, true) : this.statisticRequest({ event: 'click_app_mall_add_cart' })
+            // }
+            if (this.currentUser.userStatus === '01' || this.currentUser.userStatus === '02' || this.currentUser.userStatus === '03') {
               this.fillModalMsg = '请先完善信息'
               this.fillModalShow = true
             } else {
               if (!this.btnDisable) {
                 this.btnDisable = true
-                this.addCart(obj, type, this.currentUser.user_id).then(
-                  rt => {
-                    // me.ballValue = evt
-                    me.showMsg(rt.msg, '', 1000)
-                    if (type === 'cart') me.setCartCount(me.currentUser.user_id)
-                    me.btnDisable = false
-                  },
-                  err => {
-                    me.showMsg(err === '该商品已经存在于购物车中' ? '该商品已加入购物车' : err)
-                    me.btnDisable = false
-                  }
-                )
+                obj.num = 1
+                this.addCartItem(obj)
+                // this.addCart(obj, type, this.currentUser.user_id).then(
+                //   rt => {
+                //     // self.ballValue = evt
+                //     self.showMsg(rt.msg, '', 1000)
+                //     // if (type === 'cart') self.setCartCount(self.currentUser.user_id)
+                //     self.btnDisable = false
+                //   },
+                //   err => {
+                //     self.showMsg(err === '该商品已经存在于购物车中' ? '该商品已加入购物车' : err)
+                //     self.btnDisable = false
+                //   }
+                // )
               }
             }
-
             break
           default:
             break
@@ -520,10 +529,22 @@ export default {
         if (type === 'showPrice') msg = '请登录后查看价格，去登录'
         this.confirm({ content: msg }).then((res) => {
           if (res === 'confirm') {
-            me.jump('/pages/account/login/main')
+            self.jump('/pages/account/login/main')
           }
         })
       }
+    },
+    async addCartItem (obj) {
+      obj.cartQuantityType = obj.onlineQuantityType
+      const self = this
+      await self.httpPost(this.apiList.zf.addCartItem, obj).then(res => {
+        console.log(res)
+        self.showMsg('加购成功！')
+        self.btnDisable = false
+      }).catch(e => {
+        self.showMsg(e.message)
+        self.btnDisable = false
+      })
     },
     selectTab ({ id, idx }) {
       if (this.goodsNameList[idx]) {
@@ -536,93 +557,78 @@ export default {
       try {
         this.showLoading()
         this.loadFinish = 1
-        const me = this
+        const self = this
         this.queryObject.current_page = this.currentPage
         this.queryObject.page_size = this.pageSize
-        const data = await this.ironRequest(
-          this.apiList.xy.mallList.url,
-          this.queryObject,
-          this.apiList.xy.mallList.method
-        )
+        // const data = await this.ironRequest(
+        //   this.apiList.xy.mallList.url,
+        //   this.queryObject,
+        //   this.apiList.xy.mallList.method
+        // )
+        const data = await this.httpPost(this.apiList.zf.shopMallList, this.queryObj)
         const res = data
-        const resData = data.products
+        // const resData = data.products
+        const resData = res.data.stocks
         // const userType = this.currentUser.type
-        if (res.returncode === '0') {
-          const idx = this.swiperCount
-          resData.map(item => {
-            const weightMark = []
-            const price = []
-
-            if (Number(item.lj_price) > 0) {
-              item.wayId = 2
-              weightMark.push('理计')
-              price.push(item.lj_price)
-            }
-            if (Number(item.bj_price) > 0) {
-              weightMark.push('磅计')
-              item.wayId = 1
-              price.push(item.bj_price)
-            }
-            if (Number(item.lj_price16) > 0) {
-              price.push(item.lj_price16)
-              item.wayId = 3
-              weightMark.push('理计')
-              // weightMark.push(userType === 'seller' ? '16理计' : '理计')
-            }
-            // if (Number(item.lj_price10) > 0 && userType === 'seller') {
-            //   // item.wayId = 4
-            //   price.push(item.lj_price10)
-            //   weightMark.push('10理计')
-            // }
-            if (price.length === 0) {
-              price.push('--')
-              item.wayId = 2
-              weightMark.push('理计')
-            }
-            item.weightMark = weightMark.toString().replace(/,/g, '/')
-            item.price = price.toString().replace(/,/g, '/')
-          })
-          if (me.isRefresh === 'refresh') {
-            if (resData.length > 0 && me.currentPage === 0) {
-              me.goodsNameList[idx].data = resData
-              me.isload = false
-              if (me.goodsNameList[idx].data.length < 10) me.loadFinish = 2
-            } else if (resData.length === 0 && me.currentPage === 0) {
-              me.goodsNameList[idx].data = []
-              me.isload = false
-            }
+        // if (res.returncode === '0') {
+        const idx = this.swiperCount
+        resData.map(item => {
+          const weightMark = []
+          const price = []
+          if (item.onlineQuantityType === '02' || item.onlineQuantityType === '00') {
+            weightMark.push('磅计')
+            price.push(item.ratioPricePound)
+            item.max_weight = item.ratioAvailablePoundWeight
+          }
+          if (item.onlineQuantityType === '01' || item.onlineQuantityType === '00') {
+            weightMark.push('理计')
+            price.push(item.ratioPriceManager)
+            item.max_weight = item.ratioAvailableManagerWeight
+          }
+          item.weightMark = weightMark.toString().replace(/,/g, '/')
+          item.price = price.toString().replace(/,/g, '/')
+        })
+        if (self.isRefresh === 'refresh') {
+          if (resData.length > 0 && self.currentPage === 0) {
+            self.goodsNameList[idx].data = resData
+            self.isload = false
+            if (self.goodsNameList[idx].data.length < 10) self.loadFinish = 2
+          } else if (resData.length === 0 && self.currentPage === 0) {
+            self.goodsNameList[idx].data = []
+            self.isload = false
+          }
+        } else {
+          if (resData.length > 0) {
+            self.goodsNameList[idx].data.push(...resData)
+            if (resData.length < 10) self.loadFinish = 2
           } else {
-            if (resData.length > 0) {
-              me.goodsNameList[idx].data.push(...resData)
-              if (resData.length < 10) me.loadFinish = 2
-            } else {
-              me.currentPage--
-              if (me.currentPage > 0 && me.goodsNameList[idx].data.length > 10) me.loadFinish = 2
-            }
+            self.currentPage--
+            if (self.currentPage > 0 && self.goodsNameList[idx].data.length > 10) self.loadFinish = 2
           }
-          me.$forceUpdate()
-          // me.hideLoading()
-          if (me.prevIdx !== null && me.prevIdx !== -1) {
-            me.goodsNameList[me.prevIdx].data = []
-            me.prevIdx = null
-          }
-          if (me.goodsNameList[idx].data.length < 10) me.loadFinish = 3
-          // me.goodsNameList.mp((item, index) => {
-          //   if (Math.abs(index - idx) > 1) {
-          //     item.data = []
-          //   }
-          // })
-          // this.isload = true
         }
+        self.$forceUpdate()
+        // self.hideLoading()
+        if (self.prevIdx !== null && self.prevIdx !== -1) {
+          self.goodsNameList[self.prevIdx].data = []
+          self.prevIdx = null
+        }
+        if (self.goodsNameList[idx].data.length < 10) self.loadFinish = 3
+        // self.goodsNameList.mp((item, index) => {
+        //   if (Math.abs(index - idx) > 1) {
+        //     item.data = []
+        //   }
+        // })
+        // this.isload = true
+        // }
         console.log('loadfinish:>>', this.loadFinish)
         if (this.swiperFirst === 1) {
           this.configVal({ key: 'tempObject', val: '' })
           this.swiperFirst = 0
         }
         this.$nextTick(() => {
-          const me = this
+          const self = this
           setTimeout(() => {
-            me.hideLoading()
+            self.hideLoading()
           }, 800)
         })
         if (done) done()

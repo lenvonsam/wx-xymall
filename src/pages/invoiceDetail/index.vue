@@ -8,8 +8,8 @@ div
         .padding-bottom-xs(v-for="(no, noIdx) in nosArray", :key="noIdx") {{no}}
     .solid-bottom.item(v-for="(itm, itmIdx) in listArray", :key="itmIdx")
       .invoice-left {{itm.name}}
-      .text-gray {{tempObject[itm.key]}}
-    //- .row.solid-bottom.flex-center(v-if="queryId == 0")
+      .text-gray {{showObj[itm.key]}}
+    //- .row.solid-bottom.flex-center(v-if="tabName == 0")
     //-   .col.flex-100.ft-15 提单数量
     //-   .col.c-gray.text-right
     //-     div {{nosArrayTotal}}
@@ -26,7 +26,7 @@ div
         .invoice-left
           span.text-red *
           span 发票领取方式
-        template(v-if="queryId == '0'")
+        template(v-if="tabName == '0'")
           picker.col.text-right.text-gray(@change="pickCb", :value="pickIdx", :range="pickItems")
             .text-right.text-gray {{pickVal}}
           .text-right.text-gray.cuIcon-right
@@ -37,20 +37,20 @@ div
             span.text-red *
             span.ml-5.ft-15 收件人
           .col.text-right
-            input.text-gray.text-right(:placeholder="queryId != '0'?'':'请输入收件人'", v-model="receiver", :disabled="queryId != '0'")
+            input.text-gray.text-right(:placeholder="tabName != '0'?'':'请输入收件人'", v-model="receiver", :disabled="tabName != '0'")
         .solid-bottom.item
           .invoice-left
             span.text-red *
             span.ml-5.ft-15 手机号
           .col.text-right
-            input.text-gray.text-right(:placeholder="queryId != '0'?'':'请输入手机号'", v-model="receiverMobile", :disabled="queryId != '0'")
+            input.text-gray.text-right(:placeholder="tabName != '0'?'':'请输入手机号'", v-model="receiverMobile", :disabled="tabName != '0'")
         .solid-bottom.item
           .invoice-left
             span.text-red *
             span.ml-5.ft-15 发票地址
           .col.text-right
-            input.text-gray.text-right(:placeholder="queryId != '0'?'':'请输入地址'", v-model="receiverAddr", :disabled="queryId != '0'")
-  .pt-half-rem(v-if="pickVal == '快递邮寄' && (queryId == '2' || queryId == '3')")
+            input.text-gray.text-right(:placeholder="tabName != '0'?'':'请输入地址'", v-model="receiverAddr", :disabled="tabName != '0'")
+  .pt-half-rem(v-if="pickVal == '快递邮寄' && (tabName == '2' || tabName == '3')")
     .bg-white
       .row.padding.flex-center.border-bottom-line
         .col.flex-100
@@ -68,7 +68,7 @@ div
         .col.text-right
           .c-gray.text-right {{invoiceNo || '暂无'}}    
   .padding-sm.margin-top(@click="invoiceApply")
-    .main-btn(v-if="queryId == '0'") 提交        
+    .main-btn(v-if="tabName == '0'") 提交        
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
@@ -87,25 +87,26 @@ export default {
       pickItems: ['快递邮寄', '线下领取'],
       listArray: [{
         name: '发票抬头',
-        key: 'title'
+        key: 'settlementUnitName'
       }, {
         name: '发票类型',
-        key: 'type'
+        key: 'settlementUnitName'
       }, {
         name: '货款金额',
-        key: 'goods_price'
+        key: 'paymentMoney'
       }, {
         name: '吊费',
-        key: 'lift_price'
+        key: 'hangingFeeMoney'
       }, {
         name: '总金额',
-        key: 'price'
+        key: 'totalMoney'
       }],
       receiver: '',
       receiverMobile: '',
       receiverAddr: '',
       clickDisabled: false,
-      queryId: ''
+      tabName: '',
+      showObj: {}
     }
   },
   onUnload () {
@@ -120,41 +121,43 @@ export default {
     this.receiverMobile = ''
     this.receiverAddr = ''
     this.clickDisabled = false
-    this.queryId = ''
+    this.tabName = ''
   },
   beforeMount () {
-    this.queryId = this.$root.$mp.query.id
-    if (this.queryId === '0') {
+    this.tabName = this.$root.$mp.query.tabName
+    this.ids = this.$root.$mp.query.ids
+    if (this.tabName === '0') {
       this.pageTitle = '申请发票'
+      this.loadData()
     } else {
       this.pageTitle = this.$root.$mp.query.name
     }
-
-    this.nosArray = this.tempObject.contract_no.split(',')
-    this.nosArrayTotal = this.nosArray.length
-    if (this.tempObject.status && this.tempObject.status !== '申请') {
-      if (this.tempObject.invoice_type) {
-        this.pickVal = this.tempObject.invoice_type === '快递发票' ? '快递邮寄' : '线下领取'
-      }
-      if (this.tempObject.receive_addr) {
-        this.receiverAddr = this.tempObject.receive_addr
-      }
-      if (this.tempObject.receive_phone) {
-        this.receiverMobile = this.tempObject.receive_phone
-      }
-      if (this.tempObject.receive_name) {
-        this.receiver = this.tempObject.receive_name
-      }
-      if (this.tempObject.express_name) {
-        this.expressName = this.tempObject.express_name
-      }
-      if (this.tempObject.express_no) {
-        this.expressNo = this.tempObject.express_no
-      }
-      if (this.tempObject.invoice_no) {
-        this.invoiceNo = this.tempObject.invoice_no
-      }
-    }
+    this.nosArray = this.ids.split(',')
+    // this.nosArray = this.tempObject.contract_no.split(',')
+    // this.nosArrayTotal = this.nosArray.length
+    // if (this.tempObject.status && this.tempObject.status !== '申请') {
+    //   if (this.tempObject.invoice_type) {
+    //     this.pickVal = this.tempObject.invoice_type === '快递发票' ? '快递邮寄' : '线下领取'
+    //   }
+    //   if (this.tempObject.receive_addr) {
+    //     this.receiverAddr = this.tempObject.receive_addr
+    //   }
+    //   if (this.tempObject.receive_phone) {
+    //     this.receiverMobile = this.tempObject.receive_phone
+    //   }
+    //   if (this.tempObject.receive_name) {
+    //     this.receiver = this.tempObject.receive_name
+    //   }
+    //   if (this.tempObject.express_name) {
+    //     this.expressName = this.tempObject.express_name
+    //   }
+    //   if (this.tempObject.express_no) {
+    //     this.expressNo = this.tempObject.express_no
+    //   }
+    //   if (this.tempObject.invoice_no) {
+    //     this.invoiceNo = this.tempObject.invoice_no
+    //   }
+    // }
   },
   computed: {
     ...mapState({
@@ -170,11 +173,11 @@ export default {
       return !result
     },
     invoiceBack () {
-      this.configVal({ key: 'tempObject', val: { tabName: this.queryId } })
+      this.configVal({ key: 'tempObject', val: { tabName: this.tabName } })
       this.back()
     },
     togglePickWay () {
-      if (this.queryId === '0') {
+      if (this.tabName === '0') {
         this.pickOpen = !this.pickOpen
       }
     },
@@ -189,37 +192,63 @@ export default {
           return false
         }
       }
-      let body = {
-        user_id: this.currentUser.user_id,
-        id: this.tempObject.id,
-        type: this.tempObject.type === '明细' ? 0 : 1,
-        invoice_type: this.pickVal === '快递邮寄' ? 0 : 1
-      }
-      if (this.pickVal === '快递邮寄') {
-        body.receive_name = this.receiver
-        body.receive_phone = this.receiverMobile
-        body.receive_addr = this.receiverAddr
-      }
+      let postList = this.nosArray.map(item => {
+        return {
+          arSettlementListId: item,
+          postFlag: this.pickVal === '快递邮寄' ? 1 : 0,
+          receiptSignId: this.receiver,
+          receiptSignName: this.receiver,
+          receiptSignPhone: this.receiverMobile,
+          receiptSignAdress: this.receiverAddr
+        }
+      })
+      // let body = {
+      //   user_id: this.currentUser.user_id,
+      //   id: this.tempObject.id,
+      //   type: this.tempObject.type === '明细' ? 0 : 1,
+      //   invoice_type: this.pickVal === '快递邮寄' ? 1 : 0
+      // }
+      // if (this.pickVal === '快递邮寄') {
+      //   body.receive_name = this.receiver
+      //   body.receive_phone = this.receiverMobile
+      //   body.receive_addr = this.receiverAddr
+      // }
       if (!this.clickDisabled) {
         this.clickDisabled = true
-        const me = this
-        this.ironRequest('applyInvoice.shtml', body, 'post').then(resp => {
-          if (resp && resp.returncode === '0') {
-            const msg = me.pageTitle === '申请发票' ? '申请发票成功' : '发票确认成功'
-            me.showMsg(msg, '', 1000)
-            me.configVal({ key: 'tempObject', val: { tabName: me.queryId } })
-            setTimeout(() => {
-              me.back()
-            }, 1000)
-          } else {
-            me.clickDisabled = false
-            me.showMsg(resp === undefined ? '网路异常' : resp.errormsg)
-          }
+        const self = this
+        self.httpPost(self.apiList.zf.invoiceAdd, postList).then(res => {
+          const msg = self.pageTitle === '申请发票' ? '申请发票成功' : '发票确认成功'
+          self.showMsg(msg, '', 1000)
+          setTimeout(() => {
+            self.back()
+          }, 1000)
+        }).catch(e => {
+          self.clickDisabled = false
+          self.showMsg(e.message ? e.message : '网路异常')
         })
+        // this.ironRequest('applyInvoice.shtml', body, 'post').then(resp => {
+        //   if (resp && resp.returncode === '0') {
+        //     const msg = self.pageTitle === '申请发票' ? '申请发票成功' : '发票确认成功'
+        //     self.showMsg(msg, '', 1000)
+        //     self.configVal({ key: 'tempObject', val: { tabName: self.tabName } })
+        //     setTimeout(() => {
+        //       self.back()
+        //     }, 1000)
+        //   } else {
+        //     self.clickDisabled = false
+        //     self.showMsg(resp === undefined ? '网路异常' : resp.errormsg)
+        //   }
+        // })
       }
     },
     pickCb (e) {
       this.pickVal = this.pickItems[e.mp.detail.value]
+    },
+    loadData () {
+      const self = this
+      self.httpPost(self.apiList.zf.invoiceUnApplyDetail, self.ids.split(',')).then(res => {
+        self.showObj = res.data
+      })
     }
   }
 }

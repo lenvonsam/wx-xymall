@@ -67,7 +67,7 @@ export default {
     this.showNoticeIcon = false
     this.rowCountObj = {}
     if (this.isLogin) {
-      this.setCartCount(this.currentUser.user_id)
+      // this.setCartCount(this.currentUser.user_id)
       this.alertShow = false
       if (this.currentUser.isnew) {
         this.alertText = '您还需要完善公司信息才能正常工作'

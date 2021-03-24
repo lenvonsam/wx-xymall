@@ -4,6 +4,16 @@
 </template>
 
 <script>
+const codeTypeMapping = {
+  '-1': 0, // 通用
+  1: 2, // 短信注册
+  2: 3, // 短信登录
+  3: 1, // 忘记密码
+  4: -1, // 修改登录密码
+  5: 5, // 修改支付密码
+  6: 4, // 修改手机号（原手机）
+  7: 2 // 修改手机号（新手机）
+}
 export default {
   props: {
     phone: {
@@ -13,7 +23,9 @@ export default {
     codeType: {
       type: Number,
       required: false,
-      default: 1 // 1注册 2忘记密码 3修改手机号（原手机） 4 修改手机号（新手机）5 登录密码 6支付 7手机号登录 -1 通用
+      default: -1
+      // 2021-03-22 重新定义
+      // 1短信注册 2短信登录 3忘记密码 4修改登录密码 5修改支付密码 6修改手机号（原手机） 7修改手机号（新手机） -1 通用
     },
     timeCount: {
       type: Number,
@@ -38,7 +50,7 @@ export default {
   },
   methods: {
     getCode () {
-      console.log('phone val', this.phone)
+      // console.log('phone val', this.phone)
       if (this.phone.trim().length === 0) {
         this.showMsg('手机号不能为空')
         return
@@ -51,10 +63,16 @@ export default {
         this.showMsg('请输入正确的手机号')
         return
       }
+      const codeType = codeTypeMapping[this.codeType]
+      if (typeof codeType === 'undefined') {
+        this.showErrMsg('验证码类型错误')
+        return
+      }
       if (this.canGetCode) {
         this.canGetCode = false
         const me = this
-        this.ironRequest(this.apiList.xy.captcha.url + '?user_phone=' + this.phone + (this.codeType === -1 ? '' : '&type=' + this.codeType), {}, this.apiList.xy.captcha.method).then((resp) => {
+        this.httpGet(me.apiList.zf.getSmsVerifyCode + '?phone=' + me.phone + '&type=' + codeType, {}).then((resp) => {
+        // this.ironRequest(this.apiList.xy.captcha.url + '?user_phone=' + this.phone + (this.codeType === -1 ? '' : '&type=' + this.codeType), {}, this.apiList.xy.captcha.method).then((resp) => {
           me.timeDown()
           if (me.cb) me.cb(resp)
         }).catch((e) => {
@@ -62,7 +80,7 @@ export default {
             me.timeDown()
             me.cb(e)
           } else {
-            me.showErrMsg(e)
+            me.showErrMsg(e.message)
           }
         })
       }
