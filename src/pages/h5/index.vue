@@ -57,7 +57,6 @@ export default {
     if (query.type === 'noticeDetail') {
       path += '&id=' + query.id
     }
-    console.log('123333', path)
     return {
       title: '公告详情',
       path: path,
@@ -73,14 +72,14 @@ export default {
     async getRemoteInfo () {
       try {
         const query = this.$root.$mp.query
-        const params = {}
-        let url = this.apiList.xy[this.pageType].url
+        // const params = {}
+        let url = this.apiList.zf[this.pageType]
         if (this.pageType === 'noticeDetail') {
           url += '?id=' + query.id
         }
-        const data = await this.ironRequest(url, params, this.apiList.xy[this.pageType].method)
+        const data = await this.httpGet(url)
         console.log('data', data)
-        this.obj = data
+        this.obj = data.data
         this[this.pageType + 'Handler']()
       } catch (e) {
         this.showMsg(e)

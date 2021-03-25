@@ -22,7 +22,7 @@ export default {
     {
       url: '/static/images/ht_icon.png',
       title: '合同付款',
-      path: '/pages/bill/main?tabName=1',
+      path: '/pages/bill/main?tabName=01',
       event: 'click_app_index_pay'
     },
     {

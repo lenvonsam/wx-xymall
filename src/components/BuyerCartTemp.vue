@@ -47,7 +47,7 @@
                         span.ml-5 {{cart.stockZoneName}}
                         span.sub-mark.ml-5 {{cart.prodAreaName}}
                       .pt-5
-                        span {{cart.ratioAvailableAmount}}支 / {{cart.ratioAvailableManagerWeight}}吨
+                        span {{cart.ratioAvailableAmount}}支 / {{cart.cartQuantityType == '02' ? cart.ratioAvailablePoundWeight : cart.ratioAvailableManagerWeight}}吨
                         span.padding-left-xs 吊费:
                         span.ml-10 {{cart.price === '--' ? '--' : cart.liftingFee > 0 ? '￥' + cart.liftingFee + '/吨' : cart.liftingFee == 0 ? '无' : '线下结算'}}
                       .pt-5(v-if="cart.toleranceRange || cart.weightRange")
@@ -211,9 +211,9 @@ export default {
           filterArray.map(itm => {
             totalCount += itm.count
             if (String(itm.price).indexOf('--') < 0) {
-              if (Number(itm.lift_charge) > 0) {
+              if (Number(itm.liftingFee) > 0) {
                 const countWeight = Number(this.$toFixed(itm.count * itm.weight, 3))
-                const countLiftWeight = countWeight * itm.lift_charge
+                const countLiftWeight = countWeight * itm.liftingFee
                 this.totalPrice += itm.price * countWeight + countLiftWeight
                 this.totalLiftCharge += countLiftWeight
               } else {
@@ -318,23 +318,28 @@ export default {
       // this.statisticRequest({ event: 'click_app_cart_del_all' })
       const self = this
       console.log(this.carts)
-      this.confirm({ content: '确定清空购物车？' }).then((res) => {
-        if (res === 'confirm') {
-          self.btnDisable = true
-          this.showLoading()
-          self.httpPost(this.apiList.zf.deleteItem, this.carts).then(res => {
-            self.showMsg('清空成功')
-            self.carts = []
-            self.soldCarts = []
-            this.tabDot(this.carts.length + this.soldCarts.length)
-          }).catch(e => {
-            self.showMsg(e.message || '网络异常')
-          }).finally(() => {
-            self.hideLoading()
-            self.btnDisable = false
-          })
-        }
-      })
+      if (this.carts.length > 0) {
+        const ids = this.carts.map(itm => itm.id)
+        this.confirm({ content: '确定清空购物车？' }).then((res) => {
+          if (res === 'confirm') {
+            self.btnDisable = true
+            this.showLoading()
+            self.httpPost(this.apiList.zf.deleteItem, { ids }).then(res => {
+              self.showMsg('清空成功')
+              self.carts = []
+              self.soldCarts = []
+              this.tabDot(this.carts.length + this.soldCarts.length)
+            }).catch(e => {
+              self.showMsg(e.message || '网络异常')
+            }).finally(() => {
+              self.hideLoading()
+              self.btnDisable = false
+            })
+          }
+        })
+      } else {
+        self.showMsg('没有物资，无需清空')
+      }
     },
     // 清空失效物资
     emptySoldItems () {
@@ -379,11 +384,11 @@ export default {
         // this.statisticRequest({ event: 'click_app_cart_del' })
         if (filterArray.length === 0) {
           this.showMsg('请选择所需删除的商品')
-          return false
+          return
         }
         // 删除
         this.delCartRow(filterArray)
-        return false
+        return
       }
       if (canSellArray.length > 0) {
         this.showMsg('商品9点之后开售')
@@ -483,7 +488,7 @@ export default {
           item.num = item.count
         })
         this.showLoading()
-        self.httpPost(this.apiList.zf.generateContract, {cartItem: filterArray, deliveryType: '01'}).then(res => {
+        self.httpPost(this.apiList.zf.generateContract, { cartItem: filterArray, deliveryType: '01' }).then(res => {
           this.modalShow = false
           this.hideLoading()
           self.btnDisable = false
@@ -496,33 +501,6 @@ export default {
           this.alertShow = true
           console.log(e)
         })
-        // self.ironRequest('generateOrder.shtml', body, 'post').then(resp => {
-        //   this.modalShow = false
-        //   this.hideLoading()
-        //   if (resp && resp.returncode === '0') {
-        //     self.btnDisable = false
-        //     if (resp.order_size > 1) {
-        //       self.confirm({ content: `您批量生成${resp.order_size}个合同，请到待付款依次支付` }).then((res) => {
-        //         if (res === 'confirm') {
-        //           self.jump('/pages/bill/main?tabName=1')
-        //         }
-        //       })
-        //     } else {
-        //       // 跳转到支付确认页面
-        //       self.jump(`/pages/pay/main?orderNo=${resp.order_no}&price=${resp.deal_price}&pageType=offlinePay`)
-        //     }
-        //   } else {
-        //     self.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
-        //     self.btnDisable = false
-        //   }
-        // }).catch(err => {
-        //   self.btnDisable = false
-        //   this.modalShow = false
-        //   this.hideLoading()
-        //   // self.showMsg(err || '网络异常')
-        //   this.alertText = err || '网络异常'
-        //   this.alertShow = true
-        // })
       } else {
         this.modalShow = false
       }
@@ -556,11 +534,10 @@ export default {
     rowCartCount (obj) {
       console.log(obj.count)
       let params = {
-        skuId: obj.skuId,
+        id: obj.id,
         num: obj.count,
-        stockZoneId: obj.stockZoneId
+        batchNo: ''
       }
-      debugger
       this.httpGet(this.apiList.zf.changeNum, params).then(res => {
         console.log(res)
       }).catch(e => {
@@ -572,12 +549,12 @@ export default {
         const self = this
         const idsList = []
         row.map(item => {
-          idsList.push(item.cart_id)
+          idsList.push(item.id)
         })
         this.confirm({ content: '您确定要删除吗?' }).then((res) => {
           if (res === 'confirm') {
             self.btnDisable = true
-            self.httpPost(this.apiList.zf.deleteItem, row).then(res => {
+            self.httpPost(this.apiList.zf.deleteItem, {ids: idsList}).then(res => {
               this.showMsg('删除成功')
               this.carts = []
               this.soldCarts = []

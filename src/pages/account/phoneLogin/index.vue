@@ -156,17 +156,17 @@ export default {
             if (self.pageType === 'smsLogin') {
               self.resetVal()
               self.httpPost(self.apiList.zf.getPersonInfo, {}).then(res => {
-                self.setUser({token: self.token, user: res.data})
+                self.setUser({ token: self.token, user: res.data })
                 if (res.data.userStatus === '01') {
                   self.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
                     if (res === 'confirm') {
                       self.jump('/pages/account/companyUpdate/main')
                     } else {
-                      self.tab('/pages/self/main')
+                      self.tab('/pages/index/main')
                     }
                   })
                 } else {
-                  self.tab('/pages/self/main')
+                  self.tab('/pages/index/main')
                 }
               })
               self.configVal({ key: 'oldVersion', val: self.currentVersion })

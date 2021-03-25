@@ -42,17 +42,6 @@ export default {
       } catch (e) {
         console.error('get storage info error:>>', e)
       }
-    },
-    getQueryProfile () {
-      let self = this
-      self.ironRequest(self.apiList.xy.queryProfile.url, {}, self.apiList.xy.queryProfile.method).then(resp => {
-        if (resp.returncode === '0') {
-          console.log('App.vue_接口返回_rule=====>' + resp.rule)
-        }
-        console.log('getQueryProfile()=====>' + JSON.stringify(resp))
-      }).catch(e => {
-        console.log('getQueryProfile()_catch=====>' + JSON.stringify(e))
-      })
     }
   },
   created () {
@@ -92,7 +81,7 @@ export default {
       // const uid = me.currentUser.user_id
       // console.log('App.vue_uid=====>', uid)
       me.httpPost(me.apiList.zf.getPersonInfo, {}).then(res => {
-        me.setUser({token: me.token, user: res.data})
+        me.setUser({ token: me.token, user: res.data })
         if (res.data.userStatus === '01') {
           me.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
             if (res === 'confirm') {

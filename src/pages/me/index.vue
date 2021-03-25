@@ -161,7 +161,6 @@ export default {
   },
   onShow () {
     const self = this
-    // const uid = self.currentUser.user_id
     if (self.isLogin) {
       self.httpPost(self.apiList.zf.queryUserCenterContractInfo, {}).then(res => {
         console.log(res.data)
@@ -172,7 +171,7 @@ export default {
        * 未完善信息账号点击“我的”提示去完善信息 */
       if (self.currentUser.userStatus === '01') {
         setTimeout(() => {
-          self.jump('/pages/account/companyUpdate/main')
+          self.jump('/pages/account/companyUpdate/main?type=2')
         }, 1000)
       }
       //  else {
@@ -307,16 +306,8 @@ export default {
     },
     async refreshUser () {
       try {
-        // const data = await this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method)
-        // data.pwd = this.currentUser.pwd
-        // data.type = this.currentUser.type || 'buyer'
-        // data.localSearchs = this.currentUser.localSearchs || []
-        // if (data.avatar) data.avatar = data.avatar.indexOf('webpage/') > 0 ? data.avatar : '/filepool' + data.avatar
-        // else data.avatar = this.currentUser.avatar
-        // data.user_id = this.currentUser.user_id
-
         const res = await this.httpPost(this.apiList.zf.getPersonInfo, {})
-        this.setUser(res.data)
+        this.setUser({ user: res.data })
         if (this.currentUser.userStatus === '01') {
           this.alertText = '您还需要完善公司信息才能正常工作'
           this.alertShow = true
@@ -334,7 +325,7 @@ export default {
         this.modalShow = false
         this.ruleModalShow = true
       } else if (this.currentUser.userStatus === '01') {
-        this.alertText = '您还需要完善公司信息才能正常工作'
+        this.alertText = '您还需要完善公司信息才能正常操作'
         this.alertShow = true
       } else {
         this.ruleModalShow = false

@@ -10,7 +10,7 @@ div
           .col.padding-left-sm 请输入关键词搜索
     swiper(v-if="gallery.length > 0", :indicator-dots="true", :autoplay="true", circular,indicator-active-color="#fff", indicator-color="rgba(255, 255, 255, .3)")
       swiper-item.border-radius(v-for="(g,idx) in gallery", :key="idx")
-        img.response(:src="imgOuterUrl + g.url", v-if="imgOuterUrl", style="height: 300rpx", mode="widthFix")
+        img.response(:src="g.bannerName", v-if="g.bannerName", style="height: 300rpx", mode="widthFix")
     time-line(v-else, type="gallery")
   .row.bg-white.padding-bottom-sm
     .col.text-center(v-for="(icon,idx) in (currentUser.type === 'seller' ? sellerMainIcons : mainIcons)", :key="idx", @click="iconJump(icon)")
@@ -172,7 +172,7 @@ export default {
     ]),
     jumpNotice () {
       this.statisticRequest({ event: 'click_app_index_notice_more' })
-      this.jump('/pages/cardList/main?title=型云公告&type=notice')
+      this.jump('/pages/cardList/main?title=型云公告&type=notices')
     },
     jumpSearch () {
       this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_index_search_seller' }, true) : this.statisticRequest({ event: 'click_app_index_search' })
@@ -242,16 +242,22 @@ export default {
     // },
     async loadBanner () {
       try {
-        const data = await this.ironRequest(this.apiList.xy.banner.url, {}, this.apiList.xy.banner.method, this)
-        this.gallery = data.banners
+        const data = await this.httpPost(this.apiList.zf.banner, {
+          bannerType: '01'
+        })
+        this.gallery = data.data
       } catch (e) {
         this.showMsg(e)
       }
     },
     async loadNotice () {
       try {
-        const data = await this.ironRequest(this.apiList.xy.notice.url + '?current_page=0&page_size=5&type=2', {}, this.apiList.xy.notice.method, this)
-        this.notices = data.notices
+        const data = await this.httpPost(this.apiList.zf.notices, {
+          pageNum: 1,
+          pageSize: 5,
+          newsType: '01'
+        })
+        this.notices = data.data
       } catch (e) {
         this.showMsg(e)
       }

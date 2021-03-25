@@ -3,7 +3,7 @@ div
   nav-bar(:title="pageTitle", :isBack="true")
   template(v-if="isLoad")
     iron-scroll(@scrolltolower="loadMore", :height="screenHeight - customBar", :loadFinish="loadFinish")
-      .padding(v-if="pageType === 'notice'")
+      .padding(v-if="pageType === 'notices'")
         .bg-white.margin-bottom(v-for="(data,idx) in listData", :key="idx", style="box-shadow: 0px 0px 2.5px rgba(7,1,2,0.04)", @click="jump('/pages/h5/main?title=公告详情&type=noticeDetail&id=' + data.id)")
           .padding.border-bottom-line
             div {{data.title}}
@@ -46,12 +46,12 @@ export default {
       isLoad: false,
       pageTitle: '',
       // notice 型云公告 noticeList 通知列表
-      pageType: 'notice',
+      pageType: 'notices',
       currentPage: 0,
       listData: [],
       loadFinish: 0,
       listMapKey: {
-        'notice': 'notices',
+        'notices': 'notices',
         'noticeList': 'notices',
         'queryWithdrawList': 'withdraw'
       }
@@ -103,18 +103,21 @@ export default {
       try {
         if (this.currentPage === 0) this.isLoad = false
         this.loadFinish = 1
-        let url = this.apiList.xy[this.pageType].url
+        let url = this.apiList.zf[this.pageType]
         let params = {}
-        if (this.pageType === 'notice') {
-          url += '?type=1&current_page=' + this.currentPage + '&page_size=' + this.pageSize
+        if (this.pageType === 'notices') {
+          params = {
+            pageNum: this.currentPage,
+            pageSize: 8
+          }
         }
         if (this.pageType === 'noticeList') {
           url += '?have_read=-1&user_id=' + this.currentUser.user_id + '&current_page=' + this.currentPage + '&page_size=15'
         }
-        const data = await this.ironRequest(url, params, this.apiList.xy[this.pageType].method)
+        const data = await this.httpPost(url, params)
         console.log('get data', data)
         this.isLoad = true
-        const arr = data[this.listMapKey[this.pageType]]
+        const arr = data.data
         if (this.currentPage === 0 && arr.length > 0) {
           this.listData = arr
         } else if (this.currentPage > 0 && arr.length > 0) {

@@ -266,7 +266,6 @@ export default {
       //   this.isLogin = false
       // })
     }
-
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 285
     if (this.tempObject.fromPage === 'home') {
       // 首页
@@ -535,16 +534,19 @@ export default {
       }
     },
     async addCartItem (obj) {
-      obj.cartQuantityType = obj.onlineQuantityType
       const self = this
-      await self.httpPost(this.apiList.zf.addCartItem, obj).then(res => {
-        console.log(res)
+      try {
+        obj.cartQuantityType = obj.onlineQuantityType
+        self.showLoading()
+        await self.httpPost(this.apiList.zf.addCartItem, obj)
         self.showMsg('加购成功！')
         self.btnDisable = false
-      }).catch(e => {
+        self.hideLoading()
+      } catch (e) {
         self.showMsg(e.message)
+        self.hideLoading()
         self.btnDisable = false
-      })
+      }
     },
     selectTab ({ id, idx }) {
       if (this.goodsNameList[idx]) {
@@ -560,17 +562,8 @@ export default {
         const self = this
         this.queryObject.current_page = this.currentPage
         this.queryObject.page_size = this.pageSize
-        // const data = await this.ironRequest(
-        //   this.apiList.xy.mallList.url,
-        //   this.queryObject,
-        //   this.apiList.xy.mallList.method
-        // )
-        const data = await this.httpPost(this.apiList.zf.shopMallList, this.queryObj)
-        const res = data
-        // const resData = data.products
+        const res = await this.httpPost(this.apiList.zf.shopMallList, this.queryObj)
         const resData = res.data.stocks
-        // const userType = this.currentUser.type
-        // if (res.returncode === '0') {
         const idx = this.swiperCount
         resData.map(item => {
           const weightMark = []
@@ -642,7 +635,7 @@ export default {
       }
     },
     erpModalCb (flag) {
-      this.ironRequest(this.apiList.xy.updateRule.url, {user_id: this.currentUser.user_id}, this.apiList.xy.updateRule.method).then(res => {
+      this.ironRequest(this.apiList.xy.updateRule.url, { user_id: this.currentUser.user_id }, this.apiList.xy.updateRule.method).then(res => {
         if (res.returncode === '0') {
           console.log('updateRule_res=====>' + JSON.stringify(res))
         }

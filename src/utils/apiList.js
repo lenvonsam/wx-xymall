@@ -176,6 +176,12 @@ export default {
     phoneInfo: { url: 'wechat/miniAuth/phone', method: 'post' }
   },
   zf: {
+    // banner图
+    banner: 'xingyun/home/banner',
+    // 新闻动态
+    notices: 'xingyun/home/news',
+    // 动态详情
+    noticeDetail: 'xingyun/home/newsViewCount',
     // 获取图片验证码
     getVerifyCode: 'base/online/getVerifyCode',
     // 账号密码登录 手机短信登录
@@ -263,7 +269,8 @@ export default {
     // 完善公司信息
     addAuthentication: 'xingyun/unitAuthentication/add',
     // 商城分类
-    appletQuerySpecificationList: 'xingyun/shopMall/appletQuerySpecificationList',
+    appletQuerySpecificationList:
+      'xingyun/shopMall/appletQuerySpecificationList',
     // 商城筛选获取所有品名
     searchBrand: 'xingyun/shopMall/queryProductBrandNamePage',
     // 账户收支明细（往来账）

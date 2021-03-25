@@ -369,7 +369,6 @@ export default {
       }
     },
     async remoteUpdateCompany () {
-      debugger
       let paramsObj = Object.assign({}, this.postForm)
       paramsObj.unitRegisterAddress = paramsObj.workAddress
       try {

@@ -48,22 +48,16 @@ export default {
       }]
     }
   },
-  // onShow () {
-  //   if (this.currentUser.type === 'buyer') {
-  //     this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(resp => {
-  //       let obj = me.currentUser
-  //       obj.cust_name = resp.cust_name
-  //       obj.user_id = me.currentUser.user_id
-  //       me.setUser(obj)
-  //     })
-  //     const self = this
-  //     self.httpPost(self.apiList.zf.getPersonInfo, {}).then(res => {
-  //       self.setUser({user: res.data})
-  //     }).catch(e => {
-  //       console.log(e)
-  //     })
-  //   }
-  // },
+  onShow () {
+    if (this.currentUser.type === 'buyer') {
+      const self = this
+      self.httpPost(self.apiList.zf.getPersonInfo, {}).then(res => {
+        self.setUser({ user: res.data })
+      }).catch(e => {
+        console.log(e)
+      })
+    }
+  },
   methods: {
     ...mapActions([
       'setUser',
