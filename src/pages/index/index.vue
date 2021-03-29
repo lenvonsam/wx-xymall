@@ -243,7 +243,7 @@ export default {
     async loadBanner () {
       try {
         const data = await this.httpPost(this.apiList.zf.banner, {
-          bannerType: '01'
+          bannerType: '02'
         })
         this.gallery = data.data
       } catch (e) {
