@@ -126,12 +126,12 @@ export default {
         required: true,
         key: 'cust_name',
         type: 'text'
-      }, {
-        lbl: '登录密码',
-        type: 'pwd',
-        placeholder: '请输入6-12位登录密码',
-        required: true,
-        key: 'user_pwd'
+      // }, {
+      //   lbl: '登录密码',
+      //   type: 'pwd',
+      //   placeholder: '请输入6-12位登录密码',
+      //   required: true,
+      //   key: 'user_pwd'
       }, {
         lbl: '联系人名',
         type: 'text',
