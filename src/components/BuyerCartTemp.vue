@@ -488,7 +488,7 @@ export default {
           item.num = item.count
         })
         this.showLoading()
-        self.httpPost(this.apiList.zf.generateContract, { cartItem: filterArray, deliveryType: '01' }).then(res => {
+        self.httpPost(this.apiList.zf.generateContract, { cartItem: filterArray, deliveryType: '01', sourceType: '03' }).then(res => {
           this.modalShow = false
           this.hideLoading()
           self.btnDisable = false
@@ -518,13 +518,10 @@ export default {
         // rowItem.originPrice = rowItem.radios[1].price
       }
       let paramsObj = {
-        batchNo: rowItem.batchNo || '',
-        skuId: rowItem.skuId,
-        cartQuantityType: val,
-        stockZoneId: rowItem.stockZoneId
+        id: rowItem.id,
+        cartQuantityType: val
       }
-      this.httpGet(this.apiList.zf.changeQuantityType, paramsObj).then(res => {
-      }).catch(e => {
+      this.httpGet(this.apiList.zf.changeQuantityType, paramsObj).catch(e => {
         this.showMsg(e.message || '网络异常')
       })
       // this.ironRequest('cartUpdate.shtml', { cart_id: rowItem.cart_id, user_id: this.currentUser.user_id, measure_way: val, count: rowItem.count }, 'post').then(res => {
