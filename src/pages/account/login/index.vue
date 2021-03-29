@@ -20,7 +20,7 @@
     .margin-top-sm.text-center.text-blue(@click="jumpPhoneLogin") 手机验证码登录
     wxLogin(:backType="wxBack")
 
-        
+
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
@@ -156,7 +156,7 @@ export default {
         }
       } catch (e) {
         console.log('err', e)
-        this.showMsg(e)
+        this.showMsg(e.message)
         this.canClick = true
       }
     },

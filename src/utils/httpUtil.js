@@ -157,10 +157,11 @@ function ironRequest (reqUrl, param, type) {
   })
 }
 function httpGet (url, params) {
+  const _this = this
   url = zfBASICURL + url
   let header = {
     'PlatformId': 'ZF',
-    'Authorization': this.token
+    'Authorization': _this.token
   }
   return new Promise((resolve, reject) => {
     mpvue.request({
@@ -169,19 +170,22 @@ function httpGet (url, params) {
       header: header,
       method: 'GET',
       success (res) {
-        if (res.data.success) {
-          if (res.code === 'TK01' || res.code === 'TK02' || res.code === 'TK03' || res.code === 'TK04' || res.code === 'TC001') {
-            this.confirm({ content: '登录已失效，请重新登录' }).then((r) => {
-              if (r === 'confirm') {
-                this.jump('/pages/account/login')
-              }
-            })
-          } else {
-            resolve(res.data)
-          }
+        const data = res.data
+        if (data.total) {
+          data.total = Number(data.total)
+        }
+        if (data.success) {
+          resolve(data)
+        } else if (data.code === 'TK01' || data.code === 'TK02' || data.code === 'TK03' || data.code === 'TK04' || data.code === 'TC001' || data.message === 'token失效请重新登录' || data.message.includes('请重新登录')) {
+          _this.confirm({ content: '登录已失效，请重新登录' }).then((r) => {
+            if (r === 'confirm') {
+              _this.exitUser()
+              _this.jump('/pages/account/login/main')
+            }
+          })
         } else {
-          reject(res.data)
-          showMsg(res.data.message)
+          console.error(data.message)
+          reject(data)
         }
       },
       fial (error) {
@@ -192,11 +196,12 @@ function httpGet (url, params) {
 }
 
 function httpPost (url, params) {
+  const _this = this
   let header = {}
   if (url !== 'base/online/appletLogin') {
     header = {
       'PlatformId': 'ZF',
-      'Authorization': this.token
+      'Authorization': _this.token
     }
   } else {
     header = {
@@ -211,19 +216,22 @@ function httpPost (url, params) {
       header: header,
       method: 'POST',
       success (res) {
-        if (res.data.success) {
-          if (res.code === 'TK01' || res.code === 'TK02' || res.code === 'TK03' || res.code === 'TK04' || res.code === 'TC001') {
-            this.confirm({ content: '登录已失效，请重新登录' }).then((r) => {
-              if (r === 'confirm') {
-                this.jump('/pages/account/login')
-              }
-            })
-          } else {
-            resolve(res.data)
-          }
+        const data = res.data
+        if (data.total) {
+          data.total = Number(data.total)
+        }
+        if (data.success) {
+          resolve(data)
+        } else if (data.code === 'TK01' || data.code === 'TK02' || data.code === 'TK03' || data.code === 'TK04' || data.code === 'TC001' || data.message === 'token失效请重新登录' || data.message.includes('请重新登录')) {
+          _this.confirm({ content: '登录已失效，请重新登录' }).then((r) => {
+            if (r === 'confirm') {
+              _this.exitUser()
+              _this.jump('/pages/account/login/main')
+            }
+          })
         } else {
-          reject(res.data)
-          showMsg(res.data.message)
+          console.error(data.message)
+          reject(data)
         }
       },
       fial (error) {

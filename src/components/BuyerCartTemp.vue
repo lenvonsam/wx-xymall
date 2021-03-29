@@ -197,7 +197,7 @@ export default {
     carts: {
       handler (newVal, oldVal) {
         let filterArray = newVal.filter(item => {
-          item.countWeight = this.$toFixed(Number(item.count * item.weight), 3)
+          item.countWeight = item.weight
           return item.choosed === true
         })
         // this.totalCount = filterArray.length
@@ -212,14 +212,14 @@ export default {
             totalCount += itm.count
             if (String(itm.price).indexOf('--') < 0) {
               if (Number(itm.liftingFee) > 0) {
-                const countWeight = Number(this.$toFixed(itm.count * itm.weight, 3))
+                const countWeight = itm.weight
                 const countLiftWeight = countWeight * itm.liftingFee
                 this.totalPrice += itm.price * countWeight + countLiftWeight
                 this.totalLiftCharge += countLiftWeight
               } else {
-                this.totalPrice += itm.price * Number(this.$toFixed(itm.count * itm.weight, 3))
+                this.totalPrice += itm.price * itm.weight
               }
-              this.totalWeight += Number(this.$toFixed(itm.weight * itm.count, 3))
+              this.totalWeight += itm.weight
             }
           })
           this.totalLiftCharge = this.$toFixed(Number(this.totalLiftCharge), 2)
@@ -633,9 +633,9 @@ export default {
       this.isLoad = false
       const self = this
       await self.httpPost(this.apiList.zf.getCurrentUserCartItems, {}).then(res => {
-        let arr = res.data.items
-        this.soldCarts = []
-        arr.map(itm => {
+        let arr = res.data.items.filter(x => x.status === 1)
+        this.soldCarts = res.data.items.filter(x => x.status === 0)
+        arr.forEach(itm => {
           // const weightMark = []
           const prArr = []
           const wtArr = []

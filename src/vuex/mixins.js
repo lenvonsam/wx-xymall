@@ -548,6 +548,8 @@ const wxMixins = {
         // 磅计 重量=数量*米重*长度*（1-公差）*（1+上浮比例）
         const weight = (num * meterWeight * length * (1 - tolerance) * (1 + floating)).toFixed(3)
         return Number(weight)
+      } else {
+        return 0
       }
     }
   }

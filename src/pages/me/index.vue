@@ -266,7 +266,7 @@ export default {
     } else {
       self.showNoticeIcon = false
       self.tabDot(0)
-      self.showMsg('登录已失效，请重新登录')
+      // self.showMsg('登录已失效，请重新登录')
       // setTimeout(() => {
       //   self.jump('/pages/account/login/main')
       // }, 1000)
