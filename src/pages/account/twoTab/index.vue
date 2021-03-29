@@ -235,7 +235,7 @@ export default {
         }
       } catch (e) {
         this.canClick = true
-        this.showMsg(e)
+        this.showMsg(e.message)
       }
     }
   }

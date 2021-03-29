@@ -5,7 +5,7 @@ div
     div
       icon.cuIcon-vipcard
       span.margin-left 账户余额（元）
-    .text-center.margin-top-xl.text-bold(style="font-size: 30px") {{currentUser.account_balance}}
+    .text-center.margin-top-xl.text-bold(style="font-size: 30px") {{currentUser.unitFundBalance}}
     .text-center.margin-top
       .balance-mark(@click="jump('/pages/account/balanceList/main')") 收支明细
   .bg-white

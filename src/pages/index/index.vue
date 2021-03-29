@@ -247,7 +247,7 @@ export default {
         })
         this.gallery = data.data
       } catch (e) {
-        this.showMsg(e)
+        this.showMsg(e.message)
       }
     },
     async loadNotice () {
@@ -259,7 +259,7 @@ export default {
         })
         this.notices = data.data
       } catch (e) {
-        this.showMsg(e)
+        this.showMsg(e.message)
       }
     },
     modalCb (flag) {
