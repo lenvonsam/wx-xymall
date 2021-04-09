@@ -40,7 +40,7 @@ div
             .flex-60 三证合一
             .col
             .flex-30.row(v-if="pic1")
-              img(:src="pic1", style="width: 40rpx; height: 60rpx", @click="previewImage(imgOuterUrl + '/filepool' + pic1)")
+              img(:src="pic1", style="width: 40rpx; height: 60rpx", @click="previewImage(pic1)")
             .flex-30.row(@click="handlerImage('pic1')")
               img.add-icon(src="/static/images/add_icon.png")
         .row.padding.relative.h-50
@@ -50,7 +50,7 @@ div
             .flex-60 开票资料
             .col.text-right
             .flex-30.row(v-if="pic2")
-              img(:src="pic2", style="width: 40rpx; height: 60rpx", @click="previewImage(imgOuterUrl + '/filepool' + pic2)")
+              img(:src="pic2", style="width: 40rpx; height: 60rpx", @click="previewImage(pic2)")
             .flex-30.row(@click="handlerImage('pic2')")
               img.add-icon(src="/static/images/add_icon.png")
       .bg-white(v-else)
@@ -61,7 +61,7 @@ div
           .col.row
             .col 营业执照
             .flex-30.row(v-if="pic1")
-              img(:src="pic1", style="width: 40rpx; height: 60rpx", @click="previewImage(imgOuterUrl + '/filepool' + pic1)")
+              img(:src="pic1", style="width: 40rpx; height: 60rpx", @click="previewImage(pic1)")
             .flex-30.row(@click="handlerImage('pic1')")
               img.add-icon(src="/static/images/add_icon.png")
         .row.padding.relative.h-50
@@ -71,7 +71,7 @@ div
           .col.row
             .col 开票资料
             .flex-30.row(v-if="pic2")
-              img(:src="pic2", style="width: 40rpx; height: 60rpx", @click="previewImage(imgOuterUrl + '/filepool' + pic2)")
+              img(:src="pic2", style="width: 40rpx; height: 60rpx", @click="previewImage(pic2)")
             .flex-30.row(@click="handlerImage('pic2')")
               img.add-icon(src="/static/images/add_icon.png")
         .row.padding.relative.h-50
@@ -81,7 +81,7 @@ div
           .col.row
             .col 税务登记证
             .flex-30.row(v-if="pic3")
-              img(:src="pic3", style="width: 40rpx; height: 60rpx", @click="previewImage(imgOuterUrl + '/filepool' + pic3)")
+              img(:src="pic3", style="width: 40rpx; height: 60rpx", @click="previewImage(pic3)")
             .flex-30.row(@click="handlerImage('pic3')")
               img.add-icon(src="/static/images/add_icon.png")
         .row.padding.relative.h-50
@@ -90,7 +90,7 @@ div
           .col.row
             .col 组织机构代码证
             .flex-30.row(v-if="pic4")
-              img(:src="pic4", style="width: 40rpx; height: 60rpx", @click="previewImage(imgOuterUrl + '/filepool' + pic4)")
+              img(:src="pic4", style="width: 40rpx; height: 60rpx", @click="previewImage(pic4)")
             .flex-30.row(@click="handlerImage('pic4')")
               img.add-icon(src="/static/images/add_icon.png")
     .margin-top.padding
@@ -158,7 +158,8 @@ export default {
       backType: 1,
       // 1 非个人中心来 2 个人中心来 3 注册
       fromType: 1,
-      postForm: {}
+      postForm: {},
+      yyzzUrl: ''
     }
   },
   computed: {
@@ -184,6 +185,7 @@ export default {
     ...mapActions([
       'exitUser'
     ]),
+    // 切换账户
     backToLogin () {
       this.backType = 2
       if (this.fromType === 2) {
@@ -194,12 +196,14 @@ export default {
         this.back()
       }
     },
+    // 开票资料弹窗回调
     invoiceCb () {
       const me = this
       setTimeout(function () {
         me.pickImage(me.currentKey)
       }, 800)
     },
+    // 点击上传
     handlerImage (key) {
       this.currentKey = key
       if (key === 'pic2') {
@@ -208,6 +212,7 @@ export default {
         this.pickImage(this.currentKey)
       }
     },
+    // 选择图片
     async pickImage (key) {
       let self = this
       wx.chooseImage({
@@ -224,13 +229,14 @@ export default {
               updateType = '07'
               url = self.apiList.zf.ocrImage
               self.uploadFile(url, tempFilePaths[0], updateType, '02').then(res => {
+                console.log('pic1++++++')
                 console.log(res)
-                res.businessLicenseCode = res.creditCode
-                res.unitRegisterDate = res.unitRegisterDate.replace('年', '-').replace('月', '-').replace('日', '')
-                self.companyInfo.cust_name = res.unitName
+                res.businessLicenseCode = res.creditCode // 社会统一代码
+                res.unitRegisterDate = res.unitRegisterDate.replace('年', '-').replace('月', '-').replace('日', '') // 注册时间
+                self.companyInfo.cust_name = res.unitName // 单位名称
                 // self.companyInfo.contact_phone = res.unitPhone
-                self.companyInfo.linkman = res.legalPerson
-                self[key] = res.fileAddress
+                self.companyInfo.linkman = res.legalPerson // 联系人
+                self[key] = self.imgOuterUrl + '/api/foundation/public/user/picture/view?path=' + res.fileAddress
                 self.postForm = Object.assign(self.postForm, res)
               }).catch(e => {
                 console.log(e.message)
@@ -241,7 +247,7 @@ export default {
               url = self.apiList.zf.uploadImage
               self.uploadFile(url, tempFilePaths[0], updateType, '02').then(res => {
                 console.log(res)
-                self[key] = res.attachPath
+                self[key] = self.imgOuterUrl + '/api/foundation/public/user/picture/view?path=' + res.attachPath
                 self.postForm = Object.assign(self.postForm, res)
               }).catch(e => {
                 console.log(e.message)
@@ -257,6 +263,7 @@ export default {
       //   this.showMsg(e.message || e)
       // }
     },
+    // 上传图片
     uploadFile (url, imgUrl, updateType, isBack) {
       let self = this
       return new Promise((resolve, reject) => {
@@ -293,10 +300,12 @@ export default {
         })
       })
     },
+    // 提交审核模态框回调
     alertCb () {
       this.resetConfig()
       this.back()
     },
+    // 重置公司信息
     resetInfo () {
       this.companyInfo = {
         // 公司名称
@@ -309,6 +318,7 @@ export default {
         contact_phone: ''
       }
     },
+    // 重置页面状态
     resetConfig () {
       this.resetInfo()
       this.pic1 = ''
@@ -321,10 +331,12 @@ export default {
       this.canClick = true
       this.alertShow = false
     },
+    // 返回上一页
     pageBack () {
       this.resetConfig()
       this.tab('/pages/index/main')
     },
+    // 选择三证合一/三证未合一
     selectTabs (item) {
       this.tabName = item.status
       this.resetInfo()
@@ -335,6 +347,7 @@ export default {
       this.pic3 = ''
       this.pic4 = ''
     },
+    // 完成上传资料
     clickFinish () {
       if (this.validatePartOne()) {
         this.canHttp = true
@@ -347,6 +360,7 @@ export default {
         //   this.showMsg('请输入6-12位密码，只能是数字、字母和下划线')
         //   return
         // }
+        // ++++三证合一
         if (this.tabName === '1') {
           // if (this.pic1.length === 0) {
           //   this.showMsg('三证合一不能为空')
@@ -357,6 +371,7 @@ export default {
           //   this.canHttp = false
           // }
         } else {
+          // ++++三证未合一
           if (this.pic1.length === 0 || this.pic2.length === 0 || this.pic3.length === 0 || this.pic4.length === 0) {
             this.showMsg('图片资料不能为空')
             this.canHttp = false
@@ -368,17 +383,18 @@ export default {
         }
       }
     },
+    // 开始上传资料
     async remoteUpdateCompany () {
       let paramsObj = Object.assign({}, this.postForm)
-      paramsObj.unitRegisterAddress = paramsObj.workAddress
+      paramsObj.unitRegisterAddress = paramsObj.workAddress // 注册地址
       try {
         if (this.tabName === '1') {
           paramsObj.isThreeCertificatesInOne = true
-          paramsObj.businessLicense = this.pic1
-          paramsObj.invoiceInformation = this.pic2
-          paramsObj.unitRegisterName = this.companyInfo.cust_name
-          paramsObj.unitRegisterContactsPhone = this.companyInfo.contact_phone
-          paramsObj.unitRegisterContacts = this.companyInfo.linkman
+          paramsObj.businessLicense = this.pic1 // 三证合一
+          paramsObj.invoiceInformation = this.pic2 // 开票资料
+          paramsObj.unitRegisterName = this.companyInfo.cust_name // 公司名称
+          paramsObj.unitRegisterContactsPhone = this.companyInfo.contact_phone // 公司电话
+          paramsObj.unitRegisterContacts = this.companyInfo.linkman // 联系人
           this.companyInfo.license_pic = this.pic1
           this.companyInfo.invoice_pic = this.pic2
         } else {
@@ -406,6 +422,7 @@ export default {
         // this.showMsg(e)
       }
     },
+    // 校验信息是否完整
     validatePartOne () {
       let result = true
       for (var i = 0; i < this.partOne.length; i++) {
