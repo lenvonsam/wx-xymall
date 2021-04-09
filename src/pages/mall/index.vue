@@ -8,7 +8,7 @@ div
     swiper-item(v-for="(tabItem, swiperIdx) in goodsNameList.length", :key="swiperIdx")
       .bg-gray.text-center.text-gray.pt-100(:style="{height: scrollHeight + 'rpx'}", v-if="swiperCount === swiperIdx && !isload && goodsNameList[swiperIdx].data.length === 0")
         empty-image(url="bill_empty.png", className="img-empty")
-        .empty-content 
+        .empty-content
           span 暂时没有相关商品
           div 详情请联系400-8788-361
       template(v-else)
@@ -41,11 +41,11 @@ div
                     span.ml-8(v-if="item[mallTypeObject[itemType].weightRange]") 重量范围: {{item[mallTypeObject[itemType].weightRange]}}
                   .row.pt-5.flex-center.ft-13.text-gray
                     .col
-                      span(v-if="item[mallTypeObject[itemType].max_count] > 0 && isLogin") {{item[mallTypeObject[itemType].max_count]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
+                      span(v-if="item[mallTypeObject[itemType].ratioAvailableAmount] > 0 && isLogin") {{item[mallTypeObject[itemType].ratioAvailableAmount]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
                       span(v-else) --支/--吨
                     .flex-120.relative.text-right.ft-14.row.justify-end
-                      //- .mall-row(:class="{'notice': item.max_count === 0}")
-                      .blue-buy(v-if="item.max_count == 0 && isLogin",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
+                      //- .mall-row(:class="{'notice': item.ratioAvailableAmount === 0}")
+                      .blue-buy(v-if="item.ratioAvailableAmount == 0 && isLogin",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
                       .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="isLogin") 购买
                 template(v-else)
                   .ft-15.row
@@ -61,9 +61,9 @@ div
                     span.ft-10 公差/重量范围
                     span.ml-8 {{item[mallTypeObject[itemType].tolerance] ? item[mallTypeObject[itemType].tolerance] : '--'}}/{{item[mallTypeObject[itemType].weightRange]?item[mallTypeObject[itemType].weightRange]: '--'}}
                   .text-gray.ft-12
-                    span(v-if="item[mallTypeObject[itemType].max_count] > 0 && isLogin") {{item[mallTypeObject[itemType].max_count]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
+                    span(v-if="item[mallTypeObject[itemType].ratioAvailableAmount] > 0 && isLogin") {{item[mallTypeObject[itemType].ratioAvailableAmount]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
                     span(v-else) --支/--吨
-                  .text-blue.ft-15.text-bold 
+                  .text-blue.ft-15.text-bold
                     //- ￥{{item[mallTypeObject[itemType].price]}}
                     span.text-red.ft-13(v-if="item.price === '--'") 开售时间:{{item.show_time}}
                     span(v-else-if="item.show_price === true") ￥{{item[mallTypeObject[itemType].price]}}
@@ -71,17 +71,17 @@ div
                   .text-gray.flex
                     .ft-11.col ({{item.weightMark}})
                     .text-right
-                      //- .blue-buy(v-if="item.max_count == 0 && isLogin",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
+                      //- .blue-buy(v-if="item.ratioAvailableAmount == 0 && isLogin",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
                       //- .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="item.show_price") 购买
                       //- .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)", style="padding-top: 2rpx") 查看价格1
-                      .blue-buy(v-if="item.max_count == 0 && isLogin",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
+                      .blue-buy(v-if="item.ratioAvailableAmount == 0 && isLogin",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
                       .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="isLogin") 购买
                       .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)") 查看价格
             //- .padding.text-gray.ft-13.text-center(v-if="loading") 努力加载中...
             //- .padding.text-gray.ft-13.text-center(v-if="goodsNameList[tabIdx].finished") 加载完成
             //- span(v-for="(item,idx) in mallItems", :key="idx") {{idx}}
             //- mall-item(:mallFlag="mallFlag", :cb="mallItemCb", v-for="(item,idx) in mallItems", :item="item", :key="idx")
-      
+
     //- template(v-if="mallItems.length > 0")
     //-   mall-item(:mallFlag="mallFlag", :cb="mallItemCb", v-for="(item,idx) in mallItems", :item="item", :key="idx")
     //- .col.text-center.text-gray.pt-100(v-else)
@@ -130,7 +130,7 @@ export default {
           standard: 'specification',
           material: 'productTextureName',
           wh_name: 'stockZoneName',
-          max_count: 'ratioAvailableAmount',
+          ratioAvailableAmount: 'ratioAvailableAmount',
           max_weight: 'ratioAvailableManagerWeight',
           tolerance: 'toleranceRange',
           length: 'length',
@@ -143,7 +143,7 @@ export default {
           standard: 'product_standard',
           material: 'product_material',
           wh_name: 'wh_name',
-          max_count: 'max_count',
+          ratioAvailableAmount: 'ratioAvailableAmount',
           max_weight: 'max_weight',
           tolerance: 'tolerance_range',
           length: 'product_length',
@@ -396,6 +396,7 @@ export default {
       // console.log('swiperTransition', e)
       // this.isload = true
     },
+    // 切换轮播图
     swiperChange (e) {
       console.log('swiperChange---------')
       const idx = e.mp.detail.current

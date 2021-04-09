@@ -15,7 +15,8 @@ const wxMixins = {
       appKey: 'XingYunMallMini',
       imgProxy: 'http://xymobile.xingyun361.com/',
       // 型云图片访问地址
-      imgOuterUrl: 'http://web-test.xingyun361.com', // 测试环境图片地址
+      imgOuterUrl: 'http://47.103.130.166:8008',
+      // imgOuterUrl: 'http://web-test.xingyun361.com', // 测试环境图片地址
       // imgOuterUrl: 'http://xyweb-pro.xingyun361.com', // 预上线环境图片地址
       // imgOuterUrl: 'https://www.xingyun361.com',
       phoneReg: /^1[3-9]\d{9}$/,
@@ -216,6 +217,11 @@ const wxMixins = {
     base64Str (str) {
       const bytes = UTF8.encode(str)
       return BASE64.encode(bytes)
+    },
+    // base64解密
+    base64FromStr (encoded) {
+      var bytes = BASE64.decode(encoded)
+      return UTF8.decode(bytes)
     },
     // 设置购物车数量
     async setCartCount (userId) {
