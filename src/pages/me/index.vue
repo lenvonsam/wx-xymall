@@ -45,7 +45,7 @@ div
         .col(@click="jumpProfile")
           .flex.align-center
             .author
-              img(:src="currentUser.avatar == undefined ? (imgProxy + 'wx2104_img.png') : currentUser.avatar", v-if="imgOuterUrl")
+              img(:src="currentUser.avatar == undefined ? (imgProxy + 'wx2104_img.png') : currentUser.avatar", v-if="imgProxy")
             .col.padding-left-sm
               template(v-if="isLogin")
                 .ft-15.padding-bottom-sm {{currentUser.username}}
@@ -169,11 +169,11 @@ export default {
       /** 判断账号状态
        * 已完善信息账号可打开“我的”
        * 未完善信息账号点击“我的”提示去完善信息 */
-      // if (self.currentUser.userStatus === '01') {
-      //   setTimeout(() => {
-      //     self.jump('/pages/account/companyUpdate/main?type=2')
-      //   }, 1000)
-      // }
+      if (self.currentUser.userStatus === '01') {
+        setTimeout(() => {
+          self.jump('/pages/account/companyUpdate/main?type=2')
+        }, 1000)
+      }
       //  else {
       //   self.httpPost(self.apiList.zf.queryUserCenterContractInfo, {}).then(res => {
       //     debugger
