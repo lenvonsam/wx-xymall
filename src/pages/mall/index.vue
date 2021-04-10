@@ -41,11 +41,11 @@ div
                     span.ml-8(v-if="item[mallTypeObject[itemType].weightRange]") 重量范围: {{item[mallTypeObject[itemType].weightRange]}}
                   .row.pt-5.flex-center.ft-13.text-gray
                     .col
-                      span(v-if="item[mallTypeObject[itemType].ratioAvailableAmount] > 0 && isLogin") {{item[mallTypeObject[itemType].ratioAvailableAmount]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
+                      span(v-if="item[mallTypeObject[itemType].max_count] > 0 && isLogin") {{item[mallTypeObject[itemType].max_count]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
                       span(v-else) --支/--吨
                     .flex-120.relative.text-right.ft-14.row.justify-end
-                      //- .mall-row(:class="{'notice': item.ratioAvailableAmount === 0}")
-                      .blue-buy(v-if="item.ratioAvailableAmount == 0 && isLogin",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
+                      //- .mall-row(:class="{'notice': item.max_count === 0}")
+                      .blue-buy(v-if="item[mallTypeObject[itemType].max_count] == 0 && isLogin",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
                       .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="isLogin") 购买
                 template(v-else)
                   .ft-15.row
@@ -61,7 +61,7 @@ div
                     span.ft-10 公差/重量范围
                     span.ml-8 {{item[mallTypeObject[itemType].tolerance] ? item[mallTypeObject[itemType].tolerance] : '--'}}/{{item[mallTypeObject[itemType].weightRange]?item[mallTypeObject[itemType].weightRange]: '--'}}
                   .text-gray.ft-12
-                    span(v-if="item[mallTypeObject[itemType].ratioAvailableAmount] > 0 && isLogin") {{item[mallTypeObject[itemType].ratioAvailableAmount]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
+                    span(v-if="item[mallTypeObject[itemType].max_count] > 0 && isLogin") {{item[mallTypeObject[itemType].max_count]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
                     span(v-else) --支/--吨
                   .text-blue.ft-15.text-bold
                     //- ￥{{item[mallTypeObject[itemType].price]}}
@@ -71,10 +71,10 @@ div
                   .text-gray.flex
                     .ft-11.col ({{item.weightMark}})
                     .text-right
-                      //- .blue-buy(v-if="item.ratioAvailableAmount == 0 && isLogin",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
+                      //- .blue-buy(v-if="item[mallTypeObject[itemType].max_count] == 0 && isLogin",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
                       //- .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="item.show_price") 购买
                       //- .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)", style="padding-top: 2rpx") 查看价格1
-                      .blue-buy(v-if="item.ratioAvailableAmount == 0 && isLogin",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
+                      .blue-buy(v-if="item[mallTypeObject[itemType].max_count] == 0 && isLogin",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
                       .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="isLogin") 购买
                       .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)") 查看价格
             //- .padding.text-gray.ft-13.text-center(v-if="loading") 努力加载中...
@@ -87,6 +87,8 @@ div
     //- .col.text-center.text-gray.pt-100(v-else)
     //-   empty-image(url="bill_empty.png", className="img-empty")
     //-   .empty-content 您暂时没有相关合同
+
+  //- 商城使用引导
   modal-intro(v-model="modalIntroShow", :images="introImages", :cb="modalIntroCb")
   //- cart-ball(v-model="ballValue", :cb="ballCb")
   modal(v-model="erpModalShow", @cb="erpModalCb", :title="erpModalTitle" :btns="btn")
@@ -130,7 +132,7 @@ export default {
           standard: 'specification',
           material: 'productTextureName',
           wh_name: 'stockZoneName',
-          ratioAvailableAmount: 'ratioAvailableAmount',
+          max_count: 'ratioAvailableAmount',
           max_weight: 'ratioAvailableManagerWeight',
           tolerance: 'toleranceRange',
           length: 'length',
@@ -143,7 +145,7 @@ export default {
           standard: 'product_standard',
           material: 'product_material',
           wh_name: 'wh_name',
-          ratioAvailableAmount: 'ratioAvailableAmount',
+          max_count: 'ratioAvailableAmount',
           max_weight: 'max_weight',
           tolerance: 'tolerance_range',
           length: 'product_length',
@@ -204,6 +206,7 @@ export default {
       })
     }
   },
+  // 分享
   onShareAppMessage () {
     return {
       title: '型云商城',
@@ -348,6 +351,7 @@ export default {
     ballCb () {
       console.log('ball cb')
     },
+    // 获取当前日期
     getDate () {
       let date = new Date()
       let year = date.getFullYear()
@@ -385,6 +389,7 @@ export default {
         self.refresher()
       }, 300)
     },
+    // 商城使用引导
     showShareMall () {
       const firstShare = mpvue.getStorageSync('firstShareMall') || false
       if (!firstShare) {
@@ -476,6 +481,7 @@ export default {
       this.queryObj.keyword = val
       this.refresher()
     },
+    // 点击购买/查看价格/到货通知按钮
     mallItemCb (obj, type, evt) {
       console.log('evt', evt)
       const self = this
@@ -534,6 +540,7 @@ export default {
         })
       }
     },
+    // 添加到购物车
     async addCartItem (obj) {
       const self = this
       try {
@@ -549,6 +556,7 @@ export default {
         self.btnDisable = false
       }
     },
+    // 点击选择种类
     selectTab ({ id, idx }) {
       if (this.goodsNameList[idx]) {
         this.mallTabVal = id
@@ -556,6 +564,7 @@ export default {
         console.log('prevIdx', this.prevIdx)
       }
     },
+    // 刷新
     async refresher (done) {
       try {
         this.showLoading()
@@ -635,6 +644,7 @@ export default {
         this.showMsg(err)
       }
     },
+    // 模态框回调
     erpModalCb (flag) {
       this.ironRequest(this.apiList.xy.updateRule.url, { user_id: this.currentUser.user_id }, this.apiList.xy.updateRule.method).then(res => {
         if (res.returncode === '0') {

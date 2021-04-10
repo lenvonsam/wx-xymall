@@ -5,7 +5,7 @@ div
     .bg-white.row.padding(v-if="currentUser.type === 'buyer'")
       .col 型云头像
       .col.text-right
-        .profile-avatar(:style="{backgroundImage: 'url('+imgOuterUrl+currentUser.avatar+')'}", v-if="imgOuterUrl", @click="avatarUpload")
+        .profile-avatar(:style="{backgroundImage: 'url('+currentUser.avatar+')'}", @click="avatarUpload")
       .col.flex-25.text-gray.text-right
         icon.adjust.cuIcon-right
     .bg-white.row.padding.border-bottom-line(@click="jump('/pages/account/companyInfo/main')", :class="{'margin-top-sm': currentUser.type === 'buyer'}")

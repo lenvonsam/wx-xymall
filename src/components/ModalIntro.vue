@@ -1,8 +1,10 @@
 <template lang="pug">
 .cu-modal(:class="modalName")
+  //- 首页
   .container.mask.mall(v-if="type === 'home'", :style="{paddingTop: customBar + 55 + 'px'}", @click="hide")
     img.arrow(src="/static/images/mall_arrow.png", :style="{top: customBar + 'px'}")
     img.body(:src="imgProxy + 'mall_body.png'")
+  //- 商城
   swiper.container(:current="currentIndex", v-else)
     swiper-item(v-for="(img, idx) in images", :key="idx")
       img(:src="imgProxy + img", v-if="imgProxy", @click="nextImg(idx)")

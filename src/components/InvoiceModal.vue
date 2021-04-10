@@ -6,7 +6,7 @@
       .text-left 三证审核通过后方可交易
       .text-left 开票资料示范如下（不可缺省信息 以税务局登记开票资料为准！）
     .padding-sm
-      img.full-width(:src="imgOuterUrl + '/webpage/gzql/for-etrade/images/kaipiao1.jpg'", v-if="imgOuterUrl")
+      img.full-width(:src="imgProxy + 'wx2104_kaipiao1.jpg'")
     .padding-bottom
       .main-btn.confirm-btn(hover-class="hover-gray", @click="btnClick") 确定
 </template>
