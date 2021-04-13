@@ -170,14 +170,17 @@ export default {
     ...mapActions([
       'configVal'
     ]),
+    // 跳转公告页面
     jumpNotice () {
       this.statisticRequest({ event: 'click_app_index_notice_more' })
       this.jump('/pages/cardList/main?title=型云公告&type=notices')
     },
+    // 跳转搜索页面
     jumpSearch () {
       this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_index_search_seller' }, true) : this.statisticRequest({ event: 'click_app_index_search' })
       this.jump('/pages/search/main')
     },
+    // 展示首页引导图
     showShareBanner () {
       const firstShare = mpvue.getStorageSync('firstShare') || false
       if (!firstShare) {
@@ -192,6 +195,7 @@ export default {
       this.configVal({ key: 'tempObject', val: { name: id, fromPage: 'home' } })
       this.tab('/pages/mall/main')
     },
+    // 点击功能图标
     iconJump (icon) {
       this.statisticRequest({ event: icon.event }, true)
       if (this.isLogin) {
@@ -242,6 +246,7 @@ export default {
     //   this.lineOptions.series[0].data = this.lineOptionData[idx].slice(-9)
     //   chart.setOption(this.lineOptions)
     // },
+    // 获取轮播图
     async loadBanner () {
       try {
         const data = await this.httpPost(this.apiList.zf.banner, {
@@ -252,6 +257,7 @@ export default {
         this.showMsg(e.message)
       }
     },
+    // 获取公告信息
     async loadNotice () {
       try {
         const data = await this.httpPost(this.apiList.zf.notices, {
@@ -264,6 +270,7 @@ export default {
         this.showMsg(e.message)
       }
     },
+    // 超时未提货物模态框回调
     modalCb (flag) {
       this.ironRequest(this.apiList.xy.updateRule.url, { user_id: this.currentUser.user_id }, this.apiList.xy.updateRule.method).then(res => {
         if (res.returncode === '0') {

@@ -169,11 +169,12 @@ export default {
       /** 判断账号状态
        * 已完善信息账号可打开“我的”
        * 未完善信息账号点击“我的”提示去完善信息 */
-      if (self.currentUser.userStatus === '01') {
-        setTimeout(() => {
-          self.jump('/pages/account/companyUpdate/main?type=2')
-        }, 1000)
-      }
+      this.refreshUser()
+      // if (self.currentUser.userStatus === '01') {
+      //   setTimeout(() => {
+      //     self.jump('/pages/account/companyUpdate/main?type=2')
+      //   }, 1000)
+      // }
       //  else {
       //   self.httpPost(self.apiList.zf.queryUserCenterContractInfo, {}).then(res => {
       //     debugger
@@ -278,6 +279,7 @@ export default {
       'configVal',
       'exitUser'
     ]),
+    // 跳转消息中心
     jumpNoticeList () {
       if (!this.isLogin) {
         this.modalMsg = '您未登录,请先登录'
@@ -287,6 +289,7 @@ export default {
         this.jump('/pages/cardList/main?title=消息中心&type=noticeList')
       }
     },
+    // 登陆提示模态框回调
     modalCb (flag) {
       this.modalShow = false
       if (flag === 'confirm') {
@@ -297,6 +300,7 @@ export default {
         // this.tab('/pages/index/main')
       }
     },
+    // 完善公司信息弹窗回调
     alertCb () {
       if (this.isLogin) {
         if (this.currentUser.type === 'buyer') this.jump('/pages/account/companyUpdate/main?type=2')
@@ -304,6 +308,7 @@ export default {
         this.jump('/pages/account/login/main')
       }
     },
+    // 刷新获取用户信息
     async refreshUser () {
       try {
         const res = await this.httpPost(this.apiList.zf.getPersonInfo, {})
@@ -331,6 +336,7 @@ export default {
         this.ruleModalShow = false
       }
     },
+    // 跳转用户设置
     jumpSetting () {
       if (!this.isLogin) {
         this.modalMsg = '您未登录,请先登录'
@@ -340,6 +346,7 @@ export default {
         this.jump('/pages/account/setting/main')
       }
     },
+    // 跳转页面
     jumpToPage (item) {
       if (!this.isLogin) {
         this.modalMsg = '您未登录,请先登录'
@@ -349,6 +356,7 @@ export default {
         this.jump(item.url)
       }
     },
+    // 用户登陆/查看用户信息
     jumpProfile () {
       // if (!this.isLogin) return false
       if (!this.isLogin) {
@@ -358,6 +366,7 @@ export default {
         this.jump('/pages/account/profile/main')
       }
     },
+    // 查看账户余额
     jumpBalance () {
       if (!this.isLogin) {
         this.modalMsg = '您未登录,请先登录'
@@ -372,6 +381,7 @@ export default {
         }
       }
     },
+    // 查看全部合同
     jumpBillMore () {
       if (!this.isLogin) {
         this.modalMsg = '您未登录,请先登录'
@@ -382,6 +392,7 @@ export default {
         this.jump('/pages/bill/main')
       }
     },
+    // 点击功能图标
     jumpBicon (icon) {
       if (!this.isLogin) {
         this.modalMsg = '您未登录,请先登录'
@@ -407,6 +418,7 @@ export default {
         this.jump(icon.url.path)
       }
     },
+    // 超时未提货物收费标准模态框回调
     ruleModalCb (flag) {
       this.ironRequest(this.apiList.xy.updateRule.url, { user_id: this.currentUser.user_id }, this.apiList.xy.updateRule.method).then(res => {
         if (res.returncode === '0') {
