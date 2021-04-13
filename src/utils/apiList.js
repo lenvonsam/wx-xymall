@@ -280,6 +280,12 @@ export default {
     // 账户收支明细-数量统计
     fundDetailSummary: 'finance/unitFundFlow/getUnitFundFlowResult',
     // 资金管理 账户信息-账户余额
-    getUnitMoney: 'finance/unit-fund/getUnitMoney'
+    getUnitMoney: 'finance/unit-fund/getUnitMoney',
+    // 合同回收列表分页
+    contractRecoveryPage: 'xingyun/contractRecovery/contractRecoveryPage',
+    // 恢复购物车
+    restoreShopCart: 'xingyun/contractRecovery/restoreShopCart',
+    // 合同回收站生成合同
+    recycleBinGenerateContract: 'xingyun/contractRecovery/generateContract'
   }
 }

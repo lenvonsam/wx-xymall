@@ -66,18 +66,22 @@ export default {
       'setUser',
       'configVal'
     ]),
+    // 跳转手机验证码注册页面
     jumpReg () {
       this.statisticRequest({ event: 'click_app_register' })
       this.jump('/pages/account/register/main')
     },
+    // 跳转忘记密码页面
     jumpForgetPwd () {
       this.statisticRequest({ event: 'click_app_forgetpwd' })
       this.jump('/pages/account/phoneLogin/main?type=forgetPwd')
     },
+    // 跳转手机验证码登陆页面
     jumpPhoneLogin () {
       this.statisticRequest({ event: 'click_app_login_phone' })
       this.jump('/pages/account/phoneLogin/main')
     },
+    // 账号密码登陆
     async remoteLogin () {
       try {
         if (this.uname.trim().length === 0) {
@@ -95,7 +99,6 @@ export default {
         if (this.canClick) {
           this.canClick = false
           // const encrptPwd = this.base64Str(this.upwd.trim())
-
           const paramsObj = {
             loginType: '02',
             userName: this.uname.trim(),
@@ -104,11 +107,14 @@ export default {
           const data = await this.httpPost(this.apiList.zf.login, paramsObj)
           // console.log('user login', data)
           this.canClick = true
+          // 存储用户token和信息user
           this.setUser({token: data.data.token, user: data.data.user})
           // data.pwd = encrptPwd
           const self = this
+          // 账号密码登陆成功，获取用户信息
+          console.log('账号密码登陆成功，获取用户信息+++++')
           self.httpPost(self.apiList.zf.getPersonInfo, {}).then(res => {
-            self.setUser({user: res.data})
+            self.setUser({token: self.token, user: res.data})
             if (res.data.userStatus === '01') {
               self.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
                 if (res === 'confirm') {

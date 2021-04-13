@@ -376,6 +376,7 @@ export default {
       this.configVal({ key: 'tempObject', val: { type: this.pickway, phone: this.pwPhone, addr: this.pwAddr, detail: this.pwAddrDetail } })
       this.jump({ path: '/pickway?type=' + this.pickway })
     },
+    // 结算/删除
     goToSettle () {
       let filterArray = this.carts.filter(itm => itm.choosed === true)
       let canSellArray = filterArray.filter(itm => String(itm.price).indexOf('--') >= 0)
@@ -405,7 +406,7 @@ export default {
         // } else if (dongGangArray.length > 0) {
         //   msgs = '常州东港库物资最快次日可提'
         // }
-        this.modalShow = true
+        this.modalShow = true // 是否继续提交说明弹窗
         // this.confirm({ content: msgs + '是否确认提交？' }).then((res) => {
         //   if (res === 'confirm') {
         //     self.btnDisable = true
@@ -460,6 +461,7 @@ export default {
         this.showMsg('请选择结算商品', 'warn')
       }
     },
+    // 提交说明弹窗回调
     async modalCb (flag) {
       let self = this
       let filterArray = this.carts.filter(itm => itm.choosed === true)
@@ -484,10 +486,11 @@ export default {
           body.mobile = self.pwPhone
           body.end_addr = self.pwAddr + ' ' + self.pwAddrDetail
         }
-        filterArray.map(item => {
-          item.num = item.count
-        })
+        // filterArray.map(item => {
+        //   item.num = item.count
+        // })
         this.showLoading()
+        // 生成合同
         self.httpPost(this.apiList.zf.generateContract, { cartItem: filterArray, deliveryType: '01', sourceType: '03' }).then(res => {
           this.modalShow = false
           this.hideLoading()
@@ -497,7 +500,7 @@ export default {
           self.btnDisable = false
           this.modalShow = false
           this.hideLoading()
-          this.alertText = e.message || '网络异常'
+          this.alertText = e.message || '网络异常' // 合同生成失败弹窗提示
           this.alertShow = true
           console.log(e)
         })
@@ -629,11 +632,14 @@ export default {
         this.showMsg(e)
       }
     },
+    // 获取购物车数据
     async loadCartData () {
       this.isLoad = false
       const self = this
       await self.httpPost(this.apiList.zf.getCurrentUserCartItems, {}).then(res => {
+        // 有效物资
         let arr = res.data.items.filter(x => x.status === 1)
+        // 失效物资
         this.soldCarts = res.data.items.filter(x => x.status === 0)
         arr.forEach(itm => {
           // const weightMark = []
@@ -644,26 +650,27 @@ export default {
           // 非H型钢
           itm.radios = []
           // if (Number(itm.ratioPriceManager) > 0) {
+          // 挂牌计量方式
           if (itm.onlineQuantityType === '00' || itm.onlineQuantityType === '01') {
             let temp = self.calcWeight(
               '01',
-              itm.num,
-              itm.meterWeight,
-              itm.length,
-              itm.tolerance,
-              itm.floatingRatio
+              itm.num, // 数量(支)
+              itm.meterWeight, // 16标米重
+              itm.length, // 长度
+              itm.tolerance, // 公差
+              itm.floatingRatio // 上浮比例
             )
             itm.radios.push({
               label: '理计',
               m_way: '01',
               weight: temp,
-              price: itm.ratioPriceManager,
+              price: itm.ratioPriceManager, // 上架理计定价
               originPrice: itm.lj_origin_price
             })
             itm.price = itm.ratioPriceManager
             prArr.push(itm.ratioPriceManager)
             wtArr.push(self.calcWeight(
-              itm.cartQuantityType,
+              itm.cartQuantityType, // 购物车计量方式
               itm.num,
               itm.meterWeight,
               itm.length,
@@ -673,26 +680,27 @@ export default {
             oldPrArr.push(itm.lj_origin_price)
           }
           // if (Number(itm.ratioPricePound) > 0) {
+          // 挂牌计量方式
           if (itm.onlineQuantityType === '00' || itm.onlineQuantityType === '02') {
             let temp = self.calcWeight(
               '02',
-              itm.num,
-              itm.meterWeight,
-              itm.length,
-              itm.tolerance,
-              itm.floatingRatio
+              itm.num, // 数量(支)
+              itm.meterWeight, // 16标米重
+              itm.length, // 长度
+              itm.tolerance, // 公差
+              itm.floatingRatio // 上浮比例
             )
             itm.radios.push({
               label: '磅计',
               m_way: '02',
               weight: temp,
-              price: itm.ratioPricePound,
+              price: itm.ratioPricePound, // 上架磅计定价
               originPrice: itm.bj_origin_price
             })
             itm.price = itm.ratioPricePound
             prArr.push(itm.ratioPricePound)
             wtArr.push(self.calcWeight(
-              itm.cartQuantityType,
+              itm.cartQuantityType, // 购物车计量方式
               itm.num,
               itm.meterWeight,
               itm.length,
@@ -707,7 +715,6 @@ export default {
           } else {
             itm.measure_way_id = itm.cartQuantityType
           }
-
           // } else if (itm.trade_type === 2) {
           //   // H型钢
           //   itm.radios = [{
@@ -743,6 +750,7 @@ export default {
           //   this.carts.push(itm)
           // }
         })
+        // 显示底部tabbar购物车数量
         this.tabDot(this.carts.length + this.soldCarts.length)
       }).catch(e => {
         self.showMsg(e.message)

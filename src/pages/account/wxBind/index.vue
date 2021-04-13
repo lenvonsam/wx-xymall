@@ -5,7 +5,7 @@
     div.dis-flex.flex-dir-row.jc-sb.padding-lr
       div(v-for="(item,index) in tabs", :class="item.id === selectTabId?'text-blue cur':''", :key="index", @click="selectTab(item.id)")
         .ft-16.text-center {{item.tabTitle}}
-    div(v-if="selectTabId === 0")  
+    div(v-if="selectTabId === 0")
       .row.padding-tb-sm.border-bottom-line.margin-top-xl
         .flex-30.text-gray
           icon.ft-18.adjust.cuIcon-people
@@ -154,6 +154,7 @@ export default {
     //     self.showMsg('手机号码不合法，请重新输入！')
     //   }
     // },
+    // 短信验证码回调
     authBtnCB (obj) {
       let self = this
       console.log('authBtnCB(obj)======>' + JSON.stringify(obj))
@@ -250,6 +251,7 @@ export default {
         }
       }
     },
+    // 模态框回调
     modalCb (flag) {
       let self = this
       console.log('modalCb------->' + flag)

@@ -13,32 +13,32 @@ const wxMixins = {
       apiList,
       pageSize: 10,
       appKey: 'XingYunMallMini',
+      // 静态资源图片地址
       imgProxy: 'http://xymobile.xingyun361.com/',
-      // 型云图片访问地址
+      // 型云动态图片访问地址
       imgOuterUrl: 'http://47.103.130.166:8008',
       // imgOuterUrl: 'http://web-test.xingyun361.com', // 测试环境图片地址
       // imgOuterUrl: 'http://xyweb-pro.xingyun361.com', // 预上线环境图片地址
       // imgOuterUrl: 'https://www.xingyun361.com',
       phoneReg: /^1[3-9]\d{9}$/,
-      // 6-12为字母数字下划线
       pwdReg: /^[\w]{6,12}$/,
       erpProxy: httpUtil.proxy.erp,
       warehouseProxy: httpUtil.proxy.wh,
       crmProxy: httpUtil.proxy.crm,
       scpProxy: httpUtil.proxy.scp,
       zfBASICURL: httpUtil.zfBASICURL,
-      aboutUsInfo:
-        '<p><span style="font-size: 12px;"></span><span style="font-size: 12px;"></span><span style="font-size: 11px;"><span style="font-size: 12px;">&nbsp; &nbsp; &nbsp; 江苏智恒达型云网络科技有限公司创建于2015年11月，隶属于江苏智恒达投资集团有限公司，坐落于长三角中心城市—江苏常州，依托华东地区特大的实体钢贸资源，型云网络科技有限公司紧抓行业内的用户痛点，以型钢为切入点，打通钢铁交易环节中所有的壁垒，把上游钢厂-在线交易-支付结算-仓储加工-物流运输-供应链金融-大数据信息进行了整合贯通，真正为客户提供更全面、更高效、更便捷、成本更低的服务。</span></span><br><span style="font-size: 12px;">&nbsp; &nbsp; &nbsp; 型云是互联网思维与线下钢贸经验的结晶，是依托于实体的大宗电商变革者，为用户提供集在线交易、供应链金融、支付结算、仓储加工、物流配送于一体的增值服务，是云端之上的钢铁全产业链生态圈。</span><br><span style="font-size: 12px;">&nbsp; &nbsp; &nbsp; 我们本着“四更”的服务宗旨，建设买卖双方市场真正的良性闭环，让钢铁大宗借互联网之风在云端腾飞！</span><br><span style="font-size: 12px;">&nbsp; &nbsp; &nbsp; 智恒达集团是一家拥有20年历史的大型钢铁贸易集团，自备及在建大型室内库4万余平方米，现货库存5万余吨，在途资源4万余吨，为马鞍山钢铁集团、山东莱芜钢铁集团、首钢长治钢铁集团、河北津西钢铁集团、日照钢铁集团、河北邯郸钢铁在江苏及常州的区域总代理。整个销售网络早已覆盖苏皖地区80多个县级以上城市，辐射全国，是华东地区特大钢铁集散中心。</span><span style="font-size: 12px;"></span><span style="font-size: 12px;"></span><br></p>'
+      // 关于我们信息
+      aboutUsInfo: '<p><span style="font-size: 12px;"></span><span style="font-size: 12px;"></span><span style="font-size: 11px;"><span style="font-size: 12px;">&nbsp; &nbsp; &nbsp; 江苏智恒达型云网络科技有限公司创建于2015年11月，隶属于江苏智恒达投资集团有限公司，坐落于长三角中心城市—江苏常州，依托华东地区特大的实体钢贸资源，型云网络科技有限公司紧抓行业内的用户痛点，以型钢为切入点，打通钢铁交易环节中所有的壁垒，把上游钢厂-在线交易-支付结算-仓储加工-物流运输-供应链金融-大数据信息进行了整合贯通，真正为客户提供更全面、更高效、更便捷、成本更低的服务。</span></span><br><span style="font-size: 12px;">&nbsp; &nbsp; &nbsp; 型云是互联网思维与线下钢贸经验的结晶，是依托于实体的大宗电商变革者，为用户提供集在线交易、供应链金融、支付结算、仓储加工、物流配送于一体的增值服务，是云端之上的钢铁全产业链生态圈。</span><br><span style="font-size: 12px;">&nbsp; &nbsp; &nbsp; 我们本着“四更”的服务宗旨，建设买卖双方市场真正的良性闭环，让钢铁大宗借互联网之风在云端腾飞！</span><br><span style="font-size: 12px;">&nbsp; &nbsp; &nbsp; 智恒达集团是一家拥有20年历史的大型钢铁贸易集团，自备及在建大型室内库4万余平方米，现货库存5万余吨，在途资源4万余吨，为马鞍山钢铁集团、山东莱芜钢铁集团、首钢长治钢铁集团、河北津西钢铁集团、日照钢铁集团、河北邯郸钢铁在江苏及常州的区域总代理。整个销售网络早已覆盖苏皖地区80多个县级以上城市，辐射全国，是华东地区特大钢铁集散中心。</span><span style="font-size: 12px;"></span><span style="font-size: 12px;"></span><br></p>'
     }
   },
   computed: {
     ...mapState({
       screenWidth: state => state.screenWidth,
       screenHeight: state => state.screenHeight,
+      customBar: state => state.customBar,
       currentUser: state => state.user.currentUser,
       isLogin: state => state.user.isLogin,
-      token: state => state.user.token,
-      customBar: state => state.customBar
+      token: state => state.user.token
     })
   },
   methods: {
@@ -51,39 +51,47 @@ const wxMixins = {
     requestDecode: httpUtil.requestDecode,
     zgRequest: httpUtil.zgRequest,
     ironFileUpload: httpUtil.ironFileUpload,
+    // 保留当前页面，跳转到应用内的某个页面。但是不能跳到 tabbar 页面
     jump (url) {
       mpvue.navigateTo({
         url: url
       })
     },
+    // 关闭当前页面，返回上一页面或多级页面
     back (step = 1) {
       mpvue.navigateBack({
         delta: step
       })
     },
+    // 跳转到首页
     toHome () {
       mpvue.switchTab({ url: '/pages/index/main' })
     },
+    // 重定向，关闭当前页面，跳转到应用内的某个页面
     redirect (url) {
       mpvue.redirectTo({
         url: url
       })
     },
+    // 显示 loading 提示框
     showLoading () {
       mpvue.showLoading({
         title: '加载中…',
         mask: true
       })
     },
+    // 隐藏 loading 提示框
     hideLoading () {
       mpvue.hideLoading()
     },
+    // 设置页面导航条颜色
     whiteStatusBar () {
       mpvue.setNavigationBarColor({
         frontColor: '#ffffff',
         backgroundColor: '#ffffff'
       })
     },
+    // 删除某个本地缓存值
     removeStoreKey (key) {
       try {
         mpvue.removeStorageSync(key)
@@ -91,6 +99,7 @@ const wxMixins = {
         console.error(err)
       }
     },
+    // 为 tabBar 某一项的右上角添加文本
     tabDot (text, index = 2) {
       if (Number(text) > 0) {
         mpvue.setTabBarBadge({
@@ -103,27 +112,32 @@ const wxMixins = {
         })
       }
     },
+    // 跳转到 tabBar 页面，并关闭其他所有非 tabBar 页面
     tab (url) {
       mpvue.switchTab({
         url: url
       })
     },
+    // 拨打电话
     makeCall (phone) {
       mpvue.makePhoneCall({
         phoneNumber: phone
       })
     },
+    // 预览图片
     previewImage (url, urlist = [url]) {
       mpvue.previewImage({
         current: url,
         urls: urlist
       })
     },
+    // 复制文本
     copyText (text) {
       mpvue.setClipboardData({
         data: text
       })
     },
+    // 显示消息提示框
     showMsg (msg, type = 'none', duration = 3000) {
       mpvue.showToast({
         title: msg,
@@ -131,6 +145,7 @@ const wxMixins = {
         duration
       })
     },
+    // 显示模态对话框
     confirm (config) {
       return new Promise((resolve, reject) => {
         mpvue.showModal({
@@ -155,9 +170,11 @@ const wxMixins = {
     randomInteger () {
       return Math.floor(Math.random() * 10)
     },
+    // 身份证号隐私处理
     maskIdCard (cardno) {
       return cardno.substring(0, 4) + '**********' + cardno.substring(14)
     },
+    // 手机号隐私处理
     maskPhone (phone) {
       return phone.substring(0, 2) + '*****' + phone.substring(9)
     },
@@ -181,6 +198,7 @@ const wxMixins = {
         }
       }
     },
+    // 手机号格式校验
     mobileReg (mobile) {
       var reg = /^1[3-9][0-9]\d{4,8}$/
       return reg.test(mobile)
@@ -251,6 +269,7 @@ const wxMixins = {
         })
       }
     },
+    // 添加购物车
     addCart (val, type, userId) {
       return new Promise((resolve, reject) => {
         if (type === 'notice') {
@@ -338,6 +357,7 @@ const wxMixins = {
         ]
       }
     },
+    // 将px转为rpx
     getRpx (px) {
       return px * 750 / this.screenWidth
     },

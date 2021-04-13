@@ -8,6 +8,7 @@ export default {
       'exitUser',
       'setUser'
     ]),
+    // 微信小程序登陆
     wxAuthLogin () {
       const me = this
       try {
@@ -55,6 +56,7 @@ export default {
      * 支付宝(蚂蚁)：mpvue === my, mpvuePlatform === 'my'
      */
 
+    // 登陆日志
     // let logs
     // if (mpvuePlatform === 'my') {
     //   logs = mpvue.getStorageSync({ key: 'logs' }).data || []
@@ -71,16 +73,21 @@ export default {
     // 检查userid合法性
     // const currentUser = mpvue.getStorageSync('currentUser')
 
-    // 微信登录
+    // 微信小程序登录
     this.wxAuthLogin()
     const me = this
+    // 设置vuex全局状态
     me.autoUser()
+    // 判断是否已经登陆
+    console.log('判断用户是否已经登陆++++', me.isLogin)
     if (me.isLogin) {
       // me.getQueryProfile()
       me.showLoading()
       // const uid = me.currentUser.user_id
       // console.log('App.vue_uid=====>', uid)
+      // 获取用户信息
       me.httpPost(me.apiList.zf.getPersonInfo, {}).then(res => {
+        console.log('用户已登陆，获取用户信息++++', res)
         me.setUser({ token: me.token, user: res.data })
         if (res.data.userStatus === '01') {
           me.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
@@ -139,24 +146,27 @@ export default {
       console.log('未登录me.isLogin======>' + me.isLogin)
       me.showMsg('登录已失效，请重新登录')
     }
-
+    // 获取系统信息
     // 设置自定义customer bar
     mpvue.getSystemInfo({
       success (e) {
-        console.log(e)
+        console.log('获取系统信息+++', e)
         const statusBar = e.statusBarHeight
         console.log('status bar height:>>', e.statusBarHeight)
         me.configVal({ key: 'screenWidth', val: e.screenWidth })
         me.configVal({ key: 'screenHeight', val: e.screenHeight })
         me.configVal({ key: 'statusBar', val: statusBar })
         me.configVal({ key: 'bottomBarHeight', val: (e.screenHeight - e.windowHeight) })
+        // 获取菜单按钮（右上角胶囊按钮）的布局位置信息。坐标信息以屏幕左上角为原点。
         const capsule = wx.getMenuButtonBoundingClientRect()
+        console.log('获取胶囊信息+++', capsule)
         if (capsule) {
           me.configVal({ key: 'custom', val: capsule })
           me.configVal({ key: 'customBar', val: capsule.bottom + capsule.top - statusBar })
         } else {
           me.configVal({ key: 'customBar', val: statusBar + 50 })
         }
+        // 判断机型
         const model = e.model
         if (/iphone\sx/i.test(model) ||
           (/iphone/i.test(model) && /unknown/.test(model)) ||

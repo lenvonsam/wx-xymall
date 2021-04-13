@@ -185,6 +185,7 @@ export default {
         mpvue.setStorageSync('firstShare', true)
       }
     },
+    // 点击产品分类
     classifyClick (id, name) {
       // this.configVal({ key: 'tempObject', val: { name: title } })
       this.statisticRequest({ event: 'click_app_index_category', name: name }, true)
@@ -205,6 +206,7 @@ export default {
         })
       }
     },
+    // 点击查看更多
     mallMore () {
       this.statisticRequest({ event: 'click_app_index_category', name: '查看更多' }, true)
       this.tab('/pages/mall/main')

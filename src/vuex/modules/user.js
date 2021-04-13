@@ -103,10 +103,10 @@ export default {
     EXITUSER (state) {
       try {
         mpvue.removeStorageSync('currentUser')
+        mpvue.removeStorageSync('token')
         mpvue.setStorageSync('lastExperienceDay', '')
         mpvue.setStorageSync('overdueReminder', '')
         mpvue.setStorageSync('isAuditingReminder', '')
-        mpvue.removeStorageSync('token')
       } catch (e) {
         console.error('exituser:>>', e)
       }
@@ -119,13 +119,17 @@ export default {
     AUTOUSER (state) {
       try {
         const currentUser = mpvue.getStorageSync('currentUser')
-        console.log('currentUser:>>', currentUser)
         const token = mpvue.getStorageSync('token')
+        console.log('AUTOUSER currentUser:>>', currentUser)
+        console.log('AUTOUSER currentUser:>> token', token)
         if (token) {
           state.currentUser = currentUser
           state.currentUser.type = 'buyer'
           state.token = token
           state.isLogin = true
+          console.error('AUTOUSER success:>>')
+        } else {
+          console.log('AUTOUSER token不存在++++，用户未登陆')
         }
         // if (value.user_mark) {
         //   const time = mpvue.getStorageSync('loginTime') || -1
@@ -151,7 +155,7 @@ export default {
         //   state.isLogin = false
         // }
       } catch (e) {
-        console.error('autouser:>>', e)
+        console.error('AUTOUSER false:>>', e)
         state.currentUser = {}
         state.isLogin = false
         state.token = ''

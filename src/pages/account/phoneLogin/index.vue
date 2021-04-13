@@ -88,25 +88,30 @@ export default {
       // this.statisticRequest({ event: 'click_app_login_pwd' })
       this.back()
     },
+    // 跳转注册页面
     jumpReg () {
       // this.statisticRequest({ event: 'click_app_register' })
       this.jump('/pages/account/register/main')
     },
+    // 跳转忘记密码页面
     jumpToChildPwd () {
       // this.statisticRequest({ event: 'click_app_forgetpwd' })
       this.configVal({ key: 'tempObject', val: { action: 'pageForward' } })
       this.jump('/pages/account/phoneLogin/main?type=forgetPwd')
     },
+    // 重置页面状态
     resetVal () {
       this.phone = ''
       this.code = ''
       this.pwd = ''
       this.canClick = true
     },
+    // 返回上一页
     pageBack () {
       this.resetVal()
       this.back()
     },
+    // 登陆/提交
     async remoteHandler () {
       try {
         if (this.phone.trim().length === 0) {
@@ -146,6 +151,7 @@ export default {
         if (this.canClick) {
           this.canClick = false
           const data = await this.httpPost(url, params)
+          // 存储用户token和信息user
           this.setUser(data.data)
           const self = this
           if (self.pageType === 'smsLogin') {
@@ -155,6 +161,8 @@ export default {
           setTimeout(function () {
             if (self.pageType === 'smsLogin') {
               self.resetVal()
+              // 短信验证码登陆成功，获取用户信息
+              console.log('短信验证码登陆成功，获取用户信息+++++')
               self.httpPost(self.apiList.zf.getPersonInfo, {}).then(res => {
                 self.setUser({ token: self.token, user: res.data })
                 if (res.data.userStatus === '01') {

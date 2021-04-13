@@ -60,16 +60,19 @@ export default {
     ...mapActions([
       'setUser'
     ]),
+    // 重置页面状态
     resetVal () {
       this.phone = ''
       this.code = ''
       this.acceptProtocol = false
       this.canClick = true
     },
+    // 返回上一页
     pageBack () {
       this.resetVal()
       this.back()
     },
+    // 注册
     async remoteRegister () {
       try {
         if (this.phone.trim().length === 0) {
@@ -121,7 +124,9 @@ export default {
             //   type: 'buyer'
             // }
             // this.setUser(newUser)
-            this.setUser({token: res.data.token, user: res.data.user})
+
+            // 存储用户token和信息user
+            // this.setUser({token: res.data.token, user: res.data.user})
             this.confirm({ content: '注册成功，但您是新用户，请先完成公司信息' }).then(res => {
               me.canClick = true
               me.resetVal()

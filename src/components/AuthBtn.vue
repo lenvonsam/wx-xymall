@@ -74,6 +74,7 @@ export default {
         this.httpGet(me.apiList.zf.getSmsVerifyCode + '?phone=' + me.phone + '&type=' + codeType, {}).then((resp) => {
         // this.ironRequest(this.apiList.xy.captcha.url + '?user_phone=' + this.phone + (this.codeType === -1 ? '' : '&type=' + this.codeType), {}, this.apiList.xy.captcha.method).then((resp) => {
           me.timeDown()
+          // props 回调函数cb
           if (me.cb) me.cb(resp)
         }).catch((e) => {
           if (me.cb) {
@@ -85,6 +86,7 @@ export default {
         })
       }
     },
+    // 倒计时
     timeDown () {
       const me = this
       let timeTxt = me.timeCount
@@ -99,12 +101,14 @@ export default {
         }
       }, 1000)
     },
+    // 验证码类型错误错误提示
     showErrMsg (errMsg) {
       this.clearTime()
       this.btnTxt = '获取验证码'
       this.canGetCode = true
       this.showMsg(errMsg)
     },
+    // 清除定时器
     clearTime () {
       if (this.timeInterval) {
         clearInterval(this.timeInterval)

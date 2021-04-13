@@ -224,51 +224,52 @@ export default {
   },
   onShow () {
     this.isload = true
-    if (this.currentUser.type === 'buyer') {
-      // let isAuditing = 0 // 账号是否正在审核中
-      // let lastExperienceDay = mpvue.getStorageSync('lastExperienceDay') || ''
-      // let isAuditingReminder = mpvue.getStorageSync('isAuditingReminder') || ''
-      // let overdueReminder = mpvue.getStorageSync('overdueReminder') || ''
-      // this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(data => {
-      //   if (data.returncode === '0') {
-      //     this.trial = data.trial
-      //     isAuditing = data.is_auditing
-      //     this.currentUser.isnew = data.isnew
-      //     if (this.trial > 0) {
-      //       if (data.isnew === 1) { // 新用户
-      //         if (lastExperienceDay !== this.trial) {
-      //           this.modalMsg = '1'
-      //           this.modalShow = true
-      //           mpvue.setStorageSync('lastExperienceDay', this.trial)
-      //         }
-      //       } else if (data.isnew === 0 && isAuditing === 1) { // 已完善未审核过
-      //         if (isAuditingReminder !== this.getDate()) {
-      //           this.modalMsg = '3'
-      //           this.modalShow = true
-      //           mpvue.setStorageSync('isAuditingReminder', this.getDate())
-      //         }
-      //       }
-      //     } else if (this.trial === 0) { // 超过体验期限
-      //       if (overdueReminder !== this.getDate()) {
-      //         this.modalMsg = '2'
-      //         this.modalShow = true
-      //         mpvue.setStorageSync('lastExperienceDay', this.trial)
-      //         mpvue.setStorageSync('overdueReminder', this.getDate())
-      //         // 超过体验时间，商城显示未登录状态页面
-      //       }
-      //     } else {
-      //       mpvue.setStorageSync('lastExperienceDay', this.trial)
-      //     }
-      //   } else {
-      //     this.showMsg(data.errormsg)
-      //     this.exitUser()
-      //   }
-      // }).catch(e => {
-      //   console.log('mall.vue_queryProfile_catch=====>', JSON.stringify(e))
-      //   // this.showMsg(e)
-      //   this.isLogin = false
-      // })
-    }
+    // if (this.currentUser.type === 'buyer') {
+    //   console.log('++++++++>>>>>>>>')
+    //   let isAuditing = 0 // 账号是否正在审核中
+    //   let lastExperienceDay = mpvue.getStorageSync('lastExperienceDay') || '' // 体验过期时间
+    //   let isAuditingReminder = mpvue.getStorageSync('isAuditingReminder') || '' // 账号审核提醒
+    //   let overdueReminder = mpvue.getStorageSync('overdueReminder') || '' // 体验过期提醒
+    //   this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(data => {
+    //     if (data.returncode === '0') {
+    //       this.trial = data.trial
+    //       isAuditing = data.is_auditing
+    //       this.currentUser.isnew = data.isnew
+    //       if (this.trial > 0) {
+    //         if (data.isnew === 1) { // 新用户
+    //           if (lastExperienceDay !== this.trial) {
+    //             this.modalMsg = '1'
+    //             this.modalShow = true
+    //             mpvue.setStorageSync('lastExperienceDay', this.trial)
+    //           }
+    //         } else if (data.isnew === 0 && isAuditing === 1) { // 已完善未审核过
+    //           if (isAuditingReminder !== this.getDate()) {
+    //             this.modalMsg = '3'
+    //             this.modalShow = true
+    //             mpvue.setStorageSync('isAuditingReminder', this.getDate())
+    //           }
+    //         }
+    //       } else if (this.trial === 0) { // 超过体验期限
+    //         if (overdueReminder !== this.getDate()) {
+    //           this.modalMsg = '2'
+    //           this.modalShow = true
+    //           mpvue.setStorageSync('lastExperienceDay', this.trial)
+    //           mpvue.setStorageSync('overdueReminder', this.getDate())
+    //           // 超过体验时间，商城显示未登录状态页面
+    //         }
+    //       } else {
+    //         mpvue.setStorageSync('lastExperienceDay', this.trial)
+    //       }
+    //     } else {
+    //       this.showMsg(data.errormsg)
+    //       this.exitUser()
+    //     }
+    //   }).catch(e => {
+    //     console.log('mall.vue_queryProfile_catch=====>', JSON.stringify(e))
+    //     // this.showMsg(e)
+    //     this.isLogin = false
+    //   })
+    // }
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 285
     if (this.tempObject.fromPage === 'home') {
       // 首页
@@ -370,15 +371,18 @@ export default {
         this.jump('/pages/account/companyUpdate/main?type=2')
       }
     },
+    // 清除搜索
     cleanSearch () {
       delete this.queryObject.search
       this.onRefresh()
     },
+    // 刷新页面
     onRefresh (done) {
       this.isRefresh = 'refresh'
       this.currentPage = 0
       this.refresher(done)
     },
+    // 上拉加载
     loadMore () {
       const self = this
       this.throttle(function () {
@@ -406,6 +410,7 @@ export default {
       console.log('swiperChange---------')
       const idx = e.mp.detail.current
       this.mallTabVal = this.goodsNameList[idx].id
+      console.log(this.mallTabVal)
       if (this.goodsNameList[idx]) {
         this.showLoading()
         this.isload = true
@@ -467,6 +472,7 @@ export default {
       this.mallFlag = flag
       this.$forceUpdate()
     },
+    // 关键词搜索
     searchChange (val) {
       // this.mallItems = []
       this.goodsNameList[this.swiperCount].data = []
@@ -564,7 +570,7 @@ export default {
         console.log('prevIdx', this.prevIdx)
       }
     },
-    // 刷新
+    // 刷新页面
     async refresher (done) {
       try {
         this.showLoading()

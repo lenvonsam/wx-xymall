@@ -26,11 +26,11 @@ div
               .text-red {{item.status}}
             .text-gray
               .padding-bottom-xs {{item.supply_name}}
-              .flex.justify-between.padding-bottom-xs 
+              .flex.justify-between.padding-bottom-xs
                 span 共{{item.total_count}}支，{{item.total_weight}}吨
                 .ft-16.text-black ￥{{item.fact_price}}
               .flex.justify-between
-                .col 
+                .col
                   .padding-bottom-xs 吊费：¥{{item.lift_charge}}
                   .padding-bottom-xs 合同生成日期：{{item.create_time}}
                 div
@@ -50,6 +50,11 @@ export default {
       listData: [],
       finished: false,
       currentPage: 0,
+      pageSize: 10,
+      queryObj: {
+        pageNum: 1,
+        pageSize: 10
+      },
       isload: false,
       billNo: '',
       scrollHeight: 0,
@@ -69,6 +74,11 @@ export default {
     this.listData = []
     this.finished = false
     this.currentPage = 0
+    this.pageSize = 10
+    this.queryObj = {
+      pageNum: 1,
+      pageSize: 10
+    }
     this.isload = false
     this.billNo = ''
     this.scrollHeight = 0
@@ -109,39 +119,67 @@ export default {
         this.isload = false
       }
       this.loading = true
-      let reqUrl = 'recycleList.shtml?user_id=' + this.currentUser.user_id + '&tstc_no=' + this.billNo + '&current_page=' + this.currentPage + '&page_size=' + this.pageSize
-      this.ironRequest(reqUrl, {}, 'get').then(resp => {
-        if (resp && resp.returncode === '0') {
-          let arr = resp.orders
-          arr.map(item => {
-            item.fact_price = this.$toFixed(item.fact_price, 2)
-          })
-          if (arr.length === 0 && this.currentPage === 0) {
-            this.listData = []
-            this.finished = true
-            this.isload = false
-          } else if (arr.length > 0 && this.currentPage === 0) {
-            this.listData = arr
-            this.isload = false
-            if (arr.length > 8) this.finished = false
-          } else if (arr.length > 0 && this.currentPage > 0) {
-            arr.map(itm => {
-              this.listData.push(itm)
-            })
-            this.finished = false
-          } else {
-            this.finished = true
-            this.currentPage--
-          }
-        } else {
-          this.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
+      this.httpPost(this.apiList.zf.contractRecoveryPage, this.queryObj).then(res => {
+        console.log('++++', res)
+        let arr = res.data
+        // arr.map(item => {
+        //   item.fact_price = this.$toFixed(item.fact_price, 2)
+        // })
+        if (arr.length === 0 && this.currentPage === 0) {
+          this.listData = []
+          this.finished = true
           this.isload = false
+        } else if (arr.length > 0 && this.currentPage === 0) {
+          this.listData = arr
+          this.isload = false
+          if (arr.length > 8) this.finished = false
+        } else if (arr.length > 0 && this.currentPage > 0) {
+          arr.map(itm => {
+            this.listData.push(itm)
+          })
+          this.finished = false
+        } else {
+          this.finished = true
+          this.currentPage--
         }
+      }).finally(() => {
         this.loading = false
-      }).catch(err => {
-        this.showMsg(err || '网络异常')
-        this.loading = false
+        this.isload = false
       })
+
+      // let reqUrl = 'recycleList.shtml?user_id=' + this.currentUser.user_id + '&tstc_no=' + this.billNo + '&current_page=' + this.currentPage + '&page_size=' + this.pageSize
+      // this.ironRequest(reqUrl, {}, 'get').then(resp => {
+      //   if (resp && resp.returncode === '0') {
+      //     let arr = resp.orders
+      //     arr.map(item => {
+      //       item.fact_price = this.$toFixed(item.fact_price, 2)
+      //     })
+      //     if (arr.length === 0 && this.currentPage === 0) {
+      //       this.listData = []
+      //       this.finished = true
+      //       this.isload = false
+      //     } else if (arr.length > 0 && this.currentPage === 0) {
+      //       this.listData = arr
+      //       this.isload = false
+      //       if (arr.length > 8) this.finished = false
+      //     } else if (arr.length > 0 && this.currentPage > 0) {
+      //       arr.map(itm => {
+      //         this.listData.push(itm)
+      //       })
+      //       this.finished = false
+      //     } else {
+      //       this.finished = true
+      //       this.currentPage--
+      //     }
+      //   } else {
+      //     this.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
+      //     this.isload = false
+      //   }
+      //   this.loading = false
+      // }).catch(err => {
+      //   this.showMsg(err || '网络异常')
+      //   this.loading = false
+      // })
     }
   }
 }
