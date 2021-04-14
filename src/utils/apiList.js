@@ -196,6 +196,14 @@ export default {
     wxLogin: 'base/online/wxLogin',
     // 获取商城列表
     shopMallList: 'xingyun/shopMall/queryPage',
+    // 获取品名分页列表
+    queryProductBrandNamePage: 'xingyun/shopMall/queryProductBrandNamePage',
+    // 获取规格分页列表
+    querySpecificationPage: 'xingyun/shopMall/querySpecificationPage',
+    // 获取材质分页列表
+    queryProductTextureNamePage: 'xingyun/shopMall/queryProductTextureNamePage',
+    // 获取产地分页列表
+    queryProdAreaNamePage: 'xingyun/shopMall/queryProdAreaNamePage',
     // 基础管理-个人资料管理-获取个人资料
     getPersonInfo: 'xingyun/base/getPersonInfo',
     // 用户中心数据

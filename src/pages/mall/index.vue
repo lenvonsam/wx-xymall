@@ -321,6 +321,8 @@ export default {
       delete this.queryObject.materials
       delete this.queryObject.supplys
       delete this.queryObject.fromPage
+      console.log('tempObject++++++', this.tempObject.name)
+
       if (!this.tempObject.name) this.refresher()
     } else if (this.tempObject.fromPage === 'mallFilter' && this.tempObject.noBack) {
       // 分类
@@ -349,7 +351,7 @@ export default {
     // this.refresher()
     if (this.isLogin) {
       // this.setCartCount(this.currentUser.user_id)
-      console.log('mall_state.currentUser======>' + JSON.stringify(this.currentUser))
+      // console.log('mall_state.currentUser======>' + JSON.stringify(this.currentUser))
       this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(res => {
         if (res.returncode === '0') {
           console.log('mall.vue_接口返回_rule=====>' + res.rule)
@@ -404,7 +406,7 @@ export default {
         this.jump('/pages/account/companyUpdate/main?type=2')
       }
     },
-    // 清除搜索
+    // 监听子组件触发清除搜索
     cleanSearch () {
       delete this.queryObject.search
       this.onRefresh()
@@ -438,12 +440,12 @@ export default {
       // console.log('swiperTransition', e)
       // this.isload = true
     },
-    // 切换轮播图
+    // 切换轮播图，触发刷新页面数据
     swiperChange (e) {
       console.log('swiperChange---------')
       const idx = e.mp.detail.current
       this.mallTabVal = this.goodsNameList[idx].id
-      console.log(this.mallTabVal)
+      console.log('mallTabVal', this.mallTabVal)
       if (this.goodsNameList[idx]) {
         this.showLoading()
         this.isload = true
@@ -463,6 +465,7 @@ export default {
         console.log('prevIdx', this.prevIdx)
       }
     },
+    // 监听子组件触发获取品名数据
     getName (list) {
       list.map(item => {
         item.data = []
@@ -472,6 +475,7 @@ export default {
       // this.refresher()
       this.onRefresh()
     },
+    // 监听子组件触发筛选
     multipleFilter (filter) {
       console.log('filter', filter)
       const obj = {}
@@ -499,13 +503,13 @@ export default {
         this.refresher()
       }
     },
-    // 切换商城排版格式
+    // 监听子组件触发切换商城排版格式
     selectMall (flag) {
       console.log(flag)
       this.mallFlag = flag
       this.$forceUpdate()
     },
-    // 关键词搜索
+    // 监听子组件触发关键词搜索
     searchChange (val) {
       // this.mallItems = []
       this.goodsNameList[this.swiperCount].data = []
@@ -595,8 +599,9 @@ export default {
         self.btnDisable = false
       }
     },
-    // 点击选择种类
+    // 监听子组件触发点击选择滑动tab（品名）
     selectTab ({ id, idx }) {
+      console.log('goodsNameList++++', this.goodsNameList)
       if (this.goodsNameList[idx]) {
         this.mallTabVal = id
         this.swiperCount = idx
@@ -605,14 +610,32 @@ export default {
     },
     // 刷新页面
     async refresher (done) {
+      console.log('商城刷新页面参数++++++', this.queryObject)
       try {
         this.showLoading()
         this.loadFinish = 1
         const self = this
-        this.queryObject.current_page = this.currentPage
+        this.queryObject.page_num = this.currentPage
         this.queryObject.page_size = this.pageSize
-        const res = await this.httpPost(this.apiList.zf.shopMallList, this.queryObj)
-        const resData = res.data.stocks
+        // 品名
+        this.queryObject.productBrandNames = this.queryObject.name ? [this.queryObject.name] : []
+        // 规格
+        this.queryObject.specifications = this.queryObject.standards ? [this.queryObject.standards] : []
+        // 材质
+        this.queryObject.productTextureNames = this.queryObject.materials ? [this.queryObject.materials] : []
+        // 产地
+        this.queryObject.prodAreaNames = this.queryObject.supplys ? [this.queryObject.supplys] : []
+        // 关键词
+        this.queryObject.keyword = this.queryObject.search ? this.queryObject.search : ''
+        // delete this.queryObject.current_page
+        // delete this.queryObject.name
+        // delete this.queryObject.standards
+        // delete this.queryObject.materials
+        // delete this.queryObject.supplys
+        // delete this.queryObject.search
+        const res = await this.httpPost(this.apiList.zf.shopMallList, this.queryObject)
+        const resData = res.data.stocks || []
+        console.log('stocks++++', resData)
         const idx = this.swiperCount
         resData.map(item => {
           const weightMark = []

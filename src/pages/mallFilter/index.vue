@@ -18,7 +18,7 @@ div
         span 暂无更多
         div 详情请联系400-8788-361
     .filter-cur(v-if="standardList.length > 0")
-      .tag.text-gray(:class="{'active': searchIdx === item+1}", v-for="item in 9", :key="item", @click="selectTag(item)") {{item+1}}  
+      .tag.text-gray(:class="{'active': searchIdx === item+1}", v-for="item in 9", :key="item", @click="selectTag(item)") {{item+1}}
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
@@ -75,9 +75,11 @@ export default {
     ...mapActions([
       'configVal'
     ]),
+    // 清除搜索关键词
     cleanSearch () {
       this.searchVal = ''
     },
+    // 选择规格并返回上一级
     selectStandard (val) {
       const res = {
         name: this.queryObject.name,
@@ -89,6 +91,7 @@ export default {
       this.configVal({ key: 'tempObject', val: res })
       this.back(-1)
     },
+    // 关键词搜索
     searchChange () {
       this.statisticRequest({ event: 'click_app_mall_category_search' })
       this.supplyList = []
@@ -96,14 +99,16 @@ export default {
       this.currentPage = 0
       this.getStandardList()
     },
+    // 点击左侧选择分类
     selectName (item, idx) {
       this.filterNameList.map(item => {
         item.isActive = false
       })
       this.filterNameList[idx].isActive = true
-      this.queryObject.productBrandName = item.name
+      this.queryObject.productBrandName = item.name === '全部' ? '' : item.name
       this.getStandardList()
     },
+    // 获取商品信息
     getGoods () {
       // this.ironRequest(this.apiList.xy.goodsList.url, {}, this.apiList.xy.goodsList.method).then((res) => {
       //   const nameId = this.$root.$mp.query.name
@@ -130,12 +135,14 @@ export default {
       //     }
       //   })
       // })
+      // 获取分类名称
       this.httpPost(this.apiList.zf.searchBrand, {}).then(res => {
         const nameId = this.$root.$mp.query.name
         this.queryObject = {
           'productBrandName': nameId,
           'specification': ''
         }
+        // 获取某个分类对应的规格
         this.getStandardList()
         this.filterNameList = res.data.productBrandNameList.map(item => ({
           name: item
@@ -150,6 +157,7 @@ export default {
         })
       })
     },
+    // 获取某个分类对应的规格
     getStandardList () {
       this.isLoad = false
       // this.ironRequest(this.apiList.xy.standardList.url, this.queryObject, this.apiList.xy.standardList.method).then((res) => {
@@ -168,15 +176,34 @@ export default {
           name: item
           // item.first = item.substr(0, 1)
         }))
-        this.standardList.map(item => {
-          item.first = item.name.substr(0, 1)
+        // console.log('standardList++++++', this.standardList)
+        // this.standardList.map(item => {
+        //   item.first = item.name.substr(0, 1)
+        // })
+        // console.log('standardList++++++', this.standardList)
+        var arr = [[], [], [], [], [], [], [], [], [], [], []]
+        this.standardList.forEach(item => {
+          var firstName = item.name.substr(0, 1)
+          item.first = firstName
+          var reg = /^\d/
+          if (reg.test(firstName)) {
+            arr[firstName].push(item)
+          } else {
+            arr[10].push(item)
+          }
         })
+        console.log('分类', arr)
+        var newArr = arr.reduce(function (a, b) {
+          return a.concat(b)
+        })
+        this.standardList = newArr
         // this.standardList = res.data.specificationList
         this.isLoad = true
       }).catch(e => {
         this.showMsg(e.message)
       })
     },
+    // 点击右侧数字导航
     selectTag (idx) {
       this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_category_right_seller' }, true) : this.statisticRequest({ event: 'click_app_mall_category_right' })
       this.searchIdx = idx
