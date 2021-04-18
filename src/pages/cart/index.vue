@@ -55,6 +55,12 @@ export default {
     if (self.isLogin) {
       console.log('cart_state.currentUser======>' + JSON.stringify(this.currentUser))
       self.showCartContent = true
+
+      // 超时未提货物收费标准
+      if (this.currentUser.type === 'buyer' && !this.currentUser.userGeneralAgreement) {
+        this.modalShow = true
+      }
+
       // self.alertShow = false
       // if (typeof self.currentUser.type !== 'undefined') {
       //   if (self.currentUser.type === 'seller') {
@@ -104,13 +110,18 @@ export default {
       'exitUser'
     ]),
     modalCb (flag) {
-      this.ironRequest(this.apiList.xy.updateRule.url, { user_id: this.currentUser.user_id }, this.apiList.xy.updateRule.method).then(res => {
-        if (res.returncode === '0') {
-          console.log('updateRule_res=====>' + JSON.stringify(res))
-        }
+      this.httpPost(this.apiList.zf.updatePersonAgreement, {userGeneralAgreement: true}).then(res => {
+        console.log('updateRule_res=====>' + JSON.stringify(res))
       }).catch(e => {
         console.log('updateRule_e=====>' + e)
       })
+      // this.ironRequest(this.apiList.xy.updateRule.url, { user_id: this.currentUser.user_id }, this.apiList.xy.updateRule.method).then(res => {
+      //   if (res.returncode === '0') {
+      //     console.log('updateRule_res=====>' + JSON.stringify(res))
+      //   }
+      // }).catch(e => {
+      //   console.log('updateRule_e=====>' + e)
+      // })
       this.modalShow = false
     }
   }

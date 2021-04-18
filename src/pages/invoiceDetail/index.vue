@@ -66,9 +66,10 @@ div
         .col.flex-100
           span.ml-5.ft-15 发票代码
         .col.text-right
-          .c-gray.text-right {{invoiceNo || '暂无'}}    
+          .c-gray.text-right {{invoiceNo || '暂无'}}
   .padding-sm.margin-top(@click="invoiceApply")
-    .main-btn(v-if="tabName == '0'") 提交        
+    .main-btn(v-if="tabName == '0'") 提交
+    .main-btn(v-if="tabName == '2'") 确认
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
@@ -126,8 +127,11 @@ export default {
   beforeMount () {
     this.tabName = this.$root.$mp.query.tabName
     this.ids = this.$root.$mp.query.ids
-    if (this.tabName === '0') {
-      this.pageTitle = '申请发票'
+    console.log('测试++++++')
+    console.log(this.tabName)
+    console.log(this.ids)
+    if (this.tabName === '0' || this.tabName === '1') {
+      this.pageTitle = this.$root.$mp.query.name || '申请发票'
       this.loadData()
     } else {
       this.pageTitle = this.$root.$mp.query.name
@@ -176,11 +180,13 @@ export default {
       this.configVal({ key: 'tempObject', val: { tabName: this.tabName } })
       this.back()
     },
+    // 切换发票领取方式
     togglePickWay () {
       if (this.tabName === '0') {
         this.pickOpen = !this.pickOpen
       }
     },
+    // 申请发票/确认发票
     invoiceApply () {
       if (this.pickVal === '快递邮寄') {
         if (this.receiver.trim().length === 0 || this.receiverAddr.trim().length === 0 || this.receiverMobile.trim().length === 0) {
@@ -216,7 +222,13 @@ export default {
       if (!this.clickDisabled) {
         this.clickDisabled = true
         const self = this
-        self.httpPost(self.apiList.zf.invoiceAdd, postList).then(res => {
+        let url = ''
+        if (this.tabName === '0') {
+          url = self.apiList.zf.invoiceAdd
+        } else {
+          url = self.apiList.zf.confirmReceipt
+        }
+        self.httpPost(url, postList).then(res => {
           const msg = self.pageTitle === '申请发票' ? '申请发票成功' : '发票确认成功'
           self.showMsg(msg, '', 1000)
           setTimeout(() => {
@@ -244,11 +256,18 @@ export default {
     pickCb (e) {
       this.pickVal = this.pickItems[e.mp.detail.value]
     },
+    // 获取发票信息
     loadData () {
       const self = this
-      self.httpPost(self.apiList.zf.invoiceUnApplyDetail, self.ids.split(',')).then(res => {
-        self.showObj = res.data
-      })
+      if (this.tabName === '0') {
+        self.httpPost(self.apiList.zf.invoiceUnApplyDetail, self.ids.split(',')).then(res => {
+          self.showObj = res.data
+        })
+      } else {
+        self.httpGet(self.apiList.zf.customerAppliedDetail + '?sourceBusiBillNo=' + self.ids).then(res => {
+          self.showObj = res.data
+        })
+      }
     }
   }
 }

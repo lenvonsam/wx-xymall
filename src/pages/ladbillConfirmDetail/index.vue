@@ -57,7 +57,7 @@ div
         .padding-left-xs.cuIcon-phone
   .footer.row.bg-white.text-center.text-white.padding-sm(v-if="ladObject.status === '提单待确认'", :style="{'padding-bottom': isIpx ? '68rpx' : '20rpx'}")
     .bg-red.col.padding-sm.round(@click="ladCancel(ladObject.saleLadingId)") 驳回
-    .bg-blue.col.margin-left-sm.padding-sm.round(@click="ladConfirm(ladObject.saleLadingId)") 确认提单  
+    .bg-blue.col.margin-left-sm.padding-sm.round(@click="ladConfirm(ladObject.saleLadingId)") 确认提单
 </template>
 <script>
 import copyBtn from '@/components/CopyBtn.vue'
@@ -124,6 +124,7 @@ export default {
     copyBtn
   },
   methods: {
+    // 确认提单
     ladConfirm (saleLadingId) {
       if (!this.btnDisable) {
         this.btnDisable = true
@@ -132,7 +133,7 @@ export default {
           saleLadingId: [saleLadingId],
           type: true
         }
-        this.httpPost(this.apiList.zf.billLadingDetail, paramsObj).then(res => {
+        this.httpPost(this.apiList.zf.ladingConfirmation, paramsObj).then(res => {
           this.showMsg('提单确认成功')
           setTimeout(() => {
             me.btnDisable = false
@@ -160,6 +161,7 @@ export default {
         // })
       }
     },
+    // 驳回提单
     ladCancel (saleLadingId) {
       if (!this.btnDisable) {
         this.btnDisable = true
@@ -170,7 +172,7 @@ export default {
           saleLadingId: [saleLadingId],
           type: false
         }
-        this.httpPost(this.apiList.zf.billLadingDetail, paramsObj).then(res => {
+        this.httpPost(this.apiList.zf.ladingConfirmation, paramsObj).then(res => {
           this.showMsg('提单驳回成功')
           setTimeout(() => {
             me.btnDisable = false

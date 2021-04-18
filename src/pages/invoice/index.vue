@@ -21,15 +21,15 @@ div
                       img.choose-icon(src="/static/images/blue_check.png", v-if="item.checked")
                       img.choose-icon(src="/static/images/btn_ck_n.png", v-else)
                     .col.ft-14(:class="{'pl-5': tabName == '0' || tabName == '2'}")
-                      .pb-half-rem.c-gray.ft-14 {{item.saleLadingNo}}
+                      .pb-half-rem.c-gray.ft-14 {{item.sourceBusiBillNo}}
                       .pb-half-rem {{item.title}}
                       .text-gray
                         span 重量：
-                        span.ml-5 {{tabName == '0' ? item.settlementWeight : item.invoiceWeight}}吨
+                        span.ml-5 {{(tabName == '0' || tabName == '1') ? item.settlementWeight : item.invoiceWeight}}吨
                         span.ml-5 数量：
-                        span.ml-5 {{tabName == '0' ? item.settlementAmount : item.invoiceAmount}}支
+                        span.ml-5 {{(tabName == '0' || tabName == '1') ? item.settlementAmount : item.invoiceAmount}}支
                   .text-right.flex.flex-direction.align-end(:class="tabName !== '3' ? 'justify-between' : 'justify-center'")
-                    .text-blue.ft-18 ￥{{tabName == '0' ? item.settleTotalMoney : item.invoiceTotalMoney}}
+                    .text-blue.ft-18 ￥{{(tabName == '0' || tabName == '1') ? item.settleTotalMoney : item.invoiceTotalMoney}}
                     .invoice-detail-btn.margin-top-sm(v-if="tabName != '0' && item.settleTotalMoney > 0", @click="jumpDetail(item)") 查看详情
                     .text-gray(v-if="tabName !== '3'") 吊费：￥{{item.hangingFeeMoney}}
             .padding.text-gray.ft-13.text-center(v-if="loading") 努力加载中...
@@ -164,6 +164,7 @@ export default {
     ...mapActions([
       'configVal'
     ]),
+    // 点击全选
     allCheckHandler () {
       this.allChecked = !this.allChecked
       if (this.allChecked) {
@@ -207,6 +208,7 @@ export default {
         }
       })
     },
+    // 上拉加载
     loadMore () {
       if (!this.isLoad) {
         this.currentPage++
@@ -215,10 +217,11 @@ export default {
         this.loadData()
       }
     },
+    // 选择/不选择
     chooseSameInvoiceNo (item) {
       item.checked = !item.checked
       this.listData.map(itm => {
-        if (itm.saleLadingNo === item.saleLadingNo) itm.checked = item.checked
+        if (itm.sourceBusiBillNo === item.sourceBusiBillNo) itm.checked = item.checked
       })
       this.$forceUpdate()
     },
@@ -241,39 +244,44 @@ export default {
     //   }
     //   this.loadData()
     // },
+
+    // 点击查看详情
     jumpDetail (obj) {
       // this.configVal({key: 'tempObject', val: obj})
       // this.jump({path: '/invoice/detail', query: {id: this.tabName}})
-      if (this.disabledBtn) return false
-      this.disabledBtn = true
-      this.ironRequest('invoiceDetail.shtml?id=' + obj.id, {}, 'get').then(resp => {
-        if (resp.returncode === '0') {
-          resp.tabName = this.tabName
-          this.configVal({ key: 'tempObject', val: resp })
-          this.jump(`/pages/invoiceDetail/main?id=${this.tabName}&name=查看详情`)
-        } else {
-          this.showMsg('查看失败')
-          this.disabledBtn = false
-        }
-      }).catch(e => {
-        this.disabledBtn = false
-        this.showMsg('查看失败')
-      })
+      let ids = obj.sourceBusiBillNo
+      if (this.tabName === '1') {
+        this.jump('/pages/invoiceDetail/main?tabName=' + this.tabName + '&ids=' + ids + '&name=查看详情')
+      }
+      // this.ironRequest('invoiceDetail.shtml?id=' + obj.id, {}, 'get').then(resp => {
+      //   if (resp.returncode === '0') {
+      //     resp.tabName = this.tabName
+      //     this.configVal({ key: 'tempObject', val: resp })
+      //     this.jump(`/pages/invoiceDetail/main?id=${this.tabName}&name=查看详情`)
+      //   } else {
+      //     this.showMsg('查看失败')
+      //     this.disabledBtn = false
+      //   }
+      // }).catch(e => {
+      //   this.disabledBtn = false
+      //   this.showMsg('查看失败')
+      // })
     },
+    // 批量申请/批量确认
     invoiceAction () {
       if (this.disabledBtn) return false
       let filterArray = this.listData.filter(item => item.checked === true)
       const self = this
       this.disabledBtn = true
       if (filterArray.length > 0) {
-        let ids = filterArray.map(item => item.arSettlementListId).join(',')
+        let ids = filterArray.map(item => item.sourceBusiBillNo).join(',')
         if (this.tabName === '0') {
           this.jump('/pages/invoiceDetail/main?tabName=' + this.tabName + '&ids=' + ids)
           // 发票申请
           // let title = filterArray[0].title
           // let type = filterArray[0].type
           // 发票编号
-          let nos = filterArray.map(item => item.saleLadingNo).join(',')
+          let nos = filterArray.map(item => item.settlementUnitId).join(',')
           // // 总金额
           // let totalPrice = filterArray.map(item => item.settleTotalMoney).reduce((a, b) => a + b)
           // totalPrice = this.$toFixed(totalPrice, 2)
@@ -317,21 +325,23 @@ export default {
           }
         }
         if (this.tabName === '2') {
+          this.jump('/pages/invoiceDetail/main?tabName=' + this.tabName + '&ids=' + ids)
           // 发票确认
-          this.ironRequest('confirmInvoice.shtml', { user_id: this.currentUser.user_id, id: ids }, 'post').then(resp => {
-            if (resp && resp.returncode === '0') {
-              self.showMsg('发票确认成功')
-              self.listData = []
-              self.loadData()
-              self.disabledBtn = false
-            }
-          })
+          // this.ironRequest('confirmInvoice.shtml', { user_id: this.currentUser.user_id, id: ids }, 'post').then(resp => {
+          //   if (resp && resp.returncode === '0') {
+          //     self.showMsg('发票确认成功')
+          //     self.listData = []
+          //     self.loadData()
+          //     self.disabledBtn = false
+          //   }
+          // })
         }
       } else {
         this.showMsg('请选择需开发票')
         self.disabledBtn = false
       }
     },
+    // 加载数据
     loadData () {
       if (this.currentPage === 1) {
         this.isLoad = true
@@ -342,6 +352,10 @@ export default {
       const self = this
       this.loading = true
       this.queryObj.pageNum = this.currentPage
+      // this.queryObj.busiBillDateEnd = ''
+      // this.queryObj.busiBillDateStart = ''
+      // this.queryObj.sourceBusiBillNo = ''
+
       self.httpPost(self.postUrl, self.queryObj).then(res => {
         if (res.data.length > 0 && self.currentPage === 1) {
           self.listData = []
@@ -413,10 +427,12 @@ export default {
       //   self.showMsg(err || '网络异常')
       // })
     },
+    // 点击切换tabs
     selectTabs (item, idx) {
       this.tabName = item.status
       this.swiperCount = idx
     },
+    // 滑动轮播
     swiperChange (e) {
       const idx = e.mp.detail.current
       if (idx === 0) {

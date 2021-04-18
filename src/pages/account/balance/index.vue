@@ -5,7 +5,8 @@ div
     div
       icon.cuIcon-vipcard
       span.margin-left 账户余额（元）
-    .text-center.margin-top-xl.text-bold(style="font-size: 30px") {{currentUser.unitFundBalance}}
+    //- .text-center.margin-top-xl.text-bold(style="font-size: 30px") {{currentUser.unitFundBalance}}
+    .text-center.margin-top-xl.text-bold(style="font-size: 30px") {{accountBalanceMoney}}
     .text-center.margin-top
       .balance-mark(@click="jump('/pages/account/balanceList/main')") 收支明细
   .bg-white
@@ -28,14 +29,7 @@ div
 export default {
   data () {
     return {
-      queryObj: {
-        pageNum: 1,
-        pageSize: 10,
-        busiEventDateS: '',
-        busiEventDateE: '',
-        busiEventType: '',
-        saleContractNo: ''
-      }
+      accountBalanceMoney: ''
     }
   },
   onShow () {
@@ -44,35 +38,34 @@ export default {
   },
   methods: {
     loadData () {
-      this.httpPost(this.apiList.zf.fundDetail, this.queryObj)
-        .then((res) => {
-          this.tableValue.pagination.total = res.total
-          this.tableValue.tableData = res.data
-          this.totalNumber = res.data.length
-          this.loading(false)
-        }).finally(() => {
-          this.loading(false)
-        })
-      this.httpPost(this.apiList.zf.fundDetailSummary, this.queryObj)
-        .then((res) => {
-          this.summary = {
-            contractMoney: res.data.contractPaymentMoney || 0,
-            contractNum: res.data.contractNum || 0,
-            refundMoney: res.data.refundMoney || 0,
-            fundInMoney: res.data.rechargeMoney || 0,
-            fundOutMoney: res.data.withdrawableMoney || 0
-          }
-        })
-      // this
-      //   .httpGet(this.apiList.zf.getUnitMoney)
+      // this.httpPost(this.apiList.zf.fundDetail, this.queryObj)
       //   .then((res) => {
-      //     console.log(res)
-      //     this.accountBalanceMoney = res.data
+      //     this.tableValue.pagination.total = res.total
+      //     this.tableValue.tableData = res.data
+      //     this.totalNumber = res.data.length
+      //     this.loading(false)
+      //   }).finally(() => {
+      //     this.loading(false)
       //   })
-      //   .catch((e) => {
-      //     console.log(e)
-      //     this.msgShow({ msg: e.message })
+      // this.httpPost(this.apiList.zf.fundDetailSummary, this.queryObj)
+      //   .then((res) => {
+      //     this.summary = {
+      //       contractMoney: res.data.contractPaymentMoney || 0,
+      //       contractNum: res.data.contractNum || 0,
+      //       refundMoney: res.data.refundMoney || 0,
+      //       fundInMoney: res.data.rechargeMoney || 0,
+      //       fundOutMoney: res.data.withdrawableMoney || 0
+      //     }
       //   })
+      this.httpGet(this.apiList.zf.getUnitMoney)
+        .then((res) => {
+          console.log(res)
+          this.accountBalanceMoney = res.data
+        })
+        .catch((e) => {
+          console.log(e)
+          this.msgShow({ msg: e.message })
+        })
     }
   }
 }

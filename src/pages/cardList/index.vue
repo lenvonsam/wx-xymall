@@ -2,7 +2,6 @@
 div
   nav-bar(:title="pageTitle", :isBack="true")
   template(v-if="isLoad")
-    iron-scroll(@scrolltolower="loadMore", :height="screenHeight - customBar", :loadFinish="loadFinish")
       .padding(v-if="pageType === 'notices'")
         .bg-white.margin-bottom(v-for="(data,idx) in listData", :key="idx", style="box-shadow: 0px 0px 2.5px rgba(7,1,2,0.04)", @click="jump('/pages/h5/main?title=公告详情&type=noticeDetail&id=' + data.id)")
           .padding.border-bottom-line
@@ -26,20 +25,22 @@ div
                   time-text(:content="data.time", v-if="data.time")
               .mt-5.ft-12.text-gray.notice-line
                 div(v-html="data.content")
-      .bg-white(v-else-if="pageType === 'queryWithdrawList'")
+      .bg-white(v-else-if="pageType === 'searchWithdraw'")
         .padding.border-bottom-line(v-for="(data, idx) in listData", :key="idx")
           .row
             .col
-              .ft-16 {{data.status}}
-              .ft-12.margin-top-sm.text-gray {{data.time}}
+              .ft-16 {{receiptStatus[data.withdrawApplyStatus]}}
+              .ft-12.margin-top-sm.text-gray {{data.createDate}}
             .flex-100.ft-16.text-gray.text-right
-              span ￥{{data.price}}
+              span ￥{{data.withdrawApplyMoney}}
       //- .padding.bg-gray.text-center(v-if="listData.length > 10") 加载中...
   time-line(v-else, type="mainres")
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
+// -iron-scroll(@scrolltolower="loadMore", :height="screenHeight - customBar", :loadFinish="loadFinish")
+
 export default {
   data () {
     return {
@@ -53,9 +54,21 @@ export default {
       listMapKey: {
         'notices': 'notices',
         'noticeList': 'notices',
-        'queryWithdrawList': 'withdraw'
+        'searchWithdraw': 'withdraw'
+      },
+      receiptStatus: {
+        '20': '提现中',
+        '30': '提现中',
+        '50': '入账',
+        '00': '作废'
       }
     }
+  },
+  computed: {
+    ...mapState({
+      customBar: state => state.customBar,
+      screenHeight: state => state.screenHeight
+    })
   },
   // onReachBottom () {
   //   console.log('reach bottom')
@@ -129,7 +142,10 @@ export default {
           if (this.currentPage < 0) this.currentPage = 0
           if (this.currentPage > 0) this.loadFinish = 2
         }
-        if (this.listData.length < 10 || this.pageType === 'queryWithdrawList') this.loadFinish = 3
+        if (this.listData.length < 10 || this.pageType === 'searchWithdraw') this.loadFinish = 3
+
+        console.log('searchWithdraw+++', this.pageType)
+        console.log(this.listData)
       } catch (e) {
         this.showMsg(e)
         this.loadFinish = 0

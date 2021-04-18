@@ -194,6 +194,10 @@ export default {
     wxBind: 'base/online/appletBinding',
     // 微信登录
     wxLogin: 'base/online/wxLogin',
+    // 商城分类
+    appletQuerySpecificationList: 'xingyun/shopMall/appletQuerySpecificationList',
+    // 商城筛选获取所有品名
+    searchBrand: 'xingyun/shopMall/queryProductBrandNamePage',
     // 获取商城列表
     shopMallList: 'xingyun/shopMall/queryPage',
     // 获取品名分页列表
@@ -216,6 +220,8 @@ export default {
     contractOrderDetail: 'xingyun/order/contractOrderDetail',
     // 合同付款
     contractOrderPayment: 'xingyun/order/contractOrderPayment',
+    // 手动取消合同
+    cancelContract: 'xingyun/contract/cancelContract',
     // 加工跟踪
     onlineProcessTrack: 'xingyun/onlineProcess/queryPage',
     // 我的加工-新增加工
@@ -238,18 +244,6 @@ export default {
     ladingConfirmation: 'xingyun/billLading/ladingConfirmation',
     // 查询待确认提单
     queryLadingPage: 'xingyun/contract/queryLadingPage',
-    // 发票-未申请提单-分页查询
-    invoiceUnApply: 'finance/arStatementList/customerSearch',
-    // 发票-未申请提单详情
-    invoiceUnApplyDetail: 'finance/arStatementList/getArStatementList',
-    // 发票-已申请提单的-分页查询
-    invoiceApplied: 'finance/arInvoice/customerAppliedSearch',
-    // 发票-已开票提单
-    invoiceInvoiced: 'finance/arInvoice/customerInvoicedSearch',
-    // 发票-申请开票
-    invoiceAdd: 'finance/arStatementList/createInvoice',
-    // 用户中心-确认收票明细
-    confirmReceiptDetails: 'finance/arInvoice/search',
     // 添加购物车
     addCartItem: 'xingyun/cart/appendCartItem',
     // 获取购物车
@@ -276,24 +270,53 @@ export default {
     uploadImage: 'foundation/attach/upload',
     // 完善公司信息
     addAuthentication: 'xingyun/unitAuthentication/add',
-    // 商城分类
-    appletQuerySpecificationList:
-      'xingyun/shopMall/appletQuerySpecificationList',
-    // 商城筛选获取所有品名
-    searchBrand: 'xingyun/shopMall/queryProductBrandNamePage',
-    // 账户收支明细（往来账）
-    customerFundFlows: 'finance/unitFundFlow/searchCustomerFundFlows',
-    // 账户收支明细
-    fundDetail: 'finance/unitFundFlow/searchInAndOutDetail',
-    // 账户收支明细-数量统计
-    fundDetailSummary: 'finance/unitFundFlow/getUnitFundFlowResult',
-    // 资金管理 账户信息-账户余额
-    getUnitMoney: 'finance/unit-fund/getUnitMoney',
     // 合同回收列表分页
     contractRecoveryPage: 'xingyun/contractRecovery/contractRecoveryPage',
     // 恢复购物车
     restoreShopCart: 'xingyun/contractRecovery/restoreShopCart',
     // 合同回收站生成合同
-    recycleBinGenerateContract: 'xingyun/contractRecovery/generateContract'
+    recycleBinGenerateContract: 'xingyun/contractRecovery/generateContract',
+    // 查看公司信息
+    selectCompanyInfo: 'xingyun/base/selectCompanyInfo',
+    // 校验手机号验证码是否正确
+    checkoutVerificationCode: 'xingyun/base/checkoutVerificationCode',
+    // 修改用户个人信息
+    updatePersonInfo: 'xingyun/base/updatePersonInfo',
+    // 账户收支明细-提现申请预查询(数据准备)
+    prepareWithdrawApply: 'finance/withdrawApply/prepareWithdrawApply',
+    // 账户收支明细-提现申请
+    addWithdraw: 'finance/withdrawApply/addWithdraw',
+    // 账户收支明细（往来账）
+    searchCustomerFundFlows: 'finance/unitFundFlow/searchCustomerFundFlows',
+    // 账户收支明细
+    searchInAndOutDetail: 'finance/unitFundFlow/searchInAndOutDetail',
+    // 账户收支明细-数量统计
+    getUnitFundFlowResult: 'finance/unitFundFlow/getUnitFundFlowResult',
+    // 资金管理 账户信息-账户余额
+    getUnitMoney: 'finance/unit-fund/getUnitMoney',
+    // 小程序搜索历史
+    appletQuerySearchHistory: 'xingyun/shopMall/appletQuerySearchHistory',
+    // 提现记录（提现记录）
+    searchWithdraw: 'finance/withdrawApply/searchWithdraw',
+    // 发票-未申请提单-分页查询
+    invoiceUnApply: 'finance/arStatementList/customerSearch',
+    // 发票-未申请提单详情
+    invoiceUnApplyDetail: 'finance/arStatementList/getArStatementList',
+    // 发票-已申请提单的-分页查询
+    invoiceApplied: 'finance/arStatementList/customerAppliedSearch',
+    // 发票-已申请提单详情
+    customerAppliedDetail: 'finance/arStatementList/customerAppliedDetail',
+    // 发票-已开票提单
+    invoiceInvoiced: 'finance/arInvoice/customerInvoicedSearch',
+    // 发票-待开票
+    arStatementList: '/api/finance/arStatementList/search',
+    // 发票-申请开票
+    invoiceAdd: 'finance/arStatementList/createInvoice',
+    // 发票-待确认收票的发票列表
+    confirmReceiptDetails: 'finance/arInvoice/search',
+    // 发票-确认收票功能
+    confirmReceipt: 'finance/arInvoice/confirmReceipt',
+    // 修改用户个人协议
+    updatePersonAgreement: 'xingyun/base/updatePersonAgreement'
   }
 }

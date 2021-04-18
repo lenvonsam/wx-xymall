@@ -7,7 +7,7 @@ div
         .flex.align-center
           .cuIcon-search
           input.full-width.padding-left-sm(v-model="billNo", type="text", placeholder="合同号", confirm-type="search", @confirm="searchOrder")
-          .close-icon(@click="billNo = ''", v-if="billNo")
+          .close-icon(@click="clearBillNo", v-if="billNo")
             .cuIcon-roundclosefill.ft-18
       .search-btn.text-blue.padding-left-sm(@click="searchOrder") 搜索
     scroll-view.nav(scroll-x)
@@ -72,7 +72,7 @@ export default {
       billTab: [
         { title: '全部', status: '', data: [], isActive: true },
         { title: '待付款', status: '01', data: [], isActive: false },
-        { title: '待补款', status: '10', data: [], isActive: false },
+        { title: '待补款', status: '03', data: [], isActive: false },
         { title: '待提货', status: '02', data: [], isActive: false },
         { title: '已完成', status: '04', data: [], isActive: false }
       ],
@@ -98,6 +98,7 @@ export default {
       queryObj: {
         contractStateType: '',
         xingyunContractStatus: '',
+        saleContractNo: '',
         pageSize: 10,
         pageNum: 1
       }
@@ -121,9 +122,9 @@ export default {
     } else if (this.tabName === '02') {
       this.queryObj.contractStateType = '02'
       this.queryObj.xingyunContractStatus = ''
-    } else if (this.tabName === '10') {
+    } else if (this.tabName === '03') {
       this.queryObj.contractStateType = ''
-      this.queryObj.xingyunContractStatus = '02'
+      this.queryObj.xingyunContractStatus = '03'
     } else if (this.tabName === '04') {
       this.queryObj.contractStateType = '04'
       this.queryObj.xingyunContractStatus = ''
@@ -187,10 +188,17 @@ export default {
     clearInterval(this.timeInterval)
   },
   methods: {
+    // 清除搜索
+    clearBillNo () {
+      this.billNo = ''
+      this.queryObj.saleContractNo = ''
+    },
+    // 刷新页面
     onRefresh (done) {
       this.currentPage = 1
       this.refresher(done)
     },
+    // 搜索合同
     searchOrder () {
       // this.statisticRequest({ event: 'click_app_order_search' })
       this.startDate = ''
@@ -201,12 +209,14 @@ export default {
       this.swiperCount = 0
       this.billTab[0].data = []
       this.pageHeight = this.tabName === '1' ? 150 : 100
+      this.queryObj.saleContractNo = this.billNo
       if (this.tabName === '0') {
         this.refresher()
       } else {
         this.tabName = '0'
       }
     },
+    // 轮播切换
     swiperChange (e) {
       this.showLoading()
       const idx = e.mp.detail.current
@@ -227,6 +237,7 @@ export default {
       //   me.loadData()
       // }, 300)
     },
+    // 刷新
     refresher (done) {
       this.loadFinish = 1
       const self = this
@@ -286,6 +297,7 @@ export default {
         if (done) done()
       })
     },
+    // 点击切换tab
     selectTabs (item, idx) {
       if (item.status === '10') {
         this.queryObj.contractStateType = ''
@@ -330,6 +342,7 @@ export default {
         this.jump({ path: '/mall/pay', query: { pageType: 'offlinePay', orderNo: orderNos, price: this.totalPrice } })
       }
     },
+    // 倒计时
     countTime () {
       const idx = this.swiperCount
       const arr = this.billTab[idx].data
@@ -407,6 +420,7 @@ export default {
       })
       this.$forceUpdate()
     },
+    // 获取合同列表
     loadData (done) {
       this.loadFinish = 1
       if (this.currentPage === 1) {
@@ -498,6 +512,7 @@ export default {
       //   if (done) done()
       // })
     },
+    // 上拉加载
     loadMore () {
       if (!this.isLoad) {
         const me = this
@@ -511,10 +526,13 @@ export default {
     //   this.statisticRequest({ event: 'click_app_myorder_search' })
     //   this.jump({ path: '/bill/search' })
     // },
+    // 点击跳转合同详情
     jumpDetail (item) {
       this.jump(`/pages/billDetail/main?contractId=${item.saleContractId}`)
     },
+    // 取消合同
     billCancel (item) {
+      console.log('点击取消+++++')
       // if (this.tabName === '0') this.statisticRequest({ event: 'click_app_myorder_all_cancel' })
       // if (this.tabName === '1') this.statisticRequest({ event: 'click_app_myorder_needpay_cancel' })
       this.statisticRequest({ event: 'click_app_order_cancel' })
@@ -523,26 +541,25 @@ export default {
         if (!me.btnDisable && res === 'confirm') {
           me.btnDisable = true
           // me.$ironLoad.show()
-          me.ironRequest('cancelOrder.shtml', { user_id: me.currentUser.user_id, discussid: item.id }, 'post').then(res => {
+          me.httpGet(me.apiList.zf.cancelContract, {contractId: item.saleContractId}).then(res => {
+            console.log(res)
             // me.$ironLoad.hide()
             me.btnDisable = false
-            if (res && res.returncode === '0') {
-              me.showMsg('合同已取消', 'positive')
-              this.listData = []
-              this.allChoosed = false
-              this.isTabDisabled = true
-              me.billTab[me.swiperCount].data = []
-              // me.pageHeight = this.tabName === '1' ? 150 : 100
-
-              me.refresher()
-              // me.cb(me.billObject, 'cancel')
-            } else {
-              me.showMsg(res === undefined ? '网络异常' : res.errormsg)
-            }
+            me.showMsg('合同已取消', 'positive')
+            this.listData = []
+            this.allChoosed = false
+            this.isTabDisabled = true
+            me.billTab[me.swiperCount].data = []
+            // me.pageHeight = this.tabName === '1' ? 150 : 100
+            me.refresher()
+            // me.cb(me.billObject, 'cancel')
+          }).catch(e => {
+            me.showMsg(res.message)
           })
         }
       })
     },
+    // 去付款
     payBill (item) {
       // if (this.tabName === '0') this.statisticRequest({ event: 'click_app_myorder_all_pay' })
       // if (this.tabName === '1') this.statisticRequest({ event: 'click_app_myorder_needpay_pay' })

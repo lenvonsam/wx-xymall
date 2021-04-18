@@ -26,11 +26,11 @@ div
           .bg-white.padding.border-bottom-line.row(v-for="(item,idx) in listData", :key="idx")
             .col
               div {{item.content}}
-              .text-gray.ft-12.margin-top {{item.time}}
+              .text-gray.ft-12.margin-top {{item.ctime}}
             .col.text-right
-              .ft-16(:class="{'text-red': item.action == 1, 'text-green': item.action == 0}")            
-                span(v-if="item.action == 0") +
-                span(v-else) -
+              //- .ft-16(:class="{'text-red': item.action == 1, 'text-green': item.action == 0}")
+              //-   span(v-if="item.action == 0") +
+              //-   span(v-else)
                 span {{item.price}}
               .text-gray.margin-top(v-if="item.nowAvlbFund") {{item.nowAvlbFund}}
           //- .padding.text-gray.ft-13.text-center(v-if="loading") 努力加载中...
@@ -47,10 +47,10 @@ export default {
       isLoad: false,
       typeStatusList: [
         { label: '全部', val: '' },
-        { label: '合同付款', val: 'htfk' },
-        { label: '退款', val: 'tk' },
-        { label: '充值', val: 'cz' },
-        { label: '提现', val: 'tx' }
+        { label: '合同付款', val: 'EXSHT0002' },
+        { label: '退款', val: 'EXSHT0001' },
+        { label: '充值', val: 'ECWSK0001' },
+        { label: '提现', val: 'ECWSK0003' }
       ],
       selectActive: '',
       activeName: '',
@@ -66,7 +66,15 @@ export default {
       floatBarShow: false,
       loadFinish: 0,
       sellerId: '',
-      accountBalance: ''
+      accountBalance: '',
+      propqueryObj: {
+        pageNum: 1,
+        pageSize: 10,
+        busiEventDateS: '',
+        busiEventDateE: '',
+        busiEventType: '',
+        saleContractNo: ''
+      }
     }
   },
   computed: {
@@ -85,7 +93,8 @@ export default {
   onShow () {
     if (this.$root.$mp.query.sellerId) this.sellerId = this.$root.$mp.query.sellerId
     this.whiteStatusBar()
-    this.getMonth()
+    // this.getMonth()
+    this.getLastSixMon()
     this.typeLabel = '全部'
     this.monthLabel = '时间'
     this.currentPage = 0
@@ -95,38 +104,59 @@ export default {
     this.loading = false
     this.isload = false
     this.floatBarShow = false
-    this.loadData()
     const height = this.screenHeight - this.customBar - 185
     console.log('fullheight:>>', this.screenHeight, 'height:>>', height)
+    this.getAccountBalance()
+    this.loadData()
   },
   methods: {
-    loadMore () {
-      const me = this
-      this.throttle(function () {
-        me.currentPage++
-        me.loadData()
-      }, 300)
-    },
-    selectKey (item) {
-      // if (this.isTabDisabled) return false
-      this.selectActive = item.val
-      switch (this.activeName) {
-        case 'type':
-          this.typeStatus = item.val
-          this.typeLabel = item.label
-          break
-        case 'time':
-          this.month = item.val
-          this.monthLabel = item.label === '全部' ? '时间' : item.label
-          break
+    // 获取最近六个月
+    getLastSixMon () {
+      var data = new Date()
+      // 获取年
+      var year = data.getFullYear()
+      // 获取月
+      var mon = data.getMonth() + 1
+      var arry = [{ label: '全部', val: 0 }]
+      for (var i = 0; i < 7; i++) {
+        if (mon <= 0) {
+          year = year - 1
+          mon = mon + 12
+        }
+        if (mon < 10) {
+          mon = '0' + mon
+        }
+        arry.push({
+          label: year + '-' + mon,
+          val: year + '-' + mon,
+          year: year,
+          mon: mon
+        })
+        mon = mon - 1
       }
-      this.currentPage = 0
-      this.listData = []
-      this.activeName = ''
-      this.floatBarShow = false
-      this.isLoad = false
-      this.loadData()
+      this.monthList = arry
     },
+    // 获取某月的第一天和最后一天的日期
+    getFirstAndLastDay (year, month) {
+      var newYear = year // 取当前的年份
+      var newMonth = month++ // 取下一个月的第一天，方便计算（最后一天不固定）
+      if (month > 12) {
+        newMonth -= 12 // 月份减
+        newYear++ // 年份增
+      }
+      var newDate = new Date(newYear, newMonth, 1) // 取当年当月中的第一天
+      var firstMounthDay = `${year}-${month - 1}-01`
+      var lastDay = (new Date(newDate.getTime() - 1000 * 60 * 60 * 24)).getDate()
+      if (lastDay < 10) {
+        lastDay = '0' + lastDay
+      }
+      var lastMounthDay = `${year}-${month - 1}-${lastDay}`
+      return {
+        firstMounthDay,
+        lastMounthDay
+      }
+    },
+    // 获取月份
     getMonth () {
       let nowMonth = new Date().getMonth() + 1
       let monthList = [{ label: '全部', val: 0 }, { label: '本月', val: 1 }]
@@ -146,6 +176,7 @@ export default {
       }
       this.monthList = monthList
     },
+    // 切换单据类型或时间tab
     checkTab (flag) {
       if (flag === 'type') {
         this.tabList = this.typeStatusList
@@ -161,11 +192,57 @@ export default {
         this.floatBarShow = true
       }
     },
+    // 选择具体的单据类型或月份
+    selectKey (item) {
+      // if (this.isTabDisabled) return false
+      this.selectActive = item.val
+      switch (this.activeName) {
+        case 'type':
+          this.propqueryObj.busiEventType = item.val
+          this.typeLabel = item.label
+          break
+        case 'time':
+          let firstAndLastDay = this.getFirstAndLastDay(item.year, item.mon)
+          this.propqueryObj.busiEventDateS = firstAndLastDay.firstMounthDay
+          this.propqueryObj.busiEventDateE = firstAndLastDay.lastMounthDay
+          this.monthLabel = item.label === '全部' ? '时间' : item.label
+          break
+      }
+      this.currentPage = 0
+      this.listData = []
+      this.activeName = ''
+      this.floatBarShow = false
+      this.isLoad = false
+      this.loadData()
+    },
+    // 下拉刷新
     onRefresh (done) {
       this.currentPage = 0
       this.loadData(done)
     },
+    // 上拉加载
+    loadMore () {
+      const me = this
+      this.throttle(function () {
+        me.currentPage++
+        me.loadData()
+      }, 300)
+    },
+    // 获取账户余额
+    getAccountBalance () {
+      this.httpGet(this.apiList.zf.getUnitMoney)
+        .then((res) => {
+          console.log(res)
+          this.accountBalance = res.data
+        })
+        .catch((e) => {
+          console.log(e)
+          this.msgShow({ msg: e.message })
+        })
+    },
+    // 加载数据
     async loadData (done) {
+      console.log('测试+++++++++')
       try {
         this.showLoading()
         this.loadFinish = 1
@@ -174,26 +251,28 @@ export default {
         }
         if (this.currentPage > 0) this.loading = true
         const me = this
-        let creditRecordList = this.apiList.xy.creditRecordList
-        let params = `current_page=${this.currentPage}&page_size=${this.pageSize}&type_status=${this.typeStatus}&number=${this.month}&user_id=${this.currentUser.user_id}`
-        if (this.sellerId) {
-          creditRecordList = this.apiList.xy.sellerCreditRecordList
-          params += `&cust_no=${this.sellerId}`
-        }
-        const url = `${creditRecordList.url}?${params}`
-        const data = await this.ironRequest(url, '', creditRecordList.method)
-        this.accountBalance = data.balance
-        const arr = data.resultlist
+        // let creditRecordList = this.apiList.xy.creditRecordList
+        // let params = `current_page=${this.currentPage}&page_size=${this.pageSize}&type_status=${this.typeStatus}&number=${this.month}&user_id=${this.currentUser.user_id}`
+        // if (this.sellerId) {
+        //   creditRecordList = this.apiList.xy.sellerCreditRecordList
+        //   params += `&cust_no=${this.sellerId}`
+        // }
+        // const url = `${creditRecordList.url}?${params}`
+        // const data = await this.ironRequest(url, '', creditRecordList.method)
+        let result = await this.httpPost(this.apiList.zf.searchInAndOutDetail, this.propqueryObj)
+        console.log('res', result)
+        // this.accountBalance = data.balance
+        const arr = result.data
         this.isLoad = true
         const list = []
         if (arr.length > 0) {
           arr.map(res => {
             const obj = {
-              content: res.type_status,
-              time: res.create_time,
-              action: res.type_status === '退款' || (res.type_status === '充值' && res.bill_type !== '保证金充值' && res.bill_type !== '远期金额充值') ? 0 : 1,
-              price: res.money,
-              nowAvlbFund: res.now_avlb_fund === -1 ? '--' : res.now_avlb_fund
+              content: res.paymentType,
+              ctime: res.createDate,
+              // action: res.type_status === '退款' || (res.type_status === '充值' && res.bill_type !== '保证金充值' && res.bill_type !== '远期金额充值') ? 0 : 1,
+              price: res.flowMoney,
+              nowAvlbFund: res.balanceMoney === -1 ? '--' : res.balanceMoney
             }
             list.push(obj)
           })

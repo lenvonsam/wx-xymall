@@ -3,7 +3,7 @@
   .bg-white.padding-sm
     .round
       .flex
-        .title.row 
+        .title.row
           .title-tag
           span.padding-left-xs 加工标准
         .col.flex.justify-end(v-if="!pno")

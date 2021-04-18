@@ -21,20 +21,20 @@ div
             .flex.justify-between.padding-bottom-sm
               .col
                 .flex.align-center
-                  .ft-16.padding-right-sm {{item.no}}
+                  .ft-16.padding-right-sm {{item.saleContractNo}}
                   img.ding-icon(src="/static/images/ding.png", v-if="item.is_dx")
               .text-red {{item.status}}
             .text-gray
-              .padding-bottom-xs {{item.supply_name}}
+              .padding-bottom-xs {{item.orgName}}
               .flex.justify-between.padding-bottom-xs
-                span 共{{item.total_count}}支，{{item.total_weight}}吨
-                .ft-16.text-black ￥{{item.fact_price}}
+                span 共{{item.contractAmount}}支，{{item.estimatedTonnage}}吨
+                .ft-16.text-black ￥{{item.inTaxReceiveMoney}}
               .flex.justify-between
                 .col
-                  .padding-bottom-xs 吊费：¥{{item.lift_charge}}
-                  .padding-bottom-xs 合同生成日期：{{item.create_time}}
+                  .padding-bottom-xs 吊费：¥{{item.liftingFeeMoney}}
+                  .padding-bottom-xs 合同生成日期：{{item.saleContractDate}}
                 div
-                  .bill-btn.round(@click.stop="jumpRestore(item.no)") 恢复
+                  .bill-btn.round(@click.stop="jumpRestore(item.saleContractId)") 恢复
           .padding.text-gray.ft-13.text-center(v-if="loading") 努力加载中...
           .padding.text-gray.ft-13.text-center(v-if="finished") 加载完成
       .text-center.c-gray.pt-100(v-else)
@@ -94,24 +94,29 @@ export default {
   //   this.loadData()
   // },
   methods: {
+    // 点击跳转合同详情
     jumpDetail (item) {
-      this.jump(`/pages/billDetail/main?id=${item.no}`)
+      this.jump(`/pages/billDetail/main?contractId=${item.saleContractId}`)
     },
-    jumpRestore (no) {
+    // 点击恢复合同
+    jumpRestore (saleContractId) {
       if (this.disabled) return false
       this.disabled = true
       this.statisticRequest({ event: 'click_app_recycle_restore' })
-      this.jump('/pages/billRecycleDetail/main?no=' + no)
+      this.jump('/pages/billRecycleDetail/main?no=' + saleContractId)
     },
+    // 搜索合同
     searchOrder () {
       this.statisticRequest({ event: 'click_app_recycle_search' })
       this.currentPage = 0
       this.loadData()
     },
+    // 上拉加载
     loadMore () {
       this.currentPage++
       this.loadData()
     },
+    // 加载数据
     loadData () {
       if (this.currentPage === 0) {
         this.isload = true

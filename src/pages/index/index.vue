@@ -126,6 +126,10 @@ export default {
         }
       }
     }
+    // 超时未提货物收费标准
+    if (this.isLogin && this.currentUser.type === 'buyer' && !this.currentUser.userGeneralAgreement) {
+      this.modalShow = true
+    }
   },
   onShow (opt) {
     this.echartHeight = (400 / 345) * (this.screenWidth - 30)
@@ -272,10 +276,8 @@ export default {
     },
     // 超时未提货物模态框回调
     modalCb (flag) {
-      this.ironRequest(this.apiList.xy.updateRule.url, { user_id: this.currentUser.user_id }, this.apiList.xy.updateRule.method).then(res => {
-        if (res.returncode === '0') {
-          console.log('updateRule_res=====>' + JSON.stringify(res))
-        }
+      this.httpPost(this.apiList.zf.updatePersonAgreement, {userGeneralAgreement: true}).then(res => {
+        console.log('updateRule_res=====>' + JSON.stringify(res))
       }).catch(e => {
         console.log('updateRule_e=====>' + e)
       })

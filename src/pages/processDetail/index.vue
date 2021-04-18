@@ -57,6 +57,7 @@ export default {
       dateVal: '',
       material: '',
       rowCount: [],
+      rowCountList: [],
       originVal: [],
       remark: '',
       btnDisable: false,
@@ -85,6 +86,7 @@ export default {
     this.dateVal = this.date2Str(new Date())
     if (this.processId) {
       this.rowCount = []
+      this.rowCountList = []
       const paramsObj = {
         id: this.processId
       }
@@ -103,25 +105,6 @@ export default {
         })
         this.rowCount = list
       })
-      // this.ironRequest('processDetail.shtml?process_no=' + this.pno, {}, 'get').then(resp => {
-      //   if (resp.returncode === '0') {
-      //     this.pObj = resp.process
-      //     const list = []
-      //     this.processType = this.pObj['type']
-      //     this.pObj.items.map(item => {
-      //       const obj = {
-      //         height: item.weight,
-      //         width: item.width,
-      //         length: item.length,
-      //         sheet_count: item.sheet
-      //       }
-      //       list.push(obj)
-      //     })
-      //     this.rowCount = list
-      //   }
-      // }).catch(err => {
-      //   this.showMsg(err || '网络错误')
-      // })
     } else {
       this.rowCount = [{ height: '', width: '', length: '', sheet_count: '' }]
     }
@@ -136,6 +119,7 @@ export default {
     this.dateVal = ''
     this.material = ''
     this.rowCount = []
+    this.rowCountList = []
     this.originVal = []
     this.remark = ''
     this.btnDisable = false
@@ -144,10 +128,27 @@ export default {
     this.pObj = {}
   },
   methods: {
+    // 时间选择器回调
     dateCb (e) {
       console.log('dateCb', e)
       this.dateVal = e.mp.detail.value
     },
+    // 普通选择器回调
+    processTypeCb (e) {
+      this.processType = this.pTypeArray[e.mp.detail.value]
+    },
+    // 子组件中触发回调
+    pickerItemCb (type, idx) {
+      if (type === 'add') {
+        // 添加子组件数组
+        this.rowCount.push({ height: '', width: '', length: '', sheet_count: '' })
+      } else {
+        // 删除子组件数组
+        this.rowCount[idx] = null
+      }
+      this.$forceUpdate()
+    },
+    // 删除加工
     delProcess () {
       const self = this
       if (!this.btnDisable) {
@@ -164,58 +165,7 @@ export default {
         })
       }
     },
-    processTypeCb (e) {
-      this.processType = this.pTypeArray[e.mp.detail.value]
-    },
-    pickerItemCb (type, idx) {
-      if (type === 'add') {
-        this.rowCount.push({ height: '', width: '', length: '', sheet_count: '' })
-      } else {
-        this.rowCount[idx] = null
-      }
-      this.$forceUpdate()
-    },
-    createProcess () {
-      if (this.validateItemsNull()) {
-        // 厚度
-        const heigthStr = this.rowObj.height.toString()
-        // 宽度
-        const widthStr = this.rowObj.width.toString()
-        // 长度
-        const lenStr = this.rowObj.length.toString()
-        // 张数
-        const sheeetStr = this.rowObj.sheet_count.toString()
-        let pway = 1
-        if (this.processType === '镀锌') pway = 2
-        let body = {
-          height: heigthStr,
-          width: widthStr,
-          length: lenStr,
-          sheet_count: sheeetStr,
-          way: pway,
-          delivery_time: this.dateVal,
-          material: this.material,
-          remark: this.remark,
-          user_id: this.currentUser.user_id
-        }
-        if (!this.btnDisable) {
-          this.btnDisable = true
-          const self = this
-          this.ironRequest('process.shtml', body, 'post').then(resp => {
-            if (resp && resp.returncode === '0') {
-              self.showMsg('加工发布成功')
-              setTimeout(() => {
-                self.btnDisable = false
-                self.back()
-              })
-            } else {
-              self.btnDisable = false
-              self.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
-            }
-          })
-        }
-      }
-    },
+    // 参数校验
     validateItemsNull () {
       let result = true
       let $myDate = new Date()
@@ -223,7 +173,9 @@ export default {
       let $day = $myDate.getDate()
       if ($month < 10) $month = '0' + $month
       if ($day < 10) $day = '0' + $day
+      // 当前时间
       let $dayDate = Number(($myDate.getFullYear() + $month.toString() + $day))
+      // 交货时间
       let $dateVal = Number(this.dateVal.replace(/[-]/g, ''))
       if (this.dateVal.trim().length === 0) {
         this.showMsg('必填项不能为空')
@@ -236,15 +188,16 @@ export default {
         result = false
       } else {
         // this.originVal = []
-        this.rowObj = {
-          height: [],
-          width: [],
-          length: [],
-          sheet_count: []
-        }
+        // this.rowObj = {
+        //   height: [],
+        //   width: [],
+        //   length: [],
+        //   sheet_count: []
+        // }
         const self = this
-        this.rowCount.map((item, index) => {
+        this.rowCountList = this.rowCount.map((item, index) => {
           if (item) {
+            // 获取每一个子组件中的copyRow数据
             const row = self.$refs[`processItem_${index}`][0].copyRow
             Object.keys(row).forEach((key) => {
               if (row[key].trim().length === 0) {
@@ -253,13 +206,65 @@ export default {
                 throw Error('必填项不能为空')
               } else {
                 // this.originVal.push(row)
-                self.rowObj[key].push(row[key].trim())
+                // self.rowObj[key].push(row[key].trim())
+                item[key] = row[key]
               }
             })
+            return item
           }
         })
       }
       return result
+    },
+    // 提交加工
+    createProcess () {
+      // 参数校验是否通过
+      if (this.validateItemsNull()) {
+        var onlineProcessDetailListC = []
+        var processTypeNum = '01'
+        if (this.processType === '开平') {
+          processTypeNum = '01'
+          onlineProcessDetailListC = this.rowCountList.map((item, index) => {
+            return {
+              thickness: item.height,
+              width: item.width,
+              length: item.length,
+              pieces: item.sheet_count
+            }
+          })
+        } else {
+          processTypeNum = '02'
+          onlineProcessDetailListC = this.rowCountList.map((item, index) => {
+            return {
+              productBrandName: item.height,
+              specification: item.width,
+              length: item.length,
+              pieces: item.sheet_count
+            }
+          })
+        }
+        var body = {
+          processType: processTypeNum,
+          deliveryDate: this.dateVal,
+          productTextureName: this.material,
+          remarks: this.remark,
+          onlineProcessDetailList: onlineProcessDetailListC
+        }
+        if (!this.btnDisable) {
+          this.btnDisable = true
+          const self = this
+          this.httpPost(this.apiList.zf.addOnlineProcess, body).then(res => {
+            self.showMsg('加工发布成功')
+            setTimeout(() => {
+              self.btnDisable = false
+              self.back()
+            })
+          }).catch(err => {
+            self.btnDisable = false
+            self.showMsg(err.message)
+          })
+        }
+      }
     }
   },
   destroyed () {

@@ -67,38 +67,49 @@ export default {
     ...mapActions([
       'exitUser'
     ]),
+    // 弹窗回调
     alertCb () {
       this.exitUser()
       this.bindClick = true
       this.redirect('/pages/account/login/main?type=2')
     },
+    // 切换tab
     selectTab (val) {
       if (val === 2 && !this.canActive) {
         return
       }
       this.tabIndex = val
     },
-    async nextStep () {
-      try {
-        if (this.code1.trim().length === 0) {
-          this.showMsg('验证码不能为空')
-          return
+    // 点击下一步
+    nextStep () {
+      console.log(this.currentUser.phone)
+      console.log(this.code1)
+      console.log(this.apiList.zf.checkoutVerificationCode)
+      if (this.code1.trim().length === 0) {
+        this.showMsg('验证码不能为空')
+        return
+      }
+      if (this.nextClick) {
+        this.nextClick = false
+        let params = {
+          phone: this.currentUser.phone,
+          verificationCode: this.code1
         }
-        if (this.nextClick) {
-          this.nextClick = false
-          await this.ironRequest(this.apiList.xy.validCaptcha.url + '?user_phone=' + this.currentUser.phone + '&valid_code=' + this.code1, {}, this.apiList.xy.validCaptcha.method)
+        this.httpGet(this.apiList.zf.checkoutVerificationCode, params).then(res => {
           this.tabIndex = 2
           this.nextClick = true
           this.canActive = true
           this.newPhone = ''
           this.code2 = ''
           this.bindClick = true
-        }
-      } catch (e) {
-        this.nextClick = true
-        this.showMsg(e)
+        }).catch((e) => {
+          console.log(e)
+          this.nextClick = true
+          this.showMsg(e)
+        })
       }
     },
+    // 确认绑定
     async bindPhone () {
       try {
         if (this.newPhone.trim().length === 0) {
@@ -115,13 +126,19 @@ export default {
         }
         if (this.bindClick) {
           this.bindClick = false
-          await this.ironRequest(this.apiList.xy.bindNewPhone.url, { user_id: this.currentUser.user_id, user_phone: this.newPhone, msg_code: this.code2 }, this.apiList.xy.bindNewPhone.method)
+          let params = {
+            phone: this.newPhone,
+            verificationCode: this.code2
+          }
+          let res = await this.httpPost(this.apiList.zf.updatePersonInfo, params)
+          console.log('更新用户手机号+++++++', res)
           this.exitUser()
           this.alertShow = true
         }
       } catch (e) {
+        // console.log(e)
         this.bindClick = true
-        this.showMsg(e)
+        this.showMsg(e.message)
       }
     }
   }

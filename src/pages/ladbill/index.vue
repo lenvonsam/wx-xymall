@@ -7,7 +7,7 @@ div
         .flex.align-center
           .cuIcon-search
           input.full-width.padding-left-sm(v-model="search", type="text", placeholder="品名/提单号/车牌号", confirm-type="search", @confirm="searchOrder")
-          .close-icon(@click="search = ''", v-if="search")
+          .close-icon(@click="clearSearch", v-if="search")
             .cuIcon-roundclosefill.ft-18
       .search-btn.text-blue.padding-left-sm(@click="searchOrder") 搜索
     scroll-view.nav(scroll-x, style="height: 90rpx")
@@ -108,7 +108,8 @@ export default {
         billLadingStatus: '',
         saleLadingNo: '',
         carNo: '',
-        saleContractNo: ''
+        saleContractNo: '',
+        keywords: ''
       }
     }
   },
@@ -124,6 +125,7 @@ export default {
     this.swiperHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 170 + 'rpx'
     this.loading = false
     this.swiperCount = 0
+    // console.log('tag', this.$root.$mp.query.tabName)
     if (this.$root.$mp.query.tabName) this.tabName = this.$root.$mp.query.tabName
     const idx = this.billTab.findIndex(item => item.status === this.tabName)
     this.swiperCount = idx
@@ -147,6 +149,10 @@ export default {
     ]
   },
   methods: {
+    clearSearch () {
+      this.search = ''
+      this.queryObj.keywords = ''
+    },
     selectTabs (item, idx) {
       this.tabName = item.status
       this.swiperCount = idx
@@ -237,6 +243,7 @@ export default {
         }, 300)
       }
     },
+    // 加载数据
     loadData () {
       const self = this
       if (this.currentPage === 1) {
@@ -254,9 +261,13 @@ export default {
       if (this.tabName !== '-2') {
         body.status = this.tabName
       }
+
+      console.log('>>>>>>>>+++++++')
+      console.log('queryObj', this.queryObj)
+
       if (this.search.trim().length > 0) {
         // body.search = this.search
-        self.queryObj.search = this.search
+        self.queryObj.keywords = this.search
       }
 
       // if (this.tdNo.trim().length > 0) {

@@ -170,6 +170,7 @@ export default {
        * 已完善信息账号可打开“我的”
        * 未完善信息账号点击“我的”提示去完善信息 */
       this.refreshUser()
+
       // if (self.currentUser.userStatus === '01') {
       //   setTimeout(() => {
       //     self.jump('/pages/account/companyUpdate/main?type=2')
@@ -313,6 +314,11 @@ export default {
       try {
         const res = await this.httpPost(this.apiList.zf.getPersonInfo, {})
         this.setUser({ user: res.data })
+        // 超时未提货物模态框
+        if (this.isLogin && this.currentUser.type === 'buyer' && !this.currentUser.userGeneralAgreement) {
+          this.ruleModalShow = true
+        }
+        // 信息未完善提示
         if (this.currentUser.userStatus === '01') {
           this.alertText = '您还需要完善公司信息才能正常工作'
           this.alertShow = true
@@ -420,10 +426,8 @@ export default {
     },
     // 超时未提货物收费标准模态框回调
     ruleModalCb (flag) {
-      this.ironRequest(this.apiList.xy.updateRule.url, { user_id: this.currentUser.user_id }, this.apiList.xy.updateRule.method).then(res => {
-        if (res.returncode === '0') {
-          console.log('updateRule_res=====>' + JSON.stringify(res))
-        }
+      this.httpPost(this.apiList.zf.updatePersonAgreement, {userGeneralAgreement: true}).then(res => {
+        console.log('updateRule_res=====>' + JSON.stringify(res))
       }).catch(e => {
         console.log('updateRule_e=====>' + e)
       })

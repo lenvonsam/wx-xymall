@@ -8,11 +8,11 @@ div
   .padding-left-sm.padding-right-sm.ft-12(style="background: #FEF7E7; line-height: 70rpx; height: 70rpx", v-if="tabName == '1'")
     span.text-orange 友情提示：仅展示允许修改的合同，修改后出库进行结算
   template(v-if="isload")
-    time-line(type="mallist")  
-  template(v-else) 
+    time-line(type="mallist")
+  template(v-else)
     template(v-if="listData.length > 0")
       iron-scroll(@scrolltolower="loadMore", :height="scrollHeight", heightUnit="rpx", :refresh="true", @onRefresh="onRefresh", :loadFinish="loadFinish")
-        //- scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: screenHeight - 140 +'px'}")  
+        //- scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: screenHeight - 140 +'px'}")
         .padding-top-sm
           .padding-sm.bg-white.margin-bottom-sm(@click="jumpModifyDetail(item)", v-for="(item, itemIdx) in listData", :key="itemIdx")
             .flex.align-center
@@ -29,7 +29,7 @@ div
                 .bill-btn.round(v-else, style="width: 160rpx") {{tabName == '1' ? '申请修改' : '去确认'}}
     .text-center.c-gray.pt-100(v-else)
       empty-image(url="bill_empty.png", className="img-empty")
-      div 您暂时没有相关合同           
+      div 您暂时没有相关合同
 </template>
 <script>
 import { mapState } from 'vuex'
@@ -90,6 +90,7 @@ export default {
       this.currentPage = 0
       this.loadData(done)
     },
+    // 切换tab
     selectTabs (item) {
       this.tabName = item.status
       this.currentPage = 0
@@ -106,6 +107,7 @@ export default {
     },
     batchPay () {
     },
+    // 获取合同列表
     loadData (done) {
       this.loadFinish = 1
       if (this.currentPage === 0) {
@@ -151,6 +153,7 @@ export default {
       })
       if (done) done()
     },
+    // 上拉加载
     loadMore () {
       const me = this
       this.throttle(function () {

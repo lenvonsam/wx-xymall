@@ -236,7 +236,7 @@ export default {
                 self.companyInfo.cust_name = res.unitName // 单位名称
                 // self.companyInfo.contact_phone = res.unitPhone
                 self.companyInfo.linkman = res.legalPerson // 联系人
-                self[key] = self.imgOuterUrl + '/api/foundation/public/user/picture/view?path=' + res.fileAddress
+                self[key] = res.fileAddress
                 self.postForm = Object.assign(self.postForm, res)
               }).catch(e => {
                 console.log(e.message)
@@ -247,7 +247,7 @@ export default {
               url = self.apiList.zf.uploadImage
               self.uploadFile(url, tempFilePaths[0], updateType, '02').then(res => {
                 console.log(res)
-                self[key] = self.imgOuterUrl + '/api/foundation/public/user/picture/view?path=' + res.attachPath
+                self[key] = res.attachPath
                 self.postForm = Object.assign(self.postForm, res)
               }).catch(e => {
                 console.log(e.message)

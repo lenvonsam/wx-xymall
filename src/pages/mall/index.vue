@@ -352,16 +352,20 @@ export default {
     if (this.isLogin) {
       // this.setCartCount(this.currentUser.user_id)
       // console.log('mall_state.currentUser======>' + JSON.stringify(this.currentUser))
-      this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(res => {
-        if (res.returncode === '0') {
-          console.log('mall.vue_接口返回_rule=====>' + res.rule)
-          if (this.currentUser.type === 'buyer' && res.rule === 0) {
-            this.erpModalShow = true
-          } else {
-            this.erpModalShow = false
-          }
-        }
-      })
+      // this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(res => {
+      //   if (res.returncode === '0') {
+      //     console.log('mall.vue_接口返回_rule=====>' + res.rule)
+      //     if (this.currentUser.type === 'buyer' && res.rule === 0) {
+      //       this.erpModalShow = true
+      //     } else {
+      //       this.erpModalShow = false
+      //     }
+      //   }
+      // })
+      // 超时未提货物收费标准
+      if (this.currentUser.type === 'buyer' && !this.currentUser.userGeneralAgreement) {
+        this.erpModalShow = true
+      }
     } else {
       this.tabDot(0)
     }
@@ -708,10 +712,8 @@ export default {
     },
     // 模态框回调
     erpModalCb (flag) {
-      this.ironRequest(this.apiList.xy.updateRule.url, { user_id: this.currentUser.user_id }, this.apiList.xy.updateRule.method).then(res => {
-        if (res.returncode === '0') {
-          console.log('updateRule_res=====>' + JSON.stringify(res))
-        }
+      this.httpPost(this.apiList.zf.updatePersonAgreement, {userGeneralAgreement: true}).then(res => {
+        console.log('updateRule_res=====>' + JSON.stringify(res))
       }).catch(e => {
         console.log('updateRule_e=====>' + e)
       })

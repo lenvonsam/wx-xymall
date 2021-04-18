@@ -88,6 +88,9 @@ export default {
           state.token = data.token
         }
         state.currentUser = data.user
+
+        console.log('6666++++', data.user.userTypeLogo)
+
         // TODO 待后端接口完善字段，区分当前账号是买家还是卖家
         if (data.user.userTypeLogo === '01') {
           state.currentUser.type = 'buyer'
@@ -95,7 +98,7 @@ export default {
           state.currentUser.type = 'seller'
         }
         // TODO 搜索历史
-        state.currentUser.localSearchs = []
+        // state.currentUser.localSearchs = []
         state.isLogin = true
       } catch (e) {
         console.error('setuser:>>', e)

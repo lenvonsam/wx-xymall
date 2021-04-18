@@ -8,26 +8,26 @@ div
           .col.flex-100 {{subItem.label}}
           .col.text-right {{compObj[subItem.content]}}
       div(v-if="idx==2")
-        template(v-if="compObj['three_in_one'] == 1")
+        template(v-if="compObj['isThreeCertificatesInOne']")
           .bg-white.margin-top-sm
             .text-left.padding-sm.padding-lr(style="flex-direction:column;align-items:flex-start;")
               .col.padding-sm
                 span 三证合一
               .col.full-width.margin-top-sm
-                img.comp-img(:src="imgOuterUrl + compObj.license_pic", v-if="compObj.license_pic", @click="previewImage(imgOuterUrl + compObj.license_pic)", mode="widthFix")
+                img.comp-img(:src="compObj.businessLicense", v-if="compObj.businessLicense", @click="previewImage(compObj.businessLicense)", mode="widthFix")
           .bg-white.margin-top-sm
             .text-left.padding-sm.padding-lr(style="flex-direction:column;align-items:flex-start;")
               .col.padding-sm
                 span 开票资料
               .col.full-width.margin-top-sm
-                img.comp-img(:src="imgOuterUrl + compObj.invoice_pic", v-if="compObj.invoice_pic", @click="previewImage(imgOuterUrl + compObj.invoice_pic)", mode="widthFix")
+                img.comp-img(:src="compObj.invoiceInformation", v-if="compObj.invoiceInformation", @click="previewImage(compObj.invoiceInformation)", mode="widthFix")
         template(v-else)
           .bg-white.margin-top-sm(v-for="(subItem,tidx) in item", :key="tidx")
             .text-left.padding-sm.padding-lr(style="flex-direction:column;align-items:flex-start;")
               .col.padding-sm.padding-lr
                 span {{subItem.label}}
               .col.margin-top-sm.full-width
-                img.comp-img(:src="imgOuterUrl + compObj[subItem.content]", v-if="imgOuterUrl", @click="previewImage(imgOuterUrl + compObj[subItem.content])", mode="widthFix")
+                img.comp-img(:src="compObj[subItem.content]", v-if="imgOuterUrl", @click="previewImage(compObj[subItem.content])", mode="widthFix")
   time-line(v-else, type="mainres")
 </template>
 
@@ -39,40 +39,40 @@ export default {
       compObj: {},
       compInfo: [[{
         label: '公司名称',
-        content: 'cust_name'
+        content: 'unitRegisterName'
       }, {
         label: '公司地址',
-        content: 'address'
+        content: 'unitRegisterAddress'
       }, {
         label: '公司联系人',
-        content: 'linkman'
+        content: 'unitRegisterContacts'
       }, {
         label: '公司电话',
-        content: 'contact_phone'
+        content: 'unitRegisterContactsPhone'
       }], [{
         label: '开户名称',
-        content: 'ac_name'
+        content: 'bankRegisterName'
       }, {
         label: '开户银行',
-        content: 'bank'
+        content: 'bankName'
       }, {
         label: '银行账户',
-        content: 'ac_number'
+        content: 'bankAccount'
       }, {
         label: '税号',
-        content: 'license'
+        content: 'taxNo'
       }], [{
         label: '营业执照',
-        content: 'license_pic'
+        content: 'businessLicense'
       }, {
         label: '税务登记证',
-        content: 'tax_pic'
+        content: 'taxRegistrationCertificate'
       }, {
         label: '组织机构代码证',
-        content: 'orga_pic'
+        content: 'organizationCodeCertificate'
       }, {
         label: '开票资料',
-        content: 'invoice_pic'
+        content: 'invoiceInformation'
       }]]
     }
   },
@@ -83,7 +83,8 @@ export default {
     async remoteCompanyInfo () {
       try {
         this.isload = false
-        this.compObj = await this.ironRequest(this.apiList.xy.companyInfo.url + '?user_id=' + this.currentUser.user_id, {}, this.apiList.xy.companyInfo.method)
+        let res = await this.httpPost(this.apiList.zf.selectCompanyInfo)
+        this.compObj = res.data
         this.isload = true
       } catch (e) {
         this.showMsg(e)
