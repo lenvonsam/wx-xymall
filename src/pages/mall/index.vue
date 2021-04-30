@@ -599,11 +599,15 @@ export default {
         obj.cartQuantityType = obj.onlineQuantityType
         self.showLoading()
         await self.httpPost(this.apiList.zf.addCartItem, obj)
-        self.showMsg('购物车成功')
+        setTimeout(() => {
+          self.showMsg('购物车成功')
+        }, 500)
         self.btnDisable = false
         self.hideLoading()
       } catch (e) {
-        self.showMsg(e.message)
+        setTimeout(() => {
+          self.showMsg(e.message)
+        }, 500)
         self.hideLoading()
         self.btnDisable = false
       }

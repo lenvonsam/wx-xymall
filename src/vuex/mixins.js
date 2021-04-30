@@ -155,7 +155,7 @@ const wxMixins = {
       })
     },
     // 显示消息提示框
-    showMsg (msg, type = 'none', duration = 3000) {
+    showMsg (msg, type = 'none', duration = 2000) {
       mpvue.showToast({
         title: msg,
         icon: type,
