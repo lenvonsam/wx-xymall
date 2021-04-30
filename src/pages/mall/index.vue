@@ -91,7 +91,7 @@ div
   //- 商城使用引导
   modal-intro(v-model="modalIntroShow", :images="introImages", :cb="modalIntroCb")
   //- cart-ball(v-model="ballValue", :cb="ballCb")
-  modal(v-model="erpModalShow", @cb="erpModalCb", :title="erpModalTitle" :btns="btn")
+  // modal(v-model="erpModalShow", @cb="erpModalCb", :title="erpModalTitle" :btns="btn")
     div
       .padding-15 {{erpModalMsg}}
   modal(v-model="modalShow", :title="modalTitle", :btns="modalBtns", @cb="modalCb")

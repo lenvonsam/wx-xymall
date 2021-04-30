@@ -101,7 +101,7 @@ div
   modal(v-model="modalShow", @cb="modalCb")
     .padding-sm {{modalMsg}}
   //- alert(:title="ruleModalTitle" :msg="ruleModalMsg", v-model="ruleModalShow", :cb="ruleModalCb")
-  modal(v-model="ruleModalShow", @cb="ruleModalCb", :title="ruleModalTitle" :btns="btn")
+  // modal(v-model="ruleModalShow", @cb="ruleModalCb", :title="ruleModalTitle" :btns="btn")
     div
       .padding-15 {{ruleModalMsg}}
 </template>

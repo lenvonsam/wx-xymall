@@ -8,7 +8,7 @@
   //- modal(v-model="alertShow", @cb="modalCb")
     .padding-sm 您未登录,请先登录
   //- alert(msg="您未登录,请先登录", v-model="alertShow", :cb="alertCb")
-  modal(v-model="modalShow", @cb="modalCb", :title="modalTitle" :btns="btn")
+  // modal(v-model="modalShow", @cb="modalCb", :title="modalTitle" :btns="btn")
     div
       .padding-15 {{modalMsg}}
 </template>

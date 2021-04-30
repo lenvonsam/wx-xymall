@@ -40,7 +40,7 @@ div
   modal-intro(v-model="shareModalShow", :images="introImages", type="home")
   //- alert(msg="资料提交成功,请耐心等待审核", v-model="alertShow")
   //- modal-input(v-model="alertShow")
-  modal(v-model="modalShow", @cb="modalCb", :title="modalTitle" :btns="btn")
+  // modal(v-model="modalShow", @cb="modalCb", :title="modalTitle" :btns="btn")
     div
       .padding-15 {{modalMsg}}
 </template>
@@ -127,9 +127,9 @@ export default {
       }
     }
     // 超时未提货物收费标准
-    if (this.isLogin && this.currentUser.type === 'buyer' && !this.currentUser.userGeneralAgreement) {
-      this.modalShow = true
-    }
+    // if (this.isLogin && this.currentUser.type === 'buyer' && !this.currentUser.userGeneralAgreement) {
+    //   this.modalShow = true
+    // }
   },
   onShow (opt) {
     this.echartHeight = (400 / 345) * (this.screenWidth - 30)
