@@ -2,6 +2,7 @@
 div
   nav-bar(:title="pageTitle", :isBack="true")
   template(v-if="isLoad")
+    iron-scroll(@scrolltolower="loadMore", :height="screenHeight - customBar", :loadFinish="loadFinish")
       .padding(v-if="pageType === 'notices'")
         .bg-white.margin-bottom(v-for="(data,idx) in listData", :key="idx", style="box-shadow: 0px 0px 2.5px rgba(7,1,2,0.04)", @click="jump('/pages/h5/main?title=公告详情&type=noticeDetail&id=' + data.id)")
           .padding.border-bottom-line
@@ -39,7 +40,6 @@ div
 
 <script>
 import { mapState, mapActions } from 'vuex'
-// -iron-scroll(@scrolltolower="loadMore", :height="screenHeight - customBar", :loadFinish="loadFinish")
 
 export default {
   data () {
@@ -48,7 +48,7 @@ export default {
       pageTitle: '',
       // notice 型云公告 noticeList 通知列表
       pageType: 'notices',
-      currentPage: 0,
+      currentPage: 1,
       listData: [],
       loadFinish: 0,
       listMapKey: {
@@ -85,7 +85,7 @@ export default {
     console.log('query:>>', query)
     if (query.title) this.pageTitle = query.title
     if (query.type) this.pageType = query.type
-    this.currentPage = 0
+    this.currentPage = 1
     this.listData = []
     this.getListData()
   },
@@ -114,14 +114,15 @@ export default {
     },
     async getListData () {
       try {
-        if (this.currentPage === 0) this.isLoad = false
+        if (this.currentPage === 1) this.isLoad = false
         this.loadFinish = 1
         let url = this.apiList.zf[this.pageType]
         let params = {}
         if (this.pageType === 'notices') {
           params = {
             pageNum: this.currentPage,
-            pageSize: 8
+            pageSize: 8,
+            newsType: '01'
           }
         }
         if (this.pageType === 'noticeList') {
@@ -131,16 +132,16 @@ export default {
         console.log('get data', data)
         this.isLoad = true
         const arr = data.data
-        if (this.currentPage === 0 && arr.length > 0) {
+        if (this.currentPage === 1 && arr.length > 0) {
           this.listData = arr
-        } else if (this.currentPage > 0 && arr.length > 0) {
+        } else if (this.currentPage > 1 && arr.length > 0) {
           arr.map(itm => {
             this.listData.push(itm)
           })
         } else {
           this.currentPage--
-          if (this.currentPage < 0) this.currentPage = 0
-          if (this.currentPage > 0) this.loadFinish = 2
+          if (this.currentPage < 1) this.currentPage = 1
+          if (this.currentPage > 1) this.loadFinish = 2
         }
         if (this.listData.length < 10 || this.pageType === 'searchWithdraw') this.loadFinish = 3
 

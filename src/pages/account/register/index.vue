@@ -126,7 +126,7 @@ export default {
             // this.setUser(newUser)
 
             // 存储用户token和信息user
-            // this.setUser({token: res.data.token, user: res.data.user})
+            this.setUser({token: res.data.token, user: res.data.user})
             this.confirm({ content: '注册成功，但您是新用户，请先完成公司信息' }).then(res => {
               me.canClick = true
               me.resetVal()

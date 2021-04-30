@@ -32,6 +32,7 @@ export default {
       'setUser'
     ]),
     bindWxBtn () {
+      console.log('aaaa++++')
       let self = this
       if ((Date.now() - this.onpresscTime) > 2000) {
         this.onpresscTime = Date.now()
@@ -42,6 +43,42 @@ export default {
         if (self.bindwx) {
           // 微信自动登录接口
           console.log('self.bindwx===>' + self.bindwx)
+          let paramsObj = {
+            openId: self.openId,
+            unionId: mpvue.getStorageSync('unionId')
+          }
+          self.httpGet(self.apiList.zf.wxLogin, paramsObj).then(res => {
+            self.setUser({token: res.data.token, user: res.data.user})
+            self.httpPost(self.apiList.zf.getPersonInfo, {}).then(res => {
+              self.setUser({user: res.data})
+              if (res.data.userStatus === '01') {
+                self.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
+                  if (res === 'confirm') {
+                    self.jump('/pages/account/companyUpdate/main')
+                  } else {
+                    self.tab('/pages/me/main')
+                  }
+                })
+              } else {
+                this.showMsg('登录成功')
+                setTimeout(function () {
+                  self.canClick = true
+                  if (self.backType === 1) {
+                    console.log('+++++++aaa')
+                    self.back()
+                  } else {
+                    console.log('+++++++bbb')
+                    self.tab('/pages/index/main')
+                  }
+                }, 500)
+              }
+            })
+          }).catch(e => {
+            console.log('微信未绑定过手机号，登陆失败——+++')
+            console.log(e)
+            self.jump('/pages/account/wxBind/main')
+          })
+
           // self.ironRequest(this.apiList.xy.wxLogin.url, { openid: self.openId }, this.apiList.xy.wxLogin.method).then((res) => {
           //   console.log('res===>' + JSON.stringify(res))
           //   self.setUser(res)
@@ -62,37 +99,6 @@ export default {
           //   self.jump('/pages/account/wxBind/main')
           //   // modal提示是否绑定
           // })
-          let paramsObj = {
-            openId: self.openId,
-            unionId: mpvue.getStorageSync('unionId')
-          }
-          self.httpGet(self.apiList.zf.wxLogin, paramsObj).then(data => {
-            self.setUser({token: data.data.token, user: data.data.user})
-            self.httpPost(self.apiList.zf.getPersonInfo, {}).then(res => {
-              self.setUser({user: res.data})
-              if (res.data.userStatus === '01') {
-                self.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
-                  if (res === 'confirm') {
-                    self.jump('/pages/account/companyUpdate/main')
-                  } else {
-                    self.tab('/pages/me/main')
-                  }
-                })
-              } else {
-                this.showMsg('登录成功')
-                setTimeout(function () {
-                  self.canClick = true
-                  if (self.backType === 1) {
-                    self.back()
-                  } else {
-                    self.tab('/pages/index/main')
-                  }
-                }, 500)
-              }
-            })
-          }).catch(e => {
-            console.lgo(e)
-          })
         }
       } else {
         self.showMsg('点击过于频繁，请稍等！')

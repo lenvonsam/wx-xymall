@@ -12,21 +12,20 @@ div
   template(v-else)
     template(v-if="listData.length > 0")
       iron-scroll(@scrolltolower="loadMore", :height="scrollHeight", heightUnit="rpx", :refresh="true", @onRefresh="onRefresh", :loadFinish="loadFinish")
-        //- scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: screenHeight - 140 +'px'}")
         .padding-top-sm
           .padding-sm.bg-white.margin-bottom-sm(@click="jumpModifyDetail(item)", v-for="(item, itemIdx) in listData", :key="itemIdx")
             .flex.align-center
-              .ft-16.padding-right-sm {{item.tstc_no}}
-              img.ding-icon(src="/static/images/ding.png", v-if="item.contract_type == 12")
+              .ft-16.padding-right-sm {{item.saleContractNo}}
+              img.ding-icon(src="/static/images/ding.png", v-if="item.payMethod == '02'")
             .flex.justify-between.text-gray.align-center.margin-top-sm
               .col.text-content
-                p {{item.client_name}}
-                p 共{{item.amount}}支，{{item.weight}}吨
-                p 吊费：¥{{item.lift_price}}
+                p {{item.orgName}}
+                p 共{{item.contractAmount}}支，{{item.weight}}吨
+                p 吊费：¥{{item.liftingFeeMoney}}
               .card-right
-                .ft-16.padding-bottom-xs.text-bold.text-black ￥{{item.price}}
-                .text-red.text-right(v-if="item.status === 18") 修改中
-                .bill-btn.round(v-else, style="width: 160rpx") {{tabName == '1' ? '申请修改' : '去确认'}}
+                .ft-16.padding-bottom-xs.text-bold.text-black ￥{{item.inTaxReceiveMoney}}
+                  .text-red.text-right(v-if="item.status === 18") 修改中
+                  .bill-btn.round(v-else, style="width: 200rpx") {{tabName == '1' ? '申请修改' : '去确认'}}
     .text-center.c-gray.pt-100(v-else)
       empty-image(url="bill_empty.png", className="img-empty")
       div 您暂时没有相关合同
@@ -43,7 +42,7 @@ export default {
       ],
       isTabDisabled: false,
       tabName: '1',
-      currentPage: 0,
+      currentPage: 1,
       listData: [],
       isload: false,
       startDate: '',
@@ -54,18 +53,31 @@ export default {
       totalCount: 0,
       allChoosed: false,
       scrollHeight: 0,
-      loadFinish: 0
+      loadFinish: 0,
+      queryAObj: {
+        pageSize: 10,
+        pageNum: 1
+      },
+      queryBObj: {
+        pageSize: 10,
+        pageNum: 1,
+        contractStateType: '03',
+        xingyunContractStatus: ''
+      },
+      postUrl: '',
+      idx: ''
     }
   },
   computed: {
     ...mapState({
-      tempObject: state => state.tempObject
+      tempObject: state => state.tempObject,
+      contractStatus: state => state.contractStatus
     })
   },
   onUnload () {
     this.swiperCount = 0
     this.tabName = '1'
-    this.currentPage = 0
+    this.currentPage = 1
     this.listData = []
     this.finished = true
     this.isload = false
@@ -87,13 +99,13 @@ export default {
   },
   methods: {
     onRefresh (done) {
-      this.currentPage = 0
+      this.currentPage = 1
       this.loadData(done)
     },
     // 切换tab
     selectTabs (item) {
       this.tabName = item.status
-      this.currentPage = 0
+      this.currentPage = 1
       this.listData = []
       this.isTabDisabled = true
       if (this.tabName === '1') {
@@ -110,49 +122,97 @@ export default {
     // 获取合同列表
     loadData (done) {
       this.loadFinish = 1
-      if (this.currentPage === 0) {
-        this.isload = true
+      const self = this
+      let queryObj = {}
+      if (this.tabName === '1') {
+        self.queryAObj.pageNum = this.currentPage
+        queryObj = self.queryAObj
+        this.postUrl = this.apiList.zf.queryAppletContractPage
+        this.idx = 0
       } else {
-        this.isload = false
+        self.queryBObj.pageNum = this.currentPage
+        queryObj = self.queryBObj
+        this.postUrl = this.apiList.zf.contractList
+        this.idx = 1
       }
-      const body = {
-        user_id: this.currentUser.user_id,
-        status_flag: this.tabName,
-        current_page: this.currentPage,
-        page_size: this.pageSize
-      }
-      console.log(body)
-      const me = this
-      this.ironRequest('contract_edit_app.shtml', body, 'post').then(resp => {
-        if (resp && resp.returncode === '0') {
-          let arr = resp.notices
-          if (arr.length === 0 && me.currentPage === 0) {
-            me.listData = []
-            me.isload = false
-          } else if (arr.length > 0 && me.currentPage === 0) {
-            arr.map(itm => {
-              itm.choosed = false
-            })
-            me.listData = arr
-            me.isload = false
-          } else if (arr.length > 0 && me.currentPage > 0) {
-            arr.map(item => {
-              item.choosed = false
-              me.listData.push(item)
-            })
-          } else {
-            if (me.listData.length >= 10) me.loadFinish = 2
-            me.currentPage--
-          }
-        } else {
-          me.msgShow(resp === undefined ? '网络异常' : resp.errormsg)
-          me.isload = false
+      self.httpPost(this.postUrl, queryObj).then(res => {
+        self.billTab[self.idx].data = []
+        console.log('aaaaa')
+        // this.serverTime = new Date(res.data[0].currentDate.replace(/-/g, '/')).getTime()
+        // console.log(this.serverTime)
+        let arr = res.data
+        console.log('++++++', arr)
+        if (arr.length > 0 && self.currentPage === 1) {
+          const list = []
+          arr.map(item => {
+            item.choosed = false
+            item.status = self.contractStatus.find(c => {
+              return c.id === item.xingyunContractStatus
+            }).name
+            list.push(item)
+          })
+          console.log(list)
+          self.billTab[self.idx].data = list
+          self.listData = list
+          self.isLoad = false
+          console.log('哈哈哈哈哈+++', this.listData)
+        } else if (arr.length === 0 && self.currentPage === 1) {
+          self.listData = []
+          this.billTab[self.idx].data = []
+          self.isload = false
         }
-        this.isTabDisabled = false
-        if (this.listData.length < 10) this.loadFinish = 3
+        self.isTabDisabled = false
+        if (self.billTab[self.idx].data.length < 10) {
+          self.loadFinish = 3
+        }
+        if (done) done()
       })
-      if (done) done()
     },
+    // loadData (done) {
+    //   this.loadFinish = 1
+    //   if (this.currentPage === 0) {
+    //     this.isload = true
+    //   } else {
+    //     this.isload = false
+    //   }
+    //   const body = {
+    //     user_id: this.currentUser.user_id,
+    //     status_flag: this.tabName,
+    //     current_page: this.currentPage,
+    //     page_size: this.pageSize
+    //   }
+    //   console.log(body)
+    //   const me = this
+    //   this.ironRequest('contract_edit_app.shtml', body, 'post').then(resp => {
+    //     if (resp && resp.returncode === '0') {
+    //       let arr = resp.notices
+    //       if (arr.length === 0 && me.currentPage === 0) {
+    //         me.listData = []
+    //         me.isload = false
+    //       } else if (arr.length > 0 && me.currentPage === 0) {
+    //         arr.map(itm => {
+    //           itm.choosed = false
+    //         })
+    //         me.listData = arr
+    //         me.isload = false
+    //       } else if (arr.length > 0 && me.currentPage > 0) {
+    //         arr.map(item => {
+    //           item.choosed = false
+    //           me.listData.push(item)
+    //         })
+    //       } else {
+    //         if (me.listData.length >= 10) me.loadFinish = 2
+    //         me.currentPage--
+    //       }
+    //     } else {
+    //       me.msgShow(resp === undefined ? '网络异常' : resp.errormsg)
+    //       me.isload = false
+    //     }
+    //     this.isTabDisabled = false
+    //     if (this.listData.length < 10) this.loadFinish = 3
+    //   })
+    //   if (done) done()
+    // },
     // 上拉加载
     loadMore () {
       const me = this
@@ -162,9 +222,10 @@ export default {
         me.loadData()
       }, 300)
     },
+    // 跳转修改合同
     jumpModifyDetail (item) {
       if (this.tabName === '1') this.statisticRequest({ event: 'click_app_editorder_apply' })
-      this.jump(`/pages/modifyDetail/main?id=${item.discussid}&type=${this.tabName}`)
+      this.jump(`/pages/modifyDetail/main?contractId=${item.saleContractId}&type=${this.tabName}`)
     }
   }
 }

@@ -23,8 +23,8 @@ div
       .col(@click="payTabs('定金支付')")
         span(:class="payTabsActive === '定金支付' ? 'pay-tab-active' : ''") 定金支付
     .pay-tabs-card
-      .tishi(v-show="payTabsActive === '定金支付'") 定金比例约{{percent}}，请出库后补足尾款
-      
+      .tishi(v-show="payTabsActive === '定金支付'") 定金比例约{{percent}}%，请出库后补足尾款
+
       .pay-tabs-content
         template(v-if="payTabsActive === '全款支付'")
           .title(v-if="currentBalance < payMountInfo && pageType != 'ladPay'")
@@ -32,22 +32,22 @@ div
             span.pl-5.c-gray (货款：{{payMountInfo}}元)
           .title(v-else)
             span.ft-18 货款
-        template(v-else)    
+        template(v-else)
           .title(v-if="currentBalance < frontPrice && pageType != 'ladPay'")
             span.ft-18 需补定金
             span.pl-5.c-gray (定金：{{frontPrice}}，货款：{{payMountInfo}}元)
           .title(v-else)
             span.ft-18 定金
             span.pl-5.c-gray (货款：{{payMountInfo}}元)
-        .price            
+        .price
           span(v-if="(currentBalance < payMountInfo) && freezeMoney != '1' && pageType != 'ladPay' && payTabsActive === '全款支付'") ￥{{payMountBalance}}
           span(v-else-if="(currentBalance < frontPrice) && payTabsActive === '定金支付' && freezeMoney != '1' && pageType != 'ladPay'") ￥{{frontBalance}}
-          span(v-else) ￥{{payTabsActive === '全款支付' ? payMountInfo : frontPrice}} 
+          span(v-else) ￥{{payTabsActive === '全款支付' ? payMountInfo : frontPrice}}
       .pay-pw.flex
         span.ft-16.text-bold 支付密码
         .col.margin-left-sm
           input.full-width(placeholder="请输入支付密码(必填)", type="password", v-model="payPwd")
-  .pay-body        
+  .pay-body
     .pay-area(v-if="pageType != 'balance' && pageType !== 'ladPay' && pageType !=='offlinePay' && (currentBalance > payMountInfo)")
       q-btn.no-shadow.full-width.r-3(color="primary",big, @click="billPay") 去支付
     .offline-pay-area(v-else)
@@ -70,13 +70,13 @@ div
           img.choose-icon(src="/static/images/btn_ck_n.png", v-else)
           span.padding-left-xs 发送供应商开户信息至手机
       .footer(v-if="pageType == 'offlinePay'")
-        button.main-btn(@click="billPay") 
+        button.main-btn(@click="billPay")
           span(v-if="currentBalance < payMountInfo") 已线下转账补款
           span(v-else) 点击付款
         .info.c-gray.padding-top-xs.text-center
           span(v-if="currentBalance < payMountInfo") 点击按钮，线下收到货款，此单自动完成
           span(v-else) 点击按钮，此单自动完成
-    alert(:msg="alertTitle", :cb="alertCb", v-model="alertShow")     
+    alert(:msg="alertTitle", :cb="alertCb", v-model="alertShow")
 </template>
 <script>
 import { mapState } from 'vuex'
@@ -104,7 +104,7 @@ export default {
       payMountInfo: 0,
       payMountBalance: 0,
       frontBalance: 0,
-      paymentType: '01' // 支付方式：01全款支付,02定向支付,03白条支付
+      paymentType: '01' // 支付方式：01全款支付,02定金支付,03白条支付
     }
   },
   computed: {
@@ -139,6 +139,9 @@ export default {
     }
     this.httpPost(this.apiList.zf.contractOrderDetail, paramsObj).then(res => {
       this.payMountInfo = res.data.contractMoney
+      // this.currentBalance = resData.unitMoney
+      this.percent = res.data.depositPaymentRatio
+      this.frontPrice = res.data.deposit
       if (Number(this.currentBalance) < this.payMountInfo) {
         this.chooseType = 'offpay'
       } else {
@@ -213,11 +216,11 @@ export default {
           this.showMsg('请输入支付密码')
           return
         }
-        if (!this.pwdReg.test(this.payPwd)) {
-          this.showMsg('请输入6-12位密码，只能是数字、字母和下划线')
-          this.canHttp = false
-          return
-        }
+        // if (!this.pwdReg.test(this.payPwd)) {
+        //   this.showMsg('请输入6-12位密码，只能是数字、字母和下划线')
+        //   this.canHttp = false
+        //   return
+        // }
       }
       if (!this.btnDisable) {
         // let ordernos = this.orderNos.join(',')
@@ -231,7 +234,13 @@ export default {
             paymentType: self.paymentType,
             paymentPassword: self.payPwd
           }
-          console.log(this.chooseType)
+          // console.log(this.chooseType)
+          if (this.payTabsActive === '全款支付') {
+            paramsOnj.paymentType = '01'
+          } else if (this.payTabsActive === '定金支付') {
+            paramsOnj.paymentType = '02'
+            paramsOnj.depositRatio = this.percent
+          }
           self.httpPost(this.apiList.zf.contractOrderPayment, paramsOnj)
             .then(() => {
               self.showMsg('支付成功！')
@@ -375,6 +384,7 @@ export default {
         })
       }
     },
+    // 切换支付方式
     payTabs (flag) {
       this.payTabsActive = flag
     }

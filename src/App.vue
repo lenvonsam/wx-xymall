@@ -144,7 +144,7 @@ export default {
       // }
     } else {
       console.log('未登录me.isLogin======>' + me.isLogin)
-      me.showMsg('登录已失效，请重新登录')
+      // me.showMsg('登录已失效，请重新登录')
     }
     // 获取系统信息
     // 设置自定义customer bar

@@ -60,7 +60,7 @@ div
                       .col
                         span 预计/实提：
                         span.ml-5 {{itm.quantityType === '02' ? itm.ladingPoundWeight : itm.ladingManagerWeight}}吨 / {{itm.quantityType === '02' ? itm.outPoundWeight : itm.outManagerWeight}}吨
-                      span {{itm.outAmount}}支
+                      span {{itm.ladingAmount}}支
                 .row.padding-sm
                   span 共 {{item.outAmount}} 支
                   .col.text-right

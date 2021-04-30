@@ -30,7 +30,7 @@ export default {
     timeCount: {
       type: Number,
       required: false,
-      default: 60
+      default: 90
     },
     cb: {
       default: false

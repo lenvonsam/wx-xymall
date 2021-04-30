@@ -25,12 +25,12 @@ div
                       .pb-half-rem {{item.title}}
                       .text-gray
                         span 重量：
-                        span.ml-5 {{(tabName == '0' || tabName == '1') ? item.settlementWeight : item.invoiceWeight}}吨
+                        span.ml-5 {{item.settlementWeight}}吨
                         span.ml-5 数量：
-                        span.ml-5 {{(tabName == '0' || tabName == '1') ? item.settlementAmount : item.invoiceAmount}}支
+                        span.ml-5 {{item.settlementAmount}}支
                   .text-right.flex.flex-direction.align-end(:class="tabName !== '3' ? 'justify-between' : 'justify-center'")
-                    .text-blue.ft-18 ￥{{(tabName == '0' || tabName == '1') ? item.settleTotalMoney : item.invoiceTotalMoney}}
-                    .invoice-detail-btn.margin-top-sm(v-if="tabName != '0' && item.settleTotalMoney > 0", @click="jumpDetail(item)") 查看详情
+                    .text-blue.ft-18 ￥{{item.settleTotalMoney}}
+                    .invoice-detail-btn.margin-top-sm(v-if="tabName != '0' && item.settleTotalMoney > 0", @click.stop="jumpDetail(item)") 查看详情
                     .text-gray(v-if="tabName !== '3'") 吊费：￥{{item.hangingFeeMoney}}
             .padding.text-gray.ft-13.text-center(v-if="loading") 努力加载中...
             .padding.text-gray.ft-13.text-center(v-if="finished") 加载完成
@@ -127,6 +127,7 @@ export default {
     this.configVal({ key: 'tempObject', val: '' })
   },
   onShow () {
+    console.log('打印当前tabName+++', this.tempObject.tabName)
     // this.listData = []
     this.disabledBtn = false
     if (this.tempObject.tabName) {
@@ -250,7 +251,7 @@ export default {
       // this.configVal({key: 'tempObject', val: obj})
       // this.jump({path: '/invoice/detail', query: {id: this.tabName}})
       let ids = obj.sourceBusiBillNo
-      if (this.tabName === '1') {
+      if (this.tabName !== '0') {
         this.jump('/pages/invoiceDetail/main?tabName=' + this.tabName + '&ids=' + ids + '&name=查看详情')
       }
       // this.ironRequest('invoiceDetail.shtml?id=' + obj.id, {}, 'get').then(resp => {
@@ -274,14 +275,32 @@ export default {
       const self = this
       this.disabledBtn = true
       if (filterArray.length > 0) {
+        // 合同编号
         let ids = filterArray.map(item => item.sourceBusiBillNo).join(',')
+        // 申请发票编号
+        let sds = filterArray.map(item => {
+          return {
+            settlementUnitId: item.settlementUnitId,
+            sourceBusiBillNo: item.sourceBusiBillNo
+          }
+        })
+        // 发票确认编码
+        let sus = filterArray.map(item => {
+          return item.arInvocieId
+        })
+        sds = JSON.stringify(sds)
+        sus = JSON.stringify(sus)
+        let obj = {
+          tabName: this.tabName
+        }
+        self.configVal({ key: 'tempObject', val: obj })
         if (this.tabName === '0') {
-          this.jump('/pages/invoiceDetail/main?tabName=' + this.tabName + '&ids=' + ids)
+          this.jump('/pages/invoiceDetail/main?tabName=' + this.tabName + '&ids=' + ids + '&sds=' + sds + '&sus=' + sus)
           // 发票申请
           // let title = filterArray[0].title
           // let type = filterArray[0].type
           // 发票编号
-          let nos = filterArray.map(item => item.settlementUnitId).join(',')
+          // let nos = filterArray.map(item => item.settlementUnitId).join(',')
           // // 总金额
           // let totalPrice = filterArray.map(item => item.settleTotalMoney).reduce((a, b) => a + b)
           // totalPrice = this.$toFixed(totalPrice, 2)
@@ -298,34 +317,34 @@ export default {
           //   title,
           //   type
           // }
-          if (nos.split(',').length === 1) {
-            // self.httpPost(self.apiList.zf.invoiceAdd, obj).then(res => {
-            //   debugger
-            //   console.log(res)
-            // })
-            // this.ironRequest('invoiceDetail.shtml?id=' + filterArray[0].id, {}, 'get').then(resp => {
-            //   if (resp.returncode === '0') {
-            //     obj.goods_price = resp.goods_price
-            //     obj.lift_price = resp.lift_price
-            //     obj.invoice_no = resp.invoice_no
-            //     // self.showMsg('申请成功')
-            //     self.configVal({ key: 'tempObject', val: obj })
-            //     // self.back(-1)
-            //     self.jump('/pages/invoiceDetail/main?id=' + self.tabName)
-            //   } else {
-            //     self.showMsg(resp ? resp.errormsg : '网络错误')
-            //     self.disabledBtn = false
-            //   }
-            //   self.allChecked = false
-            // })
-          } else {
-            // this.configVal({ key: 'tempObject', val: obj })
-            this.jump('/pages/invoiceDetail/main?id=' + this.tabName)
-            this.allChecked = false
-          }
+          // if (nos.split(',').length === 1) {
+          //   // self.httpPost(self.apiList.zf.invoiceAdd, obj).then(res => {
+          //   //   debugger
+          //   //   console.log(res)
+          //   // })
+          //   // this.ironRequest('invoiceDetail.shtml?id=' + filterArray[0].id, {}, 'get').then(resp => {
+          //   //   if (resp.returncode === '0') {
+          //   //     obj.goods_price = resp.goods_price
+          //   //     obj.lift_price = resp.lift_price
+          //   //     obj.invoice_no = resp.invoice_no
+          //   //     // self.showMsg('申请成功')
+          //   //     self.configVal({ key: 'tempObject', val: obj })
+          //   //     // self.back(-1)
+          //   //     self.jump('/pages/invoiceDetail/main?id=' + self.tabName)
+          //   //   } else {
+          //   //     self.showMsg(resp ? resp.errormsg : '网络错误')
+          //   //     self.disabledBtn = false
+          //   //   }
+          //   //   self.allChecked = false
+          //   // })
+          // } else {
+          //   // this.configVal({ key: 'tempObject', val: obj })
+          //   this.jump('/pages/invoiceDetail/main?id=' + this.tabName)
+          //   this.allChecked = false
+          // }
         }
         if (this.tabName === '2') {
-          this.jump('/pages/invoiceDetail/main?tabName=' + this.tabName + '&ids=' + ids)
+          this.jump('/pages/invoiceDetail/main?tabName=' + this.tabName + '&ids=' + ids + '&sds=' + sds + '&sus=' + sus + '&name=发票确认')
           // 发票确认
           // this.ironRequest('confirmInvoice.shtml', { user_id: this.currentUser.user_id, id: ids }, 'post').then(resp => {
           //   if (resp && resp.returncode === '0') {
@@ -355,7 +374,12 @@ export default {
       // this.queryObj.busiBillDateEnd = ''
       // this.queryObj.busiBillDateStart = ''
       // this.queryObj.sourceBusiBillNo = ''
-
+      if (this.swiperCount === 2) {
+        self.queryObj.receiptSignFlagList = ['1', '2']
+      }
+      if (this.swiperCount === 3) {
+        self.queryObj.receiptSignFlagList = ['3']
+      }
       self.httpPost(self.postUrl, self.queryObj).then(res => {
         if (res.data.length > 0 && self.currentPage === 1) {
           self.listData = []
@@ -384,12 +408,14 @@ export default {
           })
           this.finished = false
         }
+        console.log('列表数据++++', this.listData)
       }).finally(() => {
         self.loading = false
         self.isload = false
         self.finished = false
         self.hideLoading()
       })
+
       // this.ironRequest('invoiceList.shtml', this.queryObject, 'post').then(resp => {
       //   if (resp && resp.returncode === '0') {
       //     if (resp.invoices.length > 0 && self.currentPage === 0) {
@@ -442,7 +468,7 @@ export default {
       } else if (idx === 2) {
         this.postUrl = this.apiList.zf.confirmReceiptDetails
       } else {
-        this.postUrl = this.apiList.zf.invoiceInvoiced
+        this.postUrl = this.apiList.zf.confirmReceiptDetails
       }
       console.log(idx)
       this.swiperCount = idx

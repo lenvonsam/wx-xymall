@@ -78,6 +78,10 @@ page,
   border-bottom: 1rpx solid #ddd;
 }
 
+.ft-10 {
+  font-size: 20rpx !important;
+}
+
 .ft-11 {
   font-size: 22rpx !important;
 }
@@ -192,6 +196,10 @@ page,
 
 .mt-5 {
   margin-top: 10rpx;
+}
+
+.mt-10 {
+  margin-top: 20rpx;
 }
 
 .mt-35 {

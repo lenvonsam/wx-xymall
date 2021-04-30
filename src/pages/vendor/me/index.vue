@@ -1,6 +1,6 @@
 <template lang="pug">
-div 
-  nav-bar(title="我的", :bgClass="'bg-blue text-white'", leftMenu)
+div
+  nav-bar(title="我的333", :bgClass="'bg-blue text-white'", leftMenu)
     div(slot="leftMenu")
       .relative(@click="jump('/pages/cardList/main?title=消息中心&type=noticeList')", v-if="showNoticeIcon")
         img(src="/static/images/notice_w_icon.png", style="width:30rpx; height: 36rpx")
@@ -14,7 +14,7 @@ div
           .col.padding-left-sm
             .ft-15.padding-bottom-sm {{currentUser.user_mark}}
             .ft-12 {{currentUser.phone}}
-      .cuIcon-right.ft-25   
+      .cuIcon-right.ft-25
     .account.bg-white.contract(@click="jumpBalance")
       .row
         .ft-16.text-bold 合同跟踪
@@ -25,9 +25,9 @@ div
         .col(v-for="(bicon, biconIdx) in billTrackIcons", :key="biconIdx", @click="jumpBicon(bicon.url)")
           .relative.contract-img
             img(:src="bicon.icon", mode="widthFix")
-            .dot(v-if="rowCountObj[bicon.dotKey] > 0", :class="{'max': rowCountObj[bicon.dotKey] > 9}") 
+            .dot(v-if="rowCountObj[bicon.dotKey] > 0", :class="{'max': rowCountObj[bicon.dotKey] > 9}")
               label {{rowCountObj[bicon.dotKey] > 99 ? '99+' : rowCountObj[bicon.dotKey]}}
-          .padding-top-xs.ft-15 {{bicon.name}}  
+          .padding-top-xs.ft-15 {{bicon.name}}
   .padding-sm
     .bg-white.features
       .ft-18.text-bold.padding-sm.padding-top.padding-bottom 功能列表
@@ -35,7 +35,7 @@ div
         .features-card(v-for="(ficon, fIdx) in featuresIcons", :key="fIdx", @click="jump(ficon.url.path)")
           .relative.contract-img(v-if="ficon.icon")
             img(:src="ficon.icon", mode="widthFix")
-            .dot(v-if="rowCountObj[ficon.dotKey] > 0", :class="{'max': rowCountObj[ficon.dotKey] > 9}") 
+            .dot(v-if="rowCountObj[ficon.dotKey] > 0", :class="{'max': rowCountObj[ficon.dotKey] > 9}")
               label {{rowCountObj[ficon.dotKey] > 99 ? '99+' : rowCountObj[ficon.dotKey]}}
           .padding-top-xs.ft-15 {{ficon.name}}
 

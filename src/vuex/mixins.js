@@ -51,6 +51,23 @@ const wxMixins = {
     requestDecode: httpUtil.requestDecode,
     zgRequest: httpUtil.zgRequest,
     ironFileUpload: httpUtil.ironFileUpload,
+    getStatus (xingyunContractStatus) {
+      let contractStatus = [
+        { id: '01', name: '待支付' },
+        { id: '02', name: '待补款' },
+        { id: '03', name: '已付款' },
+        { id: '04', name: '支付中' },
+        { id: '05', name: '待确认' },
+        { id: '06', name: '修改中' },
+        { id: '07', name: '已完成' },
+        { id: '08', name: '已违约' },
+        { id: '09', name: '已取消' }
+      ]
+      let status = contractStatus.find((c) => {
+        return c.id === xingyunContractStatus
+      })
+      return status.name
+    },
     // 保留当前页面，跳转到应用内的某个页面。但是不能跳到 tabbar 页面
     jump (url) {
       mpvue.navigateTo({

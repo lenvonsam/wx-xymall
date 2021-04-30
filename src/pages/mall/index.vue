@@ -161,7 +161,7 @@ export default {
       isload: true,
       isRefresh: 'refresh',
       pullDownRefresh: false,
-      currentPage: 0,
+      currentPage: 1,
       pageSize: 20,
       mallFlag: 1,
       btnDisable: false,
@@ -224,7 +224,7 @@ export default {
   },
   onShow () {
     this.isload = true
-    if (this.currentUser.type === 'buyer') {
+    if (this.currentUser.type === 'buyer' && this.isLogin) {
       console.log('++++++++>>>>>>>>')
       let isAuditing = 0 // 账号是否正在审核中
       let lastExperienceDay = mpvue.getStorageSync('lastExperienceDay') || '' // 体验过期时间
@@ -311,7 +311,7 @@ export default {
     } else if (this.tempObject.fromPage === 'search' && this.tempObject.noBack) {
       // 搜索
       this.isRefresh = 'refresh'
-      this.currentPage = 0
+      this.currentPage = 1
       this.swiperCount = 0
       this.swiperFirst = 1
       this.queryObject.current_page = this.currentPage
@@ -323,7 +323,9 @@ export default {
       delete this.queryObject.fromPage
       console.log('tempObject++++++', this.tempObject.name)
 
-      if (!this.tempObject.name) this.refresher()
+      if (!this.tempObject.name) {
+        this.refresher()
+      }
     } else if (this.tempObject.fromPage === 'mallFilter' && this.tempObject.noBack) {
       // 分类
       this.swiperFirst = 1
@@ -332,8 +334,9 @@ export default {
       delete this.queryObject.search
       if (this.tempObject.name === '') {
         this.isRefresh = 'refresh'
-        this.currentPage = 0
+        this.currentPage = 1
         this.swiperCount = 0
+        console.log('hehe+++++')
         this.refresher()
       } else if (this.tempObject.name === this.mallTabVal) {
         this.refresher()
@@ -418,7 +421,7 @@ export default {
     // 刷新页面
     onRefresh (done) {
       this.isRefresh = 'refresh'
-      this.currentPage = 0
+      this.currentPage = 1
       this.refresher(done)
     },
     // 上拉加载
@@ -471,9 +474,11 @@ export default {
     },
     // 监听子组件触发获取品名数据
     getName (list) {
+      console.log(list)
       list.map(item => {
         item.data = []
       })
+      console.log('goodsNameList+++', list)
       this.goodsNameList = list
       this.btnDisable = false
       // this.refresher()
@@ -492,7 +497,7 @@ export default {
       })
       // this.mallItems = []
       this.goodsNameList[this.swiperCount].data = []
-      this.currentPage = 0
+      this.currentPage = 1
       this.isRefresh = 'refresh'
       // this.queryObject = {
       //   current_page: this.currentPage,
@@ -517,7 +522,7 @@ export default {
     searchChange (val) {
       // this.mallItems = []
       this.goodsNameList[this.swiperCount].data = []
-      this.currentPage = 0
+      this.currentPage = 1
       this.isRefresh = 'refresh'
       this.queryObject = {
         current_page: this.currentPage,
@@ -594,7 +599,7 @@ export default {
         obj.cartQuantityType = obj.onlineQuantityType
         self.showLoading()
         await self.httpPost(this.apiList.zf.addCartItem, obj)
-        self.showMsg('加购成功！')
+        self.showMsg('购物车成功')
         self.btnDisable = false
         self.hideLoading()
       } catch (e) {
@@ -619,8 +624,8 @@ export default {
         this.showLoading()
         this.loadFinish = 1
         const self = this
-        this.queryObject.page_num = this.currentPage
-        this.queryObject.page_size = this.pageSize
+        this.queryObject.pageNum = this.currentPage
+        this.queryObject.pageSize = this.pageSize
         // 品名
         this.queryObject.productBrandNames = this.queryObject.name ? [this.queryObject.name] : []
         // 规格
@@ -657,50 +662,54 @@ export default {
           item.weightMark = weightMark.toString().replace(/,/g, '/')
           item.price = price.toString().replace(/,/g, '/')
         })
-        if (self.isRefresh === 'refresh') {
-          if (resData.length > 0 && self.currentPage === 0) {
-            self.goodsNameList[idx].data = resData
-            self.isload = false
-            if (self.goodsNameList[idx].data.length < 10) self.loadFinish = 2
-          } else if (resData.length === 0 && self.currentPage === 0) {
-            self.goodsNameList[idx].data = []
-            self.isload = false
-          }
-        } else {
-          if (resData.length > 0) {
-            self.goodsNameList[idx].data.push(...resData)
-            if (resData.length < 10) self.loadFinish = 2
+        if (self.goodsNameList.length > 0) {
+          if (self.isRefresh === 'refresh') {
+            if (resData.length > 0 && self.currentPage === 1) {
+              self.goodsNameList[idx].data = resData
+              self.isload = false
+              if (self.goodsNameList[idx].data.length < 10) self.loadFinish = 2
+            } else if (resData.length === 0 && self.currentPage === 1) {
+              self.goodsNameList[idx].data = []
+              self.isload = false
+            }
           } else {
-            self.currentPage--
-            if (self.currentPage > 0 && self.goodsNameList[idx].data.length > 10) self.loadFinish = 2
+            if (resData.length > 0) {
+              self.goodsNameList[idx].data.push(...resData)
+              if (resData.length < 10) self.loadFinish = 2
+            } else {
+              self.currentPage--
+              if (self.currentPage > 2 && self.goodsNameList[idx].data.length > 10) self.loadFinish = 2
+            }
           }
+          self.$forceUpdate()
+          // self.hideLoading()
+          if (self.prevIdx !== null && self.prevIdx !== -1) {
+            self.goodsNameList[self.prevIdx].data = []
+            self.prevIdx = null
+          }
+          if (self.goodsNameList[idx].data.length < 10) self.loadFinish = 3
+          // self.goodsNameList.mp((item, index) => {
+          //   if (Math.abs(index - idx) > 1) {
+          //     item.data = []
+          //   }
+          // })
+          // this.isload = true
+          // }
+          console.log('loadfinish:>>', this.loadFinish)
+          this.hideLoading()
+          this.isload = false
+          if (this.swiperFirst === 1) {
+            this.configVal({ key: 'tempObject', val: '' })
+            this.swiperFirst = 0
+          }
+          this.$nextTick(() => {
+            const self = this
+            setTimeout(() => {
+              self.hideLoading()
+            }, 800)
+          })
+          if (done) done()
         }
-        self.$forceUpdate()
-        // self.hideLoading()
-        if (self.prevIdx !== null && self.prevIdx !== -1) {
-          self.goodsNameList[self.prevIdx].data = []
-          self.prevIdx = null
-        }
-        if (self.goodsNameList[idx].data.length < 10) self.loadFinish = 3
-        // self.goodsNameList.mp((item, index) => {
-        //   if (Math.abs(index - idx) > 1) {
-        //     item.data = []
-        //   }
-        // })
-        // this.isload = true
-        // }
-        console.log('loadfinish:>>', this.loadFinish)
-        if (this.swiperFirst === 1) {
-          this.configVal({ key: 'tempObject', val: '' })
-          this.swiperFirst = 0
-        }
-        this.$nextTick(() => {
-          const self = this
-          setTimeout(() => {
-            self.hideLoading()
-          }, 800)
-        })
-        if (done) done()
       } catch (err) {
         console.log('异常', err)
         this.loadFinish = 0

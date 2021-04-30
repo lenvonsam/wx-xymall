@@ -35,12 +35,14 @@ export default {
     }
   },
   onShow () {
-    this.filterArray = []
-    if (this.currentUser.searchHistory && this.isLogin) {
-      this.filterArray = this.currentUser.searchHistory
+    // this.filterArray = []
+    // if (this.currentUser.searchHistory && this.isLogin) {
+    //   this.filterArray = this.currentUser.searchHistory
+    // }
+    // this.searchWord = ''
+    if (this.isLogin) {
+      this.getSearchHistory()
     }
-    this.searchWord = ''
-    this.getSearchHistory()
   },
   methods: {
     ...mapActions([
@@ -49,8 +51,9 @@ export default {
     ]),
     // 获取用户搜索历史
     getSearchHistory () {
-      this.httpPost(this.apiList.zf.appletQuerySearchHistory + '?pageSize=1', {pageSize: 1}).then(res => {
+      this.httpPost(this.apiList.zf.appletQuerySearchHistory + '?pageSize=9', {pageSize: 9}).then(res => {
         console.log(res)
+        this.filterArray = res.data || []
       }).catch(err => {
         console.log(err)
       })
@@ -61,8 +64,14 @@ export default {
       this.confirm({ title: '友情提示', content: '您确定要清空历史记录吗？' }).then(res => {
         if (res === 'confirm') {
           me.filterArray = []
-          me.setLocalSearch()
-          me.ironRequest(this.apiList.xy.searchHistory.url, { user_id: me.currentUser.user_id, history: JSON.stringify(me.filterArray) }, me.apiList.xy.searchHistory.method, me)
+          this.httpGet(this.apiList.zf.appletDropSearchHistory).then(res => {
+            console.log(res)
+            // this.filterArray = res.data || []
+          }).catch(err => {
+            console.log(err)
+          })
+          // me.setLocalSearch()
+          // me.ironRequest(this.apiList.xy.searchHistory.url, { user_id: me.currentUser.user_id, history: JSON.stringify(me.filterArray) }, me.apiList.xy.searchHistory.method, me)
         }
       })
     },
@@ -77,26 +86,27 @@ export default {
         this.statisticRequest({ event: 'app_mall_search', search: this.searchWord || '' })
         this.configVal({ key: 'tempObject', val: { search: this.searchWord || '', fromPage: 'search', noBack: true } })
       }
-      if (this.isLogin && typeof searchName !== 'string') {
-        // 搜索框搜索
-        const index = this.filterArray.findIndex(itm => itm === this.searchWord.trim())
-        if (index < 0 && this.searchWord.length > 0) this.filterArray.unshift(this.searchWord.trim())
-        this.setLocalSearch()
-      }
+      this.searchWord = ''
+      // if (this.isLogin && typeof searchName !== 'string') {
+      //   // 搜索框搜索
+      //   const index = this.filterArray.findIndex(itm => itm === this.searchWord.trim())
+      //   if (index < 0 && this.searchWord.length > 0) this.filterArray.unshift(this.searchWord.trim())
+      //   this.setLocalSearch()
+      // }
       this.tab('/pages/mall/main')
     },
     // 同步本地搜索历史
-    setLocalSearch () {
-      if (this.isLogin) {
-        const user = Object.assign({}, this.currentUser)
-        console.log('同步++++', user)
-        user.searchHistory = this.filterArray
-        let data = {
-          user
-        }
-        this.setUser(data)
-      }
-    },
+    // setLocalSearch () {
+    //   if (this.isLogin) {
+    //     const user = Object.assign({}, this.currentUser)
+    //     console.log('同步++++', user)
+    //     user.searchHistory = this.filterArray
+    //     let data = {
+    //       user
+    //     }
+    //     this.setUser(data)
+    //   }
+    // },
     // 清除搜索框关键词
     cleanSearch () {
       this.searchWord = ''

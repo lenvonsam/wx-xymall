@@ -95,7 +95,7 @@ export default {
     searchChange () {
       this.statisticRequest({ event: 'click_app_mall_category_search' })
       this.supplyList = []
-      this.queryObject.specification = this.searchVal
+      this.queryObject.specification = this.searchVal.replace(/x/g, '*')
       this.currentPage = 0
       this.getStandardList()
     },

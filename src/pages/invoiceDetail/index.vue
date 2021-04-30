@@ -8,7 +8,9 @@ div
         .padding-bottom-xs(v-for="(no, noIdx) in nosArray", :key="noIdx") {{no}}
     .solid-bottom.item(v-for="(itm, itmIdx) in listArray", :key="itmIdx")
       .invoice-left {{itm.name}}
-      .text-gray {{showObj[itm.key]}}
+      customerAppliedDetail
+      .text-gray(v-if="itm.key === 'invoiceType'") 明细
+      .text-gray(v-else) {{showObj[itm.key]}}
     //- .row.solid-bottom.flex-center(v-if="tabName == 0")
     //-   .col.flex-100.ft-15 提单数量
     //-   .col.c-gray.text-right
@@ -79,6 +81,7 @@ export default {
       pickIdx: 0,
       pageTitle: '申请发票',
       nosArray: [],
+      sdsArray: [],
       nosArrayTotal: '',
       pickOpen: false,
       pickVal: '线下领取',
@@ -91,7 +94,7 @@ export default {
         key: 'settlementUnitName'
       }, {
         name: '发票类型',
-        key: 'settlementUnitName'
+        key: 'invoiceType'
       }, {
         name: '货款金额',
         key: 'paymentMoney'
@@ -127,16 +130,22 @@ export default {
   beforeMount () {
     this.tabName = this.$root.$mp.query.tabName
     this.ids = this.$root.$mp.query.ids
+    this.sds = this.$root.$mp.query.sds
+    this.sus = this.$root.$mp.query.sus
     console.log('测试++++++')
-    console.log(this.tabName)
     console.log(this.ids)
-    if (this.tabName === '0' || this.tabName === '1') {
+    console.log(this.sds)
+    console.log(this.sus)
+    console.log(this.tabName)
+    if (this.tabName !== '0' || this.tabName !== '1' || this.tabName !== '2' || this.tabName !== '3') {
       this.pageTitle = this.$root.$mp.query.name || '申请发票'
       this.loadData()
     } else {
       this.pageTitle = this.$root.$mp.query.name
     }
-    this.nosArray = this.ids.split(',')
+    this.nosArray = this.ids.split(',') // 合同编号
+    this.sdsArray = JSON.parse(this.sds) // 申请发票
+    this.susArray = JSON.parse(this.sus) // 发票确认
     // this.nosArray = this.tempObject.contract_no.split(',')
     // this.nosArrayTotal = this.nosArray.length
     // if (this.tempObject.status && this.tempObject.status !== '申请') {
@@ -198,16 +207,6 @@ export default {
           return false
         }
       }
-      let postList = this.nosArray.map(item => {
-        return {
-          arSettlementListId: item,
-          postFlag: this.pickVal === '快递邮寄' ? 1 : 0,
-          receiptSignId: this.receiver,
-          receiptSignName: this.receiver,
-          receiptSignPhone: this.receiverMobile,
-          receiptSignAdress: this.receiverAddr
-        }
-      })
       // let body = {
       //   user_id: this.currentUser.user_id,
       //   id: this.tempObject.id,
@@ -219,14 +218,19 @@ export default {
       //   body.receive_phone = this.receiverMobile
       //   body.receive_addr = this.receiverAddr
       // }
+      let postList = []
       if (!this.clickDisabled) {
         this.clickDisabled = true
         const self = this
         let url = ''
         if (this.tabName === '0') {
+          console.log('tabName0', this.sdsArray)
           url = self.apiList.zf.invoiceAdd
+          postList = this.sdsArray
         } else {
+          console.log('tabName2', this.sdsArray)
           url = self.apiList.zf.confirmReceipt
+          postList = this.susArray
         }
         self.httpPost(url, postList).then(res => {
           const msg = self.pageTitle === '申请发票' ? '申请发票成功' : '发票确认成功'

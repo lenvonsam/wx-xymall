@@ -12,13 +12,13 @@ div
             span.ft-15.text-blue.text-bold {{item.saleLadingNo}}
             copy-btn(:copyUrl="item.saleLadingNo")
           .confirm-btn.text-blue(@click="jumpConfirm(item)") 确认提单
-        .padding-bottom-xs {{item.buyUnitName}}
-        .padding-bottom-xs 
-          span 共{{item.outAmount}}支，{{item.outPoundWeight + item.outManagerWeight}}吨
+        .padding-bottom-xs {{item.orgName}}
+        .padding-bottom-xs
+          span 共{{item.ladingAmount}}支，{{item.ladingWeight}}吨
         .padding-bottom-xs 生成时间：{{item.createDate}}
   .text-center.text-gray.pt-100(v-else)
     empty-image(url="bill_empty.png", className="img-empty")
-    .empty-content 您暂时没有相关提单  
+    .empty-content 您暂时没有相关提单
 </template>
 <script>
 import copyBtn from '@/components/CopyBtn.vue'
@@ -108,7 +108,7 @@ export default {
         pageSize: this.pageSize
       }
       const me = this
-      this.httpPost(this.apiList.zf.queryLadingPage + '?pageNum=' + this.currentPage + '&pageSize=' + this.pageSize, this.queryObj).then(res => {
+      this.httpPost(this.apiList.zf.queryLadingPage + '?pageNum=' + this.queryObj.pageNum + '&pageSize=' + this.queryObj.pageSize, this.queryObj).then(res => {
         const arr = res.data
         if (arr.length === 0 && me.currentPage === 1) {
           me.listData = []

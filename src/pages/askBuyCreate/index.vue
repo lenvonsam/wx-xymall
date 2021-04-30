@@ -4,36 +4,36 @@ div
   .bg-white.padding-sm
     .row.solid-bottom.padding
       .title
-        span.text-red * 
+        span.text-red *
         span.padding-left-xs 品名
       .col.text-right.padding-left-xs
         input(type="text", placeholder="请输入品名", v-model="name")
     .row.solid-bottom.padding
-      .title    
+      .title
         span.padding-left-xs 材质
       .col.text-right.padding-left-xs
         input(type="text", placeholder="请输入材质", v-model="material")
     .row.solid-bottom.padding
-      .title    
+      .title
         span.padding-left-xs 产地
       .col.text-right.padding-left-xs
-        input(type="text", placeholder="请输入产地", v-model="supply")  
+        input(type="text", placeholder="请输入产地", v-model="supply")
     .row.solid-bottom.padding
-      .title    
+      .title
         span.padding-left-xs 规格
       .col.text-right.padding-left-xs
         input(type="text", placeholder="请输入规格", v-model="standard")
     .row.solid-bottom.padding
-      .title    
+      .title
         span.text-red *
         span.padding-left-xs 联系电话
       .col.text-right.padding-left-xs
         input(type="text", placeholder="请输入联系电话", v-model="phone")
     .row.solid-bottom.padding
-      .title    
+      .title
         span.padding-left-xs 特殊要求
       .col.text-right.padding-left-xs
-        input(type="text", placeholder="请输入规格", v-model="demand")              
+        input(type="text", placeholder="请输入规格", v-model="demand")
   .bottom-footer.bg-white.padding-sm
     .main-btn(@click="createAskPay") 提交
 </template>
@@ -61,10 +61,20 @@ export default {
   },
   methods: {
     createAskPay () {
-      let nameReg = /^[A-Za-z0-9\u4e00-\u9fa5]+$/
-      if (!nameReg.test(this.name.toString().trim())) {
-        this.showMsg('品名不能包含特殊字符')
+      console.log('++++++++')
+      if (!this.name && !this.phone.toString().trim()) {
+        this.showMsg('品名、手机号不能为空')
         return
+      }
+      if (!this.name.toString().trim()) {
+        this.showMsg('品名不能为空')
+        return
+      } else {
+        let nameReg = /^[A-Za-z0-9\u4e00-\u9fa5]+$/
+        if (!nameReg.test(this.name.toString().trim())) {
+          this.showMsg('品名不能包含特殊字符')
+          return
+        }
       }
       if (!this.mobileReg(this.phone.toString().trim())) {
         this.showMsg('请输入正确的手机号')

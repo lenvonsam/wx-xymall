@@ -74,7 +74,7 @@ export default {
         dotKey: 'waitAudit',
         event: 'click_app_me_audit_seller',
         url: {
-          path: '/pages/vendor/pendingReview/main'
+          path: '/pages/vendor/pendingMenu/main'
         }
       },
       {

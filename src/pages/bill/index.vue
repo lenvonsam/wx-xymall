@@ -538,7 +538,9 @@ export default {
       this.statisticRequest({ event: 'click_app_order_cancel' })
       const me = this
       this.confirm({ content: '您确定要取消合同吗？' }).then((res) => {
+        console.log(me.btnDisable, res)
         if (!me.btnDisable && res === 'confirm') {
+          console.log('确认+++')
           me.btnDisable = true
           // me.$ironLoad.show()
           me.httpGet(me.apiList.zf.cancelContract, {contractId: item.saleContractId}).then(res => {

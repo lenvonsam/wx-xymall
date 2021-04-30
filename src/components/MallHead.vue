@@ -477,8 +477,6 @@ export default {
       this.queryObject.current_page = this.currentPage
       let queryObj = Object.assign({}, this.queryObject)
       this.showLoading()
-      console.log('apiList++++')
-      console.log(this.apiList)
       this.httpPost(this.apiList.zf[this.sortQueryList[key].reqUrl], queryObj, 'post').then(resp => {
         console.log('sortCb++++++', resp)
         // 获取对应的下拉筛选框数据
@@ -503,14 +501,14 @@ export default {
                 id: item,
                 isActive: false
               }
-              console.log(item)
-              const resActive = this.sortList[idx].data.filter((itemFilter) => {
+              // console.log(item)
+              this.sortList[idx].data.filter((itemFilter) => {
                 if (itemFilter.name === item.name && itemFilter.isActive) {
                   item.isActive = true
                 }
                 return itemFilter.name === item.name && itemFilter.isActive
               })
-              console.log('resActive', resActive)
+              // console.log('resActive', resActive)
               // if (key === 'name') {
               //   const obj = {
               //     name: item.name,

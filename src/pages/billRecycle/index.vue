@@ -17,7 +17,7 @@ div
       template(v-if="listData.length > 0")
         scroll-view.scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: scrollHeight}")
           //- .scroll-view.bg-white(scroll-y, :style="{top:customBar + 40 + 'px'}")
-          .bg-white.padding-sm.margin-bottom-sm(v-for="(item, itemIdx) in listData", :key="itemIdx", @click="jumpDetail(item)")
+          .bg-white.padding-sm.margin-bottom-sm(v-for="(item, itemIdx) in listData", :key="itemIdx", @click.stop="jumpDetail(item.saleContractId)")
             .flex.justify-between.padding-bottom-sm
               .col
                 .flex.align-center
@@ -27,7 +27,7 @@ div
             .text-gray
               .padding-bottom-xs {{item.orgName}}
               .flex.justify-between.padding-bottom-xs
-                span 共{{item.contractAmount}}支，{{item.estimatedTonnage}}吨
+                span 共{{item.contractAmount}}支，{{item.weight}}吨
                 .ft-16.text-black ￥{{item.inTaxReceiveMoney}}
               .flex.justify-between
                 .col
@@ -95,15 +95,15 @@ export default {
   // },
   methods: {
     // 点击跳转合同详情
-    jumpDetail (item) {
-      this.jump(`/pages/billDetail/main?contractId=${item.saleContractId}`)
+    jumpDetail (saleContractId) {
+      this.jump(`/pages/billDetail/main?contractId=${saleContractId}`)
     },
     // 点击恢复合同
     jumpRestore (saleContractId) {
       if (this.disabled) return false
       this.disabled = true
       this.statisticRequest({ event: 'click_app_recycle_restore' })
-      this.jump('/pages/billRecycleDetail/main?no=' + saleContractId)
+      this.jump('/pages/billRecycleDetail/main?contractId=' + saleContractId)
     },
     // 搜索合同
     searchOrder () {

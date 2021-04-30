@@ -5,7 +5,8 @@ div
     .bg-white.row.padding(v-if="currentUser.type === 'buyer'")
       .col 型云头像
       .col.text-right
-        .profile-avatar(:style="{backgroundImage: 'url('+currentUser.avatar+')'}", @click="avatarUpload")
+        .profile-avatar(v-if="newAvatar" :style="{backgroundImage: 'url('+newAvatar+')'}", @click="avatarUpload")
+        .profile-avatar(v-else :style="{backgroundImage: 'url('+currentUser.avatar+')'}", @click="avatarUpload")
       .col.flex-25.text-gray.text-right
         icon.adjust.cuIcon-right
     .bg-white.row.padding.border-bottom-line(@click="jump('/pages/account/companyInfo/main')", :class="{'margin-top-sm': currentUser.type === 'buyer'}")
@@ -45,7 +46,8 @@ export default {
       }, {
         name: '修改手机号码',
         url: '/pages/account/changePhone/main'
-      }]
+      }],
+      newAvatar: ''
     }
   },
   onShow () {
@@ -75,18 +77,83 @@ export default {
         }
       })
     },
-    async avatarUpload () {
-      try {
-        const data = await this.ironFileUpload('cominfo')
-        console.log('update data:>>', data)
-        await this.ironRequest(this.apiList.xy.updateProfile.url, { user_id: this.currentUser.user_id, avatar_url: data }, 'post')
-        const obj = this.currentUser
-        obj.avatar = '/filepool' + data
-        this.setUser(obj)
-        this.showMsg('头像更新成功')
-      } catch (e) {
-        this.showMsg(e.message || e)
-      }
+    // async avatarUpload () {
+    //   try {
+    //     const data = await this.ironFileUpload('cominfo')
+    //     console.log('update data:>>', data)
+    //     let res = await this.httpPost(this.apiList.zf.upload, {file: data})
+    //     console.log(res)
+    //     // const obj = this.currentUser
+    //     // obj.avatar = '/filepool' + data
+    //     // this.setUser(obj)
+    //     // this.showMsg('头像更新成功')
+    //   } catch (e) {
+    //     this.showMsg(e.message || e)
+    //   }
+    // },
+    // 选择图片
+    async avatarUpload (key) {
+      let self = this
+      wx.chooseImage({
+        count: 1,
+        sizeType: ['original', 'compressed'],
+        sourceType: ['album', 'camera'],
+        success (res) {
+          const tempFilePaths = res.tempFilePaths
+          let url = self.apiList.zf.upload
+          self.uploadFile(url, tempFilePaths[0]).then(res => {
+            console.log('pic1++++++')
+            console.log(res)
+            self.newAvatar = self.imgOuterUrl + '/api/foundation/public/user/picture/view?path=' + res
+            self.updatePersonInfo(res)
+          }).catch(e => {
+            console.log(e.message)
+          })
+        }
+      })
+    },
+    // 上传图片
+    uploadFile (url, imgUrl) {
+      let self = this
+      return new Promise((resolve, reject) => {
+        wx.uploadFile({
+          url: this.zfBASICURL + url,
+          filePath: imgUrl,
+          name: 'file',
+          header: {
+            'Authorization': self.token,
+            'PlatformId': 'ZF'
+          },
+          success (res) {
+            if (res.data) {
+              if (JSON.parse(res.data).success) {
+                const data = JSON.parse(res.data).data
+                resolve(data)
+              } else {
+                console.log('success.uploadFile.false====>', JSON.parse(res.data))
+                reject(JSON.parse(res.data))
+              }
+            } else {
+              self.showMsg('图片上传失败，请重试！')
+            }
+          },
+          fail (e) {
+            console.log('fail.uploadFile====>', e)
+            reject(e)
+            self.showMsg('图片上传失败，请重试！')
+          }
+        })
+      })
+    },
+    updatePersonInfo (avatar) {
+      this.httpPost(this.apiList.zf.updatePersonInfo, {
+        avatar
+      }).then(res => {
+        console.log(res)
+      }).catch(err => {
+        console.log(err)
+        this.msgShow({ msg: err.message })
+      })
     }
   }
 }

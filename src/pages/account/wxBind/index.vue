@@ -173,7 +173,7 @@ export default {
         self.isNew = true
       }
     },
-    // 登录
+    // 绑定账号并登录
     bindAndLogin () {
       let self = this
       let canHttp = true
@@ -228,23 +228,28 @@ export default {
           // }
           // self.ironRequest(self.apiList.xy.wxBind.url, paramsObj, self.apiList.xy.wxBind.method).then((res) => {
           self.httpPost(self.apiList.zf.wxBind, paramsObj).then(res => {
-            if (res.returncode.toString() === '0') {
-              if (qrParams !== '-1') self.removeStoreKey('qrp')
-              // self.setUser(res)
-              self.showMsg('绑定成功！')
-              // 微信绑定手机号注册成功，新用户res.isnew == 1跳转完善信息页面
-              setTimeout(function () {
-                if (res.isnew === 1) {
-                  self.jump('/pages/account/companyUpdate/main?type=3')
-                } else {
-                  self.tab('/pages/me/main')
-                }
-              }, 1500)
-            }
+            if (qrParams !== '-1') self.removeStoreKey('qrp')
+            // self.setUser(res)
+            self.showMsg('绑定成功！')
+            // 微信绑定手机号注册成功，新用户res.isnew == 1跳转完善信息页面
+            self.httpPost(self.apiList.zf.getPersonInfo, {}).then(res => {
+              self.setUser({ token: self.token, user: res.data })
+              if (res.data.userStatus === '01') {
+                self.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
+                  if (res === 'confirm') {
+                    self.jump('/pages/account/companyUpdate/main')
+                  } else {
+                    self.tab('/pages/index/main')
+                  }
+                })
+              } else {
+                self.tab('/pages/index/main')
+              }
+            })
           }).catch(e => {
             console.log('page_wxBind_catch===>' + JSON.stringify(e))
             self.modalShow = false
-            self.showMsg(e)
+            self.showMsg(e.message)
           })
         } else {
           self.showMsg('点击过于频繁，请稍等！')

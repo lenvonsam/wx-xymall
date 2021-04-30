@@ -196,6 +196,8 @@ export default {
     wxLogin: 'base/online/wxLogin',
     // 商城分类
     appletQuerySpecificationList: 'xingyun/shopMall/appletQuerySpecificationList',
+    // 商城品名
+    queryProductBrandNameSortPage: 'xingyun/shopMall/queryProductBrandNameSortPage',
     // 商城筛选获取所有品名
     searchBrand: 'xingyun/shopMall/queryProductBrandNamePage',
     // 获取商城列表
@@ -258,6 +260,8 @@ export default {
     failureMaterial: 'xingyun/cart/failureMaterial',
     // 生成合同
     generateContract: 'xingyun/shopMall/generateContract',
+    // 生成合同（回收站）
+    generateContractRecovery: 'xingyun/contractRecovery/generateContract',
     // 基础管理-支付密码管理
     updatePaymentCode: 'xingyun/base/updatePaymentCode',
     // 基础管理-登录密码管理
@@ -294,8 +298,10 @@ export default {
     getUnitFundFlowResult: 'finance/unitFundFlow/getUnitFundFlowResult',
     // 资金管理 账户信息-账户余额
     getUnitMoney: 'finance/unit-fund/getUnitMoney',
-    // 小程序搜索历史
+    // 获取搜索历史
     appletQuerySearchHistory: 'xingyun/shopMall/appletQuerySearchHistory',
+    // 清除搜索历史
+    appletDropSearchHistory: 'xingyun/shopMall/appletDropSearchHistory',
     // 提现记录（提现记录）
     searchWithdraw: 'finance/withdrawApply/searchWithdraw',
     // 发票-未申请提单-分页查询
@@ -317,6 +323,12 @@ export default {
     // 发票-确认收票功能
     confirmReceipt: 'finance/arInvoice/confirmReceipt',
     // 修改用户个人协议
-    updatePersonAgreement: 'xingyun/base/updatePersonAgreement'
+    updatePersonAgreement: 'xingyun/base/updatePersonAgreement',
+    // 小程序可修改合同分页列表
+    queryAppletContractPage: 'xingyun/contract/queryAppletContractPage',
+    // 修改合同
+    updateSaleContract: 'sale/saleContract/updateSaleContract',
+    // 文件上传
+    upload: 'base/file/upload'
   }
 }

@@ -224,25 +224,17 @@ export default {
         var processTypeNum = '01'
         if (this.processType === '开平') {
           processTypeNum = '01'
-          onlineProcessDetailListC = this.rowCountList.map((item, index) => {
-            return {
-              thickness: item.height,
-              width: item.width,
-              length: item.length,
-              pieces: item.sheet_count
-            }
-          })
         } else {
           processTypeNum = '02'
-          onlineProcessDetailListC = this.rowCountList.map((item, index) => {
-            return {
-              productBrandName: item.height,
-              specification: item.width,
-              length: item.length,
-              pieces: item.sheet_count
-            }
-          })
         }
+        onlineProcessDetailListC = this.rowCountList.map((item, index) => {
+          return {
+            thickness: item.height,
+            width: item.width,
+            length: item.length,
+            pieces: item.sheet_count
+          }
+        })
         var body = {
           processType: processTypeNum,
           deliveryDate: this.dateVal,

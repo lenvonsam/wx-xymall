@@ -73,18 +73,18 @@
                     span.c-blue(@click="emptySoldItems") 清空失效物资
                 .solid-bottom.ft-12.text-gray(v-for="(itm, itmIdx) in soldCarts", :key="itmIdx")
                   .padding
-                    span {{itm.product_name}}
-                    span.ml-5 {{itm.product_supply}}
+                    span {{itm.onlineProductBrandName}}
+                    span.ml-5 {{itm.prodAreaName}}
                   .padding.pt-0
-                    span 仓库：{{itm.wh_name}}
+                    span 仓库：{{itm.stockZoneName}}
                   .padding.pt-0
-                    span 规格：{{itm.product_standard}}
+                    span 规格：{{itm.specification}}
                     q-btn.pull-right.no-shadow(color="grey-6", rounded, small) 失效
                   .padding.pt-0
-                    span 材质：{{itm.product_material}}
+                    span 材质：{{itm.productTextureName}}
                   .row.padding.pt-0
                     .col
-                      span 吊费：{{itm.price === '--' ? '--' : itm.lift_charge > 0 ? '￥' + itm.lift_charge + '/吨' : itm.lift_charge == 0 ? '无' : '线下结算'}}
+                      span 吊费：{{cart.price === '--' ? '--' : cart.liftingFee > 0 ? '￥' + cart.liftingFee + '/吨' : cart.liftingFee == 0 ? '无' : '线下结算'}}
                     .col.text-right.c-black 物资不能购买，请联系客服
 
 
@@ -344,6 +344,7 @@ export default {
     // 清空失效物资
     emptySoldItems () {
       const self = this
+      console.log('清空+++')
       if (!this.btnDisable) {
         this.confirm({ content: '您确定要清空失效物资吗？' }).then((res) => {
           if (res !== 'confirm') return false
@@ -533,6 +534,7 @@ export default {
     },
     rowCartCount (obj) {
       console.log(obj.count)
+
       let params = {
         id: obj.id,
         num: obj.count,
@@ -544,6 +546,7 @@ export default {
         console.log(e)
       })
     },
+    // 删除商品
     delCartRow (row) {
       if (!this.btnDisable) {
         const self = this

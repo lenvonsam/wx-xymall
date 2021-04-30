@@ -33,7 +33,7 @@ div
       .bg-white.features
         .ft-18.text-bold.padding-sm.padding-top.padding-bottom 功能列表
         .grid.col-3.text-center.features-top
-          .features-card(v-for="(ficon, fIdx) in featuresModules", :key="fIdx", @click="jumpModules(ficon)")
+          .features-card(v-for="(ficon, fIdx) in featuresIcons", :key="fIdx", @click="jumpModules(ficon)")
             .relative.contract-img(v-if="ficon.icon")
               img(:src="ficon.icon", mode="widthFix")
               .dot(v-if="rowCountObj[ficon.dotKey] > 0", :class="{'max': rowCountObj[ficon.dotKey] > 9}")
