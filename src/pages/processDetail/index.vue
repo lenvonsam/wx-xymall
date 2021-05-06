@@ -242,7 +242,8 @@ export default {
           deliveryDate: this.dateVal,
           productTextureName: this.material,
           remarks: this.remark,
-          onlineProcessDetailList: onlineProcessDetailListC
+          onlineProcessDetailList: onlineProcessDetailListC,
+          contactsPhone: this.currentUser.phone
         }
         if (!this.btnDisable) {
           this.btnDisable = true
