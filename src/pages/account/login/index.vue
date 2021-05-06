@@ -162,9 +162,9 @@ export default {
           // }
         }
       } catch (e) {
+        this.canClick = true
         console.log('err', e)
         this.showMsg(e.message)
-        this.canClick = true
       }
     },
     async getRemoteSearchHistory () {
