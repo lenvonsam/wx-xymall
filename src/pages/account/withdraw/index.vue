@@ -6,28 +6,28 @@ div
       .flex-100
         span.text-red *
         span.ml-5 结算银行
-      .col.text-right.text-gray {{compObj.bankName}}
+      .col.text-right.text-gray {{record.withdrawUnitBankName}}
     .row.padding.padding-top-sm
       .col.flex-100
         span.text-red *
         span.ml-5 银行账户名
-      .col.text-right.text-gray {{compObj.bankRegisterName}}
+      .col.text-right.text-gray {{record.withdrawUnitBankAccountName}}
     .row.padding.padding-top-sm
       .col.flex-100
         span.text-red *
         span.ml-5 银行账户
-      .col.text-right.text-gray {{compObj.bankAccount}}
+      .col.text-right.text-gray {{record.withdrawUnitBankAccount}}
   .bg-white.margin-top-xl
     .padding.row.border-bottom-line
       .flex-25
         img.choose-icon(src="/static/images/yh.png", style="height: 24rpx")
-      .col {{compObj.bankName}}（{{bankCardEnd}}）
+      .col {{record.withdrawUnitBankCodeName}}（{{bankCardEnd}}）
       .flex-60.ft-12.text-right.text-blue(@click="jumpWithdraw") 提现进度
     .row.padding.pt-15.pb-15.flex-center
       .col.flex-25
         .ft-25 ￥
       .col.pl-10.pr-10
-        input.full-width.ft-16(:placeholder="'可转出到卡' + currentUser.unitFundBalance + '元'", v-model="chargeVal", type="digit")
+        input.full-width.ft-16(:placeholder="'可转出到卡' + record.canWithdrawAmt + '元'", v-model="chargeVal", type="digit")
       .col.flex-50.text-blue.ft-12(@click="withdrawAll") 全部提出
   .padding.margin-top-lg
    .main-btn(hover-class="hover-gray", @click="confirmWithdraw") 确认提现
@@ -40,7 +40,6 @@ import modalInput from '@/components/ModalInput.vue'
 export default {
   data () {
     return {
-      bankCardEnd: '',
       chargeVal: '',
       modalShow: false,
       canClick: true,
@@ -73,20 +72,26 @@ export default {
     this.canClick = true
   },
   onLoad () {
-    this.remoteCompanyInfo()
+    // this.remoteCompanyInfo()
     this.withdrawalApplicationPreQuery()
+  },
+  computed: {
+    bankCardEnd () {
+      let withdrawUnitBankAccount = this.record.withdrawUnitBankAccount + ''
+      return withdrawUnitBankAccount.substring(withdrawUnitBankAccount.length - 4)
+    }
   },
   methods: {
     // 获取公司信息
-    async remoteCompanyInfo () {
-      try {
-        let res = await this.httpPost(this.apiList.zf.selectCompanyInfo)
-        this.compObj = res.data
-        this.bankCardEnd = this.compObj.bankAccount.substring(this.compObj.bankAccount.length - 4)
-      } catch (e) {
-        this.showMsg(e)
-      }
-    },
+    // async remoteCompanyInfo () {
+    //   try {
+    //     let res = await this.httpPost(this.apiList.zf.selectCompanyInfo)
+    //     this.compObj = res.data
+    //     this.bankCardEnd = this.compObj.bankAccount.substring(this.compObj.bankAccount.length - 4)
+    //   } catch (e) {
+    //     this.showMsg(e)
+    //   }
+    // },
     // 弹出框回调
     alertCb () {
       this.back()
@@ -111,7 +116,7 @@ export default {
         this.msg(e.message)
       }
     },
-    // 提现模态框回调
+    // 支付模态框回调（取消/提现）
     async inputChange ({ type, val }) {
       try {
         if (type === 'confirm' && this.canClick) {
@@ -142,13 +147,14 @@ export default {
             this.canClick = true
             this.chargeVal = ''
             this.alertShow = true
-          }).catch(err => {
-            console.log(err)
+          }).catch(e => {
+            console.log(e)
+            this.showMsg(e.message)
           })
         }
       } catch (e) {
         this.canClick = true
-        this.showMsg(e)
+        this.showMsg(e.message)
       }
     },
     // 点击全部提出

@@ -144,7 +144,7 @@ export default {
         this.rowCount.push({ height: '', width: '', length: '', sheet_count: '' })
       } else {
         // 删除子组件数组
-        this.rowCount[idx] = null
+        this.rowCount.splice(idx, 1)
       }
       this.$forceUpdate()
     },
@@ -227,6 +227,7 @@ export default {
         } else {
           processTypeNum = '02'
         }
+        console.log(this.rowCountList)
         onlineProcessDetailListC = this.rowCountList.map((item, index) => {
           return {
             thickness: item.height,

@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  nav-bar(title="我的333", :bgClass="'bg-blue text-white'", leftMenu)
+  nav-bar(title="我的", :bgClass="'bg-blue text-white'", leftMenu)
     div(slot="leftMenu")
       .relative(@click="jump('/pages/cardList/main?title=消息中心&type=noticeList')", v-if="showNoticeIcon")
         img(src="/static/images/notice_w_icon.png", style="width:30rpx; height: 36rpx")
