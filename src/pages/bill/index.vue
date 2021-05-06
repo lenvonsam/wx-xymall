@@ -23,7 +23,7 @@ div
           div(:style="{height: scrollHeight+'rpx'}")
             iron-scroll(:swiperIdx="swiperIdx", @scrolltolower="loadMore", heightUnit="rpx", :height="scrollHeight", :refresh="true", @onRefresh="onRefresh", :loadFinish="loadFinish")
               .bill-list(v-for="(item, itemIdx) in billTab[swiperIdx].data", :key="itemIdx", @click="jumpDetail(item)")
-                .bg-white.box
+                .bg-white.box(v-if="!(swiperIdx == 1 && item.status == '违约')")
                   .padding-sm
                     .flex.justify-between.padding-bottom-sm
                       .col
@@ -282,6 +282,7 @@ export default {
             item.status = self.contractStatus.find(c => {
               return c.id === item.xingyunContractStatus
             }).name
+            console.log(item.status)
             list.push(item)
           })
           self.billTab[idx].data = list
@@ -442,6 +443,7 @@ export default {
             item.status = self.contractStatus.find(c => {
               return c.id === item.xingyunContractStatus
             }).name
+            console.log(item.status)
             list.push(item)
           })
           self.billTab[idx].data = list
@@ -458,6 +460,7 @@ export default {
             item.status = self.contractStatus.find(c => {
               return c.id === item.xingyunContractStatus
             }).name
+            console.log(item.status)
             list.push(item)
           })
           this.billTab[idx].data = this.billTab[idx].data.concat(list)
