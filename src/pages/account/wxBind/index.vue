@@ -232,26 +232,57 @@ export default {
             // self.setUser(res)
             self.showMsg('绑定成功！')
             // 微信绑定手机号注册成功，新用户res.isnew == 1跳转完善信息页面
-            self.httpPost(self.apiList.zf.getPersonInfo, {}).then(res => {
-              self.setUser({ token: self.token, user: res.data })
-              if (res.data.userStatus === '01') {
-                self.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
-                  if (res === 'confirm') {
-                    self.jump('/pages/account/companyUpdate/main')
-                  } else {
-                    self.tab('/pages/index/main')
-                  }
-                })
-              } else {
-                self.tab('/pages/index/main')
-              }
+            // self.httpPost(self.apiList.zf.getPersonInfo, {}).then(res => {
+            //   self.setUser({ token: self.token, user: res.data })
+            //   if (res.data.userStatus === '01') {
+            //     self.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
+            //       if (res === 'confirm') {
+            //         self.jump('/pages/account/companyUpdate/main')
+            //       } else {
+            //         self.tab('/pages/index/main')
+            //       }
+            //     })
+            //   } else {
+            //     self.tab('/pages/index/main')
+            //   }
+            // })
+
+            let paramsObj = {
+              openId: self.openId,
+              unionId: mpvue.getStorageSync('unionId')
+            }
+            self.httpGet(self.apiList.zf.wxLogin, paramsObj).then(res => {
+              self.setUser({token: res.data.token, user: res.data.user})
+              self.httpPost(self.apiList.zf.getPersonInfo, {}).then(res => {
+                self.setUser({user: res.data})
+                if (res.data.userStatus === '01') {
+                  self.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
+                    if (res === 'confirm') {
+                      self.jump('/pages/account/companyUpdate/main')
+                    } else {
+                      self.tab('/pages/me/main')
+                    }
+                  })
+                } else {
+                  this.showMsg('登录成功')
+                  setTimeout(function () {
+                    canHttp = true
+                    self.tab('/pages/me/main')
+                  }, 500)
+                }
+              })
+            }).catch(e => {
+              console.log('微信未绑定过手机号，登陆失败——+++')
+              console.log(e.message)
             })
           }).catch(e => {
+            canHttp = true
             console.log('page_wxBind_catch===>' + JSON.stringify(e))
             self.modalShow = false
             self.showMsg(e.message)
           })
         } else {
+          canHttp = true
           self.showMsg('点击过于频繁，请稍等！')
         }
       }
