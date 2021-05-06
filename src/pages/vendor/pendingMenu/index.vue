@@ -75,8 +75,24 @@ export default {
         }
       ]
     }
+  },
+  created () {
+    this.getData()
+  },
+  methods: {
+    getData () {
+      let params = {
+        'startCreateTime': '',
+        'endCreateTime': '',
+        'tenantId': '1',
+        'userId': this.currentUser.id,
+        'status': [0, 1]
+      }
+      this.httpPost(this.apiList.zf.queryWorkflowProcessMenu, params).then(res => {
+        console.log(res)
+      })
+    }
   }
-
 }
 </script>
 <style lang="stylus" scoped>

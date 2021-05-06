@@ -329,6 +329,8 @@ export default {
     // 修改合同
     updateSaleContract: 'sale/saleContract/updateSaleContract',
     // 文件上传
-    upload: 'base/file/upload'
+    upload: 'base/file/upload',
+    // 待审核菜单
+    queryWorkflowProcessMenu: 'workflow/workflow/queryWorkflowProcessMenu'
   }
 }

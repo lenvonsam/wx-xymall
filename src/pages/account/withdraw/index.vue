@@ -120,6 +120,7 @@ export default {
     async inputChange ({ type, val }) {
       try {
         if (type === 'confirm' && this.canClick) {
+          this.showLoading()
           this.canClick = false
           // let encryptPwd = this.base64Str(val)
           var params = {
@@ -145,21 +146,25 @@ export default {
           this.httpPost(this.apiList.zf.addWithdraw, params).then(resp => {
             console.log(resp)
             this.canClick = true
+            this.hideLoading()
             this.chargeVal = ''
             this.alertShow = true
           }).catch(e => {
+            this.canClick = true
+            this.hideLoading()
             console.log(e)
             this.showMsg(e.message)
           })
         }
       } catch (e) {
         this.canClick = true
+        this.hideLoading()
         this.showMsg(e.message)
       }
     },
     // 点击全部提出
     withdrawAll () {
-      this.chargeVal = this.currentUser.unitFundBalance
+      this.chargeVal = this.record.canWithdrawAmt
     },
     // 跳转提现进度
     jumpWithdraw () {

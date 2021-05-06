@@ -174,6 +174,7 @@ export default {
     if (this.$root.$mp.query.type) this.fromType = Number(this.$root.$mp.query.type)
   },
   onUnload () {
+    // this.exitUser()
     if (this.backType === 1) {
       this.resetConfig()
       this.tab('/pages/index/main')

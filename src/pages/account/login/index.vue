@@ -121,6 +121,7 @@ export default {
                 if (res === 'confirm') {
                   self.jump('/pages/account/companyUpdate/main')
                 } else {
+                  // self.exitUser()
                   self.tab('/pages/me/main')
                 }
               })
