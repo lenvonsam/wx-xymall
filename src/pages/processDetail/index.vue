@@ -94,6 +94,7 @@ export default {
         this.pObj = res.data
         const list = []
         this.processType = this.pObj['processType'] === '01' ? '开平' : '镀锌'
+        this.pObj.deliveryDate = res.data.deliveryDate.slice(0, 10)
         this.pObj.onlineProcessDetailList.map(item => {
           const obj = {
             height: item.thickness,
