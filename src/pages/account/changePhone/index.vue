@@ -105,7 +105,7 @@ export default {
         }).catch((e) => {
           console.log(e)
           this.nextClick = true
-          this.showMsg(e)
+          this.showMsg(e.message)
         })
       }
     },

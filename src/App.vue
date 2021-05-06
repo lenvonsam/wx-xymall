@@ -23,7 +23,7 @@ export default {
                     key: 'openId',
                     data: data.openId
                   })
-                  console.log('getStorage("openId")========>' + mpvue.getStorage('openId'))
+                  // console.log('getStorage("openId")========>' + mpvue.getStorage('openId'))
                   if (data.unionId) {
                     mpvue.setStorage({
                       key: 'unionId',
