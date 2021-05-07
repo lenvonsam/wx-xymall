@@ -84,7 +84,7 @@
                     span 材质：{{itm.productTextureName}}
                   .row.padding.pt-0
                     .col
-                      span 吊费：{{cart.price === '--' ? '--' : cart.liftingFee > 0 ? '￥' + cart.liftingFee + '/吨' : cart.liftingFee == 0 ? '无' : '线下结算'}}
+                      span 吊费：{{itm.price === '--' ? '--' : itm.liftingFee > 0 ? '￥' + itm.liftingFee + '/吨' : itm.liftingFee == 0 ? '无' : '线下结算'}}
                     .col.text-right.c-black 物资不能购买，请联系客服
 
 
@@ -343,13 +343,13 @@ export default {
     },
     // 清空失效物资
     emptySoldItems () {
-      const self = this
       console.log('清空+++')
+      const self = this
       if (!this.btnDisable) {
         this.confirm({ content: '您确定要清空失效物资吗？' }).then((res) => {
           if (res !== 'confirm') return false
           self.btnDisable = true
-          self.httpPost(this.apiList.zf.failureMaterial, {}).then(res => {
+          self.httpGet(this.apiList.zf.failureMaterial).then(res => {
             self.showMsg('清空成功')
             self.soldCarts = []
           }).catch(e => {

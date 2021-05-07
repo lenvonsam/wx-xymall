@@ -5,11 +5,13 @@
       .features-card.bg-white(v-for="(ficon, fIdx) in menuIcons", :key="fIdx", @click="jumpModules(ficon)")
         .relative.flex.align-center.contract-img(v-if="ficon.icon")
           img(:src="ficon.icon", mode="widthFix")
-          // .dot(v-if="rowCountObj[ficon.dotKey] > 0", :class="{'max': rowCountObj[ficon.dotKey] > 9}")
-          .dot
+          .dot(v-if="ficon.count > 0")
           .text-name
             .ft-13.text-bold {{ficon.name}}
-            .num.padding-top-xs.ft-10 几条待审批
+            .num.padding-top-xs.ft-10
+              span.text-bold.text-red.margin-right-xs(v-if="ficon.count > 0") {{ficon.count}}
+              span.text-bold.text-gray.margin-right-xs(v-else) {{ficon.count}}
+              span 条待审批
  </template>
 <script>
 // import { mapState, mapActions } from 'vuex'
@@ -22,56 +24,72 @@ export default {
           name: '采购计划',
           dotKey: 'eidt_count',
           event: 'click_app_me_to_edit_seller',
-          path: '/pages/vendor/contractTrack/main?tabName=10'
+          path: '/pages/vendor/contractTrack/main?tabName=10',
+          count: 4,
+          configId: 55
         },
         {
           icon: '/static/images/pend_menu_2.png',
           name: '发货集港',
           dotKey: 'eidt_count',
           event: 'click_app_me_to_edit_seller',
-          path: '/pages/vendor/contractTrack/main?tabName=10'
+          path: '/pages/vendor/contractTrack/main?tabName=10',
+          count: 8,
+          configId: 55
         },
         {
           icon: '/static/images/pend_menu_3.png',
           name: '付款申请',
           dotKey: 'eidt_count',
           event: 'click_app_me_to_edit_seller',
-          path: '/pages/vendor/contractTrack/main?tabName=10'
+          path: '/pages/vendor/contractTrack/main?tabName=10',
+          count: 0,
+          configId: 55
         },
         {
           icon: '/static/images/pend_menu_4.png',
           name: '资源定价',
           dotKey: 'eidt_count',
           event: 'click_app_me_to_edit_seller',
-          path: '/pages/vendor/contractTrack/main?tabName=10'
+          path: '/pages/vendor/contractTrack/main?tabName=10',
+          count: 4,
+          configId: 55
         },
         {
           icon: '/static/images/pend_menu_5.png',
           name: '合同延迟',
           dotKey: 'eidt_count',
           event: 'click_app_me_to_edit_seller',
-          path: '/pages/vendor/contractTrack/main?tabName=10'
+          path: '/pages/vendor/contractTrack/main?tabName=10',
+          count: 2,
+          configId: 55
         },
         {
           icon: '/static/images/pend_menu_6.png',
           name: '合同抬头变更',
           dotKey: 'eidt_count',
           event: 'click_app_me_to_edit_seller',
-          path: '/pages/vendor/contractTrack/main?tabName=10'
+          path: '/pages/vendor/contractTrack/main?tabName=10',
+          count: 4,
+          configId: 55
         },
         {
           icon: '/static/images/pend_menu_7.png',
           name: '合同货齐',
           dotKey: 'eidt_count',
           event: 'click_app_me_to_edit_seller',
-          path: '/pages/vendor/contractTrack/main?tabName=10'
+          path: '/pages/vendor/contractTrack/main?tabName=10',
+          count: 5,
+          configId: 55
         },
         {
           icon: '/static/images/pend_menu_8.png',
           name: '预售审核',
           dotKey: 'eidt_count',
           event: 'click_app_me_to_edit_seller',
-          path: '/pages/vendor/contractTrack/main?tabName=10'
+          path: '/pages/vendor/contractTrack/main?tabName=10',
+          count: 4,
+          configId: 55
         }
       ]
     }
@@ -80,6 +98,10 @@ export default {
     this.getData()
   },
   methods: {
+    jumpModules (ficon) {
+      console.log(ficon)
+      this.jump('/pages/vendor/pendingReview/main?configId=' + ficon.configId)
+    },
     getData () {
       let params = {
         'startCreateTime': '',

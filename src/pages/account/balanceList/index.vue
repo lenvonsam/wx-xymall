@@ -28,10 +28,7 @@ div
               div {{item.content}}
               .text-gray.ft-12.margin-top {{item.ctime}}
             .col.text-right
-              //- .ft-16(:class="{'text-red': item.action == 1, 'text-green': item.action == 0}")
-              //-   span(v-if="item.action == 0") +
-              //-   span(v-else)
-                span {{item.price}}
+              .ft-16(v-if="item.flowMoney", :class="{'text-red': item.flowType == 2, 'text-green': item.flowType == 1}") {{item.flowMoney}}
               .text-gray.margin-top(v-if="item.nowAvlbFund") {{item.nowAvlbFund}}
           //- .padding.text-gray.ft-13.text-center(v-if="loading") 努力加载中...
       .text-center.padding-top-xl(v-else)
@@ -57,7 +54,7 @@ export default {
       listData: [],
       monthList: [],
       tabList: [],
-      currentPage: 0,
+      currentPage: 1,
       typeLabel: '全部',
       monthLabel: '时间',
       typeStatus: '',
@@ -97,7 +94,7 @@ export default {
     this.getLastSixMon()
     this.typeLabel = '全部'
     this.monthLabel = '时间'
-    this.currentPage = 0
+    this.currentPage = 1
     this.typeStatus = ''
     this.month = 0
     this.activeName = ''
@@ -208,7 +205,7 @@ export default {
           this.monthLabel = item.label === '全部' ? '时间' : item.label
           break
       }
-      this.currentPage = 0
+      this.currentPage = 1
       this.listData = []
       this.activeName = ''
       this.floatBarShow = false
@@ -217,7 +214,7 @@ export default {
     },
     // 下拉刷新
     onRefresh (done) {
-      this.currentPage = 0
+      this.currentPage = 1
       this.loadData(done)
     },
     // 上拉加载
@@ -246,10 +243,10 @@ export default {
       try {
         this.showLoading()
         this.loadFinish = 1
-        if (this.currentPage === 0) {
+        if (this.currentPage === 1) {
           this.isload = false
         }
-        if (this.currentPage > 0) this.loading = true
+        if (this.currentPage > 1) this.loading = true
         const me = this
         // let creditRecordList = this.apiList.xy.creditRecordList
         // let params = `current_page=${this.currentPage}&page_size=${this.pageSize}&type_status=${this.typeStatus}&number=${this.month}&user_id=${this.currentUser.user_id}`
@@ -259,6 +256,7 @@ export default {
         // }
         // const url = `${creditRecordList.url}?${params}`
         // const data = await this.ironRequest(url, '', creditRecordList.method)
+        this.propqueryObj.pageNum = this.currentPage
         let result = await this.httpPost(this.apiList.zf.searchInAndOutDetail, this.propqueryObj)
         console.log('res', result)
         // this.accountBalance = data.balance
@@ -271,18 +269,19 @@ export default {
               content: res.paymentType,
               ctime: res.createDate,
               // action: res.type_status === '退款' || (res.type_status === '充值' && res.bill_type !== '保证金充值' && res.bill_type !== '远期金额充值') ? 0 : 1,
-              price: res.flowMoney,
-              nowAvlbFund: res.balanceMoney === -1 ? '--' : res.balanceMoney
+              flowMoney: res.flowMoney,
+              nowAvlbFund: res.balanceMoney === -1 ? '--' : res.balanceMoney,
+              flowType: res.flowType
             }
             list.push(obj)
           })
         }
         console.log('list', list)
-        if (arr.length === 0 && me.currentPage === 0) {
+        if (arr.length === 0 && me.currentPage === 1) {
           me.listData = []
-        } else if (arr.length > 0 && me.currentPage === 0) {
+        } else if (arr.length > 0 && me.currentPage === 1) {
           me.listData = list
-        } else if (arr.length > 0 && me.currentPage > 0) {
+        } else if (arr.length > 0 && me.currentPage > 1) {
           me.listData.push(...list)
         } else {
           me.currentPage--

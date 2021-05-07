@@ -330,7 +330,15 @@ export default {
     updateSaleContract: 'sale/saleContract/updateSaleContract',
     // 文件上传
     upload: 'base/file/upload',
-    // 待审核菜单
-    queryWorkflowProcessMenu: 'workflow/workflow/queryWorkflowProcessMenu'
+    // 待审核菜单/审核历史菜单
+    queryWorkflowProcessMenu: 'workflow/workflow/queryWorkflowProcessMenu',
+    // 待审核列表/审核历史列表
+    queryWorkflowProcessList: 'workflow/workflow/queryWorkflowProcessList',
+    // 待审核详情/审核历史详情
+    getDetail: 'workflow/workflow/getDetail',
+    // 待审核通过/待审核驳回
+    audit: 'workflow/workflow/audit',
+    // 卖家-crm可用客户
+    unitQueryPage: 'base/unit/queryPage'
   }
 }

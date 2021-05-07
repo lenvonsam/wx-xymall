@@ -23,7 +23,7 @@ div
           div(:style="{height: scrollHeight+'rpx'}")
             iron-scroll(:swiperIdx="swiperIdx", @scrolltolower="loadMore", heightUnit="rpx", :height="scrollHeight", :refresh="true", @onRefresh="onRefresh", :loadFinish="loadFinish")
               .bill-list(v-for="(item, itemIdx) in billTab[swiperIdx].data", :key="itemIdx", @click="jumpDetail(item)")
-                .bg-white.box(v-if="!(swiperIdx == 1 && item.status == '违约')")
+                .bg-white.box(v-if="item")
                   .padding-sm
                     .flex.justify-between.padding-bottom-sm
                       .col
@@ -222,6 +222,7 @@ export default {
       const idx = e.mp.detail.current
       this.swiperCount = idx
       this.tabName = this.billTab[idx].status
+      this.queryObj.contractStateType = this.tabName
       this.billTab[idx].data = []
       this.currentPage = 1
       this.startDate = ''
@@ -283,6 +284,9 @@ export default {
               return c.id === item.xingyunContractStatus
             }).name
             console.log(item.status)
+            // if (!(self.swiperIdx === 1 && item.status === '违约')) {
+            //   list.push(item)
+            // }
             list.push(item)
           })
           self.billTab[idx].data = list
@@ -347,7 +351,7 @@ export default {
     countTime () {
       const idx = this.swiperCount
       const arr = this.billTab[idx].data
-      arr.map(item => {
+      arr.map((item, index) => {
         if (item.status === '待支付' || item.status === '待制作提单') {
           const nowTime = this.serverTime
           // const endTimeFormat = item.status === '待制作提单' ? item.end_pack_time.replace(/-/g, '/') : item.end_pay_time.replace(/-/g, '/')
@@ -403,6 +407,11 @@ export default {
               m = m < 10 ? '0' + m : m
               s = s < 10 ? '0' + s : s
               item.timeDown = `${h}:${m}:${s}`
+              console.log('++++>>>>', this.tabName, item.status)
+              if (this.tabName === '01' && item.status === '违约') {
+                // item = null
+                this.billTab[this.swiperCount].data.splice(index, 1)
+              }
             }
           }
           // if (h + m + s === 0) {
@@ -444,6 +453,9 @@ export default {
               return c.id === item.xingyunContractStatus
             }).name
             console.log(item.status)
+            // if (!(self.swiperIdx === 1 && item.status === '违约')) {
+            //   list.push(item)
+            // }
             list.push(item)
           })
           self.billTab[idx].data = list
