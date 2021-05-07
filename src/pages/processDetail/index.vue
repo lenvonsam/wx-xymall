@@ -253,7 +253,7 @@ export default {
             setTimeout(() => {
               self.btnDisable = false
               self.back()
-            })
+            }, 2000)
           }).catch(err => {
             self.btnDisable = false
             self.showMsg(err.message)
