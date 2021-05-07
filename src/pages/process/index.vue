@@ -54,10 +54,14 @@ export default {
       productTextureName: '',
       processState: '',
       pageNum: 1,
-      pageSize: 10
+      pageSize: 20
     }
     self.httpPost(self.apiList.zf.onlineProcessTrack, paramsObj).then(res => {
       self.listData = res.data
+      self.listData.map(item => {
+        item.deliveryDate = item.deliveryDate ? item.deliveryDate.slice(0, 10) : ''
+        item.createDate = item.createDate ? item.createDate.slice(0, 10) : ''
+      })
     }).finally(() => {
       self.isload = false
     })
