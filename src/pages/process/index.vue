@@ -4,12 +4,12 @@ div
   template(v-if="isload")
     time-line(type="mainres")
   template(v-else)
-    template(v-if="listData.length > 0")  
+    template(v-if="listData.length > 0")
       div(:style="{'padding-bottom': isIpx ? '208rpx' : '140rpx'}")
         .text-content.bg-white.padding-sm.text-blue.margin-top-sm(v-for="(item, itemIdx) in listData", :key="itemIdx" @click="jump('/pages/processDetail/main?processId='+ item.processId)")
           .row
             .col.text-blue.ft-15 {{item.processNo}}
-            span {{item.status}}
+            span {{status[item.processState]}}
           .text-gray
             .row
               .col.ft-15 材质
@@ -24,7 +24,7 @@ div
       empty-image(url="bill_empty.png", className="img-empty")
       .empty-content 您暂时没有加工数据
     .bottom-footer.bg-white.padding-sm(:style="{height: isIpx ? '198rpx' : '130rpx'}")
-      .main-btn(@click="jump('/pages/processDetail/main')") 发布加工  
+      .main-btn(@click="jump('/pages/processDetail/main')") 发布加工
 </template>
 <script>
 import { mapState } from 'vuex'
@@ -32,7 +32,13 @@ export default {
   data () {
     return {
       listData: [],
-      isload: false
+      isload: false,
+      status: {
+        '01': '待受理',
+        '02': '受理完成',
+        '03': '已拒绝',
+        '04': '已过期'
+      }
     }
   },
   computed: {
