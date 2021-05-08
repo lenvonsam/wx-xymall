@@ -46,6 +46,7 @@ export default {
   },
   watch: {
     searchVal () {
+      console.log('tag', '')
       this.throttle(this.searchChange, 300)
     }
   },
@@ -96,6 +97,7 @@ export default {
       this.statisticRequest({ event: 'click_app_mall_category_search' })
       this.supplyList = []
       this.queryObject.specification = this.searchVal.replace(/x/g, '*')
+      this.queryObject.specification = this.searchVal.replace(/×/g, '*')
       this.currentPage = 0
       this.getStandardList()
     },
@@ -192,7 +194,7 @@ export default {
             arr[10].push(item)
           }
         })
-        console.log('分类', arr)
+        // console.log('分类', arr)
         var newArr = arr.reduce(function (a, b) {
           return a.concat(b)
         })

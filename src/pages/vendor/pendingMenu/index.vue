@@ -26,7 +26,7 @@ export default {
           event: 'click_app_me_to_edit_seller',
           path: '/pages/vendor/contractTrack/main?tabName=10',
           count: 4,
-          configId: 55
+          configId: 65
         },
         {
           icon: '/static/images/pend_menu_2.png',
@@ -35,7 +35,7 @@ export default {
           event: 'click_app_me_to_edit_seller',
           path: '/pages/vendor/contractTrack/main?tabName=10',
           count: 8,
-          configId: 55
+          configId: 65
         },
         {
           icon: '/static/images/pend_menu_3.png',
@@ -44,7 +44,7 @@ export default {
           event: 'click_app_me_to_edit_seller',
           path: '/pages/vendor/contractTrack/main?tabName=10',
           count: 0,
-          configId: 55
+          configId: 65
         },
         {
           icon: '/static/images/pend_menu_4.png',
@@ -107,11 +107,15 @@ export default {
         'startCreateTime': '',
         'endCreateTime': '',
         'tenantId': '1',
-        'userId': this.currentUser.id,
+        // 'userId': this.currentUser.id,
+        'userId': '1346285659781861378',
         'status': [0, 1]
       }
       this.httpPost(this.apiList.zf.queryWorkflowProcessMenu, params).then(res => {
         console.log(res)
+        if (res.success) {
+          // this.menuIcons = res.data
+        }
       })
     }
   }

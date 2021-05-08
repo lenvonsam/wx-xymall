@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  nav-bar(title="审核历史", isBack) 
+  nav-bar(title="审核历史", isBack)
   .head.bg-white(:style="{height: '115rpx'}")
     .serach.flex.align-center.padding-sm
       .col.search-input.text-gray
@@ -18,24 +18,24 @@ div
   template(v-else)
     template(v-if="listData.length > 0")
       div(:style="{height: scrollHeight+'rpx'}")
-        iron-scroll(:swiperIdx="swiperIdx", @scrolltolower="loadMore", heightUnit="rpx", :height="scrollHeight", :refresh="true", @onRefresh="onRefresh", :loadFinish="loadFinish")          
+        iron-scroll(:swiperIdx="swiperIdx", @scrolltolower="loadMore", heightUnit="rpx", :height="scrollHeight", :refresh="true", @onRefresh="onRefresh", :loadFinish="loadFinish")
           .bill-list(v-for="(item, itemIdx) in listData", :key="itemIdx", @click="jumpDetail(item)")
             .bg-white.box
               .padding-sm
                 .flex.justify-between.padding-bottom-sm
                   .col
                     .flex.align-center
-                      .ft-16.padding-right-sm {{auditType[item.audit_type]}} - {{item.tstc_no}}
-                  .text-gray {{item.statusStr}}
+                      .ft-16.padding-right-sm {{item.name}} - {{item.groupBusinessId}}
+                  .text-gray {{status[item.status]}}
                 .text-gray
-                  .flex.justify-between.padding-bottom-xs 
-                    span {{item.emp_name}}
-                    .text-black {{item.audit_time}}
-                  .padding-bottom-xs {{item.dept_name}}
+                  .flex.justify-between.padding-bottom-xs
+                    span 操作人： {{item.currentNodeName}}
+                    // .text-black {{item.audit_time}}
+                  .padding-bottom-xs {{item.groupName}}
                   .padding-bottom-xs(v-if="item.delay_text") 延时理由：{{item.delay_text}}
     .text-center.c-gray.pt-100(v-else)
       empty-image(url="bill_empty.png", className="img-empty")
-      .empty-content 您暂时没有相关合同        
+      .empty-content 您暂时没有相关合同
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
@@ -43,7 +43,28 @@ export default {
   data () {
     return {
       currentPage: 0,
-      listData: [],
+      listData: [
+        {
+          id: '572',
+          name: '收款单审批',
+          code: '308',
+          status: 1,
+          processId: 'df33fb46-9cc8-11eb-be16-12c94e43649c',
+          configId: 55,
+          callbackUrl: 'http://zf-finance-server/receipt/workflow/receiptCallBack',
+          detailUrl: '/finance/receipt/edit',
+          businessId: 'S202104140003',
+          userId: '68',
+          businessUserId: '1371720539336355841',
+          tenantId: '1',
+          currentNodeName: '总经办',
+          currentNodeCreateTime: '2021-04-14 10:29:46',
+          createTime: '2021-04-14 10:26:51',
+          groupId: '12',
+          groupBusinessId: 'D1346273839981531138',
+          groupName: '财务部'
+        }
+      ],
       triggered: false,
       isload: false,
       startDate: '',
@@ -54,6 +75,14 @@ export default {
       scrollHeight: '0px',
       loadFinish: 0,
       pageSize: 10,
+      status: {
+        '0': '发起',
+        '1': '审核中',
+        '2': '审核通过',
+        '3': '审核驳回',
+        '4': '取消',
+        '5': '弃审'
+      },
       auditType: {
         '1': '定向',
         '2': '延时',
@@ -111,7 +140,7 @@ export default {
       })
       this.currentPage = 0
     }
-    this.onRefresh()
+    // this.onRefresh()
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 115
   },
   methods: {
@@ -149,13 +178,13 @@ export default {
     refresher (done) {
       try {
         this.loadFinish = 1
-        const me = this
+        // const me = this
         let params = {
           user_id: this.currentUser.user_id,
           current_page: this.currentPage,
           page_size: this.pageSize
         }
-        const auditHistory = this.apiList.xy.auditHistory
+        // const auditHistory = this.apiList.xy.auditHistory
         // let url = `${auditHistory.url}?user_id=${this.currentUser.user_id}&current_page=${this.currentPage}&page_size=${this.pageSize}`
         if (this.filterArr) {
           params = Object.assign(params, this.filterArr)
@@ -166,44 +195,57 @@ export default {
           params.search = this.searchVal
           // url += `&search=${this.searchVal}`
         }
-        this.ironRequest(auditHistory.url, params, auditHistory.method).then(resp => {
-          if (resp.returncode === '0') {
-            let arr = resp.resultlist
-            arr.map(item => {
-              if (item.audit_type === 1 || item.audit_type === 4) {
-                if (item.status === 1 && item.audit_num === 1) {
-                  item.statusStr = '已初审'
-                } else if (item.status === 1 && item.audit_num === 2) {
-                  item.statusStr = '已复审'
-                } else if (item.status === 0 && item.audit_num === 1) {
-                  item.statusStr = '初审拒绝'
-                } else if (item.status === 0 && item.audit_num === 2) {
-                  item.statusStr = '复审拒绝'
-                }
-              } else {
-                item.statusStr = this.statusList[item.status]
-              }
-            })
-            if (arr.length === 0 && me.currentPage === 0) {
-              me.listData = []
-              me.isload = false
-            } else if (arr.length > 0 && me.currentPage === 0) {
-              me.listData = arr
-              me.isload = false
-            } else if (arr.length > 0 && me.currentPage > 0) {
-              me.listData.push(...arr)
-              me.isload = false
-            } else {
-              me.isload = false
-              me.currentPage--
-              if (me.listData.length >= 10) me.loadFinish = 2
-            }
-          }
-          me.isTabDisabled = false
-          if (me.listData.length < 10) me.loadFinish = 3
-          me.hideLoading()
-          if (done) done()
+
+        let obj = {
+          configId: '65',
+          limit: 20,
+          offset: 0,
+          tenantId: 1,
+          userId: 1371720539336355841,
+          status: [0, 1, 2, 3, 4, 5]
+        }
+        this.httpPost(this.apiList.zf.queryWorkflowProcessList, obj).then(res => {
+          console.log(res)
         })
+
+        // this.ironRequest(auditHistory.url, params, auditHistory.method).then(resp => {
+        //   if (resp.returncode === '0') {
+        //     let arr = resp.resultlist
+        //     arr.map(item => {
+        //       if (item.audit_type === 1 || item.audit_type === 4) {
+        //         if (item.status === 1 && item.audit_num === 1) {
+        //           item.statusStr = '已初审'
+        //         } else if (item.status === 1 && item.audit_num === 2) {
+        //           item.statusStr = '已复审'
+        //         } else if (item.status === 0 && item.audit_num === 1) {
+        //           item.statusStr = '初审拒绝'
+        //         } else if (item.status === 0 && item.audit_num === 2) {
+        //           item.statusStr = '复审拒绝'
+        //         }
+        //       } else {
+        //         item.statusStr = this.statusList[item.status]
+        //       }
+        //     })
+        //     if (arr.length === 0 && me.currentPage === 0) {
+        //       me.listData = []
+        //       me.isload = false
+        //     } else if (arr.length > 0 && me.currentPage === 0) {
+        //       me.listData = arr
+        //       me.isload = false
+        //     } else if (arr.length > 0 && me.currentPage > 0) {
+        //       me.listData.push(...arr)
+        //       me.isload = false
+        //     } else {
+        //       me.isload = false
+        //       me.currentPage--
+        //       if (me.listData.length >= 10) me.loadFinish = 2
+        //     }
+        //   }
+        //   me.isTabDisabled = false
+        //   if (me.listData.length < 10) me.loadFinish = 3
+        //   me.hideLoading()
+        //   if (done) done()
+        // })
       } catch (err) {
         console.log('err', err)
         this.isload = false

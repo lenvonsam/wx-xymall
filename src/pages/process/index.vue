@@ -60,7 +60,7 @@ export default {
       self.listData = res.data
       self.listData.map(item => {
         item.deliveryDate = item.deliveryDate ? item.deliveryDate.slice(0, 10) : ''
-        item.createDate = item.createDate ? item.createDate.slice(0, 10) : ''
+        // item.createDate = item.createDate ? item.createDate.slice(0, 10) : ''
       })
     }).finally(() => {
       self.isload = false

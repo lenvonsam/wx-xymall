@@ -11,21 +11,21 @@ div
         .col.text-right.text-gray {{pObj['contactsPhone']}}
     .row.solid-bottom.padding
       .title
-        span.text-red(v-if="processId") *
+        span.text-red *
         span.padding-left-xs 加工类型
       .col.text-right.text-gray(v-if="processId") {{processType}}
       picker.col(@change="processTypeCb", :range="pTypeArray", v-else)
         .text-right.text-gray {{processType}}
     .row.solid-bottom.padding
       .title
-        span.text-red(v-if="processId") *
+        span.text-red *
         span.padding-left-xs 交货时间
       .col.text-right.text-gray(v-if="processId") {{pObj['deliveryDate']}}
       picker.col(@change="dateCb", mode="date", v-else)
         .text-right.text-gray {{dateVal}}
     .row.solid-bottom.padding
       .title
-        span.text-red(v-if="processId") *
+        span.text-red *
         span.padding-left-xs 材质
       .col.text-right.padding-left-xs
         span(v-if="processId") {{pObj['productTextureName']}}

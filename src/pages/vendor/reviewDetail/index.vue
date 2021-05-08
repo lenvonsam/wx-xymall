@@ -105,7 +105,7 @@ div
               .text-black.col {{item.name}} {{item.standard}}
               .text-blue ¥ {{tempObject.auditType === '定向' ? item.order_price : item.price}}
             .text-gray
-              template(v-if="tempObject.auditType === '定向'")  
+              template(v-if="tempObject.auditType === '定向'")
                 .row.justify-between.padding-bottom-xs
                   .col
                     span.padding-right-xs {{item.material}}
@@ -129,12 +129,12 @@ div
                 span.padding-left-xs.text-grey.delete-style(v-if="detailData.is_talk_price == 1 && item.xs_price != item.order_price") 原定价：￥{{item.order_price}}
               template(v-else)
                 .row.justify-between.text-gray.padding-bottom-xs
-                  .col 
+                  .col
                     span.padding-right-xs {{item.material}}
                     span 退款支数：{{item.amount}}支
                   span ({{item.metering_way_str}})
-                .text-gray 
-                  span 退款重量：{{item.weight}}吨  
+                .text-gray
+                  span 退款重量：{{item.weight}}吨
                   span.padding-left-xs 退款金额：{{item.money}}元
   .footer.row.bg-white.text-center.text-white.padding-sm(:style="{height: isIpx ? '188rpx' : '120rpx', 'padding-bottom': isIpx ? '68rpx' : '20rpx'}",
    v-if="btnShow && tempObject.fromPage !== 'reviewHistory'")
@@ -145,7 +145,7 @@ div
     .padding-sm
       .bg-gray.input-box
         input(:placeholder="'请填写'+modalInputTitle", v-model="modalVal", :disabled="modalInputTitle === '退款金额'")
-      .text-red.text-left.padding-top-sm(v-if="modalInputTitle === '驳回原因'") 注：一旦驳回，此单将被删除，必须重新申请，请与销售沟通，并告知客户！  
+      .text-red.text-left.padding-top-sm(v-if="modalInputTitle === '驳回原因'") 注：一旦驳回，此单将被删除，必须重新申请，请与销售沟通，并告知客户！
   modal(v-model="erpModalShow1", @cb="erpModalCb", :title="erpModalTitle")
     .padding-sm {{erpModalMsg}}
   modal-input(v-model="erpModalShow2", :title="erpModalTitle", confirmText="确定", type="customize", :cb="erpModalCbInput")
@@ -164,6 +164,7 @@ export default {
   },
   data () {
     return {
+      id: '',
       modalVal: '',
       modalInputTitle: '退款金额',
       modalShow: false,
@@ -211,15 +212,19 @@ export default {
     }
     this.modalVal = ''
   },
+  onLoad (options) {
+    this.id = options.id
+  },
   onShow () {
     this.disabled = false
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 203
     // this.auditType = this.$root.$mp.query.auditType
-    this.tempObject = this.$root.$mp.query
-    if (this.tempObject.auditType) {
-      this.showLoading()
-      this.loadData()
-    }
+    // this.tempObject = this.$root.$mp.query
+    // if (this.tempObject.auditType) {
+    //   this.showLoading()
+    //   this.loadData()
+    // }
+    this.loadData()
   },
   onHide () {
     this.erpModalShow1 = false
@@ -436,115 +441,136 @@ export default {
       }
     },
     async loadData () {
-      try {
-        let url = ''
-        const modules = this.modules
-        switch (this.tempObject.auditType) {
-          case '定向':
-            const sellerDxAudit = this.apiList.xy.sellerDxAudit
-            url = `${sellerDxAudit.url}?user_id=${this.currentUser.user_id}&deal_no=${this.tempObject.tstc_no}`
-            break
-          case '退货':
-            this.btnShow = modules.return_audit
-            const sellerReturnGoodsAudit = this.apiList.xy.returnGoodsDetail
-            url = `${sellerReturnGoodsAudit.url}?subs_no=${this.tempObject.tstc_no}&return_id=${this.tempObject.return_id}`
-            if (this.tempObject.fromPage !== 'reviewHistory') {
-              url += `&status=5`
-            }
-            break
-          case '延时':
-            this.btnShow = modules.delay_audit
-            const sellerOrderDelayAudit = this.apiList.xy.sellerOrderDelayAudit
-            url = `${sellerOrderDelayAudit.url}?tstc_no=${this.tempObject.tstc_no}`
-            break
-          case 'ERP议价':
-            this.btnShow = modules.delay_audit
-            url = `${this.apiList.xy.sellerBargainAudit.url}?user_id=${this.currentUser.user_id}&id=${this.tempObject.tstc_no}`
-            break
-          case 'ERP销售定价':
-            this.btnShow = modules.delay_audit
-            url = `${this.apiList.xy.salePriceAudit.url}?user_id=${this.currentUser.user_id}&id=${this.tempObject.tstc_no}`
-            break
-          default:
-            console.log('default')
-            break
-        }
-        const data = await this.ironRequest(url, '', 'get')
-        console.log('data', data)
-        if (data.returncode === '0') {
-          switch (this.tempObject.auditType) {
-            case '定向':
-              this.detailData = {
-                liftStatus: data.need_lift,
-                billNo: data.deal_no,
-                custName: data.cust_name,
-                totalAmount: data.amount,
-                totalWeight: data.weight,
-                totalMoeny: data.moeny,
-                endTime: data.end_time,
-                status: data.status,
-                operName: data.oper_name,
-                list: data.list,
-                is_talk_price: data.is_talk_price
-              }
-              this.btnShow = (data.status === '待初审' && modules.audit) || (data.status === '待复审' && modules.re_audit)
-              break
-            case '退货':
-              const datas = data.data
-              this.detailData = {
-                billNo: datas.lad_no,
-                custName: datas.name,
-                totalAmount: datas.amount,
-                totalWeight: datas.weight,
-                totalMoeny: datas.all_price_,
-                endTime: datas.applyer_date,
-                status: datas.status_desc,
-                invoiceStatus: datas.kp_desc,
-                invoiceFlag: datas.kp_flag,
-                operName: datas.applyer_name,
-                id: datas.id,
-                totalLiftCharge: datas.lift_money,
-                list: data.list
-              }
-              break
-            case '延时':
-              this.detailData = {
-                list: data.data.resultlist
-              }
-              break
-            case 'ERP议价':
-              this.detailData = {
-                liftStatus: 1,
-                billNo: data.data.sbillBargainingDto.sbillBillcode,
-                custName: data.data.sbillBargainingDto.datasCustomername,
-                totalAmount: data.data.sbillBargainingDto.goodsNum,
-                totalWeight: data.data.sbillBargainingDto.goodsWeigh,
-                totalMoeny: data.data.sbillBargainingDto.totalMoney,
-                endTime: data.data.sbillBargainingDto.dataSystemdate,
-                status: data.data.sbillBargainingDto.bargainingAuditStatus,
-                operName: data.data.sbillBargainingDto.operatorName,
-                list: data.data.list,
-                deptName: data.data.sbillBargainingDto.deptName,
-                employeeName: data.data.sbillBargainingDto.employeeName
-              }
-              this.btnShow = (data.data.sbillBargainingDto.bargainingAuditStatus === '待初审' && modules.audit) || (data.data.sbillBargainingDto.bargainingAuditStatus === '待复审' && modules.re_audit)
-              break
-            case 'ERP销售定价':
-              this.detailData = {
-                list: data.data
-              }
-              break
-            default:
-              console.log('default')
-              break
-          }
-        }
-        this.hideLoading()
-      } catch (e) {
-        this.hideLoading()
-        console.log(e)
+      console.log('+++>>>>')
+      // this.showLoading()
+      let res = await this.httpGet(this.apiList.zf.getDetail + '?id=' + this.id + '&userId=1346285659781861378')
+      console.log(res)
+      if (res.success) {
+        // this.detailData = {
+        //   liftStatus: data.need_lift,
+        //   billNo: data.businessId,
+        //   custName: data.userName,
+        //   totalAmount: data.amount,
+        //   totalWeight: data.weight,
+        //   totalMoeny: data.moeny,
+        //   endTime: data.end_time,
+        //   status: data.status,
+        //   operName: data.oper_name,
+        //   list: data.list,
+        //   is_talk_price: data.is_talk_price
+        // }
       }
     }
+    // async loadData () {
+    //   try {
+    //     let url = ''
+    //     const modules = this.modules
+    //     switch (this.tempObject.auditType) {
+    //       case '定向':
+    //         const sellerDxAudit = this.apiList.xy.sellerDxAudit
+    //         url = `${sellerDxAudit.url}?user_id=${this.currentUser.user_id}&deal_no=${this.tempObject.tstc_no}`
+    //         break
+    //       case '退货':
+    //         this.btnShow = modules.return_audit
+    //         const sellerReturnGoodsAudit = this.apiList.xy.returnGoodsDetail
+    //         url = `${sellerReturnGoodsAudit.url}?subs_no=${this.tempObject.tstc_no}&return_id=${this.tempObject.return_id}`
+    //         if (this.tempObject.fromPage !== 'reviewHistory') {
+    //           url += `&status=5`
+    //         }
+    //         break
+    //       case '延时':
+    //         this.btnShow = modules.delay_audit
+    //         const sellerOrderDelayAudit = this.apiList.xy.sellerOrderDelayAudit
+    //         url = `${sellerOrderDelayAudit.url}?tstc_no=${this.tempObject.tstc_no}`
+    //         break
+    //       case 'ERP议价':
+    //         this.btnShow = modules.delay_audit
+    //         url = `${this.apiList.xy.sellerBargainAudit.url}?user_id=${this.currentUser.user_id}&id=${this.tempObject.tstc_no}`
+    //         break
+    //       case 'ERP销售定价':
+    //         this.btnShow = modules.delay_audit
+    //         url = `${this.apiList.xy.salePriceAudit.url}?user_id=${this.currentUser.user_id}&id=${this.tempObject.tstc_no}`
+    //         break
+    //       default:
+    //         console.log('default')
+    //         break
+    //     }
+    //     const data = await this.ironRequest(url, '', 'get')
+    //     console.log('data', data)
+    //     if (data.returncode === '0') {
+    //       switch (this.tempObject.auditType) {
+    //         case '定向':
+    //           this.detailData = {
+    //             liftStatus: data.need_lift,
+    //             billNo: data.deal_no,
+    //             custName: data.cust_name,
+    //             totalAmount: data.amount,
+    //             totalWeight: data.weight,
+    //             totalMoeny: data.moeny,
+    //             endTime: data.end_time,
+    //             status: data.status,
+    //             operName: data.oper_name,
+    //             list: data.list,
+    //             is_talk_price: data.is_talk_price
+    //           }
+    //           this.btnShow = (data.status === '待初审' && modules.audit) || (data.status === '待复审' && modules.re_audit)
+    //           break
+    //         case '退货':
+    //           const datas = data.data
+    //           this.detailData = {
+    //             billNo: datas.lad_no,
+    //             custName: datas.name,
+    //             totalAmount: datas.amount,
+    //             totalWeight: datas.weight,
+    //             totalMoeny: datas.all_price_,
+    //             endTime: datas.applyer_date,
+    //             status: datas.status_desc,
+    //             invoiceStatus: datas.kp_desc,
+    //             invoiceFlag: datas.kp_flag,
+    //             operName: datas.applyer_name,
+    //             id: datas.id,
+    //             totalLiftCharge: datas.lift_money,
+    //             list: data.list
+    //           }
+    //           break
+    //         case '延时':
+    //           this.detailData = {
+    //             list: data.data.resultlist
+    //           }
+    //           break
+    //         case 'ERP议价':
+    //           this.detailData = {
+    //             liftStatus: 1,
+    //             billNo: data.data.sbillBargainingDto.sbillBillcode,
+    //             custName: data.data.sbillBargainingDto.datasCustomername,
+    //             totalAmount: data.data.sbillBargainingDto.goodsNum,
+    //             totalWeight: data.data.sbillBargainingDto.goodsWeigh,
+    //             totalMoeny: data.data.sbillBargainingDto.totalMoney,
+    //             endTime: data.data.sbillBargainingDto.dataSystemdate,
+    //             status: data.data.sbillBargainingDto.bargainingAuditStatus,
+    //             operName: data.data.sbillBargainingDto.operatorName,
+    //             list: data.data.list,
+    //             deptName: data.data.sbillBargainingDto.deptName,
+    //             employeeName: data.data.sbillBargainingDto.employeeName
+    //           }
+    //           this.btnShow = (data.data.sbillBargainingDto.bargainingAuditStatus === '待初审' && modules.audit) || (data.data.sbillBargainingDto.bargainingAuditStatus === '待复审' && modules.re_audit)
+    //           break
+    //         case 'ERP销售定价':
+    //           this.detailData = {
+    //             list: data.data
+    //           }
+    //           break
+    //         default:
+    //           console.log('default')
+    //           break
+    //       }
+    //     }
+    //     this.hideLoading()
+    //   } catch (e) {
+    //     this.hideLoading()
+    //     console.log(e)
+    //   }
+    // }
   }
 }
 </script>
