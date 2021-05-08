@@ -39,8 +39,8 @@ div
   .process(v-if="rowCount.length > 0" :style="{'padding-bottom': isIpx ? '218rpx' : '150rpx'}")
     process-item(v-if="i", :pno="processId", :ref="`processItem_${idx}`", v-for="(i,idx) in rowCount", :row="i", :key="idx", :process-type="processType", :cb="pickerItemCb", :rowidx="idx")
   .bottom-footer.bg-white.padding-sm(:style="{'padding-bottom': isIpx ? '98rpx' : '20rpx'}")
-    .main-btn.bg-red(@click="delProcess", v-if="processId") 删除
-    .main-btn(@click="createProcess", v-else) 提交
+    .main-btn.bg-red(@click="delProcess", v-if="processId && processState=='01'") 删除
+    .main-btn(@click="createProcess", v-if="!processId") 提交
 
 </template>
 <script>
@@ -63,7 +63,8 @@ export default {
       btnDisable: false,
       rowObj: {},
       processId: '',
-      pObj: {}
+      pObj: {},
+      processState: ''
     }
   },
   components: {
@@ -94,6 +95,7 @@ export default {
         this.pObj = res.data
         const list = []
         this.processType = this.pObj['processType'] === '01' ? '开平' : '镀锌'
+        this.processState = res.data.processState
         this.pObj.deliveryDate = res.data.deliveryDate.slice(0, 10)
         this.pObj.onlineProcessDetailList.map(item => {
           const obj = {
@@ -127,6 +129,7 @@ export default {
     this.rowObj = {}
     this.processId = ''
     this.pObj = {}
+    this.processState = ''
   },
   methods: {
     // 时间选择器回调
