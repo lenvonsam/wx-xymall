@@ -255,21 +255,26 @@ export default {
               self.setUser({token: res.data.token, user: res.data.user})
               self.httpPost(self.apiList.zf.getPersonInfo, {}).then(res => {
                 self.setUser({user: res.data})
-                if (res.data.userStatus === '01') {
-                  self.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
-                    if (res === 'confirm') {
-                      self.jump('/pages/account/companyUpdate/main')
-                    } else {
-                      self.tab('/pages/me/main')
-                    }
-                  })
-                } else {
-                  this.showMsg('登录成功')
-                  setTimeout(function () {
-                    canHttp = true
-                    self.tab('/pages/me/main')
-                  }, 500)
-                }
+                this.showMsg('登录成功')
+                setTimeout(function () {
+                  canHttp = true
+                  self.tab('/pages/me/main')
+                }, 500)
+                // if (res.data.userStatus === '01') {
+                //   self.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
+                //     if (res === 'confirm') {
+                //       self.jump('/pages/account/companyUpdate/main')
+                //     } else {
+                //       self.tab('/pages/me/main')
+                //     }
+                //   })
+                // } else {
+                //   this.showMsg('登录成功')
+                //   setTimeout(function () {
+                //     canHttp = true
+                //     self.tab('/pages/me/main')
+                //   }, 500)
+                // }
               })
             }).catch(e => {
               console.log('微信未绑定过手机号，登陆失败——+++')

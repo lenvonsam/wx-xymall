@@ -167,17 +167,17 @@ export default {
         console.log('err', e)
         this.showMsg(e.message)
       }
-    },
-    async getRemoteSearchHistory () {
-      try {
-        const data = await this.ironRequest(this.apiList.xy.searchHistory.url, {}, this.apiList.xy.searchHistory.method)
-        const obj = this.currentUser
-        obj.localSearchs = data.history === undefined ? [] : JSON.parse(data.history)
-        this.setUser(obj)
-      } catch (e) {
-        console.error(e)
-      }
     }
+    // async getRemoteSearchHistory () {
+    //   try {
+    //     const data = await this.ironRequest(this.apiList.xy.searchHistory.url, {}, this.apiList.xy.searchHistory.method)
+    //     const obj = this.currentUser
+    //     obj.localSearchs = data.history === undefined ? [] : JSON.parse(data.history)
+    //     this.setUser(obj)
+    //   } catch (e) {
+    //     console.error(e)
+    //   }
+    // }
   }
 }
 </script>

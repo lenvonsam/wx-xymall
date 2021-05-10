@@ -165,6 +165,9 @@ export default {
       self.httpPost(self.apiList.zf.queryUserCenterContractInfo, {}).then(res => {
         console.log(res.data)
         this.rowCountObj = res.data
+      }).catch(err => {
+        this.hideLoading()
+        console.log(err)
       })
       /** 判断账号状态
        * 已完善信息账号可打开“我的”
@@ -315,9 +318,9 @@ export default {
         const res = await this.httpPost(this.apiList.zf.getPersonInfo, {})
         this.setUser({ user: res.data })
         // 超时未提货物模态框
-        if (this.isLogin && this.currentUser.type === 'buyer' && !this.currentUser.userGeneralAgreement) {
-          this.ruleModalShow = true
-        }
+        // if (this.isLogin && this.currentUser.type === 'buyer' && !this.currentUser.userGeneralAgreement) {
+        //   this.ruleModalShow = true
+        // }
         // 信息未完善提示
         if (this.currentUser.userStatus === '01') {
           this.alertText = '您还需要完善公司信息才能正常工作'
@@ -325,23 +328,24 @@ export default {
         }
       } catch (e) {
         console.error(e)
+        this.hideLoading()
         this.showMsg(e.message)
         this.exitUser()
       }
     },
-    async getUserRule () {
-      await this.refreshUser()
-      console.log('me_rule======>' + this.currentUser.rule)
-      if (this.currentUser.type === 'buyer' && this.currentUser.rule === 0) {
-        this.modalShow = false
-        this.ruleModalShow = true
-      } else if (this.currentUser.userStatus === '01') {
-        this.alertText = '您还需要完善公司信息才能正常操作'
-        this.alertShow = true
-      } else {
-        this.ruleModalShow = false
-      }
-    },
+    // async getUserRule () {
+    //   await this.refreshUser()
+    //   console.log('me_rule======>' + this.currentUser.rule)
+    //   if (this.currentUser.type === 'buyer' && this.currentUser.rule === 0) {
+    //     this.modalShow = false
+    //     this.ruleModalShow = true
+    //   } else if (this.currentUser.userStatus === '01') {
+    //     this.alertText = '您还需要完善公司信息才能正常操作'
+    //     this.alertShow = true
+    //   } else {
+    //     this.ruleModalShow = false
+    //   }
+    // },
     // 跳转用户设置
     jumpSetting () {
       if (!this.isLogin) {

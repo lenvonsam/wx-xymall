@@ -56,10 +56,10 @@
                           span(v-if="cart.tolerance_range") 公差范围:
                           span.ml-10.mr-10(v-if="cart.tolerance_range") {{cart.tolerance_range}}
                           span.ml-5(v-if="cart.weight_range") 重量范围:
-                          span.ml-10(v-if="cart.weight_range") {{cart.weight_range}} 
+                          span.ml-10(v-if="cart.weight_range") {{cart.weight_range}}
                         //- .pt-5
                           span(v-if="cart.weight_range") 重量范围:
-                          span.ml-10(v-if="cart.weight_range") {{cart.weight_range}} 
+                          span.ml-10(v-if="cart.weight_range") {{cart.weight_range}}
                       .text-right
                         .text-gray (可让10元)
                         .flex.flex-direction.justify-between.pt-5
@@ -107,7 +107,7 @@
           .solid-top.text-right.padding.text-gray 共4条数据
         template(v-else)
           .solid-top.row.padding.justify-between(@click="tabSelect('lift', item)", :class="{'text-blue': liftSelect === item}", v-for="(item, liftIdx) in liftList", :key="liftIdx")
-            span {{item.label}}  
+            span {{item.label}}
             .cuIcon-check(v-show="liftSelect === item")
     alert(msg="您还未登录，请先登录", v-model="alertShow", :cb="alertCb")
 </template>
@@ -420,91 +420,91 @@ export default {
     },
     loadCartData () {
       this.isLoad = false
-      const me = this
-      this.ironRequest('cartList.shtml?user_id=' + me.currentUser.user_id, {}, 'get').then(resp => {
-        this.isLoad = true
-        if (resp.returncode === '0') {
-          let arr = resp.carts
-          this.soldCarts = resp.sold_out_carts
-          arr.map(itm => {
-            itm.choosed = false
-            let allWeight = itm.one_weight
-            let wtArr = allWeight.split('/')
-            let prArr = itm.product_price.split('/')
-            let oldPrArr = itm.origin_price.split('/')
-            if (wtArr.length === 2) {
-              let weight1 = wtArr[0].substring(0, wtArr[0].indexOf('('))
-              let weight2 = wtArr[1].substring(0, wtArr[1].indexOf('('))
-              if (prArr[1] === '--') {
-                itm.radios = [{
-                  label: '理计',
-                  m_way: 2,
-                  weight: weight1,
-                  originPrice: oldPrArr[0],
-                  dxPrices: oldPrArr[0]
-                }]
-              } else {
-                itm.radios = [{
-                  label: '理计',
-                  m_way: 2,
-                  weight: weight1,
-                  price: prArr[0],
-                  originPrice: oldPrArr[0],
-                  dxPrices: oldPrArr[0]
-                }, {
-                  label: '磅计',
-                  m_way: 1,
-                  weight: weight2,
-                  price: prArr[1],
-                  originPrice: oldPrArr[1],
-                  dxPrices: oldPrArr[1]
-                }]
-              }
-              itm.weight = weight1
-              itm.price = prArr[0]
-              itm.dx_prices = oldPrArr[0]
-              itm.originPrice = oldPrArr[0]
-              if (itm.measure_way_id === 1) {
-                itm.weight = weight2
-                itm.price = prArr[1]
-                itm.originPrice = oldPrArr[1]
-                itm.dx_prices = oldPrArr[1]
-              }
-              if (itm.measure_way_id === 0) {
-                itm.measure_way_id = 2
-              }
-            } else {
-              let lbl = '理计'
-              if (itm.measure_way_id === 1) {
-                lbl = '磅计'
-              }
-              let wt = itm.one_weight.substring(0, itm.one_weight.indexOf('('))
-              itm.radios = [{
-                label: lbl,
-                m_way: itm.measure_way_id,
-                weight: wt
-              }]
-              itm.weight = wt
-              itm.price = itm.product_price
-              itm.originPrice = itm.origin_price
-              itm.dx_prices = itm.origin_price
-            }
-            itm.cost_prices = 0
-            this.carts.push(itm)
-          })
-          this.tabDot(this.carts.length + this.soldCarts.length)
-          // if (done) done()
-        } else {
-          this.showMsg(resp ? '网络异常' : resp.errormsg)
-          this.carts = []
-          this.tabDot(0)
-          // if (done) done()
-        }
-      }).catch(err => {
-        this.isLoad = true
-        me.showMsg(err || '网络异常')
-        // if (done) done()
-      })
+      // const me = this
+      // this.ironRequest('cartList.shtml?user_id=' + me.currentUser.user_id, {}, 'get').then(resp => {
+      //   this.isLoad = true
+      //   if (resp.returncode === '0') {
+      //     let arr = resp.carts
+      //     this.soldCarts = resp.sold_out_carts
+      //     arr.map(itm => {
+      //       itm.choosed = false
+      //       let allWeight = itm.one_weight
+      //       let wtArr = allWeight.split('/')
+      //       let prArr = itm.product_price.split('/')
+      //       let oldPrArr = itm.origin_price.split('/')
+      //       if (wtArr.length === 2) {
+      //         let weight1 = wtArr[0].substring(0, wtArr[0].indexOf('('))
+      //         let weight2 = wtArr[1].substring(0, wtArr[1].indexOf('('))
+      //         if (prArr[1] === '--') {
+      //           itm.radios = [{
+      //             label: '理计',
+      //             m_way: 2,
+      //             weight: weight1,
+      //             originPrice: oldPrArr[0],
+      //             dxPrices: oldPrArr[0]
+      //           }]
+      //         } else {
+      //           itm.radios = [{
+      //             label: '理计',
+      //             m_way: 2,
+      //             weight: weight1,
+      //             price: prArr[0],
+      //             originPrice: oldPrArr[0],
+      //             dxPrices: oldPrArr[0]
+      //           }, {
+      //             label: '磅计',
+      //             m_way: 1,
+      //             weight: weight2,
+      //             price: prArr[1],
+      //             originPrice: oldPrArr[1],
+      //             dxPrices: oldPrArr[1]
+      //           }]
+      //         }
+      //         itm.weight = weight1
+      //         itm.price = prArr[0]
+      //         itm.dx_prices = oldPrArr[0]
+      //         itm.originPrice = oldPrArr[0]
+      //         if (itm.measure_way_id === 1) {
+      //           itm.weight = weight2
+      //           itm.price = prArr[1]
+      //           itm.originPrice = oldPrArr[1]
+      //           itm.dx_prices = oldPrArr[1]
+      //         }
+      //         if (itm.measure_way_id === 0) {
+      //           itm.measure_way_id = 2
+      //         }
+      //       } else {
+      //         let lbl = '理计'
+      //         if (itm.measure_way_id === 1) {
+      //           lbl = '磅计'
+      //         }
+      //         let wt = itm.one_weight.substring(0, itm.one_weight.indexOf('('))
+      //         itm.radios = [{
+      //           label: lbl,
+      //           m_way: itm.measure_way_id,
+      //           weight: wt
+      //         }]
+      //         itm.weight = wt
+      //         itm.price = itm.product_price
+      //         itm.originPrice = itm.origin_price
+      //         itm.dx_prices = itm.origin_price
+      //       }
+      //       itm.cost_prices = 0
+      //       this.carts.push(itm)
+      //     })
+      //     this.tabDot(this.carts.length + this.soldCarts.length)
+      //     // if (done) done()
+      //   } else {
+      //     this.showMsg(resp ? '网络异常' : resp.errormsg)
+      //     this.carts = []
+      //     this.tabDot(0)
+      //     // if (done) done()
+      //   }
+      // }).catch(err => {
+      //   this.isLoad = true
+      //   me.showMsg(err || '网络异常')
+      //   // if (done) done()
+      // })
     },
     generateQuotation () {
       const filterArray = this.carts.filter(itm => itm.choosed === true)

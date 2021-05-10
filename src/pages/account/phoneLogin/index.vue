@@ -199,17 +199,17 @@ export default {
         this.showMsg(e)
         this.canClick = true
       }
-    },
-    async getRemoteSearchHistory (userData) {
-      try {
-        const data = await this.ironRequest(this.apiList.xy.searchHistory.url + '?user_id=' + userData.user_id, {}, this.apiList.xy.searchHistory.method)
-        const obj = this.currentUser
-        obj.localSearchs = data.history === '' ? [] : JSON.parse(data.history)
-        this.setUser(obj)
-      } catch (e) {
-        console.error(e)
-      }
     }
+    // async getRemoteSearchHistory (userData) {
+    //   try {
+    //     const data = await this.ironRequest(this.apiList.xy.searchHistory.url + '?user_id=' + userData.user_id, {}, this.apiList.xy.searchHistory.method)
+    //     const obj = this.currentUser
+    //     obj.localSearchs = data.history === '' ? [] : JSON.parse(data.history)
+    //     this.setUser(obj)
+    //   } catch (e) {
+    //     console.error(e)
+    //   }
+    // }
   }
 }
 </script>

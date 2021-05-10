@@ -196,6 +196,7 @@ export default {
   watch: {
     carts: {
       handler (newVal, oldVal) {
+        // 监听已选物资的变化
         let filterArray = newVal.filter(item => {
           item.countWeight = item.weight
           return item.choosed === true
@@ -329,6 +330,7 @@ export default {
               self.carts = []
               self.soldCarts = []
               this.tabDot(this.carts.length + this.soldCarts.length)
+              mpvue.setStorageSync('cartAllCount', this.carts.length + this.soldCarts.length)
             }).catch(e => {
               self.showMsg(e.message || '网络异常')
             }).finally(() => {
@@ -510,38 +512,52 @@ export default {
       }
     },
     // 选择计量方式
-    weightChoose (val, rowItem) {
-      rowItem.measure_way_id = val
+    weightChoose (val, cart) {
+      console.log('选择计量方式', val, cart)
+      cart.measure_way_id = val
       if (val === '01') {
-        rowItem.weight = rowItem.radios[0].weight
-        rowItem.price = rowItem.radios[0].price
-        // rowItem.originPrice = rowItem.radios[0].originPrice
+        // 理计
+        // 修改当前物资显示的总重量和定价
+        cart.weight = cart.radios[0].weight
+        cart.price = cart.radios[0].price
+        // cart.originPrice = cart.radios[0].originPrice
       } else {
-        rowItem.weight = rowItem.radios[1].weight
-        rowItem.price = rowItem.radios[1].price
-        // rowItem.originPrice = rowItem.radios[1].price
+        // 磅计
+        // 修改当前物资显示的总重量和定价
+        cart.weight = cart.radios[1].weight
+        cart.price = cart.radios[1].price
+        // cart.originPrice = cart.radios[1].price
       }
       let paramsObj = {
-        id: rowItem.id,
+        id: cart.id,
         cartQuantityType: val
       }
       this.httpGet(this.apiList.zf.changeQuantityType, paramsObj).catch(e => {
         this.showMsg(e.message || '网络异常')
       })
-      // this.ironRequest('cartUpdate.shtml', { cart_id: rowItem.cart_id, user_id: this.currentUser.user_id, measure_way: val, count: rowItem.count }, 'post').then(res => {
+      // this.ironRequest('cartUpdate.shtml', { cart_id: cart.cart_id, user_id: this.currentUser.user_id, measure_way: val, count: rowItem.count }, 'post').then(res => {
       // })
       this.$forceUpdate()
     },
-    rowCartCount (obj) {
-      console.log(obj.count)
-
+    rowCartCount (cart) {
+      console.log('修改改商品购物车数量', cart.count)
+      cart.weight = this.calcWeight(
+        cart.cartQuantityType, // 购物车计量方式
+        cart.count,
+        cart.meterWeight,
+        cart.length,
+        cart.tolerance,
+        cart.floatingRatio
+      )
+      console.log(cart.weight)
       let params = {
-        id: obj.id,
-        num: obj.count,
+        id: cart.id,
+        num: cart.count,
         batchNo: ''
       }
       this.httpGet(this.apiList.zf.changeNum, params).then(res => {
         console.log(res)
+        cart.num = cart.count
       }).catch(e => {
         console.log(e)
       })
@@ -563,6 +579,7 @@ export default {
               this.soldCarts = []
               this.loadCartData()
               this.tabDot(this.carts.length + this.soldCarts.length)
+              mpvue.setStorageSync('cartAllCount', this.carts.length + this.soldCarts.length)
             }).finally(() => {
               self.hideLoading()
               self.btnDisable = false
@@ -646,9 +663,9 @@ export default {
         this.soldCarts = res.data.items.filter(x => x.status === 0)
         arr.forEach(itm => {
           // const weightMark = []
-          const prArr = []
-          const wtArr = []
-          const oldPrArr = []
+          // const prArr = []
+          // const wtArr = []
+          // const oldPrArr = []
           // if (itm.trade_type === 1) {
           // 非H型钢
           itm.radios = []
@@ -666,21 +683,21 @@ export default {
             itm.radios.push({
               label: '理计',
               m_way: '01',
-              weight: temp,
-              price: itm.ratioPriceManager, // 上架理计定价
+              weight: temp, // 该物资理计总重量
+              price: itm.ratioPriceManager, // 该物资理计定价
               originPrice: itm.lj_origin_price
             })
             itm.price = itm.ratioPriceManager
-            prArr.push(itm.ratioPriceManager)
-            wtArr.push(self.calcWeight(
-              itm.cartQuantityType, // 购物车计量方式
-              itm.num,
-              itm.meterWeight,
-              itm.length,
-              itm.tolerance,
-              itm.floatingRatio
-            ))
-            oldPrArr.push(itm.lj_origin_price)
+            // prArr.push(itm.ratioPriceManager)
+            // wtArr.push(self.calcWeight(
+            //   itm.cartQuantityType, // 购物车计量方式
+            //   itm.num,
+            //   itm.meterWeight,
+            //   itm.length,
+            //   itm.tolerance,
+            //   itm.floatingRatio
+            // ))
+            // oldPrArr.push(itm.lj_origin_price)
           }
           // if (Number(itm.ratioPricePound) > 0) {
           // 挂牌计量方式
@@ -696,21 +713,21 @@ export default {
             itm.radios.push({
               label: '磅计',
               m_way: '02',
-              weight: temp,
-              price: itm.ratioPricePound, // 上架磅计定价
+              weight: temp, // 该物资磅计的总重量
+              price: itm.ratioPricePound, // 该物资磅计定价
               originPrice: itm.bj_origin_price
             })
             itm.price = itm.ratioPricePound
-            prArr.push(itm.ratioPricePound)
-            wtArr.push(self.calcWeight(
-              itm.cartQuantityType, // 购物车计量方式
-              itm.num,
-              itm.meterWeight,
-              itm.length,
-              itm.tolerance,
-              itm.floatingRatio
-            ))
-            oldPrArr.push(itm.bj_origin_price)
+            // prArr.push(itm.ratioPricePound)
+            // wtArr.push(self.calcWeight(
+            //   itm.cartQuantityType, // 购物车计量方式
+            //   itm.num,
+            //   itm.meterWeight,
+            //   itm.length,
+            //   itm.tolerance,
+            //   itm.floatingRatio
+            // ))
+            // oldPrArr.push(itm.bj_origin_price)
           }
           // if (!itm.measure_way_id) itm.measure_way_id = '01'
           if (!itm.cartQuantityType) {
@@ -731,6 +748,7 @@ export default {
           // }
           itm.choosed = false
           itm.count = Number(itm.num)
+          // 该物资当前计量方式的总重量
           itm.weight = self.calcWeight(
             itm.cartQuantityType ? itm.cartQuantityType : '01',
             itm.num,
@@ -739,7 +757,19 @@ export default {
             itm.tolerance,
             itm.floatingRatio
           )
+          // 该物资当前计量方式的定价
           itm.price = itm.cartQuantityType === '02' ? itm.ratioPricePound : itm.ratioPriceManager
+
+          console.log('购物车数据整理')
+          console.log({
+            radios: itm.radios,
+            price: itm.price,
+            count: itm.count,
+            choosed: itm.choosed,
+            weight: itm.weight,
+            measure_way_id: itm.measure_way_id
+          })
+
           this.carts.push(itm)
           // const idx = itm.radios.findIndex(item => {
           //   return item.m_way === itm.measure_way_id
@@ -755,6 +785,7 @@ export default {
         })
         // 显示底部tabbar购物车数量
         this.tabDot(this.carts.length + this.soldCarts.length)
+        mpvue.setStorageSync('cartAllCount', this.carts.length + this.soldCarts.length)
       }).catch(e => {
         self.showMsg(e.message)
       }).finally(() => {

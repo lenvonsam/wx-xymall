@@ -258,6 +258,7 @@ export default {
         })
         this.gallery = data.data
       } catch (e) {
+        this.hideLoading()
         this.showMsg(e.message)
       }
     },
@@ -271,6 +272,7 @@ export default {
         })
         this.notices = data.data
       } catch (e) {
+        this.hideLoading()
         this.showMsg(e.message)
       }
     },

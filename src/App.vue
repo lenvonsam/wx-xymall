@@ -82,7 +82,7 @@ export default {
     console.log('判断用户是否已经登陆++++', me.isLogin)
     if (me.isLogin) {
       // me.getQueryProfile()
-      me.showLoading()
+      // me.showLoading()
       // const uid = me.currentUser.user_id
       // console.log('App.vue_uid=====>', uid)
       // 获取用户信息
@@ -99,6 +99,7 @@ export default {
       }).finally(() => {
         me.hideLoading()
       }).catch(e => {
+        me.hideLoading()
         me.showMsg('登录已失效，请重新登录')
         setTimeout(() => {
           me.exitUser()

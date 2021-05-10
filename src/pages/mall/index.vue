@@ -132,7 +132,7 @@ export default {
           standard: 'specification',
           material: 'productTextureName',
           wh_name: 'stockZoneName',
-          max_count: 'ratioAvailableAmount',
+          max_count: 'avbleAmount',
           max_weight: 'ratioAvailableManagerWeight',
           tolerance: 'toleranceRange',
           length: 'length',
@@ -603,6 +603,12 @@ export default {
           self.showMsg('购物车成功')
         }, 500)
         self.btnDisable = false
+        // 显示底部tabbar购物车数量
+        var cartAllCount = mpvue.getStorageSync('cartAllCount')
+        if (cartAllCount) {
+          this.tabDot(cartAllCount + 1)
+          mpvue.setStorageSync('cartAllCount', cartAllCount + 1)
+        }
         self.hideLoading()
       } catch (e) {
         setTimeout(() => {
