@@ -70,20 +70,20 @@ div
           // .s-footer(v-if="carts.length > 0", style="height: 100rpx")
 
           .text-center.c-gray
-            .bottom-option.bg-white.flex.align-center.justify-between(v-if="isEdit", :style="{height: isIpx ? '168rpx' : '100rpx', 'padding-bottom': isIpx ? '68rpx' : 0}")
+            .bottom-option.bg-white.flex.align-center.padding-lr.justify-between(v-if="isEdit", :style="{height: isIpx ? '168rpx' : '100rpx', 'padding-bottom': isIpx ? '68rpx' : 0}")
               .flex.align-center(@click="choosedAll()")
                 .flex.flex-center
                   img.choose-icon(src="/static/images/blue_check.png", v-if="allChoosed")
                   img.choose-icon(src="/static/images/btn_ck_n.png", v-else)
                 .padding-xs 全选
-              .main-btn.bg-red(@click="promptClose()") 删除
+              .main-btn.bg-red(@click="delCartRow()") 删除
             .bottom-panel.bg-white.padding-sm(v-else, :style="{height: isIpx ? '308rpx' : '240rpx'}")
               .flex
                 .text-black 旧单金额
                 .text-gray.text-right.col ￥{{oldOrderPrice.allPrice}}（含吊费：{{oldOrderPrice.liftingFeeMoney}}）
               .flex
                 .text-black 新单金额
-                .text-gray.text-right.col ￥{{newOrderPrice.allPrice}}（含吊费：{{oldOrderPrice.liftingFeeMoney}}}）
+                .text-gray.text-right.col ￥{{newOrderPrice.allPrice}}（含吊费：{{newOrderPrice.liftingFeeMoney}}）
               .solid-top.solid-top-sm.row(v-if="contractStatus === 19")
                 .col.padding-right-xs
                   button.text-white.bg-red(@click="overrule()") 驳回
@@ -93,11 +93,11 @@ div
                 button.bg-gray 修改审核中
               //- .solid-top.solid-top-sm.row(v-else-if="((contractStatus === 12 || contractStatus === 14) && currentUser.type === 'buyer') || ((contractStatus === 15 || contractStatus === 16) && currentUser.type === 'seller')")
               .solid-top.solid-top-sm.row(v-else-if="contractStatus === 20")
-                .col.padding-right-xs.padding-top-sm
-                  //- button.bg-gray(@click="btnDisabled ? '' : back") 放弃修改
-                  button.bg-gray(@click="giveUp") 放弃修改
+                .col.padding-right-xs.padding-top
+                  //- button.bg-gray.ft-15(@click="btnDisabled ? '' : back") 放弃修改
+                  button.bg-gray.ft-15(@click="giveUp") 放弃修改
                 .col.padding-left-xs.padding-top-sm
-                  button.text-white.bg-blue(@click="applyEdit") 申请修改
+                  button.text-white.bg-blue.ft-15(@click="applyEdit") 申请修改
             //- .bill-foot.bg-white.padding-sm
 
 </template>
@@ -189,8 +189,9 @@ export default {
   watch: {
     carts: {
       handler (newVal, oldVal) {
+        // 监听已选物资的变化
         let filterArray = newVal.filter(item => {
-          item.countWeight = item.managerWeight
+          item.countWeight = item.weight
           return item.choosed === true
         })
         // this.totalCount = filterArray.length
@@ -200,28 +201,43 @@ export default {
         this.totalWeight = 0
         this.totalLiftCharge = 0
         let totalCount = 0
+        console.log('filterArray', filterArray)
         if (filterArray.length > 0) {
           filterArray.map(itm => {
             totalCount += itm.amount
             if (String(itm.price).indexOf('--') < 0) {
               if (Number(itm.liftingFee) > 0) {
-                const countWeight = itm.managerWeight
+                const countWeight = itm.weight
                 const countLiftWeight = countWeight * itm.liftingFee
-                this.totalPrice += itm.ratioPriceManager * countWeight + countLiftWeight
+                this.totalPrice += itm.price * countWeight + countLiftWeight
                 this.totalLiftCharge += countLiftWeight
               } else {
-                this.totalPrice += itm.ratioPriceManager * itm.managerWeight
+                this.totalPrice += itm.price * itm.weight
               }
-              this.totalWeight += itm.managerWeight
+              this.totalWeight += itm.weight
             }
           })
           this.totalLiftCharge = this.$toFixed(Number(this.totalLiftCharge), 2)
           this.totalPrice = this.$toFixed(Number(this.totalPrice), 2)
           this.totalWeight = this.$toFixed(Number(this.totalWeight), 3)
+          this.newOrderPrice.allPrice = this.totalPrice
+          this.newOrderPrice.liftingFeeMoney = this.totalLiftCharge
+        } else {
+          this.newOrderPrice.allPrice = 0
+          this.newOrderPrice.liftingFeeMoney = 0
         }
         this.totalCount = totalCount
       },
       deep: true
+    },
+    isEdit: {
+      handler (newVal, oldVal) {
+        if (newVal) {
+          this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 200 + 'rpx'
+        } else {
+          this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 340 + 'rpx'
+        }
+      }
     }
   },
   onTabItemTap (item) {
@@ -242,7 +258,7 @@ export default {
   },
   onReady () {
     if (this.isLogin) {
-      this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 240 + 'rpx'
+      this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 340 + 'rpx'
       if (this.carts.length === 0 && !this.firstLoad) {
         this.firstLoad = true
         this.loadCartData()
@@ -282,37 +298,55 @@ export default {
         }
       })
     },
-    promptClose () {
-      this.confirm({ content: '删除后将从合同中移除此规格，是否继续？(点击申请修改后，删除操作生效)' }).then((conRes) => {
-        if (conRes !== 'confirm') return false
-        const me = this
-        const modifyList = JSON.parse(JSON.stringify(me.modifyList))
-        const list = []
-        const lift = me.wh_lift.lift
-        let newWeight = 0
-        let newPrice = 0
-        modifyList.find((res, index) => {
-          if (res.choosed) {
-            // delPrice += res.price
-            res.count = 0
-            me.delModifyList.push(res)
-          } else {
-            let isLift = me.wh_lift[res.wh_name]
-            newWeight += isLift === '1' ? Number(res.weight) : 0
-            if (me.contractDetail.is_lift !== 1) {
-              isLift = 2
-            }
-            newPrice += res.price
-            list.push(res)
-          }
-        })
-        // me.newLift = Number(this.$toFixed(newWeight * lift, 2))
-        me.newLift = list.length ? Number(this.$toFixed(newWeight * lift, 2)) : 0
-        me.modifyList = list
-        me.newPrice = list.length ? Number(this.$toFixed(newPrice, 2)) : 0
-        this.getNewBillPrice()
+    delCartRow () {
+      const me = this
+      const list = []
+      this.carts.map(item => {
+        if (!item.choosed) {
+          list.push(item)
+        }
+      })
+      if (list.length === this.carts.length) {
+        this.showMsg('请选择需要删除的物资')
+        return false
+      }
+      this.confirm({ content: '删除后将从合同中移除此规格，是否继续？(点击申请修改后，删除操作生效)' }).then((res) => {
+        if (res === 'confirm') {
+          me.carts = list
+        }
       })
     },
+    // promptClose () {
+    //   this.confirm({ content: '删除后将从合同中移除此规格，是否继续？(点击申请修改后，删除操作生效)' }).then((conRes) => {
+    //     if (conRes !== 'confirm') return false
+    //     const me = this
+    //     const modifyList = JSON.parse(JSON.stringify(me.modifyList))
+    //     const list = []
+    //     const lift = me.wh_lift.lift
+    //     let newWeight = 0
+    //     let newPrice = 0
+    //     modifyList.find((res, index) => {
+    //       if (res.choosed) {
+    //         // delPrice += res.price
+    //         res.count = 0
+    //         me.delModifyList.push(res)
+    //       } else {
+    //         let isLift = me.wh_lift[res.wh_name]
+    //         newWeight += isLift === '1' ? Number(res.weight) : 0
+    //         if (me.contractDetail.is_lift !== 1) {
+    //           isLift = 2
+    //         }
+    //         newPrice += res.price
+    //         list.push(res)
+    //       }
+    //     })
+    //     // me.newLift = Number(this.$toFixed(newWeight * lift, 2))
+    //     me.newLift = list.length ? Number(this.$toFixed(newWeight * lift, 2)) : 0
+    //     me.modifyList = list
+    //     me.newPrice = list.length ? Number(this.$toFixed(newPrice, 2)) : 0
+    //     this.getNewBillPrice()
+    //   })
+    // },
     giveUp () {
       if (!this.btnDisabled) {
         this.back()
@@ -584,8 +618,16 @@ export default {
       // })
       this.$forceUpdate()
     },
-    rowCartCount (obj) {
-      console.log(obj.count)
+    rowCartCount (cart) {
+      cart.weight = this.calcWeight(
+        cart.quantityType, // 购物车计量方式
+        cart.amount,
+        cart.meterWeight,
+        cart.length,
+        cart.tolerance,
+        cart.floatingRatio
+      )
+      console.log(cart.weight)
       // let params = {
       //   id: obj.id,
       //   num: obj.count,
@@ -596,24 +638,6 @@ export default {
       // }).catch(e => {
       //   console.log(e)
       // })
-    },
-    delCartRow () {
-      const me = this
-      const list = []
-      this.carts.map(item => {
-        if (!item.choosed) {
-          list.push(item)
-        }
-      })
-      if (list.length === this.carts.length) {
-        this.showMsg('请选择需要删除的物资')
-        return false
-      }
-      this.confirm({ content: '您确定要删除吗？' }).then((res) => {
-        if (res === 'confirm') {
-          me.carts = list
-        }
-      })
     },
     async auditDxCheck (flag) {
       try {
@@ -674,24 +698,20 @@ export default {
       this.isLoad = false
       const self = this
       await self.httpPost(this.apiList.zf.saleContractDetail, {contractId: this.$root.$mp.query.contractId}).then(res => {
-        // 有效物资
-        let contractDetail = res.data
-        this.saleContractNo = contractDetail.saleContractNo
-        console.log(contractDetail.xingyunContractStatus)
-        this.cStatus = self.getStatus(contractDetail.xingyunContractStatus)
-        console.log(this.cStatus)
-        let arr = contractDetail.contractDetailList
-        // 旧单总价格
-        this.oldOrderPrice.allPrice = (res.data.goodsMoney + res.data.liftingFeeMoney).toFixed(2)
-        this.oldOrderPrice.liftingFeeMoney = res.data.liftingFeeMoney.toFixed(2)
+        // this.deliveryType = res.data.deliveryType // 01：表示自提
+        // this.sourceType = res.data.sourceType // 合同来源：01:ERP,02:型云商城,03:小程序
+        this.oldOrderPrice.allPrice = res.data.inTaxReceiveMoney
+        this.oldOrderPrice.liftingFeeMoney = res.data.liftingFeeMoney
 
+        // 有效物资
+        let arr = res.data.contractDetailList
         // 失效物资
         this.soldCarts = []
         arr.forEach(itm => {
           // const weightMark = []
-          const prArr = []
-          const wtArr = []
-          const oldPrArr = []
+          // const prArr = []
+          // const wtArr = []
+          // const oldPrArr = []
           // if (itm.trade_type === 1) {
           // 非H型钢
           itm.radios = []
@@ -700,7 +720,7 @@ export default {
           if (itm.onlineQuantityType === '00' || itm.onlineQuantityType === '01') {
             let temp = self.calcWeight(
               '01',
-              itm.num, // 数量(支)
+              itm.amount, // 数量(支)
               itm.meterWeight, // 16标米重
               itm.length, // 长度
               itm.tolerance, // 公差
@@ -709,28 +729,28 @@ export default {
             itm.radios.push({
               label: '理计',
               m_way: '01',
-              weight: temp,
-              price: itm.ratioPriceManager, // 上架理计定价
+              weight: temp, // 该物资理计总重量
+              price: itm.ratioPriceManager, // 该物资理计定价
               originPrice: itm.lj_origin_price
             })
             itm.price = itm.ratioPriceManager
-            prArr.push(itm.ratioPriceManager)
-            wtArr.push(self.calcWeight(
-              itm.cartQuantityType, // 购物车计量方式
-              itm.num,
-              itm.meterWeight,
-              itm.length,
-              itm.tolerance,
-              itm.floatingRatio
-            ))
-            oldPrArr.push(itm.lj_origin_price)
+            // prArr.push(itm.ratioPriceManager)
+            // wtArr.push(self.calcWeight(
+            //   itm.quantityType, // 购物车计量方式
+            //   itm.amount,
+            //   itm.meterWeight,
+            //   itm.length,
+            //   itm.tolerance,
+            //   itm.floatingRatio
+            // ))
+            // oldPrArr.push(itm.lj_origin_price)
           }
           // if (Number(itm.ratioPricePound) > 0) {
           // 挂牌计量方式
           if (itm.onlineQuantityType === '00' || itm.onlineQuantityType === '02') {
             let temp = self.calcWeight(
               '02',
-              itm.num, // 数量(支)
+              itm.amount, // 数量(支)
               itm.meterWeight, // 16标米重
               itm.length, // 长度
               itm.tolerance, // 公差
@@ -739,27 +759,27 @@ export default {
             itm.radios.push({
               label: '磅计',
               m_way: '02',
-              weight: temp,
-              price: itm.ratioPricePound, // 上架磅计定价
+              weight: temp, // 该物资磅计的总重量
+              price: itm.ratioPricePound, // 该物资磅计定价
               originPrice: itm.bj_origin_price
             })
             itm.price = itm.ratioPricePound
-            prArr.push(itm.ratioPricePound)
-            wtArr.push(self.calcWeight(
-              itm.cartQuantityType, // 购物车计量方式
-              itm.num,
-              itm.meterWeight,
-              itm.length,
-              itm.tolerance,
-              itm.floatingRatio
-            ))
-            oldPrArr.push(itm.bj_origin_price)
+            // prArr.push(itm.ratioPricePound)
+            // wtArr.push(self.calcWeight(
+            //   itm.quantityType, // 购物车计量方式
+            //   itm.num,
+            //   itm.meterWeight,
+            //   itm.length,
+            //   itm.tolerance,
+            //   itm.floatingRatio
+            // ))
+            // oldPrArr.push(itm.bj_origin_price)
           }
           // if (!itm.measure_way_id) itm.measure_way_id = '01'
-          if (!itm.cartQuantityType) {
+          if (!itm.quantityType) {
             itm.measure_way_id = '00'
           } else {
-            itm.measure_way_id = itm.cartQuantityType
+            itm.measure_way_id = itm.quantityType
           }
           // } else if (itm.trade_type === 2) {
           //   // H型钢
@@ -773,16 +793,29 @@ export default {
           //   if (Number(itm.lj_price16) > 0) itm.radios[0].price = itm.lj_price16
           // }
           itm.choosed = false
-          itm.count = Number(itm.num)
+          // itm.num = Number(itm.amount)
+          // 该物资当前计量方式的总重量
           itm.weight = self.calcWeight(
-            itm.cartQuantityType ? itm.cartQuantityType : '01',
-            itm.num,
+            itm.quantityType ? itm.quantityType : '01',
+            itm.amount,
             itm.meterWeight,
             itm.length,
             itm.tolerance,
             itm.floatingRatio
           )
-          itm.price = itm.cartQuantityType === '02' ? itm.ratioPricePound : itm.ratioPriceManager
+          // 该物资当前计量方式的定价
+          itm.price = itm.quantityType === '02' ? itm.ratioPricePound : itm.ratioPriceManager
+
+          console.log('购物车数据整理')
+          console.log({
+            radios: itm.radios,
+            price: itm.price,
+            // count: itm.amount,
+            choosed: itm.choosed,
+            weight: itm.weight,
+            measure_way_id: itm.measure_way_id
+          })
+
           this.carts.push(itm)
           // const idx = itm.radios.findIndex(item => {
           //   return item.m_way === itm.measure_way_id
@@ -796,87 +829,11 @@ export default {
           //   this.carts.push(itm)
           // }
         })
-        // 显示底部tabbar购物车数量
-        this.tabDot(this.carts.length + this.soldCarts.length)
       }).catch(e => {
         self.showMsg(e.message)
       }).finally(() => {
         this.isLoad = true
       })
-      // this.ironRequest('cartList.shtml?data_source=0&user_id=' + self.currentUser.user_id, {}, 'get').then(resp => {
-      //   this.isLoad = true
-      //   if (resp.returncode === '0') {
-      //     let arr = resp.carts
-      //     this.soldCarts = resp.sold_out_carts
-      //     // const userType = this.currentUser.type
-      //     arr.map(itm => {
-      //       // const weightMark = []
-      //       const prArr = []
-      //       const wtArr = []
-      //       const oldPrArr = []
-      //       if (itm.trade_type === 1) {
-      //         // 非H型钢
-      //         itm.radios = []
-      //         if (Number(itm.lj_price) > 0) {
-      //           itm.radios.push({
-      //             label: '理计',
-      //             m_way: 2,
-      //             weight: itm.lj_weight,
-      //             price: itm.lj_price,
-      //             originPrice: itm.lj_origin_price
-      //           })
-      //           prArr.push(itm.lj_price)
-      //           wtArr.push(itm.lj_weight)
-      //           oldPrArr.push(itm.lj_origin_price)
-      //         }
-      //         if (Number(itm.bj_price) > 0) {
-      //           itm.radios.push({
-      //             label: '磅计',
-      //             m_way: 1,
-      //             weight: itm.bj_weight,
-      //             price: itm.bj_price,
-      //             originPrice: itm.bj_origin_price
-      //           })
-      //           prArr.push(itm.bj_price)
-      //           wtArr.push(itm.bj_weight)
-      //           oldPrArr.push(itm.bj_origin_price)
-      //         }
-      //         if (!itm.measure_way_id) itm.measure_way_id = 2
-      //       } else if (itm.trade_type === 2) {
-      //         // H型钢
-      //         itm.radios = [{
-      //           label: '理计',
-      //           m_way: itm.measure_way_id,
-      //           weight: itm.lj_weight16,
-      //           price: '--',
-      //           originPrice: itm.lj_origin_price16
-      //         }]
-      //         if (Number(itm.lj_price16) > 0) itm.radios[0].price = itm.lj_price16
-      //       }
-      //       itm.choosed = false
-      //       const idx = itm.radios.findIndex(item => {
-      //         return item.m_way === itm.measure_way_id
-      //       })
-      //       if (idx !== -1) {
-      //         itm.weight = itm.radios[idx].weight
-      //         itm.price = itm.radios[idx].price
-      //         itm.originPrice = itm.radios[idx].originPrice
-      //         itm.dx_prices = itm.radios[idx].price
-      //         itm.allowedPrice = itm.radios[idx].allowedPrice
-      //         this.carts.push(itm)
-      //       }
-      //     })
-      //     this.tabDot(this.carts.length + this.soldCarts.length)
-      //   } else {
-      //     this.showMsg(resp ? '网络异常' : resp.errormsg)
-      //     this.carts = []
-      //     this.soldCarts = []
-      //     this.tabDot(0)
-      //   }
-      // }).catch(err => {
-      //   this.isLoad = true
-      //   self.showMsg(err || '网络异常')
-      // })
     },
     // 卖家方法
     async dx (filterArray) {

@@ -23,7 +23,7 @@ div
                 .flex.align-center
                   .ft-16.padding-right-sm {{item.saleContractNo}}
                   img.ding-icon(src="/static/images/ding.png", v-if="item.is_dx")
-              .text-red {{item.status}}
+              .text-red {{status[item.xingyunContractStatus]}}
             .text-gray
               .padding-bottom-xs {{item.orgName}}
               .flex.justify-between.padding-bottom-xs
@@ -49,7 +49,7 @@ export default {
     return {
       listData: [],
       finished: false,
-      currentPage: 0,
+      currentPage: 1,
       pageSize: 10,
       queryObj: {
         pageNum: 1,
@@ -59,7 +59,11 @@ export default {
       billNo: '',
       scrollHeight: 0,
       loading: false,
-      disabled: false
+      disabled: false,
+      status: {
+        '08': '违约',
+        '09': '已取消'
+      }
     }
   },
   computed: {
@@ -73,7 +77,7 @@ export default {
   onUnload () {
     this.listData = []
     this.finished = false
-    this.currentPage = 0
+    this.currentPage = 1
     this.pageSize = 10
     this.queryObj = {
       pageNum: 1,
@@ -108,7 +112,7 @@ export default {
     // 搜索合同
     searchOrder () {
       this.statisticRequest({ event: 'click_app_recycle_search' })
-      this.currentPage = 0
+      this.currentPage = 1
       this.loadData()
     },
     // 上拉加载
@@ -118,27 +122,28 @@ export default {
     },
     // 加载数据
     loadData () {
-      if (this.currentPage === 0) {
+      if (this.currentPage === 1) {
         this.isload = true
       } else {
         this.isload = false
       }
       this.loading = true
+      this.queryObj.pageNum = this.currentPage
       this.httpPost(this.apiList.zf.contractRecoveryPage, this.queryObj).then(res => {
         console.log('++++', res)
         let arr = res.data
         // arr.map(item => {
         //   item.fact_price = this.$toFixed(item.fact_price, 2)
         // })
-        if (arr.length === 0 && this.currentPage === 0) {
+        if (arr.length === 0 && this.currentPage === 1) {
           this.listData = []
           this.finished = true
           this.isload = false
-        } else if (arr.length > 0 && this.currentPage === 0) {
+        } else if (arr.length > 0 && this.currentPage === 1) {
           this.listData = arr
           this.isload = false
           if (arr.length > 8) this.finished = false
-        } else if (arr.length > 0 && this.currentPage > 0) {
+        } else if (arr.length > 0 && this.currentPage > 1) {
           arr.map(itm => {
             this.listData.push(itm)
           })

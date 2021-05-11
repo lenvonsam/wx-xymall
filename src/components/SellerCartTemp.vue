@@ -667,6 +667,7 @@ export default {
       }
       this.httpGet(this.apiList.zf.changeNum, params).then(res => {
         console.log(res)
+        cart.num = cart.count
       }).catch(e => {
         console.log(e)
       })
