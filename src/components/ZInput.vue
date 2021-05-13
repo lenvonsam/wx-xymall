@@ -70,7 +70,7 @@ export default {
   methods: {
     getBlur () {
       // 失焦验证输入是否合法
-      console.log(this.getValue)
+      // console.log(this.getValue)
       let val = Number(this.getValue) || 0
       let type = this.type
       switch (type) {

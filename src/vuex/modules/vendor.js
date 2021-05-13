@@ -83,7 +83,7 @@ export default {
         dotKey: '',
         event: 'click_app_me_audit_history_seller',
         url: {
-          path: '/pages/vendor/reviewHistory/main'
+          path: '/pages/vendor/historyMenu/main'
         }
       },
       {

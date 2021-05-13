@@ -68,6 +68,7 @@
         "quotationDetail/main",
         "contractDelay/main",
         "pendingMenu/main",
+        "historyMenu/main",
         "pendingReview/main",
         "contractTrack/main",
         "billFilter/main",

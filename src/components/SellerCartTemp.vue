@@ -31,7 +31,7 @@
             scroll-view.scroll-view(scroll-y, :style="{height: scrollHeight}")
               .cart-items(v-for="(cart, cartIdx) in carts", :key="cartIdx")
                 .cart-item
-                  .padding-sm
+                  .padding-sm.solid-bottom
                     .flex.flex-center.align-center.ft-15.text-bold
                       .col.flex-25(@click="cart.choosed = !cart.choosed", style="padding-top: 5px;")
                         img.choose-icon(src="/static/images/blue_check.png", v-if="cart.choosed")
@@ -41,7 +41,7 @@
                         span.padding-left-xs {{cart.specification}}
                       .text-blue ￥{{cart.price}}
                     .content.ft-13
-                      .flex.flex-center.justify-between
+                      .flex.flex-center.justify-between.padding-bottom-sm
                         div
                           div
                             span {{cart.productTextureName}}
@@ -61,10 +61,10 @@
                           .text-gray (可让{{cart.cartQuantityType == '02' ? cart.priceDiscountPound : cart.priceDiscountManager}}元)
                           .flex.flex-direction.justify-end.pt-5
                             z-radio(@checkHander="weightChoose(r.m_way, cart)", v-for="(r, rIdx) in cart.radios", :key="rIdx", :label="r.label", :checked="cart.measure_way_id === r.m_way")
-                  .margin-top-xs.padding-sm.solid-top.solid-bottom.padding-top-sm.padding-bottom-sm.row.text-gray.price
+                  .padding-sm.padding-bottom-sm.row.text-gray.price(style="width: 200px;")
                     .text-black 定向价格：
                     .col.ml-5.padding-xs.solid.line-gray
-                      z-input(inputType="digit", type="price", maxlength="8", :initVal="cart.price", inputSty="font-weight: bold", v-model="cart.directionManagerPrice")
+                      z-input(inputType="digit", type="price", maxlength="8", :initVal="cart.price", inputSty="font-weight: bold;", v-model="cart.directionManagerPrice", @input="changeDirectionPrice($event,cart)")
                       //- input(type="digit", v-model="cart.dx_prices", maxlength="8", @blur="inputFormat(cart, 'dx_prices')")
                     .padding-left-xs 元
                     // .padding-left-xs.text-black 费用：
@@ -72,9 +72,9 @@
                       // z-input(:textType="inputZero", inputType="digit", type="price", maxlength="8", v-model="cart.cost_prices", inputSty="font-weight: bold")
                       //- input(type="digit", v-model="cart.cost_prices", maxlength="8", @blur="inputFormat(cart, 'cost_prices')")
                     // .padding-left-xs 元
-                  .row.padding-sm.justify-end.align-end
+                  .row.padding-sm.justify-end.align-end.solid-top
                     .col(style="flex: 0 0 60px;")
-                      count-step(v-model="cart.count", @change="rowCartCount(cart)", :max="cart.amount_left")
+                      count-step(v-model="cart.count", @change="rowCartCount($event, cart)", :max="cart.amount_left")
                     .padding-left-xs {{cart.countWeight}}吨
               .margin-top-sm.padding-bottom-sm(v-if="soldCarts.length > 0", :class="{'padding-top-sm': carts.length === 0}")
                 .bg-white
@@ -95,7 +95,7 @@
                       span 材质：{{itm.product_material}}
                     //- .row.padding.pt-0
                       .col
-                        span 吊费：{{itm.price === '--' ? '--' : itm.lift_charge > 0 ? '￥' + itm.lift_charge + '/吨' : itm.lift_charge == 0 ? '无' : '线下结算'}}
+                        span 吊费：{{itm.price === '--' ? '--' : itm.liftingFee > 0 ? '￥' + itm.liftingFee + '/吨' : itm.liftingFee == 0 ? '无' : '线下结算'}}
                       .col.text-right.c-black 物资不能购买，请联系客服
     .s-footer(v-if="carts.length > 0", style="height: 100rpx")
       .cart-footer.justify-between
@@ -241,11 +241,11 @@ export default {
       const cartList = JSON.parse(JSON.stringify(this.carts))
       if (newVal === 2) {
         cartList.map(item => {
-          if (Number(item.lift_charge) > 0) item.dx_prices = Number(item.price) + 30
+          if (Number(item.liftingFee) > 0) item.dx_prices = Number(item.price) + 30
         })
       } else if (oldVal === 2) {
         cartList.map(item => {
-          if (Number(item.lift_charge) > 0) item.dx_prices = Number(item.price)
+          if (Number(item.liftingFee) > 0) item.dx_prices = Number(item.price)
         })
       }
       this.carts = cartList
@@ -302,6 +302,21 @@ export default {
     ...mapActions([
       'configVal'
     ]),
+    async changeDirectionPrice (val, cart) {
+      console.log(val, cart)
+      cart.dx_prices = val
+      let params = {
+        id: cart.id,
+        directionManagerPrice: val
+      }
+      try {
+        let res = await this.httpPost(this.apiList.zf.sellerUpdateMoney, params)
+        console.log(res)
+      } catch (e) {
+        console.log(e)
+        this.showMsg(e.message)
+      }
+    },
     clearPicker () {
       this.pickWayShow = false
       this.tabActive = 0
@@ -311,13 +326,15 @@ export default {
       if (newVal) cart[key] = newVal ? newVal[0] : this.numberFormat(cart[key])
       if (!cart[key]) cart[key] = key === 'dx_prices' ? cart.price : 0
     },
+    // 计算购物车费用
     cartCalculation (newVal) {
       newVal = newVal || this.carts
+      // 返回选中的物资
       let filterArray = newVal.filter(item => {
         item.countWeight = this.$toFixed(Number(item.count * item.weight), 3)
         return item.choosed === true
       })
-
+      console.log('filterArray', filterArray)
       this.allChoosed = filterArray.length === newVal.length
       let totalPrice = 0
       this.totalWeight = 0
@@ -325,10 +342,11 @@ export default {
       let totalCount = 0
       if (filterArray.length > 0) {
         filterArray.map(itm => {
-          totalCount += itm.count
-          if (Number(itm.lift_charge) > 0 && this.liftSelectVal === 1) {
-            const countLiftWeight = Number(itm.countWeight) * itm.lift_charge
-            this.totalLiftCharge += countLiftWeight
+          totalCount += itm.count // 总数量
+          // 如果收吊费
+          if (Number(itm.liftingFee) > 0 && this.liftSelectVal === 1) {
+            const countLiftWeight = Number(itm.countWeight) * itm.liftingFee // 单个物资吊总吊费
+            this.totalLiftCharge += countLiftWeight // 所有物资总吊费
           }
           totalPrice += Number(this.$toFixed(Number(itm.dx_prices) * Number(itm.countWeight), 2))
           this.totalWeight += Number(itm.countWeight)
@@ -355,6 +373,7 @@ export default {
       }, 300)
     },
 
+    // 获取客户列表
     async loadCstmList () {
       try {
         var params = {
@@ -398,36 +417,6 @@ export default {
         console.error(e)
       }
     },
-    // async loadCstmList () {
-    //   try {
-    //     let queryUrl = '?pageSize=' + this.pageSize + '&currentPage=' + this.cstmCurrentPage
-    //     if (this.customSearchVal) queryUrl += '&name=' + encodeURIComponent(this.customSearchVal)
-    //     let data = await this.request(this.crmProxy + this.apiList.crm.cstmList.url + queryUrl, {}, this.apiList.crm.cstmList.method)
-    //     this.customTotal = data.total
-    //     let arr = data.list
-
-    //     const me = this
-    //     if (arr.length === 0 && me.cstmCurrentPage === 0) {
-    //       me.customList = []
-    //       me.isload = false
-    //     } else if (arr.length > 0 && me.cstmCurrentPage === 0) {
-    //       me.customList = arr
-    //       me.isload = false
-    //     } else if (arr.length > 0 && me.cstmCurrentPage > 0) {
-    //       arr.map(item => {
-    //         me.customList.push(item)
-    //       })
-    //     } else {
-    //       // if (me.customList.length >= 10) me.customLoadFinish = 2
-    //       me.cstmCurrentPage--
-    //     }
-    //     // if (this.customList.length < 10) this.customLoadFinish = 0
-    //     this.customLoadFinish = 0
-    //     this.$forceUpdate()
-    //   } catch (e) {
-    //     console.error(e)
-    //   }
-    // },
     modalCb (flag) {
       if (flag === 'confirm' && this.dxFilterArray.length > 0) {
         if (this.flag === 1) {
@@ -453,12 +442,13 @@ export default {
       this.isEdit = !this.isEdit
       this.auditDxCheckDisable = !this.auditDxCheckDisable
     },
+    // 选择tab（客户/吊费）
     tabSelect (type, item) {
       if (type === 'lift') {
         this.liftSelect = item.label
         this.liftSelectVal = item.val
-        this.cartCalculation()
         this.pickWayShow = false
+        this.cartCalculation() // 重新计算费用
       } else {
         this.customerName = item.unitName
         this.pickWayShow = false
@@ -482,32 +472,36 @@ export default {
         me.loadCartData(done)
       }, 300)
     },
+    // 清空购物车
     clearCarts () {
-      const me = this
-      this.statisticRequest({ event: 'click_app_quotation_del_all' }, true)
-      this.confirm({ content: '确定清空购物车？' }).then((res) => {
-        if (res === 'confirm') {
-          me.btnDisable = true
-          this.showLoading()
-          me.ironRequest('cartEmpty.shtml', { user_id: me.currentUser.user_id, data_source: 1 }, 'post').then(resp => {
-            this.hideLoading()
-            if (resp && resp.returncode === '0') {
-              me.showMsg('清空成功')
-              me.btnDisable = false
-              me.carts = []
-              me.tabDot(0)
-            } else {
-              me.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
-              me.btnDisable = false
-            }
-          }).catch(err => {
-            this.hideLoading()
-            me.showMsg(err || '网络异常')
-            me.btnDisable = false
-          })
-        }
-      })
+      // this.statisticRequest({ event: 'click_app_cart_del_all' })
+      const self = this
+      console.log(this.carts)
+      if (this.carts.length > 0) {
+        const ids = this.carts.map(itm => itm.id)
+        this.confirm({ content: '确定清空购物车？' }).then((res) => {
+          if (res === 'confirm') {
+            self.btnDisable = true
+            this.showLoading()
+            self.httpPost(this.apiList.zf.deleteItem, { ids }).then(res => {
+              self.showMsg('清空成功')
+              self.carts = []
+              self.soldCarts = []
+              this.tabDot(this.carts.length + this.soldCarts.length)
+              mpvue.setStorageSync('cartAllCount', this.carts.length + this.soldCarts.length)
+            }).catch(e => {
+              self.showMsg(e.message || '网络异常')
+            }).finally(() => {
+              self.hideLoading()
+              self.btnDisable = false
+            })
+          }
+        })
+      } else {
+        self.showMsg('没有物资，无需清空')
+      }
     },
+    // 清空失效物资
     emptySoldItems () {
       console.log('清空+++')
       const self = this
@@ -526,25 +520,6 @@ export default {
         })
       }
     },
-    // emptySoldItems () {
-    //   const me = this
-    //   if (!this.btnDisable) {
-    //     this.confirm({ content: '您确定要清空失效物资吗？' }).then((res) => {
-    //       if (res !== 'confirm') return false
-    //       me.btnDisable = true
-    //       me.ironRequest('cartEmpty.shtml', { user_id: me.currentUser.user_id, type: 1 }, 'post').then(resp => {
-    //         if (resp && resp.returncode === '0') {
-    //           me.showMsg('清空成功')
-    //           me.btnDisable = false
-    //           me.soldCarts = []
-    //         }
-    //       }).catch(err => {
-    //         me.showMsg(err || '网络异常')
-    //         me.btnDisable = false
-    //       })
-    //     })
-    //   }
-    // },
     choosedAll () {
       this.statisticRequest({ event: 'click_app_quotation_checkall' }, true)
       this.allChoosed = !this.allChoosed
@@ -568,6 +543,7 @@ export default {
         try {
           if (flag === 2) this.statisticRequest({ event: 'click_app_quotation_generate' }, true)
           let filterArray = this.carts.filter(itm => itm.choosed === true)
+          // 编辑操作
           if (this.isEdit) {
             if (flag === 1) this.statisticRequest({ event: 'click_app_quotation_del' }, true)
             this.btnDisable = false
@@ -581,6 +557,7 @@ export default {
           } else if (flag === 1) {
             this.statisticRequest({ event: 'click_app_quotation_dx' }, true)
           }
+          // 定向操作
           if (filterArray.length === 0) {
             this.showMsg('请选择需要操作的物资')
             this.btnDisable = false
@@ -637,29 +614,87 @@ export default {
         }
       }, 500)
     },
-    weightChoose (val, rowItem) {
-      rowItem.measure_way_id = val
-      if (val === 2 || val === 3) {
-        rowItem.weight = rowItem.radios[0].weight
-        rowItem.price = rowItem.radios[0].price
-        rowItem.originPrice = rowItem.radios[0].originPrice
-        rowItem.dx_prices = rowItem.radios[0].price
-        rowItem.allowedPrice = rowItem.radios[0].allowedPrice
+    // weightChoose (val, rowItem) {
+    //   rowItem.measure_way_id = val
+    //   if (val === 2 || val === 3) {
+    //     rowItem.weight = rowItem.radios[0].weight
+    //     rowItem.price = rowItem.radios[0].price
+    //     rowItem.originPrice = rowItem.radios[0].originPrice
+    //     rowItem.dx_prices = rowItem.radios[0].price
+    //     rowItem.allowedPrice = rowItem.radios[0].allowedPrice
+    //   } else {
+    //     rowItem.weight = rowItem.radios[1].weight
+    //     rowItem.price = rowItem.radios[1].price
+    //     rowItem.originPrice = rowItem.radios[1].originPrice
+    //     rowItem.dx_prices = rowItem.radios[1].price
+    //     rowItem.allowedPrice = rowItem.radios[1].allowedPrice
+    //   }
+    //   if (this.liftSelectVal === 2 && Number(rowItem.liftingFee) > 0) rowItem.dx_prices = Number(rowItem.dx_prices) + 30
+    //   this.ironRequest('cartUpdate.shtml', { cart_id: rowItem.cart_id, user_id: this.currentUser.user_id, measure_way: val, count: rowItem.count, data_source: 1 }, 'post').then(res => {
+    //   })
+    //   this.$forceUpdate()
+    // },
+    weightChoose (val, cart) {
+      console.log('选择计量方式', val, cart)
+      cart.measure_way_id = val
+      if (val === '01') {
+        // 理计
+        // 修改当前物资显示的总重量和定价
+        // cart.weight = cart.radios[0].weight
+        cart.originPrice = cart.radios[0].originPrice
+        cart.allowedPrice = cart.radios[0].allowedPrice
+        cart.price = cart.radios[0].price
+        cart.cartQuantityType = cart.radios[0].m_way
+        cart.weight = this.calcWeight(
+          cart.cartQuantityType, // 购物车计量方式
+          cart.count,
+          cart.meterWeight,
+          cart.length,
+          cart.tolerance,
+          cart.floatingRatio
+        )
+        // cart.originPrice = cart.radios[0].originPrice
       } else {
-        rowItem.weight = rowItem.radios[1].weight
-        rowItem.price = rowItem.radios[1].price
-        rowItem.originPrice = rowItem.radios[1].originPrice
-        rowItem.dx_prices = rowItem.radios[1].price
-        rowItem.allowedPrice = rowItem.radios[1].allowedPrice
+        // 磅计
+        // 修改当前物资显示的总重量和定价
+        // cart.weight = cart.radios[1].weight
+        cart.originPrice = cart.radios[1].originPrice
+        cart.allowedPrice = cart.radios[1].allowedPrice
+        cart.price = cart.radios[1].price
+        cart.cartQuantityType = cart.radios[1].m_way
+        cart.weight = this.calcWeight(
+          cart.cartQuantityType, // 购物车计量方式
+          cart.count,
+          cart.meterWeight,
+          cart.length,
+          cart.tolerance,
+          cart.floatingRatio
+        )
+        // cart.originPrice = cart.radios[1].price
       }
-      if (this.liftSelectVal === 2 && Number(rowItem.lift_charge) > 0) rowItem.dx_prices = Number(rowItem.dx_prices) + 30
-      this.ironRequest('cartUpdate.shtml', { cart_id: rowItem.cart_id, user_id: this.currentUser.user_id, measure_way: val, count: rowItem.count, data_source: 1 }, 'post').then(res => {
+      let paramsObj = {
+        id: cart.id,
+        cartQuantityType: val
+      }
+      this.httpGet(this.apiList.zf.changeQuantityType, paramsObj).catch(e => {
+        this.showMsg(e.message || '网络异常')
       })
+      // this.ironRequest('cartUpdate.shtml', { cart_id: cart.cart_id, user_id: this.currentUser.user_id, measure_way: val, count: rowItem.count }, 'post').then(res => {
+      // })
       this.$forceUpdate()
     },
-    rowCartCount (cart) {
-      console.log(cart.count)
-
+    rowCartCount (num, cart) {
+      console.log('修改后的商品数量', num, cart)
+      cart.count = num
+      cart.weight = this.calcWeight(
+        cart.cartQuantityType, // 购物车计量方式
+        cart.count,
+        cart.meterWeight,
+        cart.length,
+        cart.tolerance,
+        cart.floatingRatio
+      )
+      console.log('修改后的商品重量', cart.weight)
       let params = {
         id: cart.id,
         num: cart.count,
@@ -697,30 +732,6 @@ export default {
         })
       }
     },
-    // delCartRow (row) {
-    //   if (!this.btnDisable) {
-    //     const me = this
-    //     const idsList = []
-    //     row.map(item => {
-    //       idsList.push(item.cart_id)
-    //     })
-    //     this.confirm({ content: '您确定要删除吗?' }).then((res) => {
-    //       if (res === 'confirm') {
-    //         me.btnDisable = true
-    //         me.ironRequest('cartDel.shtml', { cart_ids: idsList.toString(), data_source: 1 }, 'post', me).then(res => {
-    //           if (res.returncode === '0') {
-    //             this.showMsg('删除成功')
-    //             me.carts = me.carts.filter(item => {
-    //               return idsList.indexOf(item.cart_id) === -1
-    //             })
-    //             me.tabDot(me.carts.length)
-    //             me.btnDisable = false
-    //           }
-    //         })
-    //       }
-    //     })
-    //   }
-    // },
     // 获取购物车数据
     async loadCartData () {
       this.isLoad = false
@@ -826,7 +837,7 @@ export default {
             itm.floatingRatio
           )
           itm.price = itm.cartQuantityType === '02' ? itm.ratioPricePound : itm.ratioPriceManager
-
+          itm.dx_prices = itm.cartQuantityType === '02' ? itm.directionPoundPrice : itm.directionManagerPrice
           console.log('购物车数据整理')
           console.log({
             radios: itm.radios,

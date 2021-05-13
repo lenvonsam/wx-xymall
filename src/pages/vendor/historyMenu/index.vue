@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    nav-bar(title="待审核", isBack)
+    nav-bar(title="审核历史", isBack)
     .grid.col-2.mt-10
       .features-card.bg-white(v-for="(ficon, fIdx) in menuIcons", :key="fIdx", @click="jumpModules(ficon)")
         .relative.flex.align-center.contract-img(v-if="ficon.icon")
@@ -95,12 +95,13 @@ export default {
     }
   },
   created () {
+    console.log('???+++')
     this.getData()
   },
   methods: {
     jumpModules (ficon) {
       console.log(ficon)
-      this.jump('/pages/vendor/pendingReview/main?configId=' + ficon.code)
+      this.jump('/pages/vendor/reviewHistory/main?configId=' + ficon.configId)
     },
     getData () {
       let params = {
@@ -108,8 +109,8 @@ export default {
         'endCreateTime': '',
         'tenantId': '1',
         // 'userId': this.currentUser.id,
-        'userId': '1346277615056457730',
-        'status': [0, 1]
+        'disposeUserId': '1346277615056457730',
+        'status': [0, 1, 3, 4, 5]
       }
       this.httpPost(this.apiList.zf.queryWorkflowProcessMenu, params).then(res => {
         console.log(res)

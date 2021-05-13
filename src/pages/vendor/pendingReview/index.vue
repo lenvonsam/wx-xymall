@@ -25,11 +25,11 @@ div
                 .flex.justify-between.padding-bottom-sm
                   .col(style="width: 80%;")
                     .flex.align-center
-                      .ft-16.pr-40.white-nowrap {{item.name}} - {{item.groupBusinessId}}
+                      .ft-16.pr-40.white-nowrap {{item.name}} - {{item.businessId}}
                   .text-red {{status[item.status]}}
                 .text-gray
                   .flex.justify-between.padding-bottom-xs
-                    span 操作人： {{item.currentNodeName}}
+                    span 操作人： {{item.userName}}
                     // .text-black(v-if="item.audit_type === 1") 截止时间：{{item.times}}
                     // .text-black(v-else) {{item.times}}
                   .padding-bottom-xs {{item.groupName}}
@@ -54,24 +54,25 @@ export default {
       },
       listData: [
         {
-          id: '1310',
-          name: '收款单审批',
-          code: '308',
-          status: 1,
-          processId: 'df33fb46-9cc8-11eb-be16-12c94e43649c',
-          configId: 55,
-          callbackUrl: 'http://zf-finance-server/receipt/workflow/receiptCallBack',
-          detailUrl: '/finance/receipt/edit',
-          businessId: 'S202104140003',
-          userId: '68',
-          businessUserId: '1371720539336355841',
+          businessId: 'XSTH202105120007',
+          businessUserId: '1351071855070539777',
+          callbackUrl: 'http://zf-sale-server/saleReturn/workflow/callBack',
+          code: '171',
+          configId: 39,
+          createTime: '2021-05-12 14:22:55',
+          currentNodeCreateTime: '2021-05-12 14:22:55',
+          currentNodeName: '发起审批',
+          detailUrl: '/sale/saleReturn/edit?pageStatus=review&isAudit=1',
+          groupBusinessId: 'D1346268726369980418',
+          groupId: '15',
+          groupName: '营销一部',
+          id: '1320',
+          name: '销售退货工作审核',
+          processId: '7cbec307-b2ea-11eb-84b4-00163e218024',
+          status: 0,
           tenantId: '1',
-          currentNodeName: '总经办',
-          currentNodeCreateTime: '2021-04-14 10:29:46',
-          createTime: '2021-04-14 10:26:51',
-          groupId: '12',
-          groupBusinessId: 'D1346273839981531138',
-          groupName: '财务部'
+          userId: '59',
+          userName: '何建龙'
         }
       ],
       isload: false,
@@ -102,6 +103,11 @@ export default {
       tempObject: state => state.tempObject
     })
   },
+  // watch: {
+  //   searchVal () {
+  //     this.throttle(this.searchOrder, 300)
+  //   }
+  // },
   onUnload () {
     this.filterArr = []
     this.loadFinish = 0
@@ -180,36 +186,56 @@ export default {
     refresher (done) {
       this.loadFinish = 1
       // const me = this
-      let params = {
-        user_id: this.currentUser.user_id,
-        current_page: this.currentPage,
-        page_size: this.pageSize
-      }
+      // let params = {
+      //   user_id: this.currentUser.user_id,
+      //   current_page: this.currentPage,
+      //   page_size: this.pageSize
+      // }
       // searchVal
       // const sellerNeedAudit = this.apiList.xy.sellerNeedAudit
       // let url = `${sellerNeedAudit.url}?user_id=${this.currentUser.user_id}&current_page=${this.currentPage}&page_size=${this.pageSize}`
-      if (this.filterArr) {
-        params = Object.assign(params, this.filterArr)
-        // const filterStr = this.filterArr.toString().replace(/,/g, '&')
-        // url += `&${filterStr}`
-      }
-      if (this.searchVal) {
-        params.search = this.searchVal
-        // url += `&search=${this.searchVal}`
-      }
+      // if (this.filterArr) {
+      //   params = Object.assign(params, this.filterArr)
+      //   // const filterStr = this.filterArr.toString().replace(/,/g, '&')
+      //   // url += `&${filterStr}`
+      // }
+      // if (this.searchVal) {
+      //   params.search = this.searchVal
+      //   // url += `&search=${this.searchVal}`
+      // }
 
-      let obj = {
-        configId: '66',
+      let params = {
+        configId: '39',
         limit: 20,
         offset: 0,
         tenantId: 1,
-        userId: '1346285659781861378',
+        businessId: this.searchVal || '',
+        userId: '1346277615056457730',
         status: [0, 1]
       }
-      this.httpPost(this.apiList.zf.queryWorkflowProcessList, obj).then(res => {
+      this.httpPost(this.apiList.zf.queryWorkflowProcessList, params).then(res => {
         console.log(res)
+        let arr = res.data
+        if (arr.length === 0 && this.currentPage === 0) {
+          this.listData = []
+          this.isload = false
+        } else if (arr.length > 0 && this.currentPage === 0) {
+          this.listData = arr
+          this.isload = false
+        } else if (arr.length > 0 && this.currentPage > 0) {
+          this.listData.push(...arr)
+          this.isload = false
+        } else {
+          this.isload = false
+          this.currentPage--
+          if (this.listData.length >= 10) this.loadFinish = 2
+        }
+        this.isTabDisabled = false
+        if (this.listData.length < 10) this.loadFinish = 3
+        this.hideLoading()
+      }).catch(err => {
+        console.log(err)
       })
-
       // this.ironRequest(sellerNeedAudit.url, params, sellerNeedAudit.method).then(resp => {
       //   if (resp.returncode === '0') {
       //     let arr = resp.resultlist

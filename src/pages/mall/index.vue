@@ -597,7 +597,7 @@ export default {
       const self = this
       try {
         obj.cartQuantityType = obj.onlineQuantityType
-        self.showLoading()
+        // self.showLoading()
         await self.httpPost(this.apiList.zf.addCartItem, obj)
         setTimeout(() => {
           self.showMsg('购物车成功')
@@ -609,7 +609,7 @@ export default {
           this.tabDot(cartAllCount + 1)
           mpvue.setStorageSync('cartAllCount', cartAllCount + 1)
         }
-        self.hideLoading()
+        // self.hideLoading()
       } catch (e) {
         setTimeout(() => {
           self.showMsg(e.message)

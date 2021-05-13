@@ -339,6 +339,8 @@ export default {
     // 待审核通过/待审核驳回
     audit: 'workflow/workflow/audit',
     // 卖家-crm可用客户
-    unitQueryPage: 'base/unit/queryPage'
+    unitQueryPage: 'base/unit/queryPage',
+    // 卖家-购物车修改定向价格
+    sellerUpdateMoney: 'xingyun/cart/sellerUpdateMoney'
   }
 }

@@ -10,9 +10,9 @@ div
           .close-icon(@click="searchVal = ''", v-if="searchVal")
             .cuIcon-roundclosefill.ft-18
       .search-btn.text-blue(@click="searchOrder") 搜索
-      .filter-btn.row(@click="openFilter")
-        span 筛选
-        .cuIcon-filter
+      // .filter-btn.row(@click="openFilter")
+        // span 筛选
+        // .cuIcon-filter
   template(v-if="isload")
     time-line(type="mallist")
   template(v-else)
@@ -25,11 +25,11 @@ div
                 .flex.justify-between.padding-bottom-sm
                   .col
                     .flex.align-center
-                      .ft-16.padding-right-sm {{item.name}} - {{item.groupBusinessId}}
+                      .ft-16.padding-right-sm {{item.name}} - {{item.businessId}}
                   .text-gray {{status[item.status]}}
                 .text-gray
                   .flex.justify-between.padding-bottom-xs
-                    span 操作人： {{item.currentNodeName}}
+                    span 操作人： {{item.userName}}
                     // .text-black {{item.audit_time}}
                   .padding-bottom-xs {{item.groupName}}
                   .padding-bottom-xs(v-if="item.delay_text") 延时理由：{{item.delay_text}}
@@ -43,28 +43,7 @@ export default {
   data () {
     return {
       currentPage: 0,
-      listData: [
-        {
-          id: '572',
-          name: '收款单审批',
-          code: '308',
-          status: 1,
-          processId: 'df33fb46-9cc8-11eb-be16-12c94e43649c',
-          configId: 55,
-          callbackUrl: 'http://zf-finance-server/receipt/workflow/receiptCallBack',
-          detailUrl: '/finance/receipt/edit',
-          businessId: 'S202104140003',
-          userId: '68',
-          businessUserId: '1371720539336355841',
-          tenantId: '1',
-          currentNodeName: '总经办',
-          currentNodeCreateTime: '2021-04-14 10:29:46',
-          createTime: '2021-04-14 10:26:51',
-          groupId: '12',
-          groupBusinessId: 'D1346273839981531138',
-          groupName: '财务部'
-        }
-      ],
+      listData: [],
       triggered: false,
       isload: false,
       startDate: '',
@@ -115,6 +94,10 @@ export default {
     this.searchVal = ''
     this.currentPage = 0
     this.configVal({ key: 'tempObject', val: {} })
+  },
+  onLoad (options) {
+    console.log(options.configId)
+    this.onRefresh()
   },
   onShow () {
     if (this.tempObject.fromPage === 'billFilter') {
@@ -179,33 +162,51 @@ export default {
       try {
         this.loadFinish = 1
         // const me = this
+        // let params = {
+        //   user_id: this.currentUser.user_id,
+        //   current_page: this.currentPage,
+        //   page_size: this.pageSize
+        // }
+        // // const auditHistory = this.apiList.xy.auditHistory
+        // // let url = `${auditHistory.url}?user_id=${this.currentUser.user_id}&current_page=${this.currentPage}&page_size=${this.pageSize}`
+        // if (this.filterArr) {
+        //   params = Object.assign(params, this.filterArr)
+        //   // const filterStr = this.filterArr.toString().replace(/,/g, '&')
+        //   // url += `&${filterStr}`
+        // }
         let params = {
-          user_id: this.currentUser.user_id,
-          current_page: this.currentPage,
-          page_size: this.pageSize
-        }
-        // const auditHistory = this.apiList.xy.auditHistory
-        // let url = `${auditHistory.url}?user_id=${this.currentUser.user_id}&current_page=${this.currentPage}&page_size=${this.pageSize}`
-        if (this.filterArr) {
-          params = Object.assign(params, this.filterArr)
-          // const filterStr = this.filterArr.toString().replace(/,/g, '&')
-          // url += `&${filterStr}`
-        }
-        if (this.searchVal) {
-          params.search = this.searchVal
-          // url += `&search=${this.searchVal}`
-        }
-
-        let obj = {
-          configId: '65',
+          configId: '39',
           limit: 20,
           offset: 0,
           tenantId: 1,
-          userId: 1371720539336355841,
-          status: [0, 1, 2, 3, 4, 5]
+          businessId: this.searchVal || '',
+          userId: '1346277615056457730',
+          disposeUserId: '1346277615056457730',
+          status: [1, 2, 3, 4, 5]
         }
-        this.httpPost(this.apiList.zf.queryWorkflowProcessList, obj).then(res => {
+        console.log('+++++', params)
+        this.httpPost(this.apiList.zf.queryWorkflowProcessList, params).then(res => {
           console.log(res)
+          let arr = res.data
+          if (arr.length === 0 && this.currentPage === 0) {
+            this.listData = []
+            this.isload = false
+          } else if (arr.length > 0 && this.currentPage === 0) {
+            this.listData = arr
+            this.isload = false
+          } else if (arr.length > 0 && this.currentPage > 0) {
+            this.listData.push(...arr)
+            this.isload = false
+          } else {
+            this.isload = false
+            this.currentPage--
+            if (this.listData.length >= 10) this.loadFinish = 2
+          }
+          this.isTabDisabled = false
+          if (this.listData.length < 10) this.loadFinish = 3
+          this.hideLoading()
+        }).catch(err => {
+          console.log(err)
         })
 
         // this.ironRequest(auditHistory.url, params, auditHistory.method).then(resp => {

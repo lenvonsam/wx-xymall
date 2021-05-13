@@ -63,7 +63,7 @@
                   .row.padding-xs.justify-end.align-end
                     .col
                     .col(style="flex: 0 0 60px;")
-                      count-step(v-model="cart.count", @change="rowCartCount(cart)", :max="cart.ratioAvailableAmount")
+                      count-step(v-model="cart.count", @change="rowCartCount($event, cart)", :max="cart.ratioAvailableAmount")
                     .padding-left-xs {{cart.countWeight}}吨
             .margin-top-sm.padding-bottom-sm(v-if="soldCarts.length > 0", :class="{'padding-top-sm': carts.length === 0}")
               .bg-white
@@ -518,14 +518,32 @@ export default {
       if (val === '01') {
         // 理计
         // 修改当前物资显示的总重量和定价
-        cart.weight = cart.radios[0].weight
+        // cart.weight = cart.radios[0].weight
         cart.price = cart.radios[0].price
+        cart.cartQuantityType = cart.radios[0].m_way
+        cart.weight = this.calcWeight(
+          cart.cartQuantityType, // 购物车计量方式
+          cart.count,
+          cart.meterWeight,
+          cart.length,
+          cart.tolerance,
+          cart.floatingRatio
+        )
         // cart.originPrice = cart.radios[0].originPrice
       } else {
         // 磅计
         // 修改当前物资显示的总重量和定价
-        cart.weight = cart.radios[1].weight
+        // cart.weight = cart.radios[1].weight
         cart.price = cart.radios[1].price
+        cart.cartQuantityType = cart.radios[1].m_way
+        cart.weight = this.calcWeight(
+          cart.cartQuantityType, // 购物车计量方式
+          cart.count,
+          cart.meterWeight,
+          cart.length,
+          cart.tolerance,
+          cart.floatingRatio
+        )
         // cart.originPrice = cart.radios[1].price
       }
       let paramsObj = {
@@ -539,8 +557,9 @@ export default {
       // })
       this.$forceUpdate()
     },
-    rowCartCount (cart) {
-      console.log('修改改商品购物车数量', cart.count)
+    rowCartCount (num, cart) {
+      console.log('修改后的商品数量', num, cart)
+      cart.count = num
       cart.weight = this.calcWeight(
         cart.cartQuantityType, // 购物车计量方式
         cart.count,
@@ -549,7 +568,7 @@ export default {
         cart.tolerance,
         cart.floatingRatio
       )
-      console.log(cart.weight)
+      console.log('修改后的商品重量', cart.weight)
       let params = {
         id: cart.id,
         num: cart.count,
@@ -702,6 +721,13 @@ export default {
           // if (Number(itm.ratioPricePound) > 0) {
           // 挂牌计量方式
           if (itm.onlineQuantityType === '00' || itm.onlineQuantityType === '02') {
+            console.log(['02',
+              itm.num,
+              itm.meterWeight,
+              itm.length,
+              itm.tolerance,
+              itm.floatingRatio
+            ])
             let temp = self.calcWeight(
               '02',
               itm.num, // 数量(支)
@@ -710,6 +736,7 @@ export default {
               itm.tolerance, // 公差
               itm.floatingRatio // 上浮比例
             )
+            console.log('temp+++', temp)
             itm.radios.push({
               label: '磅计',
               m_way: '02',
