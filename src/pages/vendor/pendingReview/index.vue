@@ -119,10 +119,10 @@ export default {
   onHide () {
     this.btnDisable = false
   },
-  onLoad (options) {
-    console.log(options.configId)
-    this.onRefresh()
-  },
+  // onLoad (options) {
+  //   console.log(options.configId)
+  //   this.onRefresh()
+  // },
   onShow () {
     this.btnDisable = false
     if (this.tempObject.fromPage === 'billFilter') {
@@ -148,7 +148,7 @@ export default {
       })
       this.currentPage = 0
     }
-    // this.onRefresh()
+    this.onRefresh()
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 115
   },
   methods: {

@@ -77,6 +77,9 @@ page,
 .border-bottom-line {
   border-bottom: 1rpx solid #ddd;
 }
+.border-left-line {
+  border-left: 1rpx solid #ddd;
+}
 
 .ft-10 {
   font-size: 20rpx !important;

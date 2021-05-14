@@ -2,7 +2,7 @@
 div
   nav-bar(title="待审核", isBack)
   .padding-sm
-    div(:style="{'margin-bottom': isIpx ? '188rpx' : '120rpx'}")
+    div
       template(v-if="tempObject.auditType === '延时'")
         .bg-white.card(v-for="(item, idx) in detailData.list", :key="idx")
           .row.justify-between.padding-bottom-xs
@@ -134,6 +134,31 @@ div
                   // span ({{item.metering_way_str}})
                 .text-gray
                   span 退款金额：{{item.money}}元
+
+    div(:style="{'margin-bottom': isIpx ? '188rpx' : '120rpx'}")
+      .ft-18.padding-top-sm.padding-bottom-sm 审批流程
+      .bg-white.border-radius
+        .relative.padding-top-xl.padding-left-xl.padding-right-sm
+          .flex.justify-between.padding-bottom-xs.border-left-line.padding-left-xl
+            span.ft-16.font-bold 发起申请
+            span.padding-left-xs.text-gray.ft-13 {{detailData.firstTask.createTime}}
+          .flex.justify-between.text-gray.ft-14.border-left-line.padding-left-xl
+            span.ft-14.font-bold 申请人:{{detailData.firstTask.userName}}
+          .circle.bg-blue 1
+        .relative.padding-top-xl.padding-left-xl.padding-right-sm
+          .flex.justify-between.padding-bottom-xs.border-left-line.padding-left-xl
+            span.ft-16.font-bold 审批人
+          .flex.justify-between.text-gray.ft-14.border-left-line.padding-left-xl
+            span.ft-14.font-bold 可审批人:{{detailData.lastTask.userName}}
+            span.ft-14.text-blue 当前节点/待审批
+          .circle.bg-blue 2
+        .relative.padding-top-xl.padding-left-xl.padding-right-sm.padding-bottom-sm
+          .flex.justify-between.padding-bottom-xs.border-left-line.padding-left-xl
+            span.ft-16.font-bold 结束
+          .flex.justify-between.text-gray.ft-14.border-left-line.padding-left-xl
+            span.ft-14.font-bold 归档
+          .circle.bg-blue 3
+
   .footer.row.bg-white.text-center.text-white.padding-sm(:style="{height: isIpx ? '188rpx' : '120rpx', 'padding-bottom': isIpx ? '68rpx' : '20rpx'}",
    v-if="btnShow && tempObject.fromPage !== 'reviewHistory'")
     .col.foot-cancel(@click="confirm('cancel')", v-if="tempObject.statusStr === '待初审' || tempObject.statusStr === '待审核'") 取消
@@ -480,12 +505,14 @@ export default {
         custName: jsonData.settlementUnitName,
         // totalAmount: data.amount,
         // totalWeight: data.weight,
-        taskId: data.taskList[data.taskList.length - 1].taskId,
         totalMoeny: jsonData.returnMoney,
         endTime: jsonData.returnDate,
         invoiceStatus: '待开票',
         json: res.data.json,
-        operName: data.taskList[data.taskList.length - 1].userName
+        taskId: data.taskList[data.taskList.length - 1].taskId,
+        operName: data.taskList[data.taskList.length - 1].userName,
+        firstTask: data.taskList[0],
+        lastTask: data.taskList[data.taskList.length - 1]
         // list: jsonData.returnDetailDTOS
         // is_talk_price: data.is_talk_price
       }
@@ -626,6 +653,17 @@ export default {
   bottom 0
   left 0
   right 0
+.circle
+  height 50rpx
+  width 50rpx
+  color #fff
+  text-align center
+  line-height 50rpx
+  position absolute
+  top 25rpx
+  left 25rpx
+  border-radius 50%
+  font-size 34rpx
 .input-box
   border-radius 5px
   width 100%

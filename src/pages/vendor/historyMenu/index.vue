@@ -94,8 +94,7 @@ export default {
       ]
     }
   },
-  created () {
-    console.log('???+++')
+  onShow () {
     this.getData()
   },
   methods: {

@@ -97,7 +97,7 @@ export default {
   },
   onLoad (options) {
     console.log(options.configId)
-    this.onRefresh()
+    // this.onRefresh()
   },
   onShow () {
     if (this.tempObject.fromPage === 'billFilter') {
@@ -123,7 +123,7 @@ export default {
       })
       this.currentPage = 0
     }
-    // this.onRefresh()
+    this.onRefresh()
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 115
   },
   methods: {

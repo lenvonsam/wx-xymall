@@ -94,7 +94,7 @@ export default {
       ]
     }
   },
-  created () {
+  onShow () {
     this.getData()
   },
   methods: {
