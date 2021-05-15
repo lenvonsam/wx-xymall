@@ -159,6 +159,8 @@ export default {
     this.modalMsg = ''
     console.log('onhide---------me')
   },
+  onLoad () {
+  },
   onShow () {
     const self = this
     if (self.isLogin) {
@@ -173,6 +175,7 @@ export default {
        * 已完善信息账号可打开“我的”
        * 未完善信息账号点击“我的”提示去完善信息 */
       this.refreshUser()
+      this.getSummaryQuantity()
 
       // if (self.currentUser.userStatus === '01') {
       //   setTimeout(() => {
@@ -283,6 +286,17 @@ export default {
       'configVal',
       'exitUser'
     ]),
+    getSummaryQuantity () {
+      this.httpGet(this.apiList.zf.summaryQuantity).then(res => {
+        if (res.success) {
+          let cartNumber = res.data.cartNumber
+          this.tabDot(cartNumber)
+          mpvue.setStorageSync('cartAllCount', cartNumber)
+        }
+      }).catch(err => {
+        console.log(err)
+      })
+    },
     // 跳转消息中心
     jumpNoticeList () {
       if (!this.isLogin) {
@@ -427,20 +441,20 @@ export default {
         this.statisticRequest({ event: icon.event }, true)
         this.jump(icon.url.path)
       }
-    },
-    // 超时未提货物收费标准模态框回调
-    ruleModalCb (flag) {
-      this.httpPost(this.apiList.zf.updatePersonAgreement, {userGeneralAgreement: true}).then(res => {
-        console.log('updateRule_res=====>' + JSON.stringify(res))
-      }).catch(e => {
-        console.log('updateRule_e=====>' + e)
-      })
-      this.ruleModalShow = false
-      if (this.currentUser.userStatus === '01') {
-        this.alertText = '您还需要完善公司信息才能正常工作'
-        this.alertShow = true
-      }
     }
+    // 超时未提货物收费标准模态框回调
+    // ruleModalCb (flag) {
+    //   this.httpPost(this.apiList.zf.updatePersonAgreement, {userGeneralAgreement: true}).then(res => {
+    //     console.log('updateRule_res=====>' + JSON.stringify(res))
+    //   }).catch(e => {
+    //     console.log('updateRule_e=====>' + e)
+    //   })
+    //   this.ruleModalShow = false
+    //   if (this.currentUser.userStatus === '01') {
+    //     this.alertText = '您还需要完善公司信息才能正常工作'
+    //     this.alertShow = true
+    //   }
+    // }
   }
 }
 </script>

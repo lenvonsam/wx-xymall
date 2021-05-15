@@ -341,6 +341,8 @@ export default {
     // 卖家-crm可用客户
     unitQueryPage: 'base/unit/queryPage',
     // 卖家-购物车修改定向价格
-    sellerUpdateMoney: 'xingyun/cart/sellerUpdateMoney'
+    sellerUpdateMoney: 'xingyun/cart/sellerUpdateMoney',
+    // 查看购物车,待付款数量
+    summaryQuantity: 'xingyun/shopMall/summaryQuantity'
   }
 }
