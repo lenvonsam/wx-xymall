@@ -604,11 +604,9 @@ export default {
         }, 500)
         self.btnDisable = false
         // 显示底部tabbar购物车数量
-        var cartAllCount = mpvue.getStorageSync('cartAllCount')
-        if (cartAllCount) {
-          this.tabDot(cartAllCount + 1)
-          mpvue.setStorageSync('cartAllCount', cartAllCount + 1)
-        }
+        var cartAllCount = mpvue.getStorageSync('cartAllCount') || 0
+        this.tabDot(cartAllCount + 1)
+        mpvue.setStorageSync('cartAllCount', cartAllCount + 1)
         // self.hideLoading()
       } catch (e) {
         setTimeout(() => {

@@ -289,7 +289,7 @@ export default {
     getSummaryQuantity () {
       this.httpGet(this.apiList.zf.summaryQuantity).then(res => {
         if (res.success) {
-          let cartNumber = res.data.cartNumber
+          let cartNumber = res.data.cartNumber || 0
           this.tabDot(cartNumber)
           mpvue.setStorageSync('cartAllCount', cartNumber)
         }
