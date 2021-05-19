@@ -18,7 +18,7 @@ div
   template(v-else)
     template(v-if="listData.length > 0")
       div(:style="{height: scrollHeight+'rpx'}")
-        iron-scroll(@scrolltolower="loadMore", heightUnit="rpx", :height="scrollHeight", :refresh="true", @onRefresh="onRefresh", :loadFinish="loadFinish")          
+        iron-scroll(@scrolltolower="loadMore", heightUnit="rpx", :height="scrollHeight", :refresh="true", @onRefresh="onRefresh", :loadFinish="loadFinish")
           .bill-list(v-for="(item, itemIdx) in listData", :key="itemIdx", @click="jumpDetail(item)")
             .bg-white.box
               .padding-sm
@@ -32,10 +32,10 @@ div
                   div(:class="!item.att54 ? 'text-red' : 'text-gray'") {{statusList[item.att54]}}
                   //- .text-gray 1111{{item.att54}}
                 .text-gray
-                  .flex.justify-between.padding-bottom-xs 
+                  .flex.justify-between.padding-bottom-xs
                     span {{item.cust_name}}
                     .ft-18.text-black ￥{{item.deal_price}}
-                  .flex.justify-between.padding-bottom-xs 
+                  .flex.justify-between.padding-bottom-xs
                     span 共{{item.amount}}支，{{item.weight}}吨
                     span 延时：{{item.delay_times}}
                 .solid-top.text-black.ft-15.margin-top-xs.padding-top-sm.row
@@ -43,15 +43,15 @@ div
                     span 付款截止时间：
                     span.padding-left-xs.text-black {{item.end_pay_time}}
                   .flex
-                    .bill-btn.round.margin-left-sm(@click.stop="delayOpenModal(item)") {{item.att54 == 1 ? '再次延迟' : '延时'}} 
+                    .bill-btn.round.margin-left-sm(@click.stop="delayOpenModal(item)") {{item.att54 == 1 ? '再次延迟' : '延时'}}
     .text-center.c-gray.pt-100(v-else)
       empty-image(url="bill_empty.png", className="img-empty")
-      .empty-content 您暂时没有相关合同  
+      .empty-content 您暂时没有相关合同
   modal-input(v-model="modalShow", title="合同延时", confirmText="确定", type="customize", :cb="modalHandler")
     .text-center
       template(v-if="!checkRow.att54")
         .padding-bottom-xs 15:00前最多可延时2小时
-        .padding-bottom-xs 15:00后最多可延时19个小时 
+        .padding-bottom-xs 15:00后最多可延时19个小时
       .padding-top-xs.padding-bottom-xs.row.cuIcon-box
         .cuIcon-item(@click="delayHandler('reduce')")
           .cuIcon-move
@@ -301,7 +301,7 @@ export default {
       }, 300)
     },
     jumpDetail (item) {
-      this.jump(`/pages/billDetail/main?id=${item.tstc_no}`)
+      this.jump(`/pages/billDetail/main?id=${item.saleContractId}`)
     }
   }
 }

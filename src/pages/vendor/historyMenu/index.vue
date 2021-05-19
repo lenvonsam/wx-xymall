@@ -109,7 +109,7 @@ export default {
         'tenantId': '1',
         // 'userId': this.currentUser.id,
         'disposeUserId': '1346277615056457730',
-        'status': [0, 1, 3, 4, 5]
+        'status': [1, 2, 3, 4, 5]
       }
       this.httpPost(this.apiList.zf.queryWorkflowProcessMenu, params).then(res => {
         console.log(res)

@@ -571,7 +571,8 @@ export default {
             me.refresher()
             // me.cb(me.billObject, 'cancel')
           }).catch(e => {
-            me.showMsg(res.message)
+            me.btnDisable = false
+            me.showMsg(e.message)
           })
         }
       })

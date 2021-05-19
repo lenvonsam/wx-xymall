@@ -105,6 +105,15 @@ export default {
         }
       },
       {
+        icon: '/static/images/seller_order_icon.png',
+        name: '提单管理',
+        dotKey: '',
+        event: 'click_app_me_quotation_seller',
+        url: {
+          path: '/pages/vendor/loadBillList/main'
+        }
+      },
+      {
         icon: '/static/images/balance_icon.png',
         name: '用户余额',
         dotKey: 'balance',

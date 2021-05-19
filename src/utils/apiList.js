@@ -343,6 +343,14 @@ export default {
     // 卖家-购物车修改定向价格
     sellerUpdateMoney: 'xingyun/cart/sellerUpdateMoney',
     // 查看购物车,待付款数量
-    summaryQuantity: 'xingyun/shopMall/summaryQuantity'
+    summaryQuantity: 'xingyun/shopMall/summaryQuantity',
+    // 卖家-合同跟踪
+    querySellerContractPage: 'xingyun/contract/querySellerContractPage',
+    // 卖家-合同跟踪列表
+    sellerGetSaleContractPage: 'sale/saleContract/sellerGetSaleContractPage',
+    // 卖家合同跟踪-业务员下拉筛选列表
+    employeeQuery: 'base/employee/query',
+    // 卖家-合同跟踪-业务部门下拉筛选列表
+    departmentQuery: 'base/department/query'
   }
 }

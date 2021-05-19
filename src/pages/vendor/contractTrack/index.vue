@@ -34,45 +34,45 @@ div(@click="openStatus=false")
       template(v-else)
         template(v-if="billTab[swiperIdx].data.length > 0")
           div(:style="{height: scrollHeight+'rpx'}")
-            iron-scroll(:swiperIdx="swiperIdx", @scrolltolower="loadMore", heightUnit="rpx", :height="scrollHeight", :refresh="true", @onRefresh="onRefresh", :loadFinish="loadFinish")          
+            iron-scroll(:swiperIdx="swiperIdx", @scrolltolower="loadMore", heightUnit="rpx", :height="scrollHeight", :refresh="true", @onRefresh="onRefresh", :loadFinish="loadFinish")
               .bill-list(v-for="(item, itemIdx) in billTab[swiperIdx].data", :key="itemIdx", @click="jumpDetail(item)")
                 .bg-white.box
                   .padding-sm
                     .flex.justify-between.padding-bottom-sm
                       .col
                         .flex.align-center
-                          .ft-16.padding-right-sm {{item.tstc_no}}
-                          img.ding-icon.margin-right-xs(src="/static/images/ding.png", v-if="item.contract_type == 12")
-                          img.dingjin-icon.margin-right-xs(src="/static/images/dj_icon.png", v-if="item.pay_type == 2")
-                          img.dingjin-icon(src="/static/images/baitiao_icon.png", v-if="item.pay_type == 3")
-                      .text-red(v-if="item.status == 14") {{item.status_desc}}
-                      .text-gray(v-else) {{item.status_desc}}
+                          .ft-16.padding-right-sm {{item.saleContractNo}}
+                          img.ding-icon.margin-right-xs(src="/static/images/ding.png", v-if="item.sourceType == '01' && item.orgId == 'C00011'")
+                          img.dingjin-icon.margin-right-xs(src="/static/images/dj_icon.png", v-if="item.payMethod == '03'")
+                          img.dingjin-icon(src="/static/images/baitiao_icon.png", v-if="item.payMethod == '02'")
+                      .text-gray(v-if="item.status === '已完成' || item.status === '违约' || item.status === '已取消'") {{item.status}}
+                      .text-red(v-else-if="item.status !== '待补款'") {{item.status}}
                     .text-gray
-                      .flex.justify-between.padding-bottom-xs 
-                        span {{item.cust_name}}
-                        .ft-18.text-black ￥{{item.total_money}}
-                      .flex.justify-between.padding-bottom-xs 
-                        span 共{{item.total_left_qtt}}支，{{item.total_provided_qtt}}吨
-                        span 吊费：¥{{item.lift_money}}
-                  .solid-top.text-black.ft-15.padding-sm.row(v-if="item.cancel_button || item.edit_button || item.payButton || item.status === 14 || item.status === 15 || item.status === 16")
+                      .flex.justify-between.padding-bottom-xs
+                        span {{item.orgName}}
+                        .ft-18.text-black ￥{{item.inTaxReceiveMoney}}
+                      .flex.justify-between.padding-bottom-xs
+                        span 共{{item.contractAmount}}支，{{item.weight}}吨
+                        span 吊费：¥{{item.liftingFeeMoney}}
+                  .solid-top.text-black.ft-15.padding-sm.row
                     .col
-                      template(v-if="item.status === 14")
+                      template(v-if="item.xingyunContractStatus == '01'")
                         span 倒计时：
                         span.padding-left-xs.text-red {{item.timeDown}}
-                      template(v-else-if="!item.overdue && item.status === 15 || item.status === 16")
+                      template(v-if="item.xingyunContractStatus == '03'")
                         span 提货倒计时：
                         span.padding-left-xs.text-blue {{item.timeDown}}
                       template(v-else-if="item.overdue && item.status === 15 || item.status === 16")
                         span 提货已超时：
                         span.padding-left-xs.text-red {{item.timeDown}}
                     .flex
-                      .bill-gray-btn.round(v-if="item.cancel_button == 1", @click.stop="billCancel(item)") 取消合同
-                      .bill-btn.round.margin-left-sm(v-if="item.edit_button", @click.stop="jumpModifyDetail(item)") 申请修改
-                      //- .bill-btn.round.margin-left-sm(v-if="item.delivery_button", @click.stop="payBill(item)") 制作提单
-                      .bill-btn.round.margin-left-sm(v-if="item.payButton", @click.stop="payBill(item)") 去补款
+                      .bill-gray-btn.round(v-if="item.isCancel", @click.stop="billCancel(item)") 取消合同
+                      .bill-btn.round.margin-left-sm(v-if="item.isEdit", @click.stop="jumpModifyDetail(item)") 申请修改
+                      .bill-btn.round.margin-left-sm(v-if="item.isLading", @click.stop="payBill(item)") 制作提单
+                      // .bill-btn.round.margin-left-sm(v-if="item.xingyunContractStatus == '02'", @click.stop="payBill(item)") 去补款
         .text-center.c-gray.pt-100(v-else)
           empty-image(url="bill_empty.png", className="img-empty")
-          .empty-content 您暂时没有相关合同        
+          .empty-content 您暂时没有相关合同
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
@@ -85,7 +85,7 @@ export default {
       billTab: [
         {
           title: '全部',
-          status: '6',
+          status: '',
           data: [],
           isActive: true,
           statusList: [
@@ -102,7 +102,7 @@ export default {
           ]
         }, {
           title: '待付款',
-          status: '1',
+          status: '01',
           data: [],
           isActive: false,
           statusList: [
@@ -111,7 +111,7 @@ export default {
           ]
         }, {
           title: '已支付待确认',
-          status: '12',
+          status: '04',
           data: [],
           isActive: false,
           statusList: [
@@ -119,7 +119,7 @@ export default {
           ]
         }, {
           title: '待提货',
-          status: '8',
+          status: '03',
           data: [],
           isActive: false,
           statusList: [
@@ -128,11 +128,27 @@ export default {
             { label: '待确认', value: '16' }
           ]
         },
-        { title: '修改中', status: '10', data: [], isActive: false, statusList: [{ label: '修改中', value: '18,19' }] },
-        { title: '已完成', status: '4', data: [], isActive: false, statusList: [{ label: '已完成', value: '99' }] }
+        {
+          title: '修改中',
+          status: '06',
+          data: [],
+          isActive: false,
+          statusList: [
+            { label: '修改中', value: '18,19' }
+          ]
+        },
+        {
+          title: '已完成',
+          status: '07',
+          data: [],
+          isActive: false,
+          statusList: [
+            { label: '已完成', value: '99' }
+          ]
+        }
       ],
       tabName: '6',
-      currentPage: 0,
+      currentPage: 1,
       listData: [],
       triggered: false,
       isload: false,
@@ -145,7 +161,19 @@ export default {
       pageSize: 10,
       status: '',
       filterArr: [],
-      filterObj: {},
+      filterObj: {
+        pageNum: 1,
+        pageSize: 10,
+        contractStateType: '',
+        keyword: '',
+        saleContractNo: '',
+        unitName: '',
+        startCreateDateRange: '',
+        endCreateDateRange: '',
+        businessDepartmentId: '',
+        businessUserCode: '',
+        isHasLadingNum: false
+      },
       searchVal: '',
       statusList: [],
       initTabName: '6'
@@ -165,16 +193,40 @@ export default {
       // this.tabName = '6'
       // this.scrollId = 'idx_0'
       // this.swiperCount = 0
+
+      // this.filterObj = {
+      //   tstc_no: this.tempObject.no,
+      //   employee_code: this.tempObject.employee.id || '',
+      //   dept_code: this.tempObject.dept.id || '',
+      //   cust_id: Number(this.tempObject.custom.xyCode) || '',
+      //   status: this.tempObject.status || '',
+      //   deal_time_e: this.tempObject.endDate,
+      //   deal_time_s: this.tempObject.startDate
+      // }
+      // ++++++
       this.filterObj = {
-        tstc_no: this.tempObject.no,
-        employee_code: this.tempObject.employee.id || '',
-        dept_code: this.tempObject.dept.id || '',
-        cust_id: Number(this.tempObject.custom.xyCode) || '',
-        status: this.tempObject.status || '',
-        deal_time_e: this.tempObject.endDate,
-        deal_time_s: this.tempObject.startDate
+        // tstc_no: this.tempObject.no,
+        // employee_code: this.tempObject.employee.id || '',
+        // dept_code: this.tempObject.dept.id || '',
+        // cust_id: Number(this.tempObject.custom.xyCode) || '',
+        // status: this.tempObject.status || '',
+        // deal_time_e: this.tempObject.endDate,
+        // deal_time_s: this.tempObject.startDate,
+        pageNum: 1,
+        pageSize: 10,
+        contractStateType: '',
+        keyword: '',
+        saleContractNo: '',
+        unitName: '',
+        startCreateDateRange: '',
+        endCreateDateRange: '',
+        businessDepartmentId: '',
+        businessUserCode: '',
+        isHasLadingNum: false
       }
-      this.currentPage = 0
+
+      // ++++++
+      this.currentPage = 1
       this.onRefresh()
     } else if (this.$root.$mp.query.tabName && (this.$root.$mp.query.tabName !== this.initTabName)) {
       this.tabName = this.$root.$mp.query.tabName
@@ -204,7 +256,7 @@ export default {
     this.billTab = [
       {
         title: '全部',
-        status: '6',
+        status: '',
         data: [],
         isActive: true,
         statusList: [
@@ -220,7 +272,7 @@ export default {
         ]
       }, {
         title: '待付款',
-        status: '1',
+        status: '01',
         data: [],
         isActive: false,
         statusList: [
@@ -229,7 +281,7 @@ export default {
         ]
       }, {
         title: '已支付待确认',
-        status: '12',
+        status: '04',
         data: [],
         isActive: false,
         statusList: [
@@ -237,7 +289,7 @@ export default {
         ]
       }, {
         title: '待提货',
-        status: '8',
+        status: '03',
         data: [],
         isActive: false,
         statusList: [
@@ -246,15 +298,15 @@ export default {
           { label: '待确认', value: '16' }
         ]
       },
-      { title: '修改中', status: '10', data: [], isActive: false, statusList: [{ label: '修改中', value: '18,19' }] },
-      { title: '已完成', status: '4', data: [], isActive: false, statusList: [{ label: '已违约', value: '13' }] }
+      { title: '修改中', status: '06', data: [], isActive: false, statusList: [{ label: '修改中', value: '18,19' }] },
+      { title: '已完成', status: '07', data: [], isActive: false, statusList: [{ label: '已违约', value: '13' }] }
     ]
     this.openStatus = false
     this.scrollId = 'idx_0'
     this.initTabName = '6'
     this.tabName = '6'
     this.swiperCount = 0
-    this.currentPage = 0
+    this.currentPage = 1
     this.searchVal = ''
     this.filterObj = {}
     this.configVal({ key: 'tempObject', val: {} })
@@ -273,7 +325,7 @@ export default {
       this.jump('/pages/vendor/billFilter/main')
     },
     onRefresh (done) {
-      this.currentPage = 0
+      this.currentPage = 1
       this.isload = true
       this.refresher(done)
     },
@@ -287,7 +339,6 @@ export default {
       this.refresher()
     },
     swiperChange (e) {
-      this.showLoading()
       const idx = e.mp.detail.current
       this.openStatus = false
       if (idx > 2) {
@@ -303,30 +354,39 @@ export default {
     refresher (done) {
       this.loadFinish = 1
       const me = this
-      const sellerOrderList = this.apiList.xy.sellerOrderList
-      let params = {
-        current_page: this.currentPage,
-        page_size: this.pageSize,
-        tab_status: this.tabName,
-        user_id: this.currentUser.user_id
-      }
-      Object.assign(params, this.filterObj)
+      console.log('hahaha+++', this.tabName)
+      // let params = {
+      //   pageNum: this.currentPage,
+      //   pageSize: this.pageSize,
+      //   contractStateType: this.tabName
+      // }
+      this.filterObj.pageNum = this.currentPage
+      this.filterObj.pageSize = this.pageSize
+      this.filterObj.contractStateType = this.tabName
+      let params = this.filterObj
       if (this.searchVal) {
-        params.search = this.searchVal
+        params.keyword = this.searchVal
       }
-      this.ironRequest(sellerOrderList.url, params, sellerOrderList.method).then(resp => {
+      this.httpPost(this.apiList.zf.sellerGetSaleContractPage, params).then(res => {
+      // this.httpPost(this.apiList.zf.querySellerContractPage, params).then(res => {
+        console.log(res)
         const idx = me.swiperCount
-        this.serverTime = resp.server_time
-        if (resp.returncode === '0') {
-          let arr = resp.list
-          if (arr.length === 0 && me.currentPage === 0) {
+        if (res.success) {
+          let arr = res.data
+          if (arr.length > 0) {
+            this.serverTime = new Date(res.data[0].currentDate.replace(/-/g, '/')).getTime()
+            arr.map(item => {
+              item.status = this.getStatus(item.xingyunContractStatus)
+            })
+          }
+          if (arr.length === 0 && me.currentPage === 1) {
             me.listData = []
             me.billTab[idx].data = []
             me.isload = false
-          } else if (arr.length > 0 && me.currentPage === 0) {
+          } else if (arr.length > 0 && me.currentPage === 1) {
             me.billTab[idx].data = arr
             me.isload = false
-          } else if (arr.length > 0 && me.currentPage > 0) {
+          } else if (arr.length > 0 && me.currentPage > 1) {
             me.billTab[idx].data.push(...arr)
             me.isload = false
           } else {
@@ -337,11 +397,83 @@ export default {
         }
         me.isTabDisabled = false
         if (me.billTab[idx].data.length < 10) me.loadFinish = 3
+        me.isload = false
         me.hideLoading()
         // me.$forceUpdate()
         if (done) done()
+      }).catch(e => {
+        me.hideLoading()
       })
+      // this.ironRequest(sellerOrderList.url, params, sellerOrderList.method).then(resp => {
+      //   const idx = me.swiperCount
+      //   this.serverTime = resp.server_time
+      //   if (resp.returncode === '0') {
+      //     let arr = resp.list
+      //     if (arr.length === 0 && me.currentPage === 1) {
+      //       me.listData = []
+      //       me.billTab[idx].data = []
+      //       me.isload = false
+      //     } else if (arr.length > 0 && me.currentPage === 1) {
+      //       me.billTab[idx].data = arr
+      //       me.isload = false
+      //     } else if (arr.length > 0 && me.currentPage > 1) {
+      //       me.billTab[idx].data.push(...arr)
+      //       me.isload = false
+      //     } else {
+      //       me.isload = false
+      //       me.currentPage--
+      //       if (me.billTab[idx].data.length >= 10) me.loadFinish = 2
+      //     }
+      //   }
+      //   me.isTabDisabled = false
+      //   if (me.billTab[idx].data.length < 10) me.loadFinish = 3
+      //   me.hideLoading()
+      //   // me.$forceUpdate()
+      //   if (done) done()
+      // })
     },
+    // refresher (done) {
+    //   this.loadFinish = 1
+    //   const me = this
+    //   const sellerOrderList = this.apiList.xy.sellerOrderList
+    //   let params = {
+    //     current_page: this.currentPage,
+    //     page_size: this.pageSize,
+    //     tab_status: this.tabName,
+    //     user_id: this.currentUser.user_id
+    //   }
+    //   Object.assign(params, this.filterObj)
+    //   if (this.searchVal) {
+    //     params.search = this.searchVal
+    //   }
+    //   this.ironRequest(sellerOrderList.url, params, sellerOrderList.method).then(resp => {
+    //     const idx = me.swiperCount
+    //     this.serverTime = resp.server_time
+    //     if (resp.returncode === '0') {
+    //       let arr = resp.list
+    //       if (arr.length === 0 && me.currentPage === 1) {
+    //         me.listData = []
+    //         me.billTab[idx].data = []
+    //         me.isload = false
+    //       } else if (arr.length > 0 && me.currentPage === 1) {
+    //         me.billTab[idx].data = arr
+    //         me.isload = false
+    //       } else if (arr.length > 0 && me.currentPage > 1) {
+    //         me.billTab[idx].data.push(...arr)
+    //         me.isload = false
+    //       } else {
+    //         me.isload = false
+    //         me.currentPage--
+    //         if (me.billTab[idx].data.length >= 10) me.loadFinish = 2
+    //       }
+    //     }
+    //     me.isTabDisabled = false
+    //     if (me.billTab[idx].data.length < 10) me.loadFinish = 3
+    //     me.hideLoading()
+    //     // me.$forceUpdate()
+    //     if (done) done()
+    //   })
+    // },
     selectTabs (item, idx) {
       console.log('status', item.status)
       this.tabName = item.status
@@ -366,22 +498,34 @@ export default {
         this.jump({ path: '/mall/pay', query: { pageType: 'offlinePay', orderNo: orderNos, price: this.totalPrice } })
       }
     },
+    // 倒计时
+    // { id: '01', name: '待支付' },
+    // { id: '02', name: '待补款' },
+    // { id: '03', name: '已付款' },
+    // { id: '04', name: '支付中' },
+    // { id: '05', name: '待确认' },
+    // { id: '06', name: '修改中' },
+    // { id: '07', name: '已完成' },
+    // { id: '08', name: '已违约' },
+    // { id: '09', name: '已取消' }
     countTime () {
       const idx = this.swiperCount
       const arr = this.billTab[idx].data
-      arr.map(item => {
-        if (item.status === 14 || item.status === 15 || item.status === 16) {
+      arr.map((item, index) => {
+        if (item.status === '待支付' || item.status === '已付款' || item.status === '待确认') {
           const nowTime = this.serverTime
-          const endTimeFormat = item.status === 15 || item.status === 16 ? item.end_pack_time.replace(/-/g, '/') : item.end_pay_time.replace(/-/g, '/')
-          const endTime = new Date(endTimeFormat).getTime()
-          const leftTime = endTime - nowTime
+          // const endTimeFormat = item.status === '待制作提单' ? item.end_pack_time.replace(/-/g, '/') : item.end_pay_time.replace(/-/g, '/')
+          // const nowTime = item.currentDate
+          const endTimeFormat = item.invalidDate
+          const endTime = new Date(endTimeFormat.replace(/-/g, '/')).getTime()
+          const leftTime = Number(endTime - nowTime)
           let d = 0
           let h = 0
           let m = 0
           let s = 0
           if (leftTime >= 0) {
             // h = Math.floor(leftTime / 1000 / 60 / 60 % 24)
-            if (item.status === 15 || item.status === 16) {
+            if (item.status === '已付款') {
               item.overdue = false
               d = Math.floor(leftTime / (24 * 3600 * 1000))
               let leave1 = leftTime % (24 * 3600 * 1000) // 计算天数后剩余的毫秒数
@@ -390,16 +534,21 @@ export default {
               m = Math.floor(leave2 / (60 * 1000))
               let leave3 = leave2 % (60 * 1000) // 计算分钟数后剩余的毫秒数
               s = Math.round(leave3 / 1000)
+              // console.log(d + h + m + s)
               item.timeDown = `${d}天${h}小时${m}分`
             } else {
               h = Math.floor(leftTime / 1000 / 60 / 60)
               m = Math.floor(leftTime / 1000 / 60 % 60)
               s = Math.floor(leftTime / 1000 % 60)
+              h = h < 10 ? '0' + h : h
+              m = m < 10 ? '0' + m : m
+              s = s < 10 ? '0' + s : s
+              item.timeDown = `${h}:${m}:${s}`
             }
           } else {
-            if (item.status === 15 || item.status === 16) {
+            let overTime = Math.abs(leftTime)
+            if (item.status === '已付款') {
               item.overdue = true
-              let overTime = Math.abs(leftTime)
               d = Math.floor(overTime / (24 * 3600 * 1000))
               let leave1 = overTime % (24 * 3600 * 1000) // 计算天数后剩余的毫秒数
               h = Math.floor(leave1 / (3600 * 1000))
@@ -407,25 +556,88 @@ export default {
               m = Math.floor(leave2 / (60 * 1000))
               let leave3 = leave2 % (60 * 1000) // 计算分钟数后剩余的毫秒数
               s = Math.round(leave3 / 1000)
+              // console.log(d + h + m + s)
               item.timeDown = `${d}天${h}小时${m}分`
-            }
-          }
-          if (h + m + s === 0) {
-            if (item.status === 14) {
-              item.status = 13
-            }
-          } else {
-            if (item.status === 14) {
+            } else {
+              item.status = '已违约'
+              h = Math.floor(overTime / 1000 / 60 / 60)
+              m = Math.floor(overTime / 1000 / 60 % 60)
+              s = Math.floor(overTime / 1000 % 60)
               h = h < 10 ? '0' + h : h
               m = m < 10 ? '0' + m : m
               s = s < 10 ? '0' + s : s
               item.timeDown = `${h}:${m}:${s}`
+              // console.log('++++>>>>', this.tabName, item.status)
+              if (this.tabName === '01' && item.status === '已违约') {
+                // item = null
+                this.billTab[this.swiperCount].data.splice(index, 1)
+              }
             }
           }
         }
       })
       this.$forceUpdate()
     },
+    // countTime () {
+    //   const idx = this.swiperCount
+    //   const arr = this.billTab[idx].data
+    //   arr.map(item => {
+    //     if (item.status === 14 || item.status === 15 || item.status === 16) {
+    //       const nowTime = this.serverTime
+    //       const endTimeFormat = item.status === 15 || item.status === 16 ? item.end_pack_time.replace(/-/g, '/') : item.end_pay_time.replace(/-/g, '/')
+    //       const endTime = new Date(endTimeFormat).getTime()
+    //       const leftTime = endTime - nowTime
+    //       let d = 0
+    //       let h = 0
+    //       let m = 0
+    //       let s = 0
+    //       if (leftTime >= 0) {
+    //         // h = Math.floor(leftTime / 1000 / 60 / 60 % 24)
+    //         if (item.status === 15 || item.status === 16) {
+    //           item.overdue = false
+    //           d = Math.floor(leftTime / (24 * 3600 * 1000))
+    //           let leave1 = leftTime % (24 * 3600 * 1000) // 计算天数后剩余的毫秒数
+    //           h = Math.floor(leave1 / (3600 * 1000))
+    //           let leave2 = leave1 % (3600 * 1000) // 计算小时数后剩余的毫秒数
+    //           m = Math.floor(leave2 / (60 * 1000))
+    //           let leave3 = leave2 % (60 * 1000) // 计算分钟数后剩余的毫秒数
+    //           s = Math.round(leave3 / 1000)
+    //           item.timeDown = `${d}天${h}小时${m}分`
+    //         } else {
+    //           h = Math.floor(leftTime / 1000 / 60 / 60)
+    //           m = Math.floor(leftTime / 1000 / 60 % 60)
+    //           s = Math.floor(leftTime / 1000 % 60)
+    //         }
+    //       } else {
+    //         if (item.status === 15 || item.status === 16) {
+    //           item.overdue = true
+    //           let overTime = Math.abs(leftTime)
+    //           d = Math.floor(overTime / (24 * 3600 * 1000))
+    //           let leave1 = overTime % (24 * 3600 * 1000) // 计算天数后剩余的毫秒数
+    //           h = Math.floor(leave1 / (3600 * 1000))
+    //           let leave2 = leave1 % (3600 * 1000) // 计算小时数后剩余的毫秒数
+    //           m = Math.floor(leave2 / (60 * 1000))
+    //           let leave3 = leave2 % (60 * 1000) // 计算分钟数后剩余的毫秒数
+    //           s = Math.round(leave3 / 1000)
+    //           item.timeDown = `${d}天${h}小时${m}分`
+    //         }
+    //       }
+    //       if (h + m + s === 0) {
+    //         if (item.status === 14) {
+    //           item.status = 13
+    //         }
+    //       } else {
+    //         if (item.status === 14) {
+    //           h = h < 10 ? '0' + h : h
+    //           m = m < 10 ? '0' + m : m
+    //           s = s < 10 ? '0' + s : s
+    //           item.timeDown = `${h}:${m}:${s}`
+    //         }
+    //       }
+    //     }
+    //   })
+    //   this.$forceUpdate()
+    // },
     loadMore () {
       const me = this
       this.throttle(function () {
@@ -434,32 +646,36 @@ export default {
       }, 300)
     },
     jumpDetail (item) {
-      this.jump(`/pages/billDetail/main?id=${item.tstc_no}`)
+      console.log(item.saleContractId)
+      this.jump(`/pages/billDetail/main?contractId=${item.saleContractId}`)
     },
     billCancel (item) {
+      console.log('点击取消+++++')
       // if (this.tabName === '0') this.statisticRequest({ event: 'click_app_myorder_all_cancel' })
       // if (this.tabName === '1') this.statisticRequest({ event: 'click_app_myorder_needpay_cancel' })
+      this.statisticRequest({ event: 'click_app_order_cancel' })
       const me = this
       this.confirm({ content: '您确定要取消合同吗？' }).then((res) => {
+        console.log(me.btnDisable, res)
         if (!me.btnDisable && res === 'confirm') {
+          console.log('确认+++')
           me.btnDisable = true
           // me.$ironLoad.show()
-          me.ironRequest('cancelOrder.shtml', { user_id: me.currentUser.user_id, discussid: item.discussid }, 'post').then(res => {
+          me.httpGet(me.apiList.zf.cancelContract, {contractId: item.saleContractId}).then(res => {
+            console.log(res)
             // me.$ironLoad.hide()
             me.btnDisable = false
-            if (res && res.returncode === '0') {
-              me.showMsg('合同已取消', 'positive')
-              // this.listData = []
-              this.isTabDisabled = true
-              me.billTab[me.swiperCount].data = []
-              this.currentPage = 0
-              // me.pageHeight = this.tabName === '1' ? 150 : 100
-              this.isload = true
-              me.refresher()
-              // me.cb(me.billObject, 'cancel')
-            } else {
-              me.showMsg(res === undefined ? '网络异常' : res.errormsg)
-            }
+            me.showMsg('合同已取消', 'positive')
+            this.listData = []
+            this.allChoosed = false
+            this.isTabDisabled = true
+            me.billTab[me.swiperCount].data = []
+            // me.pageHeight = this.tabName === '1' ? 150 : 100
+            me.refresher()
+            // me.cb(me.billObject, 'cancel')
+          }).catch(e => {
+            me.btnDisable = false
+            me.showMsg(e.message)
           })
         }
       })
@@ -467,7 +683,7 @@ export default {
     jumpModifyDetail (item) {
       if (this.btnDisable) return false
       this.btnDisable = true
-      this.jump(`/pages/modifyDetail/main?id=${item.discussid}&type=${this.tabName}`)
+      this.jump(`/pages/modifyDetail/main?contractId=${item.saleContractId}&type=${this.tabName}`)
     },
     payBill (item) {
       if (this.btnDisable) return false
