@@ -54,7 +54,7 @@ div(@click="openStatus=false")
                       .flex.justify-between.padding-bottom-xs
                         span 共{{item.contractAmount}}支，{{item.weight}}吨
                         span 吊费：¥{{item.liftingFeeMoney}}
-                  .solid-top.text-black.ft-15.padding-sm.row
+                  .solid-top.text-black.ft-15.padding-sm.row(v-if="")
                     .col
                       template(v-if="item.xingyunContractStatus == '01'")
                         span 倒计时：
@@ -68,7 +68,7 @@ div(@click="openStatus=false")
                     .flex
                       .bill-gray-btn.round(v-if="item.isCancel", @click.stop="billCancel(item)") 取消合同
                       .bill-btn.round.margin-left-sm(v-if="item.isEdit", @click.stop="jumpModifyDetail(item)") 申请修改
-                      .bill-btn.round.margin-left-sm(v-if="item.isLading", @click.stop="payBill(item)") 制作提单
+                      .bill-btn.round.margin-left-sm(v-if="item.isLading", @click.stop="makeLoad(item)") 制作提单
                       // .bill-btn.round.margin-left-sm(v-if="item.xingyunContractStatus == '02'", @click.stop="payBill(item)") 去补款
         .text-center.c-gray.pt-100(v-else)
           empty-image(url="bill_empty.png", className="img-empty")
@@ -186,6 +186,7 @@ export default {
   },
   onShow () {
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 210
+    console.log('onshow+++', this.tempObject)
     if (this.tempObject.fromPage === 'billFilter') {
       const tempObject = this.tempObject
       delete tempObject.fromPage
@@ -216,12 +217,12 @@ export default {
         pageSize: 10,
         contractStateType: '',
         keyword: '',
-        saleContractNo: '',
-        unitName: '',
-        startCreateDateRange: '',
-        endCreateDateRange: '',
-        businessDepartmentId: '',
-        businessUserCode: '',
+        saleContractNo: this.tempObject.no,
+        unitName: this.tempObject.custom.unitName,
+        startCreateDateRange: this.tempObject.startDate,
+        endCreateDateRange: this.tempObject.endDate,
+        businessDepartmentId: this.tempObject.dept.code,
+        businessUserCode: this.tempObject.employee.code,
         isHasLadingNum: false
       }
 
@@ -684,6 +685,11 @@ export default {
       if (this.btnDisable) return false
       this.btnDisable = true
       this.jump(`/pages/modifyDetail/main?contractId=${item.saleContractId}&type=${this.tabName}`)
+    },
+    makeLoad (item) {
+      if (this.btnDisable) return false
+      this.btnDisable = true
+      this.jump(`/pages/vendor/loadMake/main?saleContractId=${item.saleContractId}`)
     },
     payBill (item) {
       if (this.btnDisable) return false

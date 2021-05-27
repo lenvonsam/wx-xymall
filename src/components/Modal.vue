@@ -6,8 +6,8 @@
     slot
     .padding.row.justify-center
       button.confirm-btn(
-        v-for="(item, bIdx) in btns", 
-        :key="bIdx", 
+        v-for="(item, bIdx) in btns",
+        :key="bIdx",
         :open-type="item.type",
         hover-class="hover-gray",
         :class="item.className",
@@ -48,6 +48,7 @@ export default {
   },
   watch: {
     value (newVal, oldVal) {
+      console.log('modalName变化++', newVal)
       if (newVal) this.modalName = 'show'
       else this.modalName = ''
     }

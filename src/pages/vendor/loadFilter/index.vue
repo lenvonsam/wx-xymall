@@ -10,7 +10,7 @@ div
       .text-right.row.justify-end.col.select
         span {{customName || '请选择客户'}}
         span(:class="selectShow==='custom' ? 'cuIcon-fold' : 'cuIcon-unfold'")
-      search-select(:selectSty="'top: 90rpx; height: '+ (contentHeight - 180) +'rpx'", valKey="name", :clearVal="isReset", :scrollHeight="400", :selectType="'custom'", @cb="selectCb($event, 'custom')", :show="selectShow==='custom'", :inputShow="true")    
+      search-select(:selectSty="'top: 90rpx; height: '+ (contentHeight - 180) +'rpx'", :clearVal="isReset", :scrollHeight="400", :selectType="'custom'", @cb="selectCb($event, 'custom')", :show="selectShow==='custom'", :inputShow="true")
     .row.justify-between.solid-bottom.item(:style="itemSty")
       .label 起始日期
       picker.col(@change="startDateCb", mode="date")
@@ -24,7 +24,7 @@ div
       .text-right.row.justify-end.col.select(:class="{'text-blue': selectShow==='dept'}")
         span {{deptName || '请选择部门'}}
         span(:class="selectShow==='dept' ? 'cuIcon-fold' : 'cuIcon-unfold'")
-      search-select(:selectSty="'top: 90rpx; height: '+ (contentHeight - 450) +'rpx'", :scrollHeight="300", :clearVal="isReset", :selectType="'dept'", @cb="selectCb($event, 'dept')", :show="selectShow==='dept'")  
+      search-select(:selectSty="'top: 90rpx; height: '+ (contentHeight - 450) +'rpx'", :scrollHeight="300", :clearVal="isReset", :selectType="'dept'", @cb="selectCb($event, 'dept')", :show="selectShow==='dept'")
     .row.justify-between.solid-bottom.item(@click.stop="openSelect('employee')", :style="itemSty")
       .label 业务人员
       .text-right.row.justify-end.col.select(:class="{'text-blue': selectShow==='employee'}")
@@ -36,10 +36,10 @@ div
       .text-right.row.justify-end.col.select
         picker.col(@change="statusCb", mode="selector", :range="statusList", range-key="label")
           .text-right.text-gray {{statusStr || '请选择状态'}}
-        span.cuIcon-unfold  
+        span.cuIcon-unfold
   .footer.row.bg-white.text-center.text-white.padding-sm(style="height: 100rpx")
     .col.foot-cancel(@click="confirm('reset')") 重置
-    .col.foot-confirm.margin-left-sm(@click="confirm") 搜索   
+    .col.foot-confirm.margin-left-sm(@click="confirm") 搜索
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
@@ -130,7 +130,7 @@ export default {
           status: ''
         }
       } else {
-        this.form.fromPage = 'billFilter'
+        this.form.fromPage = 'loadFilter'
         this.configVal({ key: 'tempObject', val: this.form })
         this.back()
       }
@@ -142,11 +142,14 @@ export default {
       this.form.endDate = this.date2Str(new Date(e.mp.detail.value))
     },
     selectCb (res, type) {
-      this[`${type}Name`] = res.name
+      if (type === 'custom') {
+        this[`${type}Name`] = res.unitName
+      } else {
+        this[`${type}Name`] = res.name
+      }
       this.form[type] = res
       this.selectShow = ''
       this.$forceUpdate()
-      console.log(this.form)
     }
   }
 }

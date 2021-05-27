@@ -74,6 +74,7 @@
         "contractTrack/main",
         "billFilter/main",
         "loadFilter/main",
+        "loadMake/main",
         "cart/main",
         "quotation/main",
         "reviewDetail/main",

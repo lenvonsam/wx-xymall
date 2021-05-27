@@ -150,18 +150,18 @@ export default {
     this.listData = []
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 210
     // this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 205
-    if (this.$root.$mp.query.tabName) this.tabName = this.$root.$mp.query.tabName
+    // if (this.$root.$mp.query.tabName) this.tabName = this.$root.$mp.query.tabName
     this.onRefresh()
   },
-  mounted () {
-    this.$nextTick(() => {
-      const me = this
-      this.timeInterval = setInterval(() => {
-        me.countTime()
-        me.serverTime += 1000
-      }, 1000)
-    })
-  },
+  // mounted () {
+  //   this.$nextTick(() => {
+  //     const me = this
+  //     this.timeInterval = setInterval(() => {
+  //       me.countTime()
+  //       me.serverTime += 1000
+  //     }, 1000)
+  //   })
+  // },
   methods: {
     searchOrder () {
       const reg = /[\u4E00-\u9FA5]|[\uFE30-\uFFA0]/gi
@@ -173,6 +173,10 @@ export default {
       this.isTabDisabled = true
       this.isload = true
       this.refresher()
+    },
+    payBill (item) {
+      console.log(item)
+      this.jump(`/pages/vendor/loadMake/main?saleContractId=` + item.saleContractId)
     },
     openFilter () {
       // const statusList = [{ label: '全部', value: '' }]
@@ -186,8 +190,8 @@ export default {
       // this.configVal({ key: 'tempObject', val: tempObject })
       this.jump('/pages/vendor/loadFilter/main')
     },
-    jumpDetail (item) {
-      this.jump(`/pages/vendor/quotationDetail/main?id=${item.id}`)
+    goToSettle () {
+      this.jump(`/pages/vendor/loadMake/main`)
     },
     async copyQuotation (item) {
       try {
@@ -266,18 +270,36 @@ export default {
         this.isload = false
       }
       const me = this
-      const params = {
-        pageNum: 1,
-        pageSize: 10,
-        contractStateType: '',
-        keyword: '',
-        saleContractNo: this.searchVal,
-        unitName: '',
-        startCreateDateRange: '',
-        endCreateDateRange: '',
-        businessDepartmentId: '',
-        businessUserCode: '',
-        isHasLadingNum: true
+      let params = {}
+      console.log('fromPage+++', this.tempObject.fromPage)
+      if (this.tempObject.fromPage === 'loadFilter') {
+        params = {
+          pageNum: 1,
+          pageSize: 10,
+          contractStateType: '',
+          keyword: '',
+          saleContractNo: this.tempObject.no,
+          unitName: this.tempObject.custom.unitName,
+          startCreateDateRange: this.tempObject.startDate,
+          endCreateDateRange: this.tempObject.endDate,
+          businessDepartmentId: this.tempObject.dept.code,
+          businessUserCode: this.tempObject.employee.code,
+          isHasLadingNum: true
+        }
+      } else {
+        params = {
+          pageNum: 1,
+          pageSize: 10,
+          contractStateType: '',
+          keyword: '',
+          saleContractNo: this.searchVal,
+          unitName: '',
+          startCreateDateRange: '',
+          endCreateDateRange: '',
+          businessDepartmentId: '',
+          businessUserCode: '',
+          isHasLadingNum: true
+        }
       }
       this.httpPost(this.apiList.zf.sellerGetSaleContractPage, params).then(res => {
         console.log(res)

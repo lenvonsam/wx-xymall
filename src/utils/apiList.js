@@ -338,8 +338,6 @@ export default {
     getDetail: 'workflow/workflow/getDetail',
     // 待审核通过/待审核驳回
     audit: 'workflow/workflow/audit',
-    // 卖家-crm可用客户
-    unitQueryPage: 'base/unit/queryPage',
     // 卖家-购物车修改定向价格
     sellerUpdateMoney: 'xingyun/cart/sellerUpdateMoney',
     // 查看购物车,待付款数量
@@ -348,9 +346,21 @@ export default {
     querySellerContractPage: 'xingyun/contract/querySellerContractPage',
     // 卖家-合同跟踪列表
     sellerGetSaleContractPage: 'sale/saleContract/sellerGetSaleContractPage',
+    // 卖家-crm可用客户
+    unitQueryPage: 'base/unit/queryPage',
     // 卖家合同跟踪-业务员下拉筛选列表
     employeeQuery: 'base/employee/query',
     // 卖家-合同跟踪-业务部门下拉筛选列表
-    departmentQuery: 'base/department/query'
+    departmentQuery: 'base/department/query',
+    // 卖家-提单制作-提货人
+    queryDriver: 'logistics/driver/queryPage',
+    // 卖家-提单制作-车牌号
+    queryCarsByUnitId: 'sale/saleLading/queryCarsByUnitId',
+    // 卖家-提单制作-确认制作
+    addSaleLading: 'sale/saleLading/addSaleLading',
+    // 卖家-提单详情
+    editSaleLading: 'sale/saleLading/editSaleLading',
+    // 卖家-制作提单-合同详情
+    createSaleLadingFromContract: 'sale/saleLading/createSaleLadingFromContract'
   }
 }

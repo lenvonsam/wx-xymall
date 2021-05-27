@@ -163,6 +163,8 @@ export default {
   },
   onShow () {
     const self = this
+    console.log('+++++++++++++++++++++')
+    self.modalShow = false
     if (self.isLogin) {
       self.httpPost(self.apiList.zf.queryUserCenterContractInfo, {}).then(res => {
         console.log(res.data)
@@ -330,6 +332,7 @@ export default {
     async refreshUser () {
       try {
         const res = await this.httpPost(this.apiList.zf.getPersonInfo, {})
+        this.modalShow = false
         this.setUser({ user: res.data })
         // 超时未提货物模态框
         // if (this.isLogin && this.currentUser.type === 'buyer' && !this.currentUser.userGeneralAgreement) {

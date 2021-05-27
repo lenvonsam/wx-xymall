@@ -377,7 +377,7 @@ export default {
     async loadCstmList () {
       try {
         var params = {
-          unitNameAllLike: '',
+          unitNameAllLike: this.customSearchVal,
           pageNum: 1,
           pageSize: 20
         }
