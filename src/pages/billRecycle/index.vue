@@ -129,6 +129,7 @@ export default {
       }
       this.loading = true
       this.queryObj.pageNum = this.currentPage
+      this.queryObj.contractNo = this.billNo
       this.httpPost(this.apiList.zf.contractRecoveryPage, this.queryObj).then(res => {
         console.log('++++', res)
         let arr = res.data
