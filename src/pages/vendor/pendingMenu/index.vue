@@ -100,7 +100,7 @@ export default {
   methods: {
     jumpModules (ficon) {
       console.log(ficon)
-      this.jump('/pages/vendor/pendingReview/main?configId=' + ficon.code)
+      this.jump('/pages/vendor/pendingReview/main?configId=' + ficon.configId)
     },
     getData () {
       let params = {

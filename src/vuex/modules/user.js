@@ -107,7 +107,15 @@ export default {
         state.token = ''
       }
     },
+    LOGOUT (state) {
+      state.isLogin = false
+    },
     EXITUSER (state) {
+      state.isLogin = false
+      state.token = ''
+      state.currentUser = {
+        type: 'buyer'
+      }
       try {
         mpvue.removeStorageSync('currentUser')
         mpvue.removeStorageSync('token')
@@ -117,11 +125,6 @@ export default {
       } catch (e) {
         console.error('exituser:>>', e)
       }
-      state.currentUser = {
-        type: 'buyer'
-      }
-      state.isLogin = false
-      state.token = ''
     },
     AUTOUSER (state) {
       try {

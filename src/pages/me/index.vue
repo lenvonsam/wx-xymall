@@ -163,8 +163,11 @@ export default {
   },
   onShow () {
     const self = this
-    console.log('+++++++++++++++++++++')
-    self.modalShow = false
+    console.log('是否登陆11++', self.isLogin)
+    setTimeout(() => {
+      console.log('是否登陆22++', self.isLogin)
+    }, 2000)
+
     if (self.isLogin) {
       self.httpPost(self.apiList.zf.queryUserCenterContractInfo, {}).then(res => {
         console.log(res.data)

@@ -66,6 +66,7 @@ export default {
     this.whiteStatusBar()
     this.showNoticeIcon = false
     this.rowCountObj = {}
+    console('是否登陆111++++', this.isLogin)
     if (this.isLogin) {
       // this.setCartCount(this.currentUser.user_id)
       this.alertShow = false

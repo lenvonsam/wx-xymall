@@ -4,21 +4,21 @@ div
   .padding-sm
     div
       template(v-if="tempObject.auditType === '延时'")
-        .bg-white.card(v-for="(item, idx) in detailData.list", :key="idx")
+        .bg-white.card
           .row.justify-between.padding-bottom-xs
-            .col.text-blue(@click="jumpBillDetail(item)") {{item.deal_no}}
-            .text-red {{statusList[item.status] || '待审核'}}
+            .col.text-blue(@click="jumpBillDetail") {{detailData.saleContractNo}}
+            .text-red {{statusList[status] || '待审核'}}
           .row.justify-between.padding-bottom-xs
-            .text-gray.col {{item.cust_name}}
-            .text-black ¥ {{item.price}}
+            .text-gray.col {{detailData.custName}}
+            .text-black ¥ {{detailData.totalMoeny}}
           .row.justify-between.text-gray.padding-bottom-xs
-            .col 共{{item.amount}}支，{{item.weight}}吨
-            span 操作员：{{item.opt_name}}
-          .text-gray.padding-bottom-xs(v-if="item.delay_text")
-            span 延时理由：{{item.delay_text}}
+            .col 共{{detailData.amount}}支，{{detailData.weight}}吨
+            span 操作员：{{detailData.operName}}
+          .text-gray.padding-bottom-xs(v-if="detailData.delay_text")
+            span 延时理由：{{detailData.delay_text}}
           .solid-top.padding-top-xs.padding-bottom-xs
             span 付款截止时间：
-            span.text-red.padding-left-xs {{item.order_end_time}}
+            span.text-red.padding-left-xs {{detailData.delayTime}}
       template(v-else)
         .bg-white.card
           div(v-if="tempObject.auditType !== 'ERP销售定价'")
@@ -38,11 +38,11 @@ div
               span 操作员：{{detailData.operName}}
           template(v-else-if="tempObject.auditType === 'ERP销售定价'")
             .text-gray.padding-bottom-xs.row.justify-between
-              .col {{tempObject.time}}
-              span 操作员：{{tempObject.oper_name}}
+              .col {{detailData.endTime}}
+              span 操作员：{{detailData.operName}}
           template(v-else)
             .row.justify-between.text-gray.padding-bottom-xs
-              .col 共{{detailData.totalAmount}}支，{{detailData.totalWeight}}吨
+              .col 共{{detailData.amount}}支，{{detailData.weight}}吨
               span 操作员：{{detailData.operName}}
           .solid-top.padding-top-xs.padding-bottom-xs.row.justify-between(v-if="tempObject.auditType !== 'ERP销售定价'")
             template(v-if="tempObject.auditType !== '退货'")
@@ -58,20 +58,20 @@ div
         div( v-if="tempObject.auditType === 'ERP议价'")
           .bg-white.card(v-for="(item, index) in dataList", :key="index")
             .row.justify-between.padding-bottom-xs
-              .text-black.col {{item.scontractDetailPartsname}} {{item.scontractDetailSpec}}
-              .text-blue ¥ {{item.sbillDetailInprice}}
+              .text-black.col {{item.name}} {{item.standard}}
+              .text-blue ¥ {{item.price}}
             .text-gray
               .row.justify-between.padding-bottom-xs
                 .col
-                  span.padding-right-xs {{item.scontractDetailMaterial}}
-                  span.padding-right-xs {{item.goodsProperty1}}
-                  span.padding-right-xs {{item.warehouseName}}
-                  span.sub-mark.ml-5 {{item.scontractDetailProareaname}}
-                span ({{item.goodsMetering}})
-              .padding-bottom-xs {{item.goodsNum}}支/{{item.goodsWeight}}吨
+                  span.padding-right-xs {{item.material}}
+                  span.padding-right-xs {{item.length}}
+                  span.padding-right-xs {{item.wh_name}}
+                  span.sub-mark.ml-5 {{item.supply}}
+                span ({{item.quantityType}})
+              .padding-bottom-xs {{item.max_count}}支/{{item.max_weight}}吨
               .padding-bottom-xs
-                span.padding-right-xs(v-if="item.goodsProperty5") 公差范围 {{item.goodsProperty5}}
-                span(v-if="item.goodsProperty4") 重量范围 {{item.goodsProperty4}}
+                span.padding-right-xs(v-if="item.toleranceRange") 公差范围 {{item.toleranceRange}}
+                span(v-if="item.weightRange") 重量范围 {{item.weightRange}}
               .solid-top.padding-top-xs.padding-bottom-xs.text-black(v-if="item.saleMakepriceCale != 0")
                 span 销售定价：
                 span.text-blue ￥{{item.saleMakeprice}}
@@ -81,19 +81,19 @@ div
         div( v-else-if="tempObject.auditType === 'ERP销售定价'")
           .bg-white.card(v-for="(item, index) in dataList", :key="index")
             .row.justify-between.padding-bottom-xs
-              .text-black.col {{item.partsnameName}} {{item.goodsSpec}}
-              .col.text-right.text-grey ¥{{item.goodsInprice}}/¥{{item.goodsInfeeprice}}
+              .text-black.col {{item.name}} {{item.standard}}
+              .col.text-right.text-grey ¥{{item.price}}/¥{{item.goodsInfeeprice}}
             .text-gray
               .row.justify-between.padding-bottom-xs
                 .col(style="position: relative;")
-                  span.padding-right-xs {{item.goodsMaterial}}
-                  span.padding-right-xs {{item.goodsProperty1}}米
-                  span.padding-right-xs {{item.warehouseName}}
-                  span.sub-mark.ml-5 {{item.productareaName}}
+                  span.padding-right-xs {{item.material}}
+                  span.padding-right-xs {{item.length}}米
+                  span.padding-right-xs {{item.wh_name}}
+                  span.sub-mark.ml-5 {{item.supply}}
                   span.text-grey.right-0 （材料价/费用）
               .padding-bottom-xs
-                span.padding-right-xs(v-if="item.goodsProperty5") 公差范围 {{item.goodsProperty5}}
-                span(v-if="item.goodsProperty4") 重量范围 {{item.goodsProperty4}}
+                span.padding-right-xs(v-if="item.toleranceRange") 公差范围 {{item.toleranceRange}}
+                span(v-if="item.weightRange") 重量范围 {{item.weightRange}}
               .solid-top.padding-top-xs.padding-bottom-xs.text-black(v-if="item.saleMakepriceCale != 0")
                 span 定价：
                 span.text-blue.text-bold ￥{{item.ajuPricesetMakeprice}}/￥{{item.pricesetMakeprice}}
@@ -144,7 +144,7 @@ div
             span.padding-left-xs.text-gray.ft-13 {{detailData.firstTask.createTime}}
           .flex.justify-between.text-gray.ft-14.border-left-line.padding-left-xl
             span.ft-14.font-bold 申请人:{{detailData.firstTask.userName}}
-          .circle.bg-blue 1
+          img(src="/static/images/yes.png", style="height:50rpx;width:50rpx;position:absolute;top:25rpx;left:25rpx;")
         .relative.padding-top-xl.padding-left-xl.padding-right-sm
           .flex.justify-between.padding-bottom-xs.border-left-line.padding-left-xl
             span.ft-16.font-bold 审批人
@@ -157,7 +157,7 @@ div
             span.ft-16.font-bold 结束
           .flex.justify-between.text-gray.ft-14.border-left-line.padding-left-xl
             span.ft-14.font-bold 归档
-          .circle.bg-blue 3
+          .circle.bg-gray(style="color:#ccc") 3
 
   .footer.row.bg-white.text-center.text-white.padding-sm(:style="{height: isIpx ? '188rpx' : '120rpx', 'padding-bottom': isIpx ? '68rpx' : '20rpx'}",
    v-if="btnShow && tempObject.fromPage !== 'reviewHistory'")
@@ -220,9 +220,10 @@ export default {
       screenHeight: state => state.screenHeight
     }),
     dataList () {
-      return this.detailData.list.filter(item => {
-        return item.good_name !== '吊费'
-      })
+      return this.detailData.list
+      // return this.detailData.list.filter(item => {
+      //   return item.good_name !== '吊费'
+      // })
     }
     // auditType () {
     //   return this.tempObject.auditType
@@ -242,7 +243,8 @@ export default {
     this.disabled = false
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 203
     // this.auditType = this.$root.$mp.query.auditType
-    // this.tempObject = this.$root.$mp.query
+    this.tempObject = this.$root.$mp.query
+    console.log('tempObject+++', this.tempObject)
     // if (this.tempObject.auditType) {
     //   this.showLoading()
     //   this.loadData()
@@ -346,12 +348,21 @@ export default {
             break
           case '延时':
             if (flag === 'cancel') {
-              params.status = '2'
+              params.taskId = this.detailData.taskId
+              params.userId = '1346277615056457730'
+              params.json = this.detailData.json
+              params.status = 3
+              params.reason = ''
+              params.tenantId = '1'
             } else {
-              params.status = '1'
+              params.taskId = this.detailData.taskId
+              params.userId = '1346277615056457730'
+              params.json = this.detailData.json
+              params.status = 2
+              params.reason = ''
+              params.tenantId = '1'
             }
-            params.id = this.tempObject.return_id
-            this.confirmAudit(params, this.apiList.xy.orderDelayAudit)
+            this.confirmAudit(params, this.apiList.zf.audit)
             break
           case 'ERP议价':
             this.disabled = false
@@ -491,44 +502,143 @@ export default {
     async loadData () {
       console.log('+++>>>>')
       // this.showLoading()
-      this.tempObject.auditType = '退货'
       this.btnShow = true
       let res = await this.httpGet(this.apiList.zf.getDetail + '?id=' + this.id + '&userId=1346277615056457730')
       console.log(res)
       console.log(JSON.parse(res.data.json))
       let data = res.data
       let jsonData = (JSON.parse(res.data.json))
-      this.detailData = {
-        // liftStatus: data.need_lift,
-        status: data.status,
-        billNo: jsonData.returnNo,
-        custName: jsonData.settlementUnitName,
-        // totalAmount: data.amount,
-        // totalWeight: data.weight,
-        totalMoeny: jsonData.returnMoney,
-        endTime: jsonData.returnDate,
-        invoiceStatus: '待开票',
-        json: res.data.json,
-        taskId: data.taskList[data.taskList.length - 1].taskId,
-        operName: data.taskList[data.taskList.length - 1].userName,
-        firstTask: data.taskList[0],
-        lastTask: data.taskList[data.taskList.length - 1]
-        // list: jsonData.returnDetailDTOS
-        // is_talk_price: data.is_talk_price
+      console.log('未整理参数===>', jsonData)
+      switch (this.tempObject.auditType) {
+        case '退货':
+          this.detailData = {
+            // liftStatus: data.need_lift,
+            status: data.status,
+            billNo: jsonData.returnNo,
+            custName: jsonData.settlementUnitName,
+            // totalAmount: data.amount,
+            // totalWeight: data.weight,
+            totalMoeny: jsonData.returnMoney,
+            endTime: jsonData.returnDate,
+            invoiceStatus: '待开票',
+            json: data.json,
+            taskId: data.taskList[data.taskList.length - 1].taskId,
+            operName: data.taskList[data.taskList.length - 1].userName,
+            firstTask: data.taskList[0],
+            lastTask: data.taskList[data.taskList.length - 1]
+            // list: jsonData.returnDetailDTOS
+            // is_talk_price: data.is_talk_price
+          }
+          console.log('退货参数整理====>', this.detailData)
+          // name standard  material  amount  weight money
+          this.detailData.list = jsonData.returnDetailDTOS.map(item => {
+            return {
+              name: item.productBrandName,
+              standard: item.specification,
+              material: item.productTextureName,
+              amount: item.returnAmount,
+              weight: item.quantityType === '01' ? item.returnManagerWeight : item.returnPoundWeight,
+              money: item.inTaxMoney,
+              price: item.inTaxPrice
+            }
+          })
+          break
+        case '延时':
+          this.detailData = {
+            // liftStatus: data.need_lift,
+            status: data.status,
+            saleContractNo: jsonData.saleContractNo,
+            custName: jsonData.settlementUnitName,
+            amount: jsonData.contractAmount,
+            weight: jsonData.contractType === '01' ? jsonData.contractManagerWeight : jsonData.contractPoundWeight,
+            totalMoeny: jsonData.inTaxReceiveMoney,
+            delayTime: jsonData.contractDelayDate,
+            invoiceStatus: '待付款',
+            json: data.json,
+            taskId: data.taskList[data.taskList.length - 1].taskId,
+            operName: data.taskList[data.taskList.length - 1].userName,
+            firstTask: data.taskList[0],
+            lastTask: data.taskList[data.taskList.length - 1]
+          }
+          console.log('延时参数整理====>', this.detailData)
+          break
+        case 'ERP议价':
+          this.detailData = {
+            // liftStatus: data.need_lift,
+            status: data.status,
+            billNo: jsonData.saleContractNo,
+            custName: jsonData.settlementUnitName,
+            // totalAmount: data.amount,
+            // totalWeight: data.weight,
+            totalMoeny: jsonData.inTaxReceiveMoney,
+            endTime: jsonData.contractDelayDate,
+            invoiceStatus: '待复审',
+            json: data.json,
+            taskId: data.taskList[data.taskList.length - 1].taskId,
+            operName: data.taskList[data.taskList.length - 1].userName,
+            firstTask: data.taskList[0],
+            lastTask: data.taskList[data.taskList.length - 1]
+            // list: jsonData.returnDetailDTOS
+            // is_talk_price: data.is_talk_price
+          }
+          console.log('退货参数整理====>', this.detailData)
+          // name standard  material  amount  weight money
+          this.detailData.list = jsonData.saleContractDetailDTOS.map(item => {
+            return {
+              name: item.productBrandName,
+              standard: item.specification,
+              material: item.productTextureName,
+              supply: item.prodAreaName,
+              length: item.length,
+              wh_name: item.stockZoneName,
+              max_count: item.avbleAmount,
+              max_weight: item.quantityType === '01' ? item.managerWeight : item.poundWeight,
+              price: item.quantityType === '01' ? item.priceManager : item.pricePound,
+              quantityType: item.quantityType === '01' ? '理计' : '磅计',
+              weightRange: item.weightRange,
+              toleranceRange: item.toleranceRange
+            }
+          })
+          break
+        case 'ERP销售定价':
+          this.detailData = {
+            // liftStatus: data.need_lift,
+            // status: data.status,
+            // billNo: jsonData.saleContractNo,
+            custName: jsonData.settlementUnitName,
+            amount: data.amount,
+            weight: data.weight,
+            // totalMoeny: jsonData.inTaxReceiveMoney,
+            endTime: jsonData.extractDate,
+            invoiceStatus: '待复审',
+            // json: data.json,
+            // taskId: data.taskList[data.taskList.length - 1].taskId,
+            operName: data.taskList[data.taskList.length - 1].userName,
+            firstTask: data.taskList[0],
+            lastTask: data.taskList[data.taskList.length - 1],
+            list: jsonData.demandDetailDTOS,
+            is_talk_price: data.is_talk_price
+          }
+          console.log('退货参数整理====>', this.detailData)
+          // name standard  material  amount  weight money
+          this.detailData.list = jsonData.demandDetailDTOS.map(item => {
+            return {
+              name: item.productBrandName,
+              standard: item.specification,
+              material: item.productTextureName,
+              supply: item.prodAreaName,
+              length: item.length,
+              wh_name: item.stockZoneName,
+              max_count: item.avbleAmount,
+              max_weight: item.quantityType === '01' ? item.managerWeight : item.poundWeight,
+              price: item.quantityType === '01' ? item.priceManager : item.pricePound,
+              quantityType: item.quantityType === '01' ? '理计' : '磅计',
+              weightRange: item.weightRange,
+              toleranceRange: item.toleranceRange
+            }
+          })
+          break
       }
-      console.log('参数整理====>', this.detailData)
-      // name standard  material  amount  weight money
-      this.detailData.list = jsonData.returnDetailDTOS.map(item => {
-        return {
-          name: item.productBrandName,
-          standard: item.specification,
-          material: item.productTextureName,
-          amount: item.returnAmount,
-          weight: item.quantityType === '01' ? item.returnManagerWeight : item.returnPoundWeight,
-          money: item.inTaxMoney,
-          price: item.inTaxPrice
-        }
-      })
     }
     // async loadData () {
     //   try {

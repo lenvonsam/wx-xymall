@@ -76,77 +76,74 @@ export default {
     // 微信小程序登录
     this.wxAuthLogin()
     const me = this
-    // 设置vuex全局状态
-    me.autoUser()
     // 判断是否已经登陆
     console.log('判断用户是否已经登陆++++', me.isLogin)
-    if (me.isLogin) {
-      // me.getQueryProfile()
-      // me.showLoading()
-      // const uid = me.currentUser.user_id
-      // console.log('App.vue_uid=====>', uid)
-      // 获取用户信息
-      me.httpPost(me.apiList.zf.getPersonInfo, {}).then(res => {
-        console.log('用户已登陆，获取用户信息++++', res)
-        me.setUser({ token: me.token, user: res.data })
-        if (res.data.userStatus === '01') {
-          me.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
-            if (res === 'confirm') {
-              me.jump('/pages/account/companyUpdate/main')
-            }
-          })
-        }
-      }).finally(() => {
-        me.hideLoading()
-      }).catch(e => {
-        me.hideLoading()
-        me.showMsg('登录已失效，请重新登录')
-        setTimeout(() => {
-          me.exitUser()
-          me.jump('/pages/account/login/main')
-        }, 500)
-      })
-      // this.ironRequest(`${this.apiList.xy.checkUUID.url}?user_id=${uid}`, {}, this.apiList.xy.checkUUID.method).then(resp => {
-      //   console.log('checkUUID未失效')
-      //   me.hideLoading()
-      //   // 自动登录：token是否失效
-      // }).catch((e) => {
-      //   me.hideLoading()
-      //   console.log('App.vue_已失效currentUser_catch========>' + JSON.stringify(e))
-      //   me.showMsg('登录已失效，请重新登录')
-      //   const localSearch = me.currentUser.localSearchs
-      //   me.ironRequest(me.apiList.xy.searchHistory.url, { user_id: me.currentUser.user_id, history: localSearch }, me.apiList.xy.searchHistory.method, me)
-      //   me.ironRequest(`${me.apiList.xy.loginOut.url}?user_id=${me.currentUser.user_id}`, {}, me.apiList.xy.loginOut.method)
-      //   setTimeout(() => {
-      //     me.exitUser()
-      //     me.jump('/pages/account/login/main')
-      //   }, 500)
-      // })
-      // if (me.currentUser.type === 'buyer') { // 判断用户type,buyer不需要调接口判断checkUUID失效与否
-      //   console.log('App.vue_me.currentUser.type========>' + me.currentUser.type)
-      //   me.hideLoading()
-      // } else {
-      //   this.ironRequest(`${this.apiList.xy.checkUUID.url}?user_id=${uid}`, {}, this.apiList.xy.checkUUID.method).then(resp => {
-      //     console.log('checkUUID未失效')
-      //     me.hideLoading()
-      //   // 自动登录
-      //   }).catch((e) => {
-      //     me.hideLoading()
-      //     console.log('App.vue_已失效currentUser_catch========>' + JSON.stringify(e))
-      //     me.showMsg('登录已失效，请重新登录')
-      //     const localSearch = me.currentUser.localSearchs
-      //     me.ironRequest(me.apiList.xy.searchHistory.url, { user_id: me.currentUser.user_id, history: localSearch }, me.apiList.xy.searchHistory.method, me)
-      //     me.ironRequest(`${me.apiList.xy.loginOut.url}?user_id=${me.currentUser.user_id}`, {}, me.apiList.xy.loginOut.method)
-      //     setTimeout(() => {
-      //       me.exitUser()
-      //       me.jump('/pages/account/login/main')
-      //     }, 500)
-      //   })
-      // }
-    } else {
-      console.log('未登录me.isLogin======>' + me.isLogin)
-      // me.showMsg('登录已失效，请重新登录')
-    }
+    // me.getQueryProfile()
+    // me.showLoading()
+    // const uid = me.currentUser.user_id
+    // console.log('App.vue_uid=====>', uid)
+    // 获取用户信息
+    me.httpPost(me.apiList.zf.getPersonInfo, {}).then(res => {
+      console.log('用户已登陆，获取用户信息++++', res)
+      // 设置vuex全局状态
+      me.autoUser()
+      me.setUser({ token: me.token, user: res.data })
+      if (res.data.userStatus === '01') {
+        me.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
+          if (res === 'confirm') {
+            me.jump('/pages/account/companyUpdate/main')
+          }
+        })
+      }
+    }).finally(() => {
+      me.hideLoading()
+    }).catch(e => {
+      me.$store.commit('LOGOUT')
+      me.hideLoading()
+      me.showMsg('登录已失效，请重新登录')
+      setTimeout(() => {
+        me.exitUser()
+        me.jump('/pages/account/login/main')
+      }, 500)
+    })
+    // this.ironRequest(`${this.apiList.xy.checkUUID.url}?user_id=${uid}`, {}, this.apiList.xy.checkUUID.method).then(resp => {
+    //   console.log('checkUUID未失效')
+    //   me.hideLoading()
+    //   // 自动登录：token是否失效
+    // }).catch((e) => {
+    //   me.hideLoading()
+    //   console.log('App.vue_已失效currentUser_catch========>' + JSON.stringify(e))
+    //   me.showMsg('登录已失效，请重新登录')
+    //   const localSearch = me.currentUser.localSearchs
+    //   me.ironRequest(me.apiList.xy.searchHistory.url, { user_id: me.currentUser.user_id, history: localSearch }, me.apiList.xy.searchHistory.method, me)
+    //   me.ironRequest(`${me.apiList.xy.loginOut.url}?user_id=${me.currentUser.user_id}`, {}, me.apiList.xy.loginOut.method)
+    //   setTimeout(() => {
+    //     me.exitUser()
+    //     me.jump('/pages/account/login/main')
+    //   }, 500)
+    // })
+    // if (me.currentUser.type === 'buyer') { // 判断用户type,buyer不需要调接口判断checkUUID失效与否
+    //   console.log('App.vue_me.currentUser.type========>' + me.currentUser.type)
+    //   me.hideLoading()
+    // } else {
+    //   this.ironRequest(`${this.apiList.xy.checkUUID.url}?user_id=${uid}`, {}, this.apiList.xy.checkUUID.method).then(resp => {
+    //     console.log('checkUUID未失效')
+    //     me.hideLoading()
+    //   // 自动登录
+    //   }).catch((e) => {
+    //     me.hideLoading()
+    //     console.log('App.vue_已失效currentUser_catch========>' + JSON.stringify(e))
+    //     me.showMsg('登录已失效，请重新登录')
+    //     const localSearch = me.currentUser.localSearchs
+    //     me.ironRequest(me.apiList.xy.searchHistory.url, { user_id: me.currentUser.user_id, history: localSearch }, me.apiList.xy.searchHistory.method, me)
+    //     me.ironRequest(`${me.apiList.xy.loginOut.url}?user_id=${me.currentUser.user_id}`, {}, me.apiList.xy.loginOut.method)
+    //     setTimeout(() => {
+    //       me.exitUser()
+    //       me.jump('/pages/account/login/main')
+    //     }, 500)
+    //   })
+    // }
+
     // 获取系统信息
     // 设置自定义customer bar
     mpvue.getSystemInfo({

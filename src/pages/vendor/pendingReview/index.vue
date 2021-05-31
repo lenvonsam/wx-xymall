@@ -52,29 +52,31 @@ export default {
         '4': '取消',
         '5': '弃审'
       },
-      listData: [
-        {
-          businessId: 'XSTH202105120007',
-          businessUserId: '1351071855070539777',
-          callbackUrl: 'http://zf-sale-server/saleReturn/workflow/callBack',
-          code: '171',
-          configId: 39,
-          createTime: '2021-05-12 14:22:55',
-          currentNodeCreateTime: '2021-05-12 14:22:55',
-          currentNodeName: '发起审批',
-          detailUrl: '/sale/saleReturn/edit?pageStatus=review&isAudit=1',
-          groupBusinessId: 'D1346268726369980418',
-          groupId: '15',
-          groupName: '营销一部',
-          id: '1320',
-          name: '销售退货工作审核',
-          processId: '7cbec307-b2ea-11eb-84b4-00163e218024',
-          status: 0,
-          tenantId: '1',
-          userId: '59',
-          userName: '何建龙'
-        }
-      ],
+      configId: '',
+      listData: [],
+      // listData: [
+      //   {
+      //     businessId: 'XSTH202105120007',
+      //     businessUserId: '1351071855070539777',
+      //     callbackUrl: 'http://zf-sale-server/saleReturn/workflow/callBack',
+      //     code: '171',
+      //     configId: 39,
+      //     createTime: '2021-05-12 14:22:55',
+      //     currentNodeCreateTime: '2021-05-12 14:22:55',
+      //     currentNodeName: '发起审批',
+      //     detailUrl: '/sale/saleReturn/edit?pageStatus=review&isAudit=1',
+      //     groupBusinessId: 'D1346268726369980418',
+      //     groupId: '15',
+      //     groupName: '营销一部',
+      //     id: '1320',
+      //     name: '销售退货工作审核',
+      //     processId: '7cbec307-b2ea-11eb-84b4-00163e218024',
+      //     status: 0,
+      //     tenantId: '1',
+      //     userId: '59',
+      //     userName: '何建龙'
+      //   }
+      // ],
       isload: false,
       searchVal: '',
       isTabDisabled: false,
@@ -119,10 +121,11 @@ export default {
   onHide () {
     this.btnDisable = false
   },
-  // onLoad (options) {
-  //   console.log(options.configId)
-  //   this.onRefresh()
-  // },
+  onLoad (options) {
+    console.log(options.configId)
+    this.configId = options.configId
+    this.onRefresh()
+  },
   onShow () {
     this.btnDisable = false
     if (this.tempObject.fromPage === 'billFilter') {
@@ -205,7 +208,7 @@ export default {
       // }
 
       let params = {
-        configId: '39',
+        configId: this.configId,
         limit: 20,
         offset: 0,
         tenantId: 1,
@@ -271,7 +274,17 @@ export default {
       if (this.btnDisable) return false
       this.btnDisable = true
       // this.configVal({ key: 'tempObject', val: item })
-      this.jump(`/pages/vendor/reviewDetail/main?id=${item.id}`)
+      let auditTypeText = ''
+      if (this.configId === '39') {
+        auditTypeText = '退货'
+      } else if (this.configId === '73') {
+        auditTypeText = '延时'
+      } else if (this.configId === '710') {
+        auditTypeText = 'ERP议价'
+      } else if (this.configId === '4') {
+        auditTypeText = 'ERP销售定价'
+      }
+      this.jump(`/pages/vendor/reviewDetail/main?id=${item.id}&auditType=${auditTypeText}`)
     }
   }
 }

@@ -177,6 +177,7 @@ function httpGet (url, params) {
         if (data.success) {
           resolve(data)
         } else if (data.code === 'TK01' || data.code === 'TK02' || data.code === 'TK03' || data.code === 'TK04' || data.code === 'TC001' || data.message === 'token失效请重新登录' || data.message.includes('请重新登录')) {
+          _this.$store.commit('LOGOUT')
           _this.confirm({ content: '登录已失效，请重新登录' }).then((r) => {
             if (r === 'confirm') {
               _this.exitUser()
@@ -224,6 +225,7 @@ function httpPost (url, params) {
           resolve(data)
         } else if (data.code === 'TK01' || data.code === 'TK02' || data.code === 'TK03' || data.code === 'TK04' || data.code === 'TC001' || data.message === 'token失效请重新登录' || data.message.includes('请重新登录')) {
           // console.log('>>>+++++++++登陆失效模态框')
+          _this.$store.commit('LOGOUT')
           _this.confirm({ content: '登录已失效，请重新登录' }).then((r) => {
             if (r === 'confirm') {
               _this.exitUser()
