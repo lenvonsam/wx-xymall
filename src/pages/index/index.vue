@@ -176,12 +176,12 @@ export default {
     ]),
     // 跳转公告页面
     jumpNotice () {
-      this.statisticRequest({ event: 'click_app_index_notice_more' })
+      this.logEventGet({ event: 'click_app_index_notice_more' })
       this.jump('/pages/cardList/main?title=型云公告&type=notices')
     },
     // 跳转搜索页面
     jumpSearch () {
-      this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_index_search_seller' }, true) : this.statisticRequest({ event: 'click_app_index_search' })
+      this.currentUser.type === 'seller' ? this.logEventGet({ event: 'click_app_index_search_seller' }) : this.logEventGet({ event: 'click_app_index_search' })
       this.jump('/pages/search/main')
     },
     // 展示首页引导图
@@ -195,13 +195,13 @@ export default {
     // 点击产品分类
     classifyClick (id, name) {
       // this.configVal({ key: 'tempObject', val: { name: title } })
-      this.statisticRequest({ event: 'click_app_index_category', name: name }, true)
+      this.logEventGet({ event: 'click_app_index_category', name: name })
       this.configVal({ key: 'tempObject', val: { name: id, fromPage: 'home' } })
       this.tab('/pages/mall/main')
     },
     // 点击功能图标
     iconJump (icon) {
-      this.statisticRequest({ event: icon.event })
+      this.logEventGet({ event: icon.event })
       if (this.isLogin) {
         if (icon.dotKey && this.currentUser.type === 'seller' && !this.modules[icon.dotKey]) {
           this.showMsg('暂无权限')
@@ -216,7 +216,7 @@ export default {
     },
     // 点击查看更多
     mallMore () {
-      this.statisticRequest({ event: 'click_app_index_category', name: '查看更多' }, true)
+      this.logEventGet({ event: 'click_app_index_category', name: '查看更多' })
       this.tab('/pages/mall/main')
     },
     // initChart (canvas, width, height) {

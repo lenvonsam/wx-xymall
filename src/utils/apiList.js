@@ -363,6 +363,7 @@ export default {
     // 卖家-制作提单-合同详情
     createSaleLadingFromContract: 'sale/saleLading/createSaleLadingFromContract',
     // 埋点、行为日志记录
+    logClickAdd: 'base/log-click/add',
     logEventAdd: 'base/log-event/add'
   }
 }

@@ -18,7 +18,7 @@ div
         span 暂无更多
         div 详情请联系400-8788-361
     .filter-cur(v-if="standardList.length > 0")
-      .tag.text-gray(:class="{'active': searchIdx === item+1}", v-for="item in 9", :key="item", @click="selectTag(item)") {{item+1}}  
+      .tag.text-gray(:class="{'active': searchIdx === item+1}", v-for="item in 9", :key="item", @click="selectTag(item)") {{item+1}}
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
@@ -69,12 +69,12 @@ export default {
         fromPage: 'mallFilter',
         noBack: true
       }
-      // this.statisticRequest({ event: 'app_mall_category', goods_name: res.name, standard: res.standards })
+      this.logEventPost({ event: 'app_mall_category', goods_name: res.name, standard: res.standards })
       this.configVal({ key: 'tempObject', val: res })
       this.back(-1)
     },
     searchChange () {
-      // this.statisticRequest({ event: 'click_app_mall_category_search' })
+      // this.logEventGet({ event: 'click_app_mall_category_search' })
       this.supplyList = []
       this.queryObject.search = this.searchVal
       this.currentPage = 0
@@ -134,7 +134,7 @@ export default {
       })
     },
     selectTag (idx) {
-      // this.statisticRequest({ event: 'click_app_mall_category_right' })
+      // this.logEventGet({ event: 'click_app_mall_category_right' })
       this.searchIdx = idx
     }
   }

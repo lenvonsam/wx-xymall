@@ -477,7 +477,7 @@ export default {
       this.tabActive = type
     },
     choosedAll () {
-      // this.statisticRequest({ event: 'click_app_quotation_checkall' }, true)
+      // this.logEventGet({ event: 'click_app_quotation_checkall' })
       this.allChoosed = !this.allChoosed
       if (this.allChoosed) {
         this.loadData.map(item => {

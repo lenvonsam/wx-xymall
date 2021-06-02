@@ -27,7 +27,7 @@ export default {
   },
   methods: {
     openPickWay (type) {
-      this.statisticRequest({ event: 'click_app_cart_address' })
+      this.logEventGet({ event: 'click_app_cart_address' })
       this.pickWayShow = !this.pickWayShow
     }
   }

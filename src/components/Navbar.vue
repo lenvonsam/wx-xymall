@@ -58,7 +58,7 @@ export default {
   },
   methods: {
     handleContact () {
-      this.statisticRequest({ event: 'click_app_index_kf' })
+      this.logEventGet({ event: 'click_app_index_kf' })
       console.log('handleContact')
     },
     navBack () {

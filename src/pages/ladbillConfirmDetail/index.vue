@@ -205,7 +205,7 @@ export default {
       }
     },
     telContact () {
-      this.statisticRequest({ event: 'click_app_mylad_confirm_tel' })
+      this.logEventGet({ event: 'click_app_mylad_confirm_tel' })
       window.location.href = 'tel://' + this.tdContact
     }
   }

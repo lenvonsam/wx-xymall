@@ -168,7 +168,7 @@ export default {
     },
     // 跳转提现进度
     jumpWithdraw () {
-      this.statisticRequest({ event: 'click_app_balance_withdraw' })
+      this.logEventGet({ event: 'click_app_balance_withdraw' })
       this.jump('/pages/cardList/main?type=searchWithdraw&title=提现进度')
     },
     // 点击确认提现

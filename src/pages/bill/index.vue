@@ -200,7 +200,7 @@ export default {
     },
     // 搜索合同
     searchOrder () {
-      this.statisticRequest({ event: 'click_app_order_search' })
+      this.logEventGet({ event: 'click_app_order_search' })
       this.startDate = ''
       this.endDate = ''
       this.listData = []
@@ -538,7 +538,7 @@ export default {
       }
     },
     // jumpSearch () {
-    //   this.statisticRequest({ event: 'click_app_myorder_search' })
+    //   this.logEventGet({ event: 'click_app_myorder_search' })
     //   this.jump({ path: '/bill/search' })
     // },
     // 点击跳转合同详情
@@ -548,9 +548,9 @@ export default {
     // 取消合同
     billCancel (item) {
       console.log('点击取消+++++')
-      // if (this.tabName === '0') this.statisticRequest({ event: 'click_app_myorder_all_cancel' })
-      // if (this.tabName === '1') this.statisticRequest({ event: 'click_app_myorder_needpay_cancel' })
-      this.statisticRequest({ event: 'click_app_order_cancel' })
+      // if (this.tabName === '0') this.logEventGet({ event: 'click_app_myorder_all_cancel' })
+      // if (this.tabName === '1') this.logEventGet({ event: 'click_app_myorder_needpay_cancel' })
+      this.logEventGet({ event: 'click_app_order_cancel' })
       const me = this
       this.confirm({ content: '您确定要取消合同吗？' }).then((res) => {
         console.log(me.btnDisable, res)
@@ -579,9 +579,9 @@ export default {
     },
     // 去付款
     payBill (item) {
-      // if (this.tabName === '0') this.statisticRequest({ event: 'click_app_myorder_all_pay' })
-      // if (this.tabName === '1') this.statisticRequest({ event: 'click_app_myorder_needpay_pay' })
-      this.statisticRequest({ event: 'click_app_order_to_pay' })
+      // if (this.tabName === '0') this.logEventGet({ event: 'click_app_myorder_all_pay' })
+      // if (this.tabName === '1') this.logEventGet({ event: 'click_app_myorder_needpay_pay' })
+      this.logEventGet({ event: 'click_app_order_to_pay' })
       this.jump(`/pages/pay/main?pageType=offlinePay&orderNo=${item.saleContractId}`)
     }
   }

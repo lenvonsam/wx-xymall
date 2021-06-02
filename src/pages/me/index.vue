@@ -150,7 +150,7 @@ export default {
     })
   },
   onTabItemTap (item) {
-    this.statisticRequest({ event: 'click_app_nav_me' })
+    this.logEventGet({ event: 'click_app_nav_me' })
   },
   onHide () {
     this.alertShow = false
@@ -308,7 +308,7 @@ export default {
         this.modalMsg = '您未登录,请先登录'
         this.modalShow = true
       } else {
-        this.statisticRequest({ event: 'click_app_me_message' })
+        this.logEventGet({ event: 'click_app_me_message' })
         this.jump('/pages/cardList/main?title=消息中心&type=noticeList')
       }
     },
@@ -372,7 +372,7 @@ export default {
         this.modalMsg = '您未登录,请先登录'
         this.modalShow = true
       } else {
-        this.statisticRequest({ event: 'click_app_me_setting' })
+        this.logEventGet({ event: 'click_app_me_setting' })
         this.jump('/pages/account/setting/main')
       }
     },
@@ -382,7 +382,7 @@ export default {
         this.modalMsg = '您未登录,请先登录'
         this.modalShow = true
       } else {
-        this.statisticRequest({ event: item.event })
+        this.logEventGet({ event: item.event })
         this.jump(item.url)
       }
     },
@@ -392,7 +392,7 @@ export default {
       if (!this.isLogin) {
         this.jump('/pages/account/login/main')
       } else {
-        // this.statisticRequest({ event: 'click_app_me_profile' })
+        // this.logEventGet({ event: 'click_app_me_profile' })
         this.jump('/pages/account/profile/main')
       }
     },
@@ -403,10 +403,10 @@ export default {
         this.modalShow = true
       } else {
         if (this.currentUser.type === 'seller') {
-          this.statisticRequest({ event: 'click_app_me_order_all_seller' })
+          this.logEventGet({ event: 'click_app_me_order_all_seller' })
           this.jump('/pages/vendor/contractTrack/main')
         } else {
-          this.statisticRequest({ event: 'click_app_me_balance' })
+          this.logEventGet({ event: 'click_app_me_balance' })
           this.jump('/pages/account/balance/main')
         }
       }
@@ -417,8 +417,8 @@ export default {
         this.modalMsg = '您未登录,请先登录'
         this.modalShow = true
       } else {
-        // this.statisticRequest({ event: 'click_app_me_myorder_more' })
-        // this.statisticRequest({ event: 'click_app_me_order_all' })
+        // this.logEventGet({ event: 'click_app_me_myorder_more' })
+        // this.logEventGet({ event: 'click_app_me_order_all' })
         this.jump('/pages/bill/main')
       }
     },
@@ -428,7 +428,7 @@ export default {
         this.modalMsg = '您未登录,请先登录'
         this.modalShow = true
       } else {
-        this.statisticRequest({ event: icon.event })
+        this.logEventGet({ event: icon.event })
         this.jump(icon.url.path)
       }
     },
@@ -437,7 +437,7 @@ export default {
         this.modalMsg = '您未登录,请先登录'
         this.modalShow = true
       } else {
-        this.statisticRequest({ event: icon.event })
+        this.logEventGet({ event: icon.event })
         this.jump(icon.url.path)
       }
     }

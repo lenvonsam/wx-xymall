@@ -61,7 +61,7 @@ export default {
       this.loadData(done)
     },
     jumpConfirm (item) {
-      this.statisticRequest({ event: 'click_app_td_confirm' })
+      this.logEventGet({ event: 'click_app_td_confirm' })
       this.jump('/pages/ladbillConfirmDetail/main?saleLadingId=' + item.saleLadingId)
     },
     loadData (done) {

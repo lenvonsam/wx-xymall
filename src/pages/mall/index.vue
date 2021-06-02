@@ -223,7 +223,7 @@ export default {
     }
   },
   onTabItemTap (item) {
-    this.statisticRequest({ event: 'click_app_nav_mall' })
+    this.logEventGet({ event: 'click_app_nav_mall' })
   },
   onShow () {
     this.isload = true
@@ -556,7 +556,7 @@ export default {
             break
           case 'notice':
           case 'cart':
-            this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_add_cart_seller' }) : this.statisticRequest({ event: 'click_app_mall_add_cart' })
+            this.currentUser.type === 'seller' ? this.logEventGet({ event: 'click_app_mall_add_cart_seller' }) : this.logEventGet({ event: 'click_app_mall_add_cart' })
             if (this.currentUser.userStatus === '01' || this.currentUser.userStatus === '02' || this.currentUser.userStatus === '03') {
               this.fillModalMsg = '请先完善信息'
               this.fillModalShow = true

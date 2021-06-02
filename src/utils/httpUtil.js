@@ -281,10 +281,9 @@ function logEventGet (params, noSeller) {
     return false
   } else {
     let header = {
-      'PlatformId': 'ZF',
-      'Authorization': this.token
+      'PlatformId': 'ZF'
     }
-    let url = zfBASICURL + this.apiList.zf.logEventAdd
+    let url = zfBASICURL + this.apiList.zf.logClickAdd
     mpvue.request({
       url: url,
       data: params,
@@ -310,8 +309,7 @@ function logEventPost (params, noSeller) {
     return false
   } else {
     let header = {
-      'PlatformId': 'ZF',
-      'Authorization': this.token
+      'PlatformId': 'ZF'
     }
     let url = zfBASICURL + this.apiList.zf.logEventAdd
     mpvue.request({

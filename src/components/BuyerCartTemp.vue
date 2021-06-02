@@ -278,7 +278,7 @@ export default {
       this.pickWayShow = false
     },
     jumpMall () {
-      this.statisticRequest({ event: 'click_app_cart_go_mall' })
+      this.logEventGet({ event: 'click_app_cart_go_mall' })
       this.tab('/pages/mall/main')
     },
     alertCb () {
@@ -287,7 +287,7 @@ export default {
     },
     openEdit () {
       this.pickWayShow = false
-      if (!this.isEdit) this.statisticRequest({ event: 'click_app_cart_modify' })
+      if (!this.isEdit) this.logEventGet({ event: 'click_app_cart_modify' })
       this.isEdit = !this.isEdit
     },
     tabSelect (type, item) {
@@ -299,7 +299,7 @@ export default {
       }
     },
     openPickWay (type) {
-      this.statisticRequest({ event: 'click_app_cart_address' })
+      this.logEventGet({ event: 'click_app_cart_address' })
       this.pickWayShow = !this.pickWayShow
     },
     refresher (done) {
@@ -313,7 +313,7 @@ export default {
     },
     // 清空购物车
     clearCarts () {
-      this.statisticRequest({ event: 'click_app_cart_del_all' })
+      this.logEventGet({ event: 'click_app_cart_del_all' })
       const self = this
       console.log(this.carts)
       if (this.carts.length > 0) {
@@ -360,7 +360,7 @@ export default {
       }
     },
     choosedAll () {
-      this.statisticRequest({ event: 'click_app_cart_checkall' })
+      this.logEventGet({ event: 'click_app_cart_checkall' })
       this.allChoosed = !this.allChoosed
       if (this.allChoosed) {
         this.carts.map(itm => {
@@ -382,7 +382,7 @@ export default {
       let canSellArray = filterArray.filter(itm => String(itm.price).indexOf('--') >= 0)
       // const self = this
       if (this.isEdit) {
-        this.statisticRequest({ event: 'click_app_cart_del' })
+        this.logEventGet({ event: 'click_app_cart_del' })
         if (filterArray.length === 0) {
           this.showMsg('请选择所需删除的商品')
           return

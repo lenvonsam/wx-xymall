@@ -224,7 +224,7 @@ export default {
     },
     // 跳转修改合同
     jumpModifyDetail (item) {
-      if (this.tabName === '1') this.statisticRequest({ event: 'click_app_editorder_apply' })
+      if (this.tabName === '1') this.logEventGet({ event: 'click_app_editorder_apply' })
       this.jump(`/pages/modifyDetail/main?contractId=${item.saleContractId}&type=${this.tabName}`)
     }
   }

@@ -88,13 +88,13 @@ export default {
         fromPage: 'mallFilter',
         noBack: true
       }
-      // this.statisticRequest({ event: 'app_mall_category', goods_name: res.name, standard: res.standards })
+      this.logEventPost({ event: 'app_mall_category', goods_name: res.name, standard: res.standards })
       this.configVal({ key: 'tempObject', val: res })
       this.back(-1)
     },
     // 关键词搜索
     searchChange () {
-      this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_category_search_seller' }) : this.statisticRequest({ event: 'click_app_mall_category_search' })
+      this.currentUser.type === 'seller' ? this.logEventGet({ event: 'click_app_mall_category_search_seller' }) : this.logEventGet({ event: 'click_app_mall_category_search' })
       this.supplyList = []
       this.queryObject.specification = this.searchVal.replace(/x/g, '*')
       this.queryObject.specification = this.searchVal.replace(/×/g, '*')
@@ -207,7 +207,7 @@ export default {
     },
     // 点击右侧数字导航
     selectTag (idx) {
-      this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_category_right_seller' }) : this.statisticRequest({ event: 'click_app_mall_category_right' })
+      this.currentUser.type === 'seller' ? this.logEventGet({ event: 'click_app_mall_category_right_seller' }) : this.logEventGet({ event: 'click_app_mall_category_right' })
       this.searchIdx = idx
     }
   }

@@ -10,8 +10,8 @@ div
         copy-btn(:copyUrl="billDetail.saleContractNo")
       .col.text-right(v-if="billDetail.status_desc === '待补款'")
         span.text-blue 待补款:
-        span.padding-left-sm.text-red.text-bold ￥{{billDetail.paid_price_desc}}  
-      .col.flex-100.text-blue.text-right(v-else, :class="{'text-red': billDetail.status_desc == '违约'}") {{billDetail.status_desc}}        
+        span.padding-left-sm.text-red.text-bold ￥{{billDetail.paid_price_desc}}
+      .col.flex-100.text-blue.text-right(v-else, :class="{'text-red': billDetail.status_desc == '违约'}") {{billDetail.status_desc}}
     .bg-white.margin-top-sm.text-content
       .padding-sm.text-black.text-bold.solid-bottom.ft-15 商品信息
       .ft-13.padding-sm.solid-bottom.relative(v-for="(item, idx) in billDetail.contractDetailList", :key="idx")
@@ -31,12 +31,12 @@ div
         .text-gray(v-if="item.toleranceRange || item.weightRange")
           span.padding-right-sm(v-if="item.toleranceRange") 公差范围 {{item.toleranceRange}}
           span(v-if="item.weightRange") 重量范围 {{item.weightRange}}
-        //- .bill-item-line(v-if="idx < (billDetail.order_items.length - 1)") 
+        //- .bill-item-line(v-if="idx < (billDetail.order_items.length - 1)")
         //- .solid-top.padding-top-xs.padding-bottom-xs.text-black(v-if="currentUser.type == 'seller' && item.xs_price != item.order_price && item.xs_price != 0")
         //-   span.text-black 销售定价：
         //-   span.text-orange ￥{{item.xs_price}}
         //-   span(v-if="item.order_price").padding-left-xs.text-grey.delete-style 原定价：￥{{item.order_price}}
-    template(v-if="billDetail.status_desc !== '待付款'")     
+    template(v-if="billDetail.status_desc !== '待付款'")
       .bg-white.mt-half-rem
         .text-black.padding-sm.text-bold.solid-bottom 合同基本信息
         .ft-13.text-gray.padding-sm
@@ -48,7 +48,7 @@ div
             .col.text-black.text-right {{billDetail.invalidDate}}
       .bg-white.solid-top.padding-sm.flex
         .col 共{{billDetail.contractAmount}}支，{{billDetail.contractManagerWeight}}吨
-        .col.text-right 
+        .col.text-right
           .ft-12 吊费: {{billDetail.liftingFeeMoney}}
           .padding-top-xs
             span 合同金额：
@@ -67,8 +67,8 @@ div
             .col.text-right.text-black {{billDetail.totalLiftCharge === '0.00' ? '0' : billDetail.totalLiftCharge}}元
           .flex
             .col 实发总金额
-            .col.text-right.text-black {{billDetail.totalContractAmount}}元    
-      //- .padding.c-orange.ft-12(style="background:#fefcee") 温馨提示：合同生成 120 分钟之后不可取消，逾期支付视为违约！ 请在合同支付后 5 天内提货，如出现多次延时提货，平台将酌情收取仓储费用！      
+            .col.text-right.text-black {{billDetail.totalContractAmount}}元
+      //- .padding.c-orange.ft-12(style="background:#fefcee") 温馨提示：合同生成 120 分钟之后不可取消，逾期支付视为违约！ 请在合同支付后 5 天内提货，如出现多次延时提货，平台将酌情收取仓储费用！
       .pt-half-rem(v-if="billDetail.status_desc !== '待补款' && billDetail.status_desc !== '违约'")
         .bg-white
           .padding-sm.text-black.text-bold.solid-bottom 支付详情
@@ -84,11 +84,11 @@ div
                 span {{billDetail.inTaxPayMoney}} 元
             .flex.padding-bottom-xs(v-if="billDetail.payMethod === '02'")
               .col 定金抵扣
-              .col.text-right.text-black {{billDetail.used_front_price}} 元       
+              .col.text-right.text-black {{billDetail.used_front_price}} 元
             .flex
               .col 未支付
               .col.text-right.text-black {{billDetail.unpaidAmount}} 元
-    template(v-else)          
+    template(v-else)
       .bg-white.solid-top.padding-sm.flex
         .col 共{{billDetail.amount}}支，{{billDetail.weight}}吨
         .col.text-right 合同金额：
@@ -100,8 +100,8 @@ div
         .padding-bottom-xs.flex.justify-between
           span 实发数量：
           span.text-black {{billDetail.outAmount}}支
-        .padding-bottom-xs.flex.justify-between           
-          div 实发重量: 
+        .padding-bottom-xs.flex.justify-between
+          div 实发重量:
           .text-black {{billDetail.totalWeight}}吨
         .padding-bottom-xs.flex.align-center.justify-between
           div 需补款：
@@ -191,11 +191,11 @@ export default {
   },
   methods: {
     payBill () {
-      this.statisticRequest({ event: 'click_app_myorder_detail_pay' })
+      this.logEventGet({ event: 'click_app_myorder_detail_pay' })
       this.jump('/mall/pay?orderNo=' + this.billDetail.tstc_no + '&pageType=offlinePay&price=' + this.billDetail.total_money + '&frontPrice=' + this.billDetail.front_price + '&percent=' + this.billDetail.percent)
     },
     cancelBill () {
-      this.statisticRequest({ event: 'click_app_myorder_detail_cancel' })
+      this.logEventGet({ event: 'click_app_myorder_detail_cancel' })
       const me = this
       if (!this.btnDisable) {
         this.confirm({ content: '您确定要取消合同吗？' }).then((res) => {

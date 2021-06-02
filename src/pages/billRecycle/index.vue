@@ -106,12 +106,12 @@ export default {
     jumpRestore (saleContractId) {
       if (this.disabled) return false
       this.disabled = true
-      this.statisticRequest({ event: 'click_app_recycle_restore' })
+      this.logEventGet({ event: 'click_app_recycle_restore' })
       this.jump('/pages/billRecycleDetail/main?contractId=' + saleContractId)
     },
     // 搜索合同
     searchOrder () {
-      this.statisticRequest({ event: 'click_app_recycle_search' })
+      this.logEventGet({ event: 'click_app_recycle_search' })
       this.currentPage = 1
       this.loadData()
     },

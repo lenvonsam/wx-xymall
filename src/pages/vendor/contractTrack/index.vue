@@ -652,9 +652,9 @@ export default {
     },
     billCancel (item) {
       console.log('点击取消+++++')
-      // if (this.tabName === '0') this.statisticRequest({ event: 'click_app_myorder_all_cancel' })
-      // if (this.tabName === '1') this.statisticRequest({ event: 'click_app_myorder_needpay_cancel' })
-      this.statisticRequest({ event: 'click_app_order_cancel' })
+      // if (this.tabName === '0') this.logEventGet({ event: 'click_app_myorder_all_cancel' })
+      // if (this.tabName === '1') this.logEventGet({ event: 'click_app_myorder_needpay_cancel' })
+      this.logEventGet({ event: 'click_app_order_cancel' })
       const me = this
       this.confirm({ content: '您确定要取消合同吗？' }).then((res) => {
         console.log(me.btnDisable, res)
@@ -694,8 +694,8 @@ export default {
     payBill (item) {
       if (this.btnDisable) return false
       this.btnDisable = true
-      // if (this.tabName === '0') this.statisticRequest({ event: 'click_app_myorder_all_pay' })
-      // if (this.tabName === '1') this.statisticRequest({ event: 'click_app_myorder_needpay_pay' })
+      // if (this.tabName === '0') this.logEventGet({ event: 'click_app_myorder_all_pay' })
+      // if (this.tabName === '1') this.logEventGet({ event: 'click_app_myorder_needpay_pay' })
       this.jump(`/pages/pay/main?pageType=offlinePay&orderNo=${item.tstc_no}&price=${item.fact_price}`)
     }
   }

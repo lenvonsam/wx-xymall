@@ -68,17 +68,17 @@ export default {
     ]),
     // 跳转手机验证码注册页面
     jumpReg () {
-      this.statisticRequest({ event: 'click_app_register' })
+      this.logEventGet({ event: 'click_app_register' })
       this.jump('/pages/account/register/main')
     },
     // 跳转忘记密码页面
     jumpForgetPwd () {
-      this.statisticRequest({ event: 'click_app_forgetpwd' })
+      this.logEventGet({ event: 'click_app_forgetpwd' })
       this.jump('/pages/account/phoneLogin/main?type=forgetPwd')
     },
     // 跳转手机验证码登陆页面
     jumpPhoneLogin () {
-      this.statisticRequest({ event: 'click_app_login_phone' })
+      this.logEventGet({ event: 'click_app_login_phone' })
       this.jump('/pages/account/phoneLogin/main')
     },
     // 账号密码登陆
@@ -116,7 +116,7 @@ export default {
           self.httpPost(self.apiList.zf.getPersonInfo, {}).then(res => {
             console.log(res.data)
             self.setUser({token: self.token, user: res.data})
-            res.data.userTypeLogo === '01' ? this.statisticRequest({event: 'click_app_login'}) : this.statisticRequest({event: 'click_app_login_seller'})
+            res.data.userTypeLogo === '01' ? this.logEventGet({event: 'click_app_login'}) : this.logEventGet({event: 'click_app_login_seller'})
             if (res.data.userStatus === '01') {
               self.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
                 if (res === 'confirm') {
@@ -140,7 +140,7 @@ export default {
           })
           this.configVal({ key: 'oldVersion', val: this.currentVersion })
           // this.getRemoteSearchHistory(data)
-          // data.type === 'seller' ? this.statisticRequest({ event: 'click_app_login_seller' }, true) : this.statisticRequest({ event: 'click_app_login' })
+          // data.type === 'seller' ? this.logEventGet({ event: 'click_app_login_seller' }) : this.logEventGet({ event: 'click_app_login' })
           // if (data.isnew) {
           //   this.canClick = true
           //   this.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
