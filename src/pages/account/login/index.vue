@@ -116,6 +116,7 @@ export default {
           self.httpPost(self.apiList.zf.getPersonInfo, {}).then(res => {
             console.log(res.data)
             self.setUser({token: self.token, user: res.data})
+            res.data.userTypeLogo === '01' ? this.statisticRequest({event: 'click_app_login'}) : this.statisticRequest({event: 'click_app_login_seller'})
             if (res.data.userStatus === '01') {
               self.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
                 if (res === 'confirm') {

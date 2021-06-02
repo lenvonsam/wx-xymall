@@ -232,9 +232,6 @@ export default {
       deep: true
     }
   },
-  onTabItemTap (item) {
-    this.statisticRequest({ event: 'click_app_nav_cart' })
-  },
   onHide () {
     this.carts = []
     this.soldCarts = []
@@ -316,7 +313,7 @@ export default {
     },
     // 清空购物车
     clearCarts () {
-      // this.statisticRequest({ event: 'click_app_cart_del_all' })
+      this.statisticRequest({ event: 'click_app_cart_del_all' })
       const self = this
       console.log(this.carts)
       if (this.carts.length > 0) {
@@ -385,7 +382,7 @@ export default {
       let canSellArray = filterArray.filter(itm => String(itm.price).indexOf('--') >= 0)
       // const self = this
       if (this.isEdit) {
-        // this.statisticRequest({ event: 'click_app_cart_del' })
+        this.statisticRequest({ event: 'click_app_cart_del' })
         if (filterArray.length === 0) {
           this.showMsg('请选择所需删除的商品')
           return

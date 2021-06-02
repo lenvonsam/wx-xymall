@@ -14,7 +14,7 @@
   .relative
     .mt-15.text-center.flex.align-stretch
       .col.tab-content
-        scroll-view.nav(scroll-x, :scroll-into-view="scrollId")  
+        scroll-view.nav(scroll-x, :scroll-into-view="scrollId")
           .cu-item(:id="'idx_'+index", v-for="(item,index) in sortList[0].data", :class="item.id === tabVal?'text-blue cur':''", :key="index", @click="selectTab(item, index)")
             span {{item.name}}
       .tab-more.row.justify-center(@click="openName")
@@ -49,13 +49,13 @@
         scroll-view(scroll-y, style="max-height: 700rpx", :scroll-top="scrollTop", @scrolltolower="loadMore")
           .grid.col-3.padding-top-sm.sort-content
             .sort-list(v-if="sort.data.length > 0", v-for="(item, index) in sort.data", :key="index")
-              .sort-item(:class="{active: item.isActive, 'big': sortIdx !== 1}", @click.stop="selectSort(sortIdx, index)") 
+              .sort-item(:class="{active: item.isActive, 'big': sortIdx !== 1}", @click.stop="selectSort(sortIdx, index)")
                 .sort-name {{item.name}}
                 .check.cuIcon-check.bg-blue(v-show="item.isActive")
           //- .padding-sm.text-center 加载完成
         .row.padding-sm.justify-around(v-if="sortIdx !== 0")
-          .btn-cancel.col(@click="selectSort(sortIdx, 0)") 重选 
-          .btn-sure.margin-left-sm.col(@click="searchHandler()") 确定            
+          .btn-cancel.col(@click="selectSort(sortIdx, 0)") 重选
+          .btn-sure.margin-left-sm.col(@click="searchHandler()") 确定
   modal-intro(v-model="modalIntroShow", :images="modalIntroImages", :cb="modalIntroCb")
 </template>
 <script>

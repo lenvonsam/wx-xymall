@@ -85,7 +85,7 @@ export default {
       'configVal'
     ]),
     jumpBack () {
-      // this.statisticRequest({ event: 'click_app_login_pwd' })
+      this.statisticRequest({ event: 'click_app_login_pwd' })
       this.back()
     },
     // 跳转注册页面
@@ -111,7 +111,7 @@ export default {
       this.resetVal()
       this.back()
     },
-    // 登陆/提交
+    // 手机验证码登陆/忘记密码提交
     async remoteHandler () {
       try {
         if (this.phone.trim().length === 0) {
@@ -156,7 +156,6 @@ export default {
           const self = this
           if (self.pageType === 'smsLogin') {
             self.showMsg('登录成功')
-            // self.statisticRequest({ event: 'click_app_login' })
           }
           setTimeout(function () {
             if (self.pageType === 'smsLogin') {
@@ -165,6 +164,7 @@ export default {
               console.log('短信验证码登陆成功，获取用户信息+++++')
               self.httpPost(self.apiList.zf.getPersonInfo, {}).then(res => {
                 self.setUser({ token: self.token, user: res.data })
+                res.data.userTypeLogo === '01' ? this.statisticRequest({event: 'click_app_login'}) : this.statisticRequest({event: 'click_app_login_seller'})
                 if (res.data.userStatus === '01') {
                   self.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
                     if (res === 'confirm') {

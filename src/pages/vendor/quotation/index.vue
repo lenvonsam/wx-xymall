@@ -2,7 +2,7 @@
   .s-layout
     nav-bar(title="报价清单", :isBack="!pageType")
     .padding-left-sm.padding-right-sm.ft-12(style="background: #FEF7E7; line-height: 70rpx; height: 70rpx")
-      .text-orange 
+      .text-orange
         template(v-if="status === '已完成' || status === '已失效'")
           .row.justify-between
             .col 报价单
@@ -43,13 +43,13 @@
                         span.ml-5 {{cart.length}}米
                         span.ml-5 {{cart.warehouse}}
                         span.sub-mark.ml-5 {{cart.supply}}
-                      span （{{cart.meteringWay}}）  
+                      span （{{cart.meteringWay}}）
                     .pt-5.row.justify-between
                       .col
                         template(v-if="pageType !== 'share'")
                           span {{cart.amount_left}}支 / {{cart.weight_left}}吨
                           span.padding-left-xs 吊费:
-                        template(v-else)  
+                        template(v-else)
                           span 吊费:
                         span.ml-10 {{cart.price === '--' ? '--' : cart.lift > 0 ? '￥' + cart.lift + '/吨' : cart.lift == 0 ? '无' : '线下结算'}}
                       //- span （{{cart.meteringWay}}）
@@ -84,7 +84,7 @@
               span 合计：
               b.text-red ￥{{totalPrice}}
           .text-right.ft-12(style="color:#999;") 共{{totalCount}}支 ，{{totalWeight}}吨
-            span ，吊费: {{totalLiftCharge}}元 
+            span ，吊费: {{totalLiftCharge}}元
         .cart-settle-btn.ft-18(:class="status === '已完成' || status === '已失效' ? 'bg-gray' : 'bg-red'", v-if="pageType === 'share'", @click="auditDxCheck") 生成合同
         button.cart-settle-btn.bg-red.ft-18(@click="shareClick" v-else) 分享
     modal(:title="modalTitle", :btns="btns", :value="modalShow", @cb="modalHandler", :width="modalWidth")
@@ -96,7 +96,7 @@
     modal(v-model="modalDefaultShow", :btns="modalBtns === 'mall' ? mallBtns : btns", @cb="modalDefaultHandler")
       template(v-if="errList.length > 0")
         .padding-sm.text-left(v-for="(item, errIdx) in errList", :key="errIdx") {{item}}
-      template(v-else)  
+      template(v-else)
         .padding-sm {{modalDefaultMsg}}
     modal(v-model="noticeClientModalShow", @cb="noticeClientModalCb" :showWarningIcon = "showWarningIcon", :title="noticeClientModalTitle")
       .padding-lr-22(style="text-align: left;")
@@ -321,7 +321,7 @@ export default {
         this.btnDisable = false
         return false
       }
-      this.statisticRequest({ event: 'click_app_quotation_share' }, true)
+      this.statisticRequest({ event: 'click_app_quotation_share' })
       const filterArray = this.carts.filter(item => {
         return item.choosed === true
       })

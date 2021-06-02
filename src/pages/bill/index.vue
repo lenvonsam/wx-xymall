@@ -200,7 +200,7 @@ export default {
     },
     // 搜索合同
     searchOrder () {
-      // this.statisticRequest({ event: 'click_app_order_search' })
+      this.statisticRequest({ event: 'click_app_order_search' })
       this.startDate = ''
       this.endDate = ''
       this.listData = []
@@ -581,7 +581,7 @@ export default {
     payBill (item) {
       // if (this.tabName === '0') this.statisticRequest({ event: 'click_app_myorder_all_pay' })
       // if (this.tabName === '1') this.statisticRequest({ event: 'click_app_myorder_needpay_pay' })
-      // this.statisticRequest({ event: 'click_app_order_to_pay' })
+      this.statisticRequest({ event: 'click_app_order_to_pay' })
       this.jump(`/pages/pay/main?pageType=offlinePay&orderNo=${item.saleContractId}`)
     }
   }

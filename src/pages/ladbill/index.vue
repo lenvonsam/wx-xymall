@@ -179,7 +179,7 @@ export default {
       this.billTab[idx].data = []
       this.currentPage = 1
       this.finished = true
-      // this.statisticRequest({ event: 'click_app_td_search' })
+      this.statisticRequest({ event: 'click_app_td_search' })
       // this.listData = []
       this.loadData()
       // this.swiperCount = 0

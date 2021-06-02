@@ -201,7 +201,7 @@ export default {
     },
     // 点击功能图标
     iconJump (icon) {
-      this.statisticRequest({ event: icon.event }, true)
+      this.statisticRequest({ event: icon.event })
       if (this.isLogin) {
         if (icon.dotKey && this.currentUser.type === 'seller' && !this.modules[icon.dotKey]) {
           this.showMsg('暂无权限')

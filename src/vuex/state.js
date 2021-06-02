@@ -89,6 +89,7 @@ export default {
       icon: '/static/images/dfk.png',
       dotKey: 'paymentNumber',
       name: '待付款',
+      event: 'click_app_me_to_pay',
       url: {
         path: '/pages/bill/main?tabName=01'
       }
@@ -97,6 +98,7 @@ export default {
       icon: '/static/images/submit_orders_icon.png',
       name: '待确认',
       dotKey: 'ladingConfirmNumber',
+      event: 'click_app_me_to_confirm',
       url: {
         path: '/pages/ladbillConfirm/main'
       }
@@ -105,6 +107,7 @@ export default {
       icon: '/static/images/wait_pick_icon.png',
       name: '待提货',
       dotKey: 'updateNumber',
+      event: 'click_app_me_to_lad',
       url: {
         path: '/pages/bill/main?tabName=02'
       }
@@ -113,6 +116,7 @@ export default {
       icon: '/static/images/billing_Infor.png',
       name: '待开票',
       dotKey: 'notInvoicedNum',
+      event: 'click_app_me_to_invoice',
       url: {
         path: '/pages/invoice/main?tabName=0'
       }

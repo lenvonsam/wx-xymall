@@ -403,7 +403,7 @@ export default {
         this.modalShow = true
       } else {
         if (this.currentUser.type === 'seller') {
-          this.statisticRequest({ event: 'click_app_me_order_all_seller' }, true)
+          this.statisticRequest({ event: 'click_app_me_order_all_seller' })
           this.jump('/pages/vendor/contractTrack/main')
         } else {
           this.statisticRequest({ event: 'click_app_me_balance' })
@@ -428,14 +428,7 @@ export default {
         this.modalMsg = '您未登录,请先登录'
         this.modalShow = true
       } else {
-        // if (this.currentUser.type === 'seller') {
-        //   this.statisticRequest({ event: icon.event }, true)
-        // } else {
-        //   if (icon.url.path === '/pages/bill/main?tabName=1') this.statisticRequest({ event: 'click_app_me_to_pay' })
-        //   if (icon.url.path === '/pages/ladbillConfirm/main') this.statisticRequest({ event: 'click_app_me_to_confirm' })
-        //   if (icon.url.path === '/pages/bill/main?tabName=6') this.statisticRequest({ event: 'click_app_me_to_lad' })
-        //   if (icon.url.path === '/pages/invoice/main?tabName=0') this.statisticRequest({ event: 'click_app_me_to_invoice' })
-        // }
+        this.statisticRequest({ event: icon.event })
         this.jump(icon.url.path)
       }
     },
@@ -444,7 +437,7 @@ export default {
         this.modalMsg = '您未登录,请先登录'
         this.modalShow = true
       } else {
-        this.statisticRequest({ event: icon.event }, true)
+        this.statisticRequest({ event: icon.event })
         this.jump(icon.url.path)
       }
     }

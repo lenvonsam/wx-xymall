@@ -275,36 +275,71 @@ function httpPostForm (url, params) {
   })
 }
 
-function httpLogEvent (params) {
-  let header = {
-    'PlatformId': 'ZF',
-    'Authorization': this.token
-  }
-  let url = zfBASICURL + this.apiList.zf.logEventAdd
-  mpvue.request({
-    url: url,
-    data: params,
-    header: header,
-    method: 'POST',
-    success (res) {
-      console.log(res)
-      if (res.data.success) {
-        console.log('埋点事件记录:', params.event)
-      } else {
-        console.error(res.data.message)
-      }
-    },
-    fail (error) {
-      console.error(error.errMsg)
+// statisticRequest
+function logEventGet (params, noSeller) {
+  if (noSeller && this.currentUser.type === 'seller') {
+    return false
+  } else {
+    let header = {
+      'PlatformId': 'ZF',
+      'Authorization': this.token
     }
-  })
+    let url = zfBASICURL + this.apiList.zf.logEventAdd
+    mpvue.request({
+      url: url,
+      data: params,
+      header: header,
+      method: 'GET',
+      success (res) {
+        console.log(res)
+        if (res.data.success) {
+          console.log('埋点事件记录:', params.event)
+        } else {
+          console.error(res.data.message)
+        }
+      },
+      fail (error) {
+        console.error(error.errMsg)
+      }
+    })
+  }
+}
+
+function logEventPost (params, noSeller) {
+  if (noSeller && this.currentUser.type === 'seller') {
+    return false
+  } else {
+    let header = {
+      'PlatformId': 'ZF',
+      'Authorization': this.token
+    }
+    let url = zfBASICURL + this.apiList.zf.logEventAdd
+    mpvue.request({
+      url: url,
+      data: params,
+      header: header,
+      method: 'POST',
+      success (res) {
+        console.log(res)
+        if (res.data.success) {
+          console.log('埋点事件记录:', params.event)
+        } else {
+          console.error(res.data.message)
+        }
+      },
+      fail (error) {
+        console.error(error.errMsg)
+      }
+    })
+  }
 }
 
 export default {
   httpGet,
   httpPost,
   httpPostForm,
-  httpLogEvent,
+  logEventGet,
+  logEventPost,
   zfBASICURL,
   proxy: {
     // 开发
@@ -343,37 +378,37 @@ export default {
   requestDecode (type, url, params, urlMethod, iptCharset = 'gbk') {
     return basicRequest(type, url, params, urlMethod, iptCharset)
   },
-  statisticRequest (param, isSeller) {
-    if (this.currentUser.type === 'seller' && !isSeller) return false
-    let basicParams = Object.assign({}, param)
-    if (this.isLogin) {
-      basicParams.user_id = this.currentUser.user_id
-    }
-    const baiscUrl = BASICURL + '/ironmart/statisticsProxy'
-    const reqBody = {
-      params: serializeformQuery(basicParams, true)
-    }
-    return new Promise((resolve, reject) => {
-      const body = {
-        url: baiscUrl,
-        method: 'POST',
-        data: reqBody,
-        success (res) {
-          console.log('success', res)
-          if (res.data.returncode === '0') {
-            resolve(res.data)
-          } else {
-            reject(res.data === undefined ? '网络异常' : res.data.errormsg)
-            console.log('showMsgerrMsg4========>' + res.data.errormsg)
-          }
-        },
-        error (err) {
-          reject(err.message || '网络异常')
-        }
-      }
-      mpvue.request(body)
-    })
-  },
+  // statisticRequest (param, isSeller) {
+  //   if (this.currentUser.type === 'seller' && !isSeller) return false
+  //   let basicParams = Object.assign({}, param)
+  //   if (this.isLogin) {
+  //     basicParams.user_id = this.currentUser.user_id
+  //   }
+  //   const baiscUrl = BASICURL + '/ironmart/statisticsProxy'
+  //   const reqBody = {
+  //     params: serializeformQuery(basicParams, true)
+  //   }
+  //   return new Promise((resolve, reject) => {
+  //     const body = {
+  //       url: baiscUrl,
+  //       method: 'POST',
+  //       data: reqBody,
+  //       success (res) {
+  //         console.log('success', res)
+  //         if (res.data.returncode === '0') {
+  //           resolve(res.data)
+  //         } else {
+  //           reject(res.data === undefined ? '网络异常' : res.data.errormsg)
+  //           console.log('showMsgerrMsg4========>' + res.data.errormsg)
+  //         }
+  //       },
+  //       error (err) {
+  //         reject(err.message || '网络异常')
+  //       }
+  //     }
+  //     mpvue.request(body)
+  //   })
+  // },
   zgRequest (params) {
     const basicUrl = BASICURL + 'ironmart/zgProxy'
     const paramStr = JSON.stringify(params)

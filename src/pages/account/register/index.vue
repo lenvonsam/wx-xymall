@@ -74,8 +74,6 @@ export default {
     },
     // 注册
     async remoteRegister () {
-      console.log('?????')
-      this.httpLogEvent({event: 'click_app_register'})
       try {
         if (this.phone.trim().length === 0) {
           this.showMsg('手机号不能为空')

@@ -437,7 +437,7 @@ export default {
       }
     },
     openEdit () {
-      if (!this.isEdit) this.statisticRequest({ event: 'click_app_quotation_modify' }, true)
+      if (!this.isEdit) this.statisticRequest({ event: 'click_app_quotation_modify' })
       this.pickWayShow = false
       this.isEdit = !this.isEdit
       this.auditDxCheckDisable = !this.auditDxCheckDisable
@@ -474,7 +474,7 @@ export default {
     },
     // 清空购物车
     clearCarts () {
-      // this.statisticRequest({ event: 'click_app_cart_del_all' })
+      this.statisticRequest({ event: 'click_app_quotation_del_all' })
       const self = this
       console.log(this.carts)
       if (this.carts.length > 0) {
@@ -521,7 +521,7 @@ export default {
       }
     },
     choosedAll () {
-      this.statisticRequest({ event: 'click_app_quotation_checkall' }, true)
+      this.statisticRequest({ event: 'click_app_quotation_checkall' })
       this.allChoosed = !this.allChoosed
       if (this.allChoosed) {
         this.carts.map(itm => {
@@ -541,11 +541,11 @@ export default {
       setTimeout(async () => {
         this.hideLoading()
         try {
-          if (flag === 2) this.statisticRequest({ event: 'click_app_quotation_generate' }, true)
+          if (flag === 2) this.statisticRequest({ event: 'click_app_quotation_generate' })
           let filterArray = this.carts.filter(itm => itm.choosed === true)
           // 编辑操作
           if (this.isEdit) {
-            if (flag === 1) this.statisticRequest({ event: 'click_app_quotation_del' }, true)
+            if (flag === 1) this.statisticRequest({ event: 'click_app_quotation_del' })
             this.btnDisable = false
             if (filterArray.length === 0) {
               this.showMsg('请选择所需删除的商品')
@@ -555,7 +555,7 @@ export default {
             this.delCartRow(filterArray)
             return false
           } else if (flag === 1) {
-            this.statisticRequest({ event: 'click_app_quotation_dx' }, true)
+            this.statisticRequest({ event: 'click_app_quotation_dx' })
           }
           // 定向操作
           if (filterArray.length === 0) {

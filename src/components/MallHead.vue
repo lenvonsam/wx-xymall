@@ -243,35 +243,35 @@ export default {
     ]),
     // 获取焦点（请输入规格快速查询）
     standardInputFocus () {
-      this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_standard_search_seller' }, true) : this.statisticRequest({ event: 'click_app_mall_standard_search' })
+      this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_standard_search_seller' }) : this.statisticRequest({ event: 'click_app_mall_standard_search' })
     },
     // 打开规格下拉筛选框
     openStandard () {
       this.currentPage = 0
-      this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_standard_seller' }, true) : this.statisticRequest({ event: 'click_app_mall_standard' })
+      this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_standard_seller' }) : this.statisticRequest({ event: 'click_app_mall_standard' })
       this.sortCb('standard')
     },
     // 打开材质下拉筛选框
     openMaterial () {
       this.currentPage = 0
-      this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_material_seller' }, true) : this.statisticRequest({ event: 'click_app_mall_material' })
+      this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_material_seller' }) : this.statisticRequest({ event: 'click_app_mall_material' })
       this.sortCb('material')
     },
     // 打开产地下拉筛选框
     openSupply () {
       this.currentPage = 0
-      this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_supply_seller' }, true) : this.statisticRequest({ event: 'click_app_mall_supply' })
+      this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_supply_seller' }) : this.statisticRequest({ event: 'click_app_mall_supply' })
       this.sortCb('origin')
     },
     // 打开品名下拉筛选框
     openName () {
       this.currentPage = 0
-      this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_goods_drop_down_seller' }, true) : this.statisticRequest({ event: 'click_app_mall_goods_drop_down' })
+      this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_goods_drop_down_seller' }) : this.statisticRequest({ event: 'click_app_mall_goods_drop_down' })
       this.activeTab = 'name'
     },
     // 点击跳转搜索页面
     jumpSearchInput () {
-      this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_search_seller' }, true) : this.statisticRequest({ event: 'click_app_mall_search' })
+      this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_search_seller' }) : this.statisticRequest({ event: 'click_app_mall_search' })
       this.jump('/pages/search/main')
     },
     // 清除搜索（请输入规格快速查询）
@@ -292,7 +292,7 @@ export default {
     },
     // 点击分类
     classifyClick () {
-      this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_category_seller' }, true) : this.statisticRequest({ event: 'click_app_mall_category' })
+      this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_category_seller' }) : this.statisticRequest({ event: 'click_app_mall_category' })
       // 分类使用引导图
       const firstShare = mpvue.getStorageSync('firstShareMallClassify') || false
       if (!firstShare) {
@@ -387,7 +387,7 @@ export default {
     // 规格下拉筛选框搜索框搜索内容改变
     standardChange (e) {
       this.throttle(() => {
-        this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_category_search_seller' }, true) : this.statisticRequest({ event: 'click_app_mall_category_search' })
+        this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_category_search_seller' }) : this.statisticRequest({ event: 'click_app_mall_category_search' })
         this.queryObject.search = e.mp.detail.value
         this.currentPage = 0
         this.sortCb('standard')
@@ -637,9 +637,9 @@ export default {
     // 选择商城的展示模式
     selectMall (flag) {
       if (flag) {
-        this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_view_list_seller' }, true) : this.statisticRequest({ event: 'click_app_mall_view_list' })
+        this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_view_list_seller' }) : this.statisticRequest({ event: 'click_app_mall_view_list' })
       } else {
-        this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_view_grid_seller' }, true) : this.statisticRequest({ event: 'click_app_mall_view_grid' })
+        this.currentUser.type === 'seller' ? this.statisticRequest({ event: 'click_app_mall_view_grid_seller' }) : this.statisticRequest({ event: 'click_app_mall_view_grid' })
       }
       this.mallFlag = flag
       this.$emit('selectMall', flag)
