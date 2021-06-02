@@ -279,7 +279,7 @@ export default {
         auditTypeText = '退货'
       } else if (this.configId === '73') {
         auditTypeText = '延时'
-      } else if (this.configId === '710') {
+      } else if (this.configId === '710' || this.configId === '5') {
         auditTypeText = 'ERP议价'
       } else if (this.configId === '4') {
         auditTypeText = 'ERP销售定价'

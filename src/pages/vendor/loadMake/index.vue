@@ -108,7 +108,7 @@ export default {
       customerName: '',
       modalShow: false,
       modalMsg: '',
-      liftSelect: '收吊费',
+      liftSelect: '自提',
       customSearchVal: '',
       liftSelectVal: 1,
       tabActive: 0,
@@ -129,14 +129,11 @@ export default {
       isEdit: false,
       pickWayShow: false,
       liftList: [{
-        label: '收吊费',
-        val: 1
+        label: '自提',
+        val: '01'
       }, {
-        label: '免吊费',
-        val: 2
-      }, {
-        label: '开平免吊费',
-        val: 3
+        label: '配送',
+        val: '02'
       }],
       pickWayList: [],
       scrollHeight: 0,
@@ -177,7 +174,7 @@ export default {
   watch: {
     loadData: {
       handler (newVal, oldVal) {
-        console.log('数据变更+++')
+        console.log('数据变更+++', newVal)
         this.$forceUpdate()
         this.cartCalculation(newVal)
       },
@@ -223,6 +220,10 @@ export default {
   onLoad (options) {
     console.log(options)
     this.saleLadingId = options.saleContractId
+  },
+  onUnload () {
+    this.liftSelect = ''
+    this.customerName = ''
   },
   onShow () {
     if (this.tempObject.type) {
@@ -292,11 +293,12 @@ export default {
         let list = item.ladingDetailVOList.filter(itm => {
           return itm.choosed
         })
+        console.log(list, 'hh++', item.ladingDetailVOList)
         if (list.length === item.ladingDetailVOList.length) {
           item.itemAllchoosed = true
-          item.ladingDetailVOList.forEach(itm => {
-            itm.choosed = true
-          })
+          // item.ladingDetailVOList.forEach(itm => {
+          //   itm.choosed = true
+          // })
           let olist = []
           this.loadData.forEach(item => {
             if (item.itemAllchoosed) {
@@ -452,6 +454,9 @@ export default {
         this.liftSelectVal = item.val
         this.pickWayShow = false
         this.cartCalculation() // 重新计算费用
+        this.loadData.forEach(itm => {
+          itm.deliveryType = this.liftSelectVal
+        })
       } else {
         this.customerName = item.carNo
         this.pickWayShow = false
@@ -542,31 +547,28 @@ export default {
       })
     },
     deleteLoading () {
-      console.log('???')
-      let list = this.loadData.filter(item => {
-        return !item.itemAllchoosed
-      })
-      console.log('hahha+++', list)
-      if (list.length > 0) {
-        list.map(item => {
-          item.ladingDetailVOList = item.ladingDetailVOList.filter(itm => {
-            return !item.choosed
+      this.confirm({ content: '您确定要删除吗？' }).then((res) => {
+        if (res === 'confirm') {
+          let list = this.loadData.filter(item => {
+            return !item.itemAllchoosed
           })
-        })
-        this.loadData = list
-      } else {
-        this.loadData = []
-        this.$forceUpdate()
-      }
+          if (list.length > 0) {
+            list.map(item => {
+              item.ladingDetailVOList = item.ladingDetailVOList.filter(itm => {
+                return !item.choosed
+              })
+            })
+            this.loadData = list
+          } else {
+            this.loadData = []
+            this.$forceUpdate()
+          }
+        }
+      })
       // if (!choosedDeleteItem) {
       //   this.showMsg('请选择需要删除的物资')
       //   return false
       // }
-      // this.confirm({ content: '您确定要删除吗？' }).then((res) => {
-      //   if (res === 'confirm') {
-      //     this.loadData = list
-      //   }
-      // })
     },
     makeLoading () {
       this.confirm({ content: '您确定要制作提单吗？' }).then((res) => {
@@ -584,6 +586,9 @@ export default {
           this.loadData[0].saleLadingDetailDTOS = this.loadData[0].ladingDetailVOList
           this.httpPost(this.apiList.zf.addSaleLading, this.loadData[0]).then(res => {
             console.log(res)
+            if (res.success) {
+              this.showMsg('提单制作成功！')
+            }
           }).catch(err => {
             this.showMsg(err.message)
           })

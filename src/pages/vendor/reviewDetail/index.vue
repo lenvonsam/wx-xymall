@@ -82,7 +82,7 @@ div
           .bg-white.card(v-for="(item, index) in dataList", :key="index")
             .row.justify-between.padding-bottom-xs
               .text-black.col {{item.name}} {{item.standard}}
-              .col.text-right.text-grey ¥{{item.price}}/¥{{item.goodsInfeeprice}}
+              .col.text-right.text-grey ¥{{item.inTaxPrice}}/¥{{item.inTaxMoney}}
             .text-gray
               .row.justify-between.padding-bottom-xs
                 .col(style="position: relative;")
@@ -566,7 +566,7 @@ export default {
           this.detailData = {
             // liftStatus: data.need_lift,
             status: data.status,
-            billNo: jsonData.saleContractNo,
+            billNo: jsonData.saleContractNo || jsonData.preSaleDemandNo,
             custName: jsonData.settlementUnitName,
             // totalAmount: data.amount,
             // totalWeight: data.weight,
@@ -583,7 +583,8 @@ export default {
           }
           console.log('退货参数整理====>', this.detailData)
           // name standard  material  amount  weight money
-          this.detailData.list = jsonData.saleContractDetailDTOS.map(item => {
+          let listData = jsonData.saleContractDetailDTOS || jsonData.preDemandDetailDTOS
+          this.detailData.list = listData.map(item => {
             return {
               name: item.productBrandName,
               standard: item.specification,
@@ -604,7 +605,7 @@ export default {
           this.detailData = {
             // liftStatus: data.need_lift,
             // status: data.status,
-            // billNo: jsonData.saleContractNo,
+            billNo: jsonData.demandNo,
             custName: jsonData.settlementUnitName,
             amount: data.amount,
             weight: data.weight,
@@ -629,6 +630,8 @@ export default {
               supply: item.prodAreaName,
               length: item.length,
               wh_name: item.stockZoneName,
+              inTaxPrice: item.inTaxPrice,
+              inTaxMoney: item.inTaxMoney,
               max_count: item.avbleAmount,
               max_weight: item.quantityType === '01' ? item.managerWeight : item.poundWeight,
               price: item.quantityType === '01' ? item.priceManager : item.pricePound,

@@ -361,6 +361,8 @@ export default {
     // 卖家-提单详情
     editSaleLading: 'sale/saleLading/editSaleLading',
     // 卖家-制作提单-合同详情
-    createSaleLadingFromContract: 'sale/saleLading/createSaleLadingFromContract'
+    createSaleLadingFromContract: 'sale/saleLading/createSaleLadingFromContract',
+    // 埋点、行为日志记录
+    logEventAdd: 'base/log-event/add'
   }
 }

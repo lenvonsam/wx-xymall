@@ -84,15 +84,15 @@
                       span.c-blue(@click="emptySoldItems") 清空失效物资
                   .solid-bottom.ft-12.text-gray(v-for="(itm, itmIdx) in soldCarts", :key="itmIdx")
                     .padding
-                      span {{itm.product_name}}
-                      span.ml-5 {{itm.product_supply}}
+                      span {{itm.onlineProductBrandName}}
+                      span.ml-5 {{itm.prodAreaName}}
                     .padding.pt-0
-                      span 仓库：{{itm.wh_name}}
+                      span 仓库：{{itm.stockZoneName}}
                     .padding.pt-0
-                      span 规格：{{itm.product_standard}}
+                      span 规格：{{itm.specification}}
                       q-btn.pull-right.no-shadow(color="grey-6", rounded, small) 失效
                     .padding.pt-0
-                      span 材质：{{itm.product_material}}
+                      span 材质：{{itm.productTextureName}}
                     //- .row.padding.pt-0
                       .col
                         span 吊费：{{itm.price === '--' ? '--' : itm.liftingFee > 0 ? '￥' + itm.liftingFee + '/吨' : itm.liftingFee == 0 ? '无' : '线下结算'}}

@@ -176,7 +176,7 @@ function httpGet (url, params) {
         }
         if (data.success) {
           resolve(data)
-        } else if (data.code === 'TK01' || data.code === 'TK02' || data.code === 'TK03' || data.code === 'TK04' || data.code === 'TC001' || data.message === 'token失效请重新登录' || data.message.includes('请重新登录')) {
+        } else if (data.code === 'TK01' || data.code === 'TK02' || data.code === 'TK03' || data.code === 'TK04' || data.code === 'TC001' || data.message === 'token失效请重新登录' || data.message === '请重新登录') {
           _this.$store.commit('LOGOUT')
           _this.confirm({ content: '登录已失效，请重新登录' }).then((r) => {
             if (r === 'confirm') {
@@ -189,7 +189,7 @@ function httpGet (url, params) {
           reject(data)
         }
       },
-      fial (error) {
+      fail (error) {
         reject(error)
       }
     })
@@ -223,7 +223,7 @@ function httpPost (url, params) {
         }
         if (data.success) {
           resolve(data)
-        } else if (data.code === 'TK01' || data.code === 'TK02' || data.code === 'TK03' || data.code === 'TK04' || data.code === 'TC001' || data.message === 'token失效请重新登录' || data.message.includes('请重新登录')) {
+        } else if (data.code === 'TK01' || data.code === 'TK02' || data.code === 'TK03' || data.code === 'TK04' || data.code === 'TC001' || data.message === 'token失效请重新登录' || data.message === '请重新登录') {
           // console.log('>>>+++++++++登陆失效模态框')
           _this.$store.commit('LOGOUT')
           _this.confirm({ content: '登录已失效，请重新登录' }).then((r) => {
@@ -237,7 +237,7 @@ function httpPost (url, params) {
           reject(data)
         }
       },
-      fial (error) {
+      fail (error) {
         reject(error)
       }
     })
@@ -268,10 +268,35 @@ function httpPostForm (url, params) {
           resolve(res.data)
         }
       },
-      fial (error) {
+      fail (error) {
         reject(error)
       }
     })
+  })
+}
+
+function httpLogEvent (params) {
+  let header = {
+    'PlatformId': 'ZF',
+    'Authorization': this.token
+  }
+  let url = zfBASICURL + this.apiList.zf.logEventAdd
+  mpvue.request({
+    url: url,
+    data: params,
+    header: header,
+    method: 'POST',
+    success (res) {
+      console.log(res)
+      if (res.data.success) {
+        console.log('埋点事件记录:', params.event)
+      } else {
+        console.error(res.data.message)
+      }
+    },
+    fail (error) {
+      console.error(error.errMsg)
+    }
   })
 }
 
@@ -279,6 +304,7 @@ export default {
   httpGet,
   httpPost,
   httpPostForm,
+  httpLogEvent,
   zfBASICURL,
   proxy: {
     // 开发

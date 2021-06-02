@@ -25,7 +25,7 @@ div
                       //- .sub-mark.ml-5 {{item[mallTypeObject[itemType].supply]}}
                       //- span.ml-5.ft-12(style="color:#666") ({{weightMark}})
                     .text-right.ft-16
-                      span.text-red.ft-13(v-if="item.price === '--'") 开售时间:{{item.show_time}}
+                      span.text-red.ft-13(v-if="item.price === '--' || (isLogin && !isNineClocks && item.productClassName ==='H型钢') || (isLogin && !isNineClocks && item.productClassName ==='板材')") 开售时间:{{item.show_time}}
                       span.text-blue(v-else-if="isLogin") ￥{{item.price}}
                       .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)") 查看价格
                   .row.pt-5.flex-center.ft-12
@@ -41,12 +41,14 @@ div
                     span.ml-8(v-if="item[mallTypeObject[itemType].weightRange]") 重量范围: {{item[mallTypeObject[itemType].weightRange]}}
                   .row.pt-5.flex-center.ft-13.text-gray
                     .col
-                      span(v-if="item[mallTypeObject[itemType].max_count] > 0 && isLogin") {{item[mallTypeObject[itemType].max_count]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
+                      span(v-if="(!isNineClocks && item.productClassName =='H型钢') || (!isNineClocks && item.productClassName =='板材')") --支/--吨
+                      span(v-else-if="item[mallTypeObject[itemType].max_count] > 0 && isLogin") {{item[mallTypeObject[itemType].max_count]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
                       span(v-else) --支/--吨
                     .flex-120.relative.text-right.ft-14.row.justify-end
                       //- .mall-row(:class="{'notice': item.max_count === 0}")
-                      .blue-buy(v-if="item[mallTypeObject[itemType].max_count] == 0 && isLogin",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
-                      .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="isLogin") 购买
+                      .blue-buy(v-if="(isLogin && !isNineClocks && item.productClassName =='H型钢') || (isLogin && !isNineClocks && item.productClassName =='板材')",style="display:none!important")
+                      .blue-buy(v-else-if="item[mallTypeObject[itemType].max_count] == 0 && isLogin",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
+                      .blue-buy(v-else-if="isLogin", @click="mallItemCb(item, 'cart', $event)") 购买
                 template(v-else)
                   .ft-15.row
                     span.text-bold {{item[mallTypeObject[itemType].name]}}
@@ -73,7 +75,7 @@ div
                     .text-right
                       //- .blue-buy(v-if="item[mallTypeObject[itemType].max_count] == 0 && isLogin",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
                       //- .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="item.show_price") 购买
-                      //- .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)", style="padding-top: 2rpx") 查看价格1
+                      //- .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)", style="padding-top: 2rpx") 查看价格
                       .blue-buy(v-if="item[mallTypeObject[itemType].max_count] == 0 && isLogin",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
                       .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="isLogin") 购买
                       .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)") 查看价格
@@ -152,6 +154,7 @@ export default {
           weightRange: 'weight_range'
         }
       },
+      isNineClocks: false,
       weightMark: '',
       itemType: 'product',
       introImages: ['mall_classify.png', 'mall_good.png', 'mall_standard.png'],
@@ -651,12 +654,20 @@ export default {
         // delete this.queryObject.supplys
         // delete this.queryObject.search
         const res = await this.httpPost(this.apiList.zf.shopMallList, this.queryObject)
+        let currentDate = res.data.currentDate
+        let $this = new Date(currentDate) === 'Invalid Date' ? new Date(currentDate.substr(0, 19)) : new Date(currentDate)
+        if ($this.getHours() < 9) {
+          this.isNineClocks = false
+        } else {
+          this.isNineClocks = true
+        }
         const resData = res.data.stocks || []
         console.log('stocks++++', resData)
         const idx = this.swiperCount
         resData.map(item => {
           const weightMark = []
           const price = []
+          item.show_time = '9:00'
           if (item.onlineQuantityType === '02' || item.onlineQuantityType === '00') {
             weightMark.push('磅计')
             price.push(item.ratioPricePound)

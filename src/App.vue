@@ -82,11 +82,13 @@ export default {
     // me.showLoading()
     // const uid = me.currentUser.user_id
     // console.log('App.vue_uid=====>', uid)
+
+    // 设置vuex全局状态
+    me.autoUser()
+
     // 获取用户信息
     me.httpPost(me.apiList.zf.getPersonInfo, {}).then(res => {
       console.log('用户已登陆，获取用户信息++++', res)
-      // 设置vuex全局状态
-      me.autoUser()
       me.setUser({ token: me.token, user: res.data })
       if (res.data.userStatus === '01') {
         me.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
