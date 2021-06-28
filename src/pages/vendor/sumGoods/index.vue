@@ -18,24 +18,28 @@ div
                 template(v-if="mallFlag === 1")
                   .row
                     .col.text-bold.ft-15
-                      span {{item.name}}
-                      span.ml-5 {{item.standard}}
+                      span {{item.productBrandName}}
+                      span.ml-5 {{item.specification}}
                     .text-right.ft-16
-                      span.text-blue ￥{{item.metering_way === '磅计' ? item.bjprice : item.ljprice}}
+                      span.text-blue(v-if="item.quantityType == '01'") ￥{{item.priceManager}}
+                      span.text-blue(v-if="item.quantityType == '02'") ￥{{item.pricePound}}
+                      span.text-blue(v-if="item.quantityType == '00'") ￥{{item.priceManager/item.pricePound}}
                   .row.pt-5.flex-center.ft-12
                     .col.c-gray
-                      span {{item.material}}
+                      span {{item.productTextureName}}
                       span.ml-8 {{item.length}}米
-                      span.ml-8 {{item.wh_name}}
-                      .sub-mark.ml-5 {{item.supply}}
+                      span.ml-8 {{item.stockZoneName}}
+                      .sub-mark.ml-5 {{item.prodAreaName}}
                     .text-right
-                      span ({{item.metering_way}})
-                  .pt-5.c-gray.ft-12(v-if="item.weight_range || item.tolerance_range")
-                    span(v-if="item.tolerance_range") 公差范围: {{item.tolerance_range}}
-                    span.ml-8(v-if="item.weight_range") 重量范围: {{item.weight_range}}
+                      span(v-if="item.quantityType == '01'") (理计)
+                      span(v-if="item.quantityType == '02'") (磅计)
+                      span(v-if="item.quantityType == '00'") (理计/磅计)
+                  .pt-5.c-gray.ft-12(v-if="item.weightRange || item.toleranceRange")
+                    span.mr-8(v-if="item.toleranceRange") 公差范围: {{item.toleranceRange}}
+                    span(v-if="item.weightRange") 重量范围: {{item.weightRange}}
                   .row.pt-5.flex-center.ft-13.text-gray
                     .col
-                      span(v-if="item.max_count > 0") {{item.max_count}}支/{{item.max_weight}}吨
+                      span(v-if="item.avbleAmount > 0") {{item.avbleAmount}}支/{{item.quantityType == '02' ? item.avblePoundWeight : item.avbleManagerWeight}}吨
                     .flex-120.relative.text-right.ft-14.row.justify-end
                       .blue-buy(@click="mallItemCb(item, 'cart', $event)") 详情
 </template>
@@ -64,7 +68,7 @@ export default {
       isload: true,
       isRefresh: 'refresh',
       pullDownRefresh: false,
-      currentPage: 0,
+      currentPage: 1,
       pageSize: 10,
       mallFlag: 1,
       btnDisable: false,
@@ -100,7 +104,7 @@ export default {
     this.mallItems = []
     this.queryObject = {}
     this.isRefresh = 'refresh'
-    this.currentPage = 0
+    this.currentPage = 1
     this.mallFlag = 1
     this.btnDisable = false
     this.goodsNameList = []
@@ -122,10 +126,10 @@ export default {
       this.swiperFirst = 1
       Object.assign(this.queryObject, this.tempObject)
       delete this.queryObject.fromPage
-      delete this.queryObject.search
+      delete this.queryObject.keyword
       if (this.tempObject.name === '') {
         this.isRefresh = 'refresh'
-        this.currentPage = 0
+        this.currentPage = 1
         this.swiperCount = 0
         this.refresher()
       } else if (this.tempObject.name === this.mallTabVal) {
@@ -149,11 +153,11 @@ export default {
       console.log('ball cb')
     },
     cleanSearch () {
-      delete this.queryObject.search
+      delete this.queryObject.keyword
       this.onRefresh()
     },
     onRefresh (done) {
-      this.currentPage = 0
+      this.currentPage = 1
       this.refresher(done)
     },
     loadMore () {
@@ -185,7 +189,7 @@ export default {
         // this.showLoading()
         this.isload = true
         this.isRefresh = 'refresh'
-        this.queryObject.current_page = this.currentPage
+        this.queryObject.pageNum = this.currentPage
         this.queryObject.name = this.mallTabVal
         if (this.swiperFirst !== 1) {
           delete this.queryObject.standards
@@ -222,15 +226,15 @@ export default {
       })
       // this.mallItems = []
       this.goodsNameList[this.swiperCount].data = []
-      this.currentPage = 0
+      this.currentPage = 1
       this.isRefresh = 'refresh'
       // this.queryObject = {
-      //   current_page: this.currentPage,
-      //   page_size: this.pageSize,
+      //   pageNum: this.currentPage,
+      //   pageSize: this.pageSize,
       //   name: this.mallTabVal,
       //   only_available: 1
       // }
-      this.queryObject.current_page = this.currentPage
+      this.queryObject.pageNum = this.currentPage
       this.queryObject.name = this.mallTabVal
       // this.filterObj = obj
       Object.assign(this.queryObject, obj)
@@ -245,12 +249,12 @@ export default {
     },
     searchChange (val) {
       this.isRefresh = 'refresh'
-      this.currentPage = 0
+      this.currentPage = 1
       this.swiperCount = 0
       this.swiperFirst = 1
-      this.queryObject.current_page = this.currentPage
+      this.queryObject.pageNum = this.currentPage
       this.queryObject.name = this.mallTabVal
-      this.queryObject.search = val
+      this.queryObject.keyword = val
       delete this.queryObject.standards
       delete this.queryObject.materials
       delete this.queryObject.supplys
@@ -259,10 +263,11 @@ export default {
     mallItemCb (obj, type, evt) {
       if (this.btnDisable) return false
       this.btnDisable = true
-      console.log('evt', evt)
-      const me = this
-      me.ballValue = evt
-      this.jump(`/pages/vendor/sumGoodsDetail/main?sumgoodsBatch=${obj.sumgoods_batch}`)
+      // console.log('evt', evt)
+      // const me = this
+      // me.ballValue = evt
+      // this.jump(`/pages/vendor/sumGoodsDetail/main?sumgoodsBatch=${obj.sumgoods_batch}`)
+      this.jump('/pages/vendor/sumGoodsDetail/main?item=' + JSON.stringify(obj))
     },
     selectTab ({ id, idx }) {
       if (this.goodsNameList[idx]) {
@@ -276,23 +281,18 @@ export default {
         this.showLoading()
         this.loadFinish = 1
         const me = this
-        this.queryObject.current_page = this.currentPage
-        this.queryObject.page_size = 20
-        const data = await this.ironRequest(
-          this.apiList.xy.sumGoodsList.url,
-          this.queryObject,
-          this.apiList.xy.sumGoodsList.method
-        )
-        const res = data
-        const resList = data.list
-        if (res.returncode === '0') {
+        this.queryObject.pageNum = this.currentPage
+        this.queryObject.pageSize = 10
+        const res = await this.httpPost(this.apiList.zf.querySaleStockPageList, this.queryObject)
+        if (res.success) {
+          const resList = res.data.stocks
           const idx = this.swiperCount
           if (me.isRefresh === 'refresh') {
-            if (resList.length > 0 && me.currentPage === 0) {
+            if (resList.length > 0 && me.currentPage === 1) {
               me.goodsNameList[idx].data = resList
               me.isload = false
               if (me.goodsNameList[idx].data.length < 10) me.loadFinish = 2
-            } else if (resList.length === 0 && me.currentPage === 0) {
+            } else if (resList.length === 0 && me.currentPage === 1) {
               me.goodsNameList[idx].data = []
               me.isload = false
             }
@@ -302,7 +302,7 @@ export default {
               if (resList.length < 10) me.loadFinish = 2
             } else {
               me.currentPage--
-              if (me.currentPage > 0 && me.goodsNameList[idx].data.length > 10) me.loadFinish = 2
+              if (me.currentPage > 1 && me.goodsNameList[idx].data.length > 10) me.loadFinish = 2
             }
           }
           me.$forceUpdate()
@@ -383,6 +383,8 @@ export default {
   letter-spacing 1px
 .ml-8
   margin-left 8px !important
+.mr-8
+  margin-right 8px !important
 .card-list
   width 49%
   line-height 20px

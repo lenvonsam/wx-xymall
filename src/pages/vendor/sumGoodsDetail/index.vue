@@ -5,21 +5,22 @@ div
     .padding-sm
       .row.justify-between.padding-bottom-sm
         .text-black.text-bold
-          span {{tabData.partsnameName}}
-          span.padding-left-xs {{tabData.goodsSpec}}
-        .text-blue 
-          span(v-if="tabData.pricesetMakepriceStr") ¥{{tabData.pricesetMakepriceStr}}
-          span(v-if="tabData.pricesetMakepriceStr && tabData.ajuPricesetMakepriceStr") /
-          span(v-if="tabData.ajuPricesetMakepriceStr") ¥{{tabData.ajuPricesetMakepriceStr}}
+          span {{tabData.productBrandName}}
+          span.padding-left-xs {{tabData.specification}}
+        .text-blue(v-if="tabData.quantityType == '01'") ￥{{tabData.priceManager}}
+        .text-blue(v-if="tabData.quantityType == '02'") ￥{{tabData.pricePound}}
+        .text-blue(v-if="tabData.quantityType == '00'") ￥{{tabData.priceManager/tabData.pricePound}}
       .text-gray
         .row.justify-between.padding-bottom-xs
           .col
-            span {{tabData.goodsMaterial}}
-            span.ml-8 {{tabData.goodsProperty1Str}}米
-            span.ml-8 {{tabData.warehouseName}}
-            .sub-mark.ml-5 {{tabData.productareaName}}
-          span ({{tabData.goodsMetering}})
-        .padding-bottom-xs {{tabData.goodsNum}}支/{{tabData.goodsAssistweight}}吨
+            span {{tabData.productTextureName}}
+            span.ml-8 {{tabData.length}}米
+            span.ml-8 {{tabData.stockZoneName}}
+            .sub-mark.ml-5 {{tabData.prodAreaName}}
+          span(v-if="tabData.quantityType == '01'") (理计)
+          span(v-if="tabData.quantityType == '02'") (磅计)
+          span(v-if="tabData.quantityType == '00'") (理计/磅计)
+        .padding-bottom-xs {{tabData.avbleAmount}}支/{{tabData.quantityType == '02' ? tabData.avblePoundWeight : tabData.avbleManagerWeight}}吨
     .padding-sm.solid-bottom.solid-top.text-black.ft-18 其他信息
     .padding-left-sm.padding-right-sm.padding-top.padding-bottom
       .solid
@@ -32,39 +33,39 @@ export default {
   data () {
     return {
       tabList: [
-        { label: '公差', val: '', prop: ['datasDetailStr1'] },
-        { label: '米重', val: '', prop: ['goodsProperty2Str'] },
-        { label: '支/件', val: '', prop: ['goodsAssistnum'] },
-        { label: '可卖件', val: '', prop: ['goodsSupplyContractstr1Str'] },
-        { label: '可买支', val: '', prop: ['goodsSupplyContractstr2Str'] },
-        { label: '可卖数量', val: '', prop: ['goodsSupplynumStr'] },
-        { label: '新开单件', val: '', prop: ['goodsNewContractstr1'] },
-        { label: '新开单支', val: '', prop: ['goodsNewContractstr2'] },
-        { label: '新开单数量', val: '', prop: ['goodsNewNum'] },
-        { label: '实物件', val: '', prop: ['goodsContractstr1Str'] },
-        { label: '实物支', val: '', prop: ['goodsContractstr2Str'] },
-        { label: '实物数量', val: '', prop: ['goodsNumStr'] },
-        { label: '支单件', val: '', prop: ['goodsUnitPriceStr'] },
-        { label: '理计可让价', val: '', prop: ['ajuPricesetPrefpriceStr'] },
-        { label: '磅计可让价', val: '', prop: ['pricesetPrefpriceStr'] },
-        { label: '可卖重量/理重', val: '', prop: ['goodsSupplyweightStr', 'goodsSupplyassistweightStr'] },
-        { label: '实物重量/理重', val: '', prop: ['goodsWeightStr', 'goodsAssistweightStr'] },
-        { label: '未验收数量/重量/理重', val: '', prop: ['goodsFnumStr', 'goodsFweightStr', 'goodsFassistweightStr'] },
-        { label: '总锁定数量', val: '', prop: ['goodsSlocknumStr'] },
-        { label: '总锁定/重量/理重', val: '', prop: ['goodsSlockweightStr', 'goodsSlockassistweightStr'] },
-        { label: '订货数量', val: '', prop: ['goodsOrdnumStr'] },
-        { label: '订货重量', val: '', prop: ['goodsOrdweightStr'] },
-        { label: '提单件', val: '', prop: ['goodsBillContractstr1Str'] },
-        { label: '提单支', val: '', prop: ['goodsBillContractstr2Str'] },
-        { label: '提单数量', val: '', prop: ['goodsBillnumStr'] },
-        { label: '提单重量/理重', val: '', prop: ['goodsBillweightStr', 'goodsBillassistweightStr'] },
-        { label: '加工件', val: '', prop: ['goodsMacContractstr1Str'] },
-        { label: '加工支', val: '', prop: ['goodsMacContractstr2Str'] },
-        { label: '加工数量', val: '', prop: ['goodsMacnumStr'] },
-        { label: '加工重量/理重', val: '', prop: ['goodsMacweightStr', 'goodsMacassistweightStr'] },
-        { label: '人工锁定数量', val: '', prop: ['goodsLocknumStr'] },
-        { label: '人工锁定数量/理重', val: '', prop: ['goodsLockweightStr', 'goodsLockassistweightStr'] },
-        { label: '货权机构', val: '', prop: ['goodsOrgName'] }
+        { label: '公差', val: '', prop: ['tolerance'] },
+        { label: '米重', val: '', prop: ['meterWeight'] },
+        { label: '支/件', val: '', prop: ['pieces'] },
+        { label: '可卖件', val: '', prop: ['marketablePiece'] },
+        { label: '可买支', val: '', prop: ['marketableBranch'] },
+        { label: '可卖数量', val: '', prop: ['avbleAmount'] },
+        // { label: '新开单件', val: '', prop: ['goodsNewContractstr1'] },
+        // { label: '新开单支', val: '', prop: ['goodsNewContractstr2'] },
+        // { label: '新开单数量', val: '', prop: ['goodsNewNum'] },
+        { label: '实物件', val: '', prop: ['matterPiece'] },
+        { label: '实物支', val: '', prop: ['matterBranch'] },
+        { label: '实物数量', val: '', prop: ['stockAmount'] },
+        { label: '支单件', val: '', prop: ['inTaxPrice'] },
+        { label: '理计可让价', val: '', prop: ['priceDiscountManager'] },
+        { label: '磅计可让价', val: '', prop: ['priceDiscountPound'] },
+        { label: '可卖理量/磅重', val: '', prop: ['avbleManagerWeight', 'avblePoundWeight'] },
+        { label: '实物理重/磅重', val: '', prop: ['stockManagerWeight', 'stockPoundWeight'] },
+        // { label: '未验收数量/理重/磅重', val: '', prop: ['goodsFnumStr', 'goodsFweightStr', 'goodsFassistweightStr'] },
+        { label: '总锁定数量', val: '', prop: ['lockAmount'] },
+        { label: '总锁定/理重/磅重', val: '', prop: ['lockManagerWeight', 'lockPoundWeight'] },
+        // { label: '订货数量', val: '', prop: ['goodsOrdnumStr'] },
+        // { label: '订货重量', val: '', prop: ['goodsOrdweightStr'] },
+        { label: '提单件', val: '', prop: ['billOfLadingPiece'] },
+        { label: '提单支', val: '', prop: ['billOfLadingBranch'] },
+        { label: '提单数量', val: '', prop: ['ladingAmount'] },
+        { label: '提单理重/磅重', val: '', prop: ['ladingManagerWeight', 'ladingPoundWeight'] },
+        { label: '加工件', val: '', prop: ['processPiece'] },
+        { label: '加工支', val: '', prop: ['processBranch'] },
+        { label: '加工数量', val: '', prop: ['processAmount'] },
+        { label: '加工理重/磅重', val: '', prop: ['processManagerWeight', 'processPoundWeight'] },
+        { label: '人工锁定数量', val: '', prop: ['manualAmount'] },
+        { label: '人工锁定数量/理重', val: '', prop: ['manualManagerWeight', 'manualPoundWeight'] },
+        { label: '货权机构', val: '', prop: ['orgShortName'] }
       ],
       tabData: {}
     }
@@ -72,47 +73,61 @@ export default {
   onUnload () {
     this.tabData = {}
     this.tabList = [
-      { label: '公差', val: '', prop: ['datasDetailStr1'] },
-      { label: '米重', val: '', prop: ['goodsProperty2Str'] },
-      { label: '支/件', val: '', prop: ['goodsAssistnum'] },
-      { label: '可卖件', val: '', prop: ['goodsSupplyContractstr1Str'] },
-      { label: '可买支', val: '', prop: ['goodsSupplyContractstr2Str'] },
-      { label: '可卖数量', val: '', prop: ['goodsSupplynumStr'] },
-      { label: '新开单件', val: '', prop: ['goodsNewContractstr1'] },
-      { label: '新开单支', val: '', prop: ['goodsNewContractstr2'] },
-      { label: '新开单数量', val: '', prop: ['goodsNewNum'] },
-      { label: '实物件', val: '', prop: ['goodsContractstr1Str'] },
-      { label: '实物支', val: '', prop: ['goodsContractstr2Str'] },
-      { label: '实物数量', val: '', prop: ['goodsNumStr'] },
-      { label: '支单件', val: '', prop: ['goodsUnitPriceStr'] },
-      { label: '理计可让价', val: '', prop: ['ajuPricesetPrefpriceStr'] },
-      { label: '磅计可让价', val: '', prop: ['pricesetPrefpriceStr'] },
-      { label: '可卖重量/理重', val: '', prop: ['goodsSupplyweightStr', 'goodsSupplyassistweightStr'] },
-      { label: '实物重量/理重', val: '', prop: ['goodsWeightStr', 'goodsAssistweightStr'] },
-      { label: '未验收数量/重量/理重', val: '', prop: ['goodsFnumStr', 'goodsFweightStr', 'goodsFassistweightStr'] },
-      { label: '总锁定数量', val: '', prop: ['goodsSlocknumStr'] },
-      { label: '总锁定/重量/理重', val: '', prop: ['goodsSlockweightStr', 'goodsSlockassistweightStr'] },
-      { label: '订货数量', val: '', prop: ['goodsOrdnumStr'] },
-      { label: '订货重量', val: '', prop: ['goodsOrdweightStr'] },
-      { label: '提单件', val: '', prop: ['goodsBillContractstr1Str'] },
-      { label: '提单支', val: '', prop: ['goodsBillContractstr2Str'] },
-      { label: '提单数量', val: '', prop: ['goodsBillnumStr'] },
-      { label: '提单重量/理重', val: '', prop: ['goodsBillweightStr', 'goodsBillassistweightStr'] },
-      { label: '加工件', val: '', prop: ['goodsMacContractstr1Str'] },
-      { label: '加工支', val: '', prop: ['goodsMacContractstr2Str'] },
-      { label: '加工数量', val: '', prop: ['goodsMacnumStr'] },
-      { label: '加工重量/理重', val: '', prop: ['goodsMacweightStr', 'goodsMacassistweightStr'] },
-      { label: '人工锁定数量', val: '', prop: ['goodsLocknumStr'] },
-      { label: '人工锁定数量/理重', val: '', prop: ['goodsLockweightStr', 'goodsLockassistweightStr'] },
-      { label: '货权机构', val: '', prop: ['goodsOrgName'] }
+      { label: '公差', val: '', prop: ['tolerance'] },
+      { label: '米重', val: '', prop: ['meterWeight'] },
+      { label: '支/件', val: '', prop: ['pieces'] },
+      { label: '可卖件', val: '', prop: ['marketablePiece'] },
+      { label: '可买支', val: '', prop: ['marketableBranch'] },
+      { label: '可卖数量', val: '', prop: ['avbleAmount'] },
+      // { label: '新开单件', val: '', prop: ['goodsNewContractstr1'] },
+      // { label: '新开单支', val: '', prop: ['goodsNewContractstr2'] },
+      // { label: '新开单数量', val: '', prop: ['goodsNewNum'] },
+      { label: '实物件', val: '', prop: ['matterPiece'] },
+      { label: '实物支', val: '', prop: ['matterBranch'] },
+      { label: '实物数量', val: '', prop: ['stockAmount'] },
+      { label: '支单件', val: '', prop: ['inTaxPrice'] },
+      { label: '理计可让价', val: '', prop: ['priceDiscountManager'] },
+      { label: '磅计可让价', val: '', prop: ['priceDiscountPound'] },
+      { label: '可卖理量/磅重', val: '', prop: ['avbleManagerWeight', 'avblePoundWeight'] },
+      { label: '实物理重/磅重', val: '', prop: ['stockManagerWeight', 'stockPoundWeight'] },
+      // { label: '未验收数量/理重/磅重', val: '', prop: ['goodsFnumStr', 'goodsFweightStr', 'goodsFassistweightStr'] },
+      { label: '总锁定数量', val: '', prop: ['lockAmount'] },
+      { label: '总锁定/理重/磅重', val: '', prop: ['lockManagerWeight', 'lockPoundWeight'] },
+      // { label: '订货数量', val: '', prop: ['goodsOrdnumStr'] },
+      // { label: '订货重量', val: '', prop: ['goodsOrdweightStr'] },
+      { label: '提单件', val: '', prop: ['billOfLadingPiece'] },
+      { label: '提单支', val: '', prop: ['billOfLadingBranch'] },
+      { label: '提单数量', val: '', prop: ['ladingAmount'] },
+      { label: '提单理重/磅重', val: '', prop: ['ladingManagerWeight', 'ladingPoundWeight'] },
+      { label: '加工件', val: '', prop: ['processPiece'] },
+      { label: '加工支', val: '', prop: ['processBranch'] },
+      { label: '加工数量', val: '', prop: ['processAmount'] },
+      { label: '加工理重/磅重', val: '', prop: ['processManagerWeight', 'processPoundWeight'] },
+      { label: '人工锁定数量', val: '', prop: ['manualAmount'] },
+      { label: '人工锁定数量/理重', val: '', prop: ['manualManagerWeight', 'manualPoundWeight'] },
+      { label: '货权机构', val: '', prop: ['orgShortName'] }
     ]
   },
-  mounted () {
-    this.$nextTick(() => {
-      this.showLoading()
-      this.loadData()
+  onLoad (options) {
+    console.log(options)
+    const resData = JSON.parse(options.item)
+    console.log(resData)
+    this.tabData = resData
+    this.tabList.map(item => {
+      const valList = []
+      item.prop.map(key => {
+        console.log(key)
+        valList.push(resData[key])
+      })
+      item.val = valList.toString().replace(/,/g, '/')
     })
   },
+  // mounted () {
+  //   this.$nextTick(() => {
+  //     this.showLoading()
+  //     this.loadData()
+  //   })
+  // },
   methods: {
     async loadData () {
       try {

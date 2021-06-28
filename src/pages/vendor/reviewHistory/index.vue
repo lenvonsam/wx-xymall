@@ -174,14 +174,18 @@ export default {
         //   // const filterStr = this.filterArr.toString().replace(/,/g, '&')
         //   // url += `&${filterStr}`
         // }
+
+        // let testUserId = '1346277615056457730' // 员工 何建龙
+        let testUserId = '1346282719734140929' // 采购部长 于成龙
+
         let params = {
           configId: '39',
           limit: 20,
           offset: 0,
           tenantId: 1,
           businessId: this.searchVal || '',
-          userId: '1346277615056457730',
-          disposeUserId: '1346277615056457730',
+          userId: testUserId,
+          disposeUserId: testUserId,
           status: [1, 2, 3, 4, 5]
         }
         console.log('+++++', params)

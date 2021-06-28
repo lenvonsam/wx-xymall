@@ -32,7 +32,11 @@ export default {
       standardList: [],
       searchVal: '',
       searchIdx: 1,
-      isLoad: false
+      isLoad: false,
+      queryObject: {
+        productBrandName: '',
+        specification: ''
+      }
     }
   },
   computed: {
@@ -46,6 +50,7 @@ export default {
   },
   watch: {
     searchVal () {
+      console.log('tag', '')
       this.throttle(this.searchChange, 300)
     }
   },
@@ -55,13 +60,31 @@ export default {
       this.filterLeftSty = `height: ${this.screenHeight} - ${this.customBar} + 'px'`
     })
   },
+  // onReachBottom () {
+  //   console.log('onReachBottom')
+  //   this.currentPage++
+  //   this.isLoad = 'reachBottom'
+  //   this.refresher()
+  // },
+  // onPullDownRefresh () {
+  //   this.isLoad = 'refresh'
+  //   this.currentPage = 0
+  //   this.refresher()
+  // },
+  // methods: {
+  //   ...mapActions([
+  //     'configVal'
+  //   ])
+  // },
   methods: {
     ...mapActions([
       'configVal'
     ]),
+    // 清除搜索关键词
     cleanSearch () {
       this.searchVal = ''
     },
+    // 选择规格并返回上一级
     selectStandard (val) {
       const res = {
         name: this.queryObject.name,
@@ -73,45 +96,66 @@ export default {
       this.configVal({ key: 'tempObject', val: res })
       this.back(-1)
     },
+    // 关键词搜索
     searchChange () {
-      // this.logEventGet({ event: 'click_app_mall_category_search' })
+      this.currentUser.type === 'seller' ? this.logEventGet({ event: 'click_app_mall_category_search_seller' }) : this.logEventGet({ event: 'click_app_mall_category_search' })
       this.supplyList = []
-      this.queryObject.search = this.searchVal
+      this.queryObject.specification = this.searchVal.replace(/x/g, '*')
+      this.queryObject.specification = this.searchVal.replace(/×/g, '*')
       this.currentPage = 0
       this.getStandardList()
     },
+    // 点击左侧选择分类
     selectName (item, idx) {
       this.filterNameList.map(item => {
         item.isActive = false
       })
       this.filterNameList[idx].isActive = true
-      this.queryObject.name = item.id
+      this.queryObject.productBrandName = item.name === '全部' ? '' : item.name
       this.getStandardList()
     },
+    // 获取商品信息
     getGoods () {
-      this.ironRequest(this.apiList.xy.sumGoodsNameList.url, {
-        page_size: 1000,
-        current_page: 0
-      }, this.apiList.xy.sumGoodsNameList.method).then((res) => {
+      // this.ironRequest(this.apiList.xy.goodsList.url, {}, this.apiList.xy.goodsList.method).then((res) => {
+      //   const nameId = this.$root.$mp.query.name
+      //   this.queryObject = {
+      //     current_page: this.currentPage,
+      //     page_size: this.pageSize,
+      //     search: '',
+      //     name: nameId,
+      //     only_available: 1
+      //   }
+      //   this.getStandardList()
+      //   this.filterNameList = res.goods
+      //   this.filterNameList.unshift({ name: '全部', id: '', isActive: false })
+      //   const tempObject = {
+      //     name: nameId,
+      //     standards: ''
+      //   }
+      //   this.configVal({ key: 'tempObject', val: tempObject })
+      //   this.filterNameList.map(item => {
+      //     if (item.id === nameId) {
+      //       item.isActive = true
+      //     } else {
+      //       item.isActive = false
+      //     }
+      //   })
+      // })
+      // 获取分类名称
+      this.httpPost(this.apiList.zf.brandQueryPage, {
+        pageNum: 1,
+        pageSize: 1000
+      }).then(res => {
         const nameId = this.$root.$mp.query.name
-        this.queryObject = {
-          current_page: this.currentPage,
-          page_size: this.pageSize,
-          search: '',
-          name: nameId,
-          only_available: 1
+        if (nameId) {
+          this.queryObject.productBrandName = nameId
         }
+        // 获取某个分类对应的规格
         this.getStandardList()
-        res.list.map(item => {
-          item.id = item.name
-        })
-        this.filterNameList = res.list
+        this.filterNameList = res.data.map(item => ({
+          name: item.brandName
+        }))
         this.filterNameList.unshift({ name: '全部', id: '', isActive: false })
-        const tempObject = {
-          name: nameId,
-          standards: ''
-        }
-        this.configVal({ key: 'tempObject', val: tempObject })
         this.filterNameList.map(item => {
           if (item.id === nameId) {
             item.isActive = true
@@ -121,20 +165,45 @@ export default {
         })
       })
     },
+    // 获取某个分类对应的规格
     getStandardList () {
       this.isLoad = false
-      this.ironRequest(this.apiList.xy.sumGoodsStandardList.url, this.queryObject, this.apiList.xy.sumGoodsStandardList.method).then((res) => {
-        console.log('getStandardList', res)
+      this.httpPost(this.apiList.zf.getSpecification, this.queryObject).then(res => {
         this.searchIdx = 1
-        res.list.map(item => {
-          item.first = item.name.substr(0, 1)
+        this.standardList = res.data.map(item => ({
+          name: item
+          // item.first = item.substr(0, 1)
+        }))
+        // console.log('standardList++++++', this.standardList)
+        // this.standardList.map(item => {
+        //   item.first = item.name.substr(0, 1)
+        // })
+        // console.log('standardList++++++', this.standardList)
+        var arr = [[], [], [], [], [], [], [], [], [], [], []]
+        this.standardList.forEach(item => {
+          var firstName = item.name.substr(0, 1)
+          item.first = firstName
+          var reg = /^\d/
+          if (reg.test(firstName)) {
+            arr[firstName].push(item)
+          } else {
+            arr[10].push(item)
+          }
         })
-        this.standardList = res.list
+        // console.log('分类', arr)
+        var newArr = arr.reduce(function (a, b) {
+          return a.concat(b)
+        })
+        this.standardList = newArr
+        // this.standardList = res.data.specificationList
         this.isLoad = true
+      }).catch(e => {
+        this.showMsg(e.message)
       })
     },
+    // 点击右侧数字导航
     selectTag (idx) {
-      // this.logEventGet({ event: 'click_app_mall_category_right' })
+      this.currentUser.type === 'seller' ? this.logEventGet({ event: 'click_app_mall_category_right_seller' }) : this.logEventGet({ event: 'click_app_mall_category_right' })
       this.searchIdx = idx
     }
   }

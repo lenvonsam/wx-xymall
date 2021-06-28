@@ -140,6 +140,7 @@ export default {
       // 获取分类名称
       this.httpPost(this.apiList.zf.searchBrand, {}).then(res => {
         const nameId = this.$root.$mp.query.name
+        console.log('nameId+++', nameId)
         this.queryObject = {
           'productBrandName': nameId,
           'specification': ''
@@ -149,9 +150,9 @@ export default {
         this.filterNameList = res.data.productBrandNameList.map(item => ({
           name: item
         }))
-        this.filterNameList.unshift({ name: '全部', id: '', isActive: false })
+        this.filterNameList.unshift({ name: '全部', isActive: false })
         this.filterNameList.map(item => {
-          if (item.id === nameId) {
+          if (item.name === nameId) {
             item.isActive = true
           } else {
             item.isActive = false

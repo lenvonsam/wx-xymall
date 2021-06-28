@@ -75,6 +75,8 @@
         "billFilter/main",
         "loadFilter/main",
         "loadMake/main",
+        "loadDetail/main",
+        "balanceList/main",
         "cart/main",
         "quotation/main",
         "reviewDetail/main",

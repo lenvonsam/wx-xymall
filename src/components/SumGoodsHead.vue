@@ -78,10 +78,10 @@ export default {
       tabVal: '',
       activeTab: '',
       pageSize: 50,
-      currentPage: 0,
+      currentPage: 1,
       queryObject: {
-        current_page: 0,
-        page_size: 50
+        pageNum: 1,
+        pageSize: 50
       },
       temporary: [],
       sortList: [
@@ -91,35 +91,71 @@ export default {
         { label: '产地', key: 'origin', data: [], selectSort: [], title: '产地展示' },
         { label: '仓库', key: 'warehouse', data: [], selectSort: [], title: '仓库展示' }
       ],
+      // sortQueryList: {
+      //   'standard': {
+      //     reqUrl: 'querySpecificationPage',
+      //     chooseIdx: [0, 0],
+      //     respKey: 'specificationList'
+      //   },
+      //   'name': {
+      //     reqUrl: 'queryProductBrandNamePage',
+      //     chooseIdx: [0, 0],
+      //     respKey: 'productBrandNameList'
+      //   },
+      //   'material': {
+      //     reqUrl: 'queryProductTextureNamePage',
+      //     chooseIdx: [0, 0],
+      //     respKey: 'productTextureNameList'
+      //   },
+      //   'origin': {
+      //     reqUrl: 'queryProdAreaNamePage',
+      //     chooseIdx: [0, 0],
+      //     respKey: 'prodAreaNameList'
+      //   },
+      //   'more': {
+      //     reqUrl: 'querySpecificationPage',
+      //     chooseIdx: [0, 0]
+      //   }
+      // },
+      // // ERP现货物资列表查询接口
+      // querySaleStockPageList: 'sale/stock/querySaleStockPageList',
+      // // ERP现货物资仓库下拉框接口
+      // stockZoneQueryPage: 'foundation/stockZone/queryPage',
+      // // ERP现货物资规格下拉框接口
+      // specificationQueryPage: 'foundation/product/getSpecificationList',
+      // // ERP现货物资材质下拉框接口
+      // textureQueryPage: 'foundation/product/texture/queryPage',
+      // // ERP现货物资产地下拉框接口
+      // prodAreaQueryPage: 'foundation/prodArea/queryPage'
       sortQueryList: {
         'standard': {
-          reqUrl: 'seller/erp/standard.shtml',
+          reqUrl: 'specificationQueryPage',
           chooseIdx: [0, 0],
-          respKey: 'list',
+          respKey: 'standard',
           key: 'standard'
         },
         'name': {
-          reqUrl: 'seller/erp/goods.shtml',
+          reqUrl: 'brandQueryPage',
           chooseIdx: [0, 0],
-          respKey: 'list',
+          respKey: 'name',
           key: 'name'
         },
         'material': {
-          reqUrl: 'seller/erp/material.shtml',
+          reqUrl: 'textureQueryPage',
           chooseIdx: [0, 0],
-          respKey: 'list',
+          respKey: 'material',
           key: 'material'
         },
         'origin': {
-          reqUrl: 'seller/erp/supply.shtml',
+          reqUrl: 'prodAreaQueryPage',
           chooseIdx: [0, 0],
-          respKey: 'list',
+          respKey: 'origin',
           key: 'origin'
         },
         'warehouse': {
-          reqUrl: 'seller/erp/warehouse.shtml',
+          reqUrl: 'stockZoneQueryPage',
           chooseIdx: [0, 0],
-          respKey: 'list',
+          respKey: 'warehouse',
           key: 'warehouse'
         }
       },
@@ -210,43 +246,43 @@ export default {
       this.searchVal = ''
     }
     console.log('tempObject', this.tempObject.search)
-    this.currentPage = 0
+    this.currentPage = 1
   },
   methods: {
     ...mapActions([
       'configVal'
     ]),
     openStandard () {
-      this.currentPage = 0
+      this.currentPage = 1
       this.sortCb('standard')
     },
     openMaterial () {
-      this.currentPage = 0
+      this.currentPage = 1
       this.sortCb('material')
     },
     openSupply () {
-      this.currentPage = 0
+      this.currentPage = 1
       this.sortCb('origin')
     },
     openWarehouse () {
-      this.currentPage = 0
+      this.currentPage = 1
       this.sortCb('warehouse')
     },
     openName () {
-      this.currentPage = 0
+      this.currentPage = 1
       this.activeTab = 'name'
     },
     cleanStandard () {
       this.standardVal = ''
       this.sortList[1].data = []
       this.queryObject.search = ''
-      this.currentPage = 0
+      this.currentPage = 1
       this.sortCb('standard')
     },
     cleanSearch () {
       this.configVal({ key: 'tempObject', val: '' })
       this.searchVal = ''
-      // this.currentPage = 0
+      // this.currentPage = 1
       this.$emit('cleanSearch')
       // this.sortCb('name')
     },
@@ -338,7 +374,7 @@ export default {
       this.throttle(() => {
         // this.logEventGet({ event: 'click_app_mall_category_search' })
         this.queryObject.search = e.mp.detail.value
-        this.currentPage = 0
+        this.currentPage = 1
         this.sortCb('standard')
       }, 300)
     },
@@ -400,70 +436,210 @@ export default {
         this.sortCb(this.activeTab)
       }
     },
+
+    // 品名、规格、材质、产地
     sortCb (key, standard) {
-      this.queryObject.name = this.tabVal
-      this.queryObject.current_page = this.currentPage
+      // this.queryObject.name = this.tabVal
+      this.queryObject.pageNum = this.currentPage
       let queryObj = Object.assign({}, this.queryObject)
       this.showLoading()
-      this.ironRequest(this.sortQueryList[key].reqUrl, queryObj, 'post').then(resp => {
-        if (resp.returncode === '0') {
-          let arr = resp[this.sortQueryList[key].respKey]
-          const tabList = []
-          const idx = this.sortList.findIndex((item) => {
-            return item.key === key
+      this.httpPost(this.apiList.zf[this.sortQueryList[key].reqUrl], queryObj).then(resp => {
+        console.log('sortCb++++++', resp)
+        // 获取对应的下拉筛选框数据
+        // 'standard': {
+        //   reqUrl: 'specificationQueryPage',
+        //   chooseIdx: [0, 0],
+        //   respKey: 'list',
+        //   key: 'standard'
+        // },
+        // 'name': {
+        //   reqUrl: 'brandQueryPage',
+        //   chooseIdx: [0, 0],
+        //   respKey: 'list',
+        //   key: 'name'
+        // },
+        // 'material': {
+        //   reqUrl: 'textureQueryPage',
+        //   chooseIdx: [0, 0],
+        //   respKey: 'list',
+        //   key: 'material'
+        // },
+        // 'origin': {
+        //   reqUrl: 'prodAreaQueryPage',
+        //   chooseIdx: [0, 0],
+        //   respKey: 'list',
+        //   key: 'origin'
+        // },
+        // 'warehouse': {
+        //   reqUrl: 'stockZoneQueryPage',
+        //   chooseIdx: [0, 0],
+        //   respKey: 'list',
+        //   key: 'warehouse'
+        // }
+
+        // let arr = resp.data[this.sortQueryList[key].respKey]
+
+        let arr = []
+        if (this.sortQueryList[key].respKey === 'name') {
+          arr = resp.data.map((item, index) => {
+            return item.brandName
           })
-          if (arr.length > 0) {
-            if (standard) {
-              arr.unshift({ name: '全部', id: '', isActive: false })
-              arr[1].isActive = true
-              this.sortList[1].data = arr
-            } else {
-              arr.map(item => {
-                item.isActive = false
-                const resActive = this.sortList[idx].data.filter((itemFilter) => {
-                  if (itemFilter.name === item.name && itemFilter.isActive) {
-                    item.isActive = true
-                  }
-                  return itemFilter.name === item.name && itemFilter.isActive
-                })
-                console.log('resActive', resActive)
-                if (key === 'name') {
-                  const obj = {
-                    name: item.name,
-                    id: item.name
-                  }
-                  tabList.push(obj)
-                }
-              })
-              // arr.unshift({ name: '全部', id: '', isActive: false })
-              // this.sortList[idx].data = arr
-              if ((this.currentPage === 0 || key !== 'standard') && !this.isMore) {
-                arr.unshift({ name: '全部', id: '', isActive: false })
-                this.sortList[idx].data = arr
-              } else {
-                this.sortList[idx].data.push(...arr)
-              }
-            }
-          } else {
-            if (this.currentPage > 0) this.currentPage--
-          }
-          if (key === 'name') {
-            tabList.unshift({ name: '全部', id: '', isActive: true })
-            this.sortList[0].data = tabList
-            this.mallTabValChange()
-            this.$emit('getName', tabList)
-          } else if (standard) {
-            this.activeTab = ''
-            this.queryObject.search = ''
-            this.standardVal = ''
-          } else {
-            this.activeTab = key
-          }
-          this.isMore = false
-          this.hideLoading()
+        } else if (this.sortQueryList[key].respKey === 'standard') {
+          arr = resp.data.map((item, index) => {
+            return item.specification
+          })
+        } else if (this.sortQueryList[key].respKey === 'material') {
+          arr = resp.data.map((item, index) => {
+            return item.textureName
+          })
+        } else if (this.sortQueryList[key].respKey === 'origin') {
+          arr = resp.data.map((item, index) => {
+            return item.areaName
+          })
+        } else if (this.sortQueryList[key].respKey === 'warehouse') {
+          arr = resp.data.map((item, index) => {
+            return item.stockZoneName
+          })
         }
+        const tabList = []
+        // 获取当前点击的key（规格、材质、产地）的下标
+        const idx = this.sortList.findIndex((item) => {
+          return item.key === key
+        })
+        console.log('idx', idx)
+        if (arr.length > 0) {
+          if (standard) {
+            // const standardIdx = arr.findIndex(item => item.name === standard)
+            arr.unshift({ name: '全部', isActive: false })
+            arr[1].isActive = true
+            this.sortList[1].data = arr
+          } else {
+            var newArr = arr.map(item => {
+              item = {
+                name: item,
+                id: item,
+                isActive: false
+              }
+              // console.log(item)
+              this.sortList[idx].data.filter((itemFilter) => {
+                if (itemFilter.name === item.name && itemFilter.isActive) {
+                  item.isActive = true
+                }
+                return itemFilter.name === item.name && itemFilter.isActive
+              })
+              // console.log('resActive', resActive)
+              // if (key === 'name') {
+              //   const obj = {
+              //     name: item.name,
+              //     key: item.name
+              //   }
+              //   tabList.push(obj)
+              // }
+              tabList.push(item)
+              return item
+            })
+            newArr.unshift({ name: '全部', id: '', isActive: false })
+            // 将数据存入sortList对应项的data中
+            this.sortList[idx].data = newArr
+            // if ((this.currentPage === 0 || key !== 'standard') && !this.isMore) {
+            //   arr.unshift({ name: '全部', id: '', isActive: false })
+            //   this.sortList[idx].data = arr
+            // } else {
+            //   this.sortList[idx].data.push(...arr)
+            // }
+            console.log('sortList++++', this.sortList[idx].data)
+          }
+        } else {
+          this.sortList[idx].data = arr
+        }
+        // else if (this.currentPage !== 0) {
+        //   this.currentPage--
+        // }
+        // 如果选择的是品名
+        if (key === 'name') {
+          tabList.unshift({ name: '全部', id: '', isActive: true })
+          this.sortList[0].data = tabList
+          this.mallTabValChange()
+          this.$emit('getName', tabList)
+        } else if (standard) {
+          this.activeTab = ''
+          this.queryObject.search = ''
+          this.standardVal = ''
+        } else {
+          this.activeTab = key // standard、material、origin
+        }
+        this.isMore = false
+        this.hideLoading()
+      }).catch((e) => {
+        console.log('sortQueryList_catch=======>' + JSON.stringify(e))
+        this.hideLoading()
       })
     }
+
+    // sortCb (key, standard) {
+    //   this.queryObject.name = this.tabVal
+    //   this.queryObject.pageNum = this.currentPage
+    //   let queryObj = Object.assign({}, this.queryObject)
+    //   this.showLoading()
+    //   this.ironRequest(this.sortQueryList[key].reqUrl, queryObj, 'post').then(resp => {
+    //     if (resp.returncode === '0') {
+    //       let arr = resp[this.sortQueryList[key].respKey]
+    //       const tabList = []
+    //       const idx = this.sortList.findIndex((item) => {
+    //         return item.key === key
+    //       })
+    //       if (arr.length > 0) {
+    //         if (standard) {
+    //           arr.unshift({ name: '全部', id: '', isActive: false })
+    //           arr[1].isActive = true
+    //           this.sortList[1].data = arr
+    //         } else {
+    //           arr.map(item => {
+    //             item.isActive = false
+    //             const resActive = this.sortList[idx].data.filter((itemFilter) => {
+    //               if (itemFilter.name === item.name && itemFilter.isActive) {
+    //                 item.isActive = true
+    //               }
+    //               return itemFilter.name === item.name && itemFilter.isActive
+    //             })
+    //             console.log('resActive', resActive)
+    //             if (key === 'name') {
+    //               const obj = {
+    //                 name: item.name,
+    //                 id: item.name
+    //               }
+    //               tabList.push(obj)
+    //             }
+    //           })
+    //           // arr.unshift({ name: '全部', id: '', isActive: false })
+    //           // this.sortList[idx].data = arr
+    //           if ((this.currentPage === 0 || key !== 'standard') && !this.isMore) {
+    //             arr.unshift({ name: '全部', id: '', isActive: false })
+    //             this.sortList[idx].data = arr
+    //           } else {
+    //             this.sortList[idx].data.push(...arr)
+    //           }
+    //         }
+    //       } else {
+    //         if (this.currentPage > 0) this.currentPage--
+    //       }
+    //       if (key === 'name') {
+    //         tabList.unshift({ name: '全部', id: '', isActive: true })
+    //         this.sortList[0].data = tabList
+    //         this.mallTabValChange()
+    //         this.$emit('getName', tabList)
+    //       } else if (standard) {
+    //         this.activeTab = ''
+    //         this.queryObject.search = ''
+    //         this.standardVal = ''
+    //       } else {
+    //         this.activeTab = key
+    //       }
+    //       this.isMore = false
+    //       this.hideLoading()
+    //     }
+    //   })
+    // }
   }
 }
 </script>

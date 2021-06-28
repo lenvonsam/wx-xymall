@@ -103,12 +103,16 @@ export default {
       this.jump('/pages/vendor/pendingReview/main?configId=' + ficon.configId)
     },
     getData () {
+      let testUserId = '1400343202594037762'
+      // let testUserId = '1346277615056457730' // 员工 何建龙
+      // let testUserId = '1346282719734140929' // 采购部长 于成龙
+
       let params = {
         'startCreateTime': '',
         'endCreateTime': '',
         'tenantId': '1',
         // 'userId': this.currentUser.id,
-        'userId': '1346277615056457730',
+        'userId': testUserId,
         'status': [0, 1]
       }
       this.httpPost(this.apiList.zf.queryWorkflowProcessMenu, params).then(res => {

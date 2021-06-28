@@ -25,31 +25,30 @@ div
                 .flex.justify-between.padding-bottom-sm
                   .col
                     .flex.align-center
-                      .ft-16.padding-right-sm {{item.tstc_no}}
-                      img.ding-icon(src="/static/images/ding.png", v-if="item.contract_type === 12")
-                      img.dingjin-icon(src="/static/images/dj_icon.png", v-if="item.pay_type == '2'")
-                      img.dingjin-icon(src="/static/images/baitiao_icon.png", v-if="item.pay_type == '3'")
-                  div(:class="!item.att54 ? 'text-red' : 'text-gray'") {{statusList[item.att54]}}
-                  //- .text-gray 1111{{item.att54}}
+                      .ft-16.padding-right-sm {{item.saleContractNo}}
+                      img.ding-icon.margin-right-xs(src="/static/images/ding.png", v-if="item.sourceType == '01' && item.orgId == 'C00011'")
+                      img.dingjin-icon.margin-right-xs(src="/static/images/dj_icon.png", v-if="item.payMethod == '03'")
+                      img.dingjin-icon(src="/static/images/baitiao_icon.png", v-if="item.payMethod == '02'")
+                  div(:class="item.contractDelayTimes > 0 ? 'text-red' : 'text-gray'") {{item.contractDelayTimes > 0 ? '已延时' : '未延时'}}
                 .text-gray
                   .flex.justify-between.padding-bottom-xs
-                    span {{item.cust_name}}
-                    .ft-18.text-black ￥{{item.deal_price}}
+                    span {{item.buyUnitName}}
+                    .ft-18.text-black ￥{{item.inTaxReceiveMoney}}
                   .flex.justify-between.padding-bottom-xs
-                    span 共{{item.amount}}支，{{item.weight}}吨
-                    span 延时：{{item.delay_times}}
+                    span 共{{item.contractAmount}}支，{{item.contractManagerWeight}}吨
+                    span 延时：{{item.contractDelayTimes}}
                 .solid-top.text-black.ft-15.margin-top-xs.padding-top-sm.row
                   .col
                     span 付款截止时间：
-                    span.padding-left-xs.text-black {{item.end_pay_time}}
+                    span.padding-left-xs.text-black {{item.contractDelayDate}}
                   .flex
-                    .bill-btn.round.margin-left-sm(@click.stop="delayOpenModal(item)") {{item.att54 == 1 ? '再次延迟' : '延时'}}
+                    .bill-btn.round.margin-left-sm(@click.stop="delayOpenModal(item)") {{item.contractDelayTimes == 1 ? '再次延迟' : '延时'}}
     .text-center.c-gray.pt-100(v-else)
       empty-image(url="bill_empty.png", className="img-empty")
       .empty-content 您暂时没有相关合同
   modal-input(v-model="modalShow", title="合同延时", confirmText="确定", type="customize", :cb="modalHandler")
     .text-center
-      template(v-if="!checkRow.att54")
+      template(v-if="!checkRow.contractDelayTimes")
         .padding-bottom-xs 15:00前最多可延时2小时
         .padding-bottom-xs 15:00后最多可延时19个小时
       .padding-top-xs.padding-bottom-xs.row.cuIcon-box
@@ -58,7 +57,7 @@ div
         input(type="number", v-model="delayDate", @blur="delayBlur", @focus="delayFocus", :focus="false")
         .cuIcon-item(@click="delayHandler('add')")
           .cuIcon-add
-      template(v-if="checkRow.att54")
+      template(v-if="checkRow.contractDelayTimes")
         .padding-sm
           .bg-gray.input-box
             input(placeholder="请填写延时备注（必填）", v-model="textVal", maxlength="20")
@@ -71,7 +70,7 @@ export default {
     return {
       delayDate: 1,
       modalShow: false,
-      currentPage: 0,
+      currentPage: 1,
       listData: [],
       triggered: false,
       isload: false,
@@ -111,7 +110,7 @@ export default {
   onUnload () {
     this.modalShow = false
     this.searchVal = ''
-    this.currentPage = 0
+    this.currentPage = 1
     this.filterObj = {}
     this.delayDate = 1
     this.textVal = ''
@@ -125,15 +124,17 @@ export default {
   },
   onShow () {
     if (this.tempObject.fromPage === 'billFilter') {
+      console.log('tempObject+++', this.tempObject)
       this.filterObj = {
-        cust_no: Number(this.tempObject.custom.xyCode) || '',
-        dept_code: this.tempObject.dept.id || '',
-        employee_code: this.tempObject.employee.id || '',
-        deal_time_s: this.tempObject.startDate,
-        deal_time_e: this.tempObject.endDate
+        saleContractNo: this.tempObject.no,
+        createDateStart: this.tempObject.startDate, // 起始日期
+        createDateEnd: this.tempObject.endDate, // 结束日期
+        buyUnitId: this.tempObject.custom.id || '', // 客户名称(传id)
+        businessDepartmentId: this.tempObject.dept.id || '', // 业务部门(传id)
+        businessUserCode: this.tempObject.employee.id // 业务员(传code)
       }
       this.searchVal = this.tempObject.no
-      this.currentPage = 0
+      this.currentPage = 1
     }
     this.onRefresh()
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 115
@@ -156,7 +157,7 @@ export default {
       const minDate = new Date(this.date2Str(new Date()) + ' 15:00').getTime()
       const nowDate = new Date().getTime()
       if (nowDate > minDate) maxDelayDate = 19
-      if (this.checkRow.att54) maxDelayDate = 99
+      if (this.checkRow.contractDelayTimes) maxDelayDate = 99
       if (delayDate > maxDelayDate) {
         this.delayDate = maxDelayDate
         return false
@@ -174,27 +175,23 @@ export default {
     },
     async orderDelay () {
       try {
-        let orderDelay = ''
         let params = {
-          id: this.checkRow.discussid,
-          user_id: this.currentUser.user_id,
-          hour: this.delayDate
+          saleContractId: this.checkRow.saleContractId,
+          contractDelayTimes: this.checkRow.contractDelayTimes + 1,
+          delayDay: this.delayDate,
+          type: '02' // 01 天 02 小时
         }
-        if (this.checkRow.att54) {
-          orderDelay = this.apiList.xy.orderDelayAgain
+        if (this.checkRow.contractDelayTimes) {
           if (!this.textVal) {
             this.showMsg('请输入延时备注')
             return false
           }
-          params.text = this.textVal
-          params.deal_no = this.checkRow.tstc_no
-        } else {
-          orderDelay = this.apiList.xy.orderDelay
+          params.delayReason = this.textVal
         }
-        const data = await this.ironRequest(orderDelay.url, params, orderDelay.method)
-        if (data.returncode === '0') {
-          this.showMsg(data.errormsg)
-          this.currentPage = 0
+        const data = await this.httpGet(this.apiList.zf.delaySaleContract, params)
+        if (data.success) {
+          this.showMsg('延时成功！')
+          this.currentPage = 1
           this.refresher()
           this.delayDate = 1
           this.textVal = ''
@@ -202,7 +199,7 @@ export default {
       } catch (err) {
         this.delayDate = 1
         this.textVal = ''
-        this.showMsg(err || '网络错误')
+        this.showMsg(err.message)
       }
     },
     delayOpenModal (item) {
@@ -236,7 +233,7 @@ export default {
       this.jump('/pages/vendor/billFilter/main')
     },
     onRefresh (done) {
-      this.currentPage = 0
+      this.currentPage = 1
       this.showLoading()
       this.refresher(done)
     },
@@ -249,7 +246,6 @@ export default {
     refresher (done) {
       this.loadFinish = 1
       const me = this
-      const orderDelayList = this.apiList.xy.orderDelayList
       // let url = `${orderDelayList.url}?user_id=${this.currentUser.user_id}&current_page=${this.currentPage}&page_size=${this.pageSize}&status=1&is_confirm=0`
       // if (this.filterArr.length > 0) {
       //   const filterStr = this.filterArr.toString().replace(/,/g, '&')
@@ -257,26 +253,24 @@ export default {
       // }
       //  等待接口修改
       const params = {
-        current_page: this.currentPage,
-        page_size: this.pageSize,
-        status: 1,
-        is_confirm: 0
+        pageNum: this.currentPage,
+        pageSize: this.pageSize
       }
       Object.assign(params, this.filterObj)
       if (this.searchVal) {
         // url += `&search=${this.searchVal}`
-        params.search = this.searchVal
+        params.keyword = this.searchVal
       }
-      this.ironRequest(orderDelayList.url, params, orderDelayList.method).then(resp => {
-        if (resp.returncode === '0') {
-          let arr = resp.resultlist
-          if (arr.length === 0 && me.currentPage === 0) {
+      this.httpPost(this.apiList.zf.querySaleContractPage, params).then(res => {
+        if (res.success) {
+          let arr = res.data
+          if (arr.length === 0 && me.currentPage === 1) {
             me.listData = []
             me.isload = false
-          } else if (arr.length > 0 && me.currentPage === 0) {
+          } else if (arr.length > 0 && me.currentPage === 1) {
             me.listData = arr
             me.isload = false
-          } else if (arr.length > 0 && me.currentPage > 0) {
+          } else if (arr.length > 0 && me.currentPage > 1) {
             me.listData.push(...arr)
             me.isload = false
           } else {
@@ -293,7 +287,55 @@ export default {
         if (done) done()
       })
     },
+    // refresher (done) {
+    //   this.loadFinish = 1
+    //   const me = this
+    //   const orderDelayList = this.apiList.xy.orderDelayList
+    //   // let url = `${orderDelayList.url}?user_id=${this.currentUser.user_id}&current_page=${this.currentPage}&page_size=${this.pageSize}&status=1&is_confirm=0`
+    //   // if (this.filterArr.length > 0) {
+    //   //   const filterStr = this.filterArr.toString().replace(/,/g, '&')
+    //   //   url += `&${filterStr}`
+    //   // }
+    //   //  等待接口修改
+    //   const params = {
+    //     current_page: this.currentPage,
+    //     page_size: this.pageSize,
+    //     status: 1,
+    //     is_confirm: 0
+    //   }
+    //   Object.assign(params, this.filterObj)
+    //   if (this.searchVal) {
+    //     // url += `&search=${this.searchVal}`
+    //     params.search = this.searchVal
+    //   }
+    //   this.ironRequest(orderDelayList.url, params, orderDelayList.method).then(resp => {
+    //     if (resp.returncode === '0') {
+    //       let arr = resp.resultlist
+    //       if (arr.length === 0 && me.currentPage === 0) {
+    //         me.listData = []
+    //         me.isload = false
+    //       } else if (arr.length > 0 && me.currentPage === 0) {
+    //         me.listData = arr
+    //         me.isload = false
+    //       } else if (arr.length > 0 && me.currentPage > 0) {
+    //         me.listData.push(...arr)
+    //         me.isload = false
+    //       } else {
+    //         me.isload = false
+    //         me.currentPage--
+    //         if (me.listData.length >= 10) me.loadFinish = 2
+    //       }
+    //     }
+    //     me.isTabDisabled = false
+    //     if (me.listData.length < 10) me.loadFinish = 3
+    //     me.hideLoading()
+    //     me.delayDate = 1
+    //     me.textVal = ''
+    //     if (done) done()
+    //   })
+    // },
     loadMore () {
+      console.log('aaaa')
       const me = this
       this.throttle(function () {
         me.currentPage++
@@ -301,7 +343,7 @@ export default {
       }, 300)
     },
     jumpDetail (item) {
-      this.jump(`/pages/billDetail/main?id=${item.saleContractId}`)
+      this.jump(`/pages/billDetail/main?contractId=${item.saleContractId}`)
     }
   }
 }

@@ -22,20 +22,20 @@ div
                 .flex.justify-between.padding-bottom-sm
                   .col
                     .flex.align-center
-                      .ft-16.padding-right-sm {{item.datas_balcorpname}}
-                  .text-black ￥{{item.zh}}
+                      .ft-16.padding-right-sm {{item.unitName}}
+                  .text-black ￥{{item.sumMoney}}
                 .text-gray
                   .padding-bottom-xs 
-                    span 智恒达：￥{{item.aa}}
-                    span.padding-left-xs 岳阳通：￥{{item.bb}}
+                    span 智恒达：￥{{item.jxMoney}}
+                    span.padding-left-xs 岳阳通：￥{{item.yytMoney}}
                   .padding-bottom-xs
-                    span {{item.dept_name}}
-                    span.padding-left-xs {{item. employee_name}}
-                .solid-top.text-black.ft-15.margin-top-xs.padding-top-sm.row.justify-between(v-if="item.bankroll_date")
+                    span {{item.departmentName}}
+                    span.padding-left-xs {{item. businessUserName}}
+                .solid-top.text-black.ft-15.margin-top-xs.padding-top-sm.row.justify-between(v-if="item.lastMakeMoneyTime")
                   .col
                     span 最近应收：
-                    span.padding-left-xs.text-red {{item.bankroll_date}}  
-                  span {{item.ts}}天
+                    span.padding-left-xs.text-red {{item.lastMakeMoneyTime}}  
+                  span {{item.days}}天
     .text-center.c-gray.pt-100(v-else)
       empty-image(url="bill_empty.png", className="img-empty")
  
@@ -45,7 +45,7 @@ import { mapState } from 'vuex'
 export default {
   data () {
     return {
-      currentPage: 0,
+      currentPage: 1,
       listData: [],
       isload: false,
       searchVal: '',
@@ -66,7 +66,7 @@ export default {
   },
   methods: {
     onRefresh (done) {
-      this.currentPage = 0
+      this.currentPage = 1
       this.showLoading()
       this.refresher(done)
     },
@@ -79,24 +79,30 @@ export default {
     refresher (done) {
       this.loadFinish = 1
       const me = this
-      const gatherinsgBeforeWarning = this.apiList.xy.gatherinsgBeforeWarning
       const params = {
-        current_page: this.currentPage,
-        page_size: this.pageSize
+        unitName: '',
+        departmentName: '',
+        businessUserName: '',
+        pageNum: this.currentPage,
+        pageSize: this.pageSize
       }
       if (this.searchVal) {
-        params.search = this.searchVal
+        let newSearchVal = this.searchVal.trim().replace(/\s+/g, ',')
+        params.unitName = newSearchVal
+        params.departmentName = newSearchVal
+        params.businessUserName = newSearchVal
       }
-      this.ironRequest(gatherinsgBeforeWarning.url, params, gatherinsgBeforeWarning.method).then(resp => {
-        if (resp.returncode === '0') {
+      this.httpPost(this.apiList.zf.queryTransferXy, params).then(resp => {
+        console.log(resp)
+        if (resp.success) {
           let arr = resp.data
-          if (arr.length === 0 && me.currentPage === 0) {
+          if (arr.length === 0 && me.currentPage === 1) {
             me.listData = []
             me.isload = false
-          } else if (arr.length > 0 && me.currentPage === 0) {
+          } else if (arr.length > 0 && me.currentPage === 1) {
             me.listData = arr
             me.isload = false
-          } else if (arr.length > 0 && me.currentPage > 0) {
+          } else if (arr.length > 0 && me.currentPage > 1) {
             me.listData.push(...arr)
             me.isload = false
           } else {
@@ -111,6 +117,41 @@ export default {
         if (done) done()
       })
     },
+    // refresher (done) {
+    //   this.loadFinish = 1
+    //   const me = this
+    //   const gatherinsgBeforeWarning = this.apiList.xy.gatherinsgBeforeWarning
+    //   const params = {
+    //     current_page: this.currentPage,
+    //     page_size: this.pageSize
+    //   }
+    //   if (this.searchVal) {
+    //     params.search = this.searchVal
+    //   }
+    //   this.ironRequest(gatherinsgBeforeWarning.url, params, gatherinsgBeforeWarning.method).then(resp => {
+    //     if (resp.returncode === '0') {
+    //       let arr = resp.data
+    //       if (arr.length === 0 && me.currentPage === 0) {
+    //         me.listData = []
+    //         me.isload = false
+    //       } else if (arr.length > 0 && me.currentPage === 0) {
+    //         me.listData = arr
+    //         me.isload = false
+    //       } else if (arr.length > 0 && me.currentPage > 0) {
+    //         me.listData.push(...arr)
+    //         me.isload = false
+    //       } else {
+    //         me.isload = false
+    //         me.currentPage--
+    //         if (me.listData.length >= 10) me.loadFinish = 2
+    //       }
+    //     }
+    //     me.isTabDisabled = false
+    //     if (me.listData.length < 10) me.loadFinish = 3
+    //     me.hideLoading()
+    //     if (done) done()
+    //   })
+    // },
     loadMore () {
       const me = this
       this.throttle(function () {

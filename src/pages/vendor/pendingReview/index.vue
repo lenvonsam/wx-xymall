@@ -207,13 +207,16 @@ export default {
       //   // url += `&search=${this.searchVal}`
       // }
 
+      let testUserId = '1400343202594037762' // 员工 何建龙
+      // let testUserId = '1346282719734140929' // 采购部长 于成龙
+
       let params = {
         configId: this.configId,
         limit: 20,
         offset: 0,
         tenantId: 1,
         businessId: this.searchVal || '',
-        userId: '1346277615056457730',
+        userId: testUserId,
         status: [0, 1]
       }
       this.httpPost(this.apiList.zf.queryWorkflowProcessList, params).then(res => {
@@ -275,14 +278,16 @@ export default {
       this.btnDisable = true
       // this.configVal({ key: 'tempObject', val: item })
       let auditTypeText = ''
-      if (this.configId === '39') {
+      if (this.configId === '715') {
         auditTypeText = '退货'
       } else if (this.configId === '73') {
         auditTypeText = '延时'
+      } else if (this.configId === '1') {
+        auditTypeText = '定向'
+      } else if (this.configId === '57') {
+        auditTypeText = 'ERP定价'
       } else if (this.configId === '710' || this.configId === '5') {
         auditTypeText = 'ERP议价'
-      } else if (this.configId === '4') {
-        auditTypeText = 'ERP销售定价'
       }
       this.jump(`/pages/vendor/reviewDetail/main?id=${item.id}&auditType=${auditTypeText}`)
     }

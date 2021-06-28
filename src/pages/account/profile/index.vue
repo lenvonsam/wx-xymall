@@ -20,9 +20,12 @@ div
     .bg-white.row.padding.border-bottom-line
       .col 登录账号
       .col.text-right.text-gray {{currentUser.username}}
-    .bg-white.row.padding
+    .bg-white.row.padding.border-bottom-line
       .col 姓名
-      .col.text-right.text-gray {{currentUser.type === 'buyer' ? currentUser.name : currentUser.nickname}}
+      .col.text-right.text-gray {{currentUser.name || currentUser.nickName}}
+    .bg-white.row.padding( v-if="currentUser.type === 'seller'")
+      .col 手机号
+      .col.text-right.text-gray {{currentUser.phone}}
     .bg-white.row.ft-16.padding(v-for="(item,idx) in jumpArray", :key="idx", :class="{'margin-top-sm': idx === 0, 'border-bottom-line': (idx < (jumpArray.length - 1))}", @click="jump(item.url)", v-if="currentUser.type === 'buyer'")
       .col {{item.name}}
       .col.text-right.text-gray(v-if="idx == (jumpArray.length - 1)") {{currentUser.phone}}

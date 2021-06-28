@@ -20,8 +20,8 @@ div
   template(v-if="isload")
     time-line(type="mallist")
   template(v-else)
-    template(v-if="listData.length > 0")
-      iron-scroll(:swiperIdx="swiperIdx", @scrolltolower="loadMore", heightUnit="rpx", :height="scrollHeight", :refresh="true", @onRefresh="onRefresh", :loadFinish="loadFinish")
+    template(v-if="tabName === '1'")
+      iron-scroll(@scrolltolower="loadMore", heightUnit="rpx", :height="scrollHeight", :refresh="true", @onRefresh="onRefresh", :loadFinish="loadFinish")
         .bill-list(v-for="(item, itemIdx) in listData", :key="itemIdx")
           .bg-white.box
             .padding-sm
@@ -31,7 +31,7 @@ div
                     .col.flex.align-center(@click="item.choosed = !item.choosed", style="padding-top: 5px;")
                       img.choose-icon(src="/static/images/blue_check.png", v-if="item.choosed")
                       img.choose-icon(src="/static/images/btn_ck_n.png", v-else)
-                      .ft-16.padding-right-sm.padding-left-sm {{item.saleContractNo}}
+                      .ft-16.padding-right-sm.padding-left-sm.text-blue {{item.saleContractNo}}
                       img.ding-icon.margin-right-xs(src="/static/images/ding.png", v-if="item.sourceType == '01' && item.orgId == 'C00011'")
                       img.dingjin-icon.margin-right-xs(src="/static/images/dj_icon.png", v-if="item.payMethod == '03'")
                       img.dingjin-icon(src="/static/images/baitiao_icon.png", v-if="item.payMethod == '02'")
@@ -48,10 +48,39 @@ div
             .solid-top.text-black.ft-15.padding-sm.flex.justify-between
               span {{item.createDate}}
               .bill-btn.round.margin-left-sm( @click.stop="payBill(item)") 制作提单
+    template(v-if="tabName === '2'")
+        .bill-list(v-for="(item, itemIdx) in listDataManger", :key="itemIdx")
+          .bg-white.box
+            .padding-sm
+              .flex.justify-between.padding-bottom-sm
+                .col
+                  .flex.align-center.justify-between
+                    span.text-blue {{item.saleLadingNo}}
+                span(style="padding:6rpx;background-color:#ff8d1a;color:#fff;border-radius:8rpx;font-size:24rpx;") {{item.carNo}}
+              .text-gray
+                .flex.justify-between.padding-bottom-xs
+                  span {{item.orgName}}
+                  .ft-16.text-red ￥{{item.inTaxAvailableMoney}}
+                .flex.justify-between.padding-bottom-xs
+                  span 共{{item.ladingAmount}}支，{{item.weight}}吨
+                .flex.justify-between.padding-bottom-xs
+                  span {{item.saleContractNo}}
+                  // span 吊费：¥{{item.liftingFeeMoney}}
+            .solid-top.text-black.ft-15.padding-sm.flex.justify-end
+              // .bill-btn.round.margin-left-sm(v-if="item.isGoodsFlag" @click.stop="goDetail(item,'all')") 货齐
+              // .bill-btn.round.margin-left-sm(v-if="item.isCancelFlag" @click.stop="goDetail(item,'drop')") 作废
+              // .bill-btn.round.margin-left-sm(v-if="item.isEditFlag" @click.stop="goDetail(item,'edit')") 编辑
+              // .bill-btn.round.margin-left-sm(v-if="item.isCancelFlag" @click.stop="goDetail(item,'cancelAll')") 取消货齐
+              // .bill-btn.round.margin-left-sm(@click.stop="goDetail(item, 'detail')") 详情
+              .bill-btn.round.margin-left-sm(@click.stop="goDetail(item,'all')",style="border-color:#2485ff;color:#2485ff;") 货齐
+              .bill-btn.round.margin-left-sm(@click.stop="goDetail(item,'drop')",style="border-color:#ff5b5b;color:#ff5b5b;") 作废
+              .bill-btn.round.margin-left-sm(@click.stop="goDetail(item,'edit')",style="border-color:#1bb158;color:#1bb158;") 编辑
+              .bill-btn.round.margin-left-sm(@click.stop="goDetail(item,'cancelAll')",style="border-color:#2485ff;color:#2485ff;") 取消货齐
+              .bill-btn.round.margin-left-sm(@click.stop="goDetail(item,'detail')",style="border-color:#2485ff;color:#2485ff;") 详情
     .text-center.c-gray.pt-100(v-else)
       empty-image(url="bill_empty.png", className="img-empty")
       .empty-content 您暂时没有相关提单
-  .s-footer(v-if="listData.length > 0", style="height: 100rpx")
+  .s-footer(v-if="listData.length > 0 && tabName === '1'", style="height: 100rpx")
     .cart-footer.justify-between
       .col.cart-footer-col
         .row.justify-between
@@ -72,13 +101,14 @@ export default {
   data () {
     return {
       billTab: [
-        { title: '提单制作', status: '1,2', data: [], isActive: true },
-        { title: '提单管理', status: '3,4', data: [], isActive: false }
+        { title: '提单制作', status: '1', data: [], isActive: true },
+        { title: '提单管理', status: '2', data: [], isActive: false }
       ],
       isTabDisabled: false,
-      tabName: '1,2',
+      tabName: '1',
       currentPage: 1,
       listData: [],
+      listDataManger: [],
       isload: false,
       scrollHeight: 0,
       loadFinish: 0,
@@ -137,7 +167,7 @@ export default {
     }
   },
   onUnload () {
-    this.tabName = '1,2'
+    this.tabName = '1'
     this.currentPage = 1
     this.listData = []
     this.finished = true
@@ -178,6 +208,14 @@ export default {
       console.log(item)
       this.jump(`/pages/vendor/loadMake/main?saleContractId=` + item.saleContractId)
     },
+    goDetail (item, stateLog) {
+      console.log(item)
+      if (stateLog === 'edit') {
+        this.jump(`/pages/vendor/loadMake/main?saleLadingId=${item.saleLadingId}`)
+      } else {
+        this.jump(`/pages/vendor/loadDetail/main?saleLadingId=${item.saleLadingId}&stateLog=${stateLog}`)
+      }
+    },
     openFilter () {
       // const statusList = [{ label: '全部', value: '' }]
       // Object.keys(this.auditType).forEach(key => {
@@ -208,12 +246,8 @@ export default {
         this.showMsg(err || '网络错误')
       }
     },
-    onRefresh (done) {
-      this.currentPage = 1
-      this.loadData(done)
-    },
     countTime () {
-      if (this.tabName === '1,2') {
+      if (this.tabName === '1') {
         const arr = this.listData
         arr.map(item => {
           const nowTime = this.serverTime
@@ -246,9 +280,18 @@ export default {
     },
     selectTabs (item) {
       this.tabName = item.status
+      console.log(this.tabName, this.listData)
       this.listData = []
       this.isTabDisabled = true
       this.onRefresh()
+    },
+    onRefresh (done) {
+      this.currentPage = 1
+      if (this.tabName === '1') {
+        this.loadDataMake(done)
+      } else {
+        this.loadDataManger(done)
+      }
     },
     choosedAll () {
       this.allChoosed = !this.allChoosed
@@ -262,7 +305,7 @@ export default {
         })
       }
     },
-    loadData (done) {
+    loadDataMake (done) {
       this.loadFinish = 1
       if (this.currentPage === 1) {
         this.isload = true
@@ -335,8 +378,72 @@ export default {
             me.currentPage--
           }
         }
+        // this.billTab[0].data = arr
         this.isTabDisabled = false
         if (this.listData.length < 10) this.loadFinish = 3
+      })
+      if (done) done()
+    },
+    loadDataManger (done) {
+      this.loadFinish = 1
+      if (this.currentPage === 1) {
+        this.isload = true
+      } else {
+        this.isload = false
+      }
+      const me = this
+      let params = {}
+      console.log('fromPage+++', this.tempObject.fromPage)
+      if (this.tempObject.fromPage === 'loadFilter') {
+        params = {
+          pageNum: 1,
+          pageSize: 10,
+          contractStateType: '',
+          keyword: '',
+          saleContractNo: this.tempObject.no,
+          buyUnitName: this.tempObject.custom.unitName,
+          createStartTime: this.tempObject.startDate,
+          createEndTime: this.tempObject.endDate,
+          departmentId: this.tempObject.dept.code,
+          businessUserCode: this.tempObject.employee.code,
+          orgId: ''
+        }
+      } else {
+        params = {
+          pageNum: 1,
+          pageSize: 10,
+          keyword: '',
+          saleContractNo: '',
+          buyUnitName: '',
+          createStartTime: '',
+          createEndTime: '',
+          departmentId: '',
+          businessUserCode: '',
+          orgId: ''
+        }
+      }
+      this.httpPost(this.apiList.zf.querySellerSaleLadingPage, params).then(res => {
+        console.log(res)
+        if (res.success) {
+          let arr = res.data
+          if (arr.length === 0 && me.currentPage === 1) {
+            me.listDataManger = []
+            me.isload = false
+          } else if (arr.length > 0 && me.currentPage === 1) {
+            me.listDataManger = arr
+            me.isload = false
+          } else if (arr.length > 0 && me.currentPage > 1) {
+            arr.map(item => {
+              me.listDataManger.push(item)
+            })
+          } else {
+            if (me.listDataManger.length >= 10) me.loadFinish = 2
+            me.currentPage--
+          }
+        }
+        // this.billTab[1].data = arr
+        this.isTabDisabled = false
+        if (this.listDataManger.length < 10) this.loadFinish = 3
       })
       if (done) done()
     },
@@ -386,7 +493,11 @@ export default {
       this.throttle(function () {
         me.currentPage++
         this.isTabDisabled = true
-        me.loadData()
+        if (this.tabName === '1') {
+          this.loadDataMake()
+        } else {
+          this.loadDataManger()
+        }
       }, 300)
     }
   }

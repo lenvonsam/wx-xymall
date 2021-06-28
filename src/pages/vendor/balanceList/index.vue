@@ -62,7 +62,7 @@ export default {
       month: 0,
       floatBarShow: false,
       loadFinish: 0,
-      sellerId: '',
+      // sellerId: '',
       accountBalance: '',
       propqueryObj: {
         pageNum: 1,
@@ -70,8 +70,10 @@ export default {
         busiEventDateS: '',
         busiEventDateE: '',
         busiEventType: '',
-        saleContractNo: ''
-      }
+        saleContractNo: '',
+        unitId: ''
+      },
+      options: {}
     }
   },
   computed: {
@@ -82,13 +84,17 @@ export default {
   onUnload () {
     this.listData = []
     this.activeName = ''
-    this.sellerId = ''
+    // this.sellerId = ''
     this.accountBalance = ''
     this.month = 0
     this.loadFinish = 0
   },
+  onLoad (options) {
+    // console.log(options.unitId)
+    this.unitId = options.unitId
+  },
   onShow () {
-    if (this.$root.$mp.query.sellerId) this.sellerId = this.$root.$mp.query.sellerId
+    // if (this.$root.$mp.query.sellerId) this.sellerId = this.$root.$mp.query.sellerId
     this.whiteStatusBar()
     // this.getMonth()
     this.getLastSixMon()
@@ -227,7 +233,16 @@ export default {
     },
     // 获取账户余额
     getAccountBalance () {
-      this.httpGet(this.apiList.zf.getUnitMoney)
+      // let params = {
+      //   companyCode: this.options.companyCode,
+      //   companyName: this.options.companyName,
+      //   unitId: this.options.unitId,
+      //   unitName: this.options.unitName,
+      //   unitStyle: '',
+      //   moneyType: '01',
+      //   userId: this.currentUser.id
+      // }
+      this.httpGet(this.apiList.zf.lookUnitMoney, {unitId: this.unitId})
         .then((res) => {
           console.log(res)
           this.accountBalance = res.data
@@ -257,6 +272,7 @@ export default {
         // const url = `${creditRecordList.url}?${params}`
         // const data = await this.ironRequest(url, '', creditRecordList.method)
         this.propqueryObj.pageNum = this.currentPage
+        this.propqueryObj.unitId = this.unitId
         let result = await this.httpPost(this.apiList.zf.searchInAndOutDetail, this.propqueryObj)
         console.log('res', result)
         // this.accountBalance = data.balance

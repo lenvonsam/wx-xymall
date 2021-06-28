@@ -7,7 +7,7 @@ div
       .text-right.row.justify-end.col.select
         span {{customName || '请选择客户'}}
         span(:class="selectShow==='custom' ? 'cuIcon-fold' : 'cuIcon-unfold'")
-      search-select(:selectSty="'top: 90rpx; height: '+ (contentHeight - 90) +'rpx'", valKey="name", :clearVal="isReset", :scrollHeight="400", :selectType="'custom'", @cb="selectCb($event, 'custom')", :show="selectShow==='custom'", :inputShow="true")    
+      search-select(:selectSty="'top: 90rpx; height: '+ (contentHeight - 90) +'rpx'", :clearVal="isReset", :scrollHeight="400", :selectType="'custom'", @cb="selectCb($event, 'custom')", :show="selectShow==='custom'", :inputShow="true")
     .row.justify-between.solid-bottom.item(@click.stop="openSelect('dept')")
       .label 业务部门
       .text-right.row.justify-end.col.select(:class="{'text-blue': selectShow==='dept'}")
@@ -19,7 +19,7 @@ div
       switch.blue.sm(:checked="form.hideZero", @change="switchChange")
   .footer.row.bg-white.text-center.text-white.padding-sm(style="height: 100rpx")
     .col.foot-cancel(@click="confirm('reset')") 重置
-    .col.foot-confirm.margin-left-sm(@click="confirm") 搜索   
+    .col.foot-confirm.margin-left-sm(@click="confirm") 搜索
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
@@ -80,7 +80,12 @@ export default {
       }
     },
     selectCb (res, type) {
-      this[`${type}Name`] = res.name
+      console.log(res, type)
+      if (type === 'custom') {
+        this[`${type}Name`] = res.unitName
+      } else {
+        this[`${type}Name`] = res.name
+      }
       this.form[type] = res
       this.selectShow = ''
       this.$forceUpdate()

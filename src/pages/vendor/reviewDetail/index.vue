@@ -21,7 +21,7 @@ div
             span.text-red.padding-left-xs {{detailData.delayTime}}
       template(v-else)
         .bg-white.card
-          div(v-if="tempObject.auditType !== 'ERP销售定价'")
+          div(v-if="tempObject.auditType !== 'ERP定价'")
             .row.justify-between.padding-bottom-xs
               .col.text-blue {{detailData.billNo}}
               .text-red {{tempObject.auditType === '退货' ? '待退款' : detailData.status}}
@@ -30,21 +30,22 @@ div
               .text-black ¥ {{detailData.totalMoeny}}
           div(v-else)
             .row.justify-between.padding-bottom-xs
-              .col.text-black {{tempObject.partsname_name}}
-              .text-red {{tempObject.statusStr}}
+              .col.text-black {{detailData.productBrandName}}
+              .text-red 待审核
           template(v-if="tempObject.auditType === '退货'")
-            .text-gray.padding-bottom-xs.row.justify-between
+            .text-gray.padding-bottom-xs
+              // .row.justify-between
+              .col 操作员：{{detailData.operName}}
               .col 发票状态：{{detailData.invoiceStatus}}
-              span 操作员：{{detailData.operName}}
-          template(v-else-if="tempObject.auditType === 'ERP销售定价'")
+          template(v-else-if="tempObject.auditType === 'ERP定价'")
             .text-gray.padding-bottom-xs.row.justify-between
               .col {{detailData.endTime}}
               span 操作员：{{detailData.operName}}
           template(v-else)
             .row.justify-between.text-gray.padding-bottom-xs
-              .col 共{{detailData.amount}}支，{{detailData.weight}}吨
+              // .col 共{{detailData.amount}}支，{{detailData.weight}}吨
               span 操作员：{{detailData.operName}}
-          .solid-top.padding-top-xs.padding-bottom-xs.row.justify-between(v-if="tempObject.auditType !== 'ERP销售定价'")
+          .solid-top.padding-top-xs.padding-bottom-xs.row.justify-between(v-if="tempObject.auditType !== 'ERP定价'")
             template(v-if="tempObject.auditType !== '退货'")
               .col
                 span {{tempObject.auditType==='定向' ? '' : '付款'}}截止时间：
@@ -78,7 +79,7 @@ div
                 span.padding-left-xs.delete-style.text-grey ￥{{item.oldSaleMakeprice}}
                 span.padding-left-xs 定价差：
                 span.text-red ￥{{item.saleMakepriceCale}}
-        div( v-else-if="tempObject.auditType === 'ERP销售定价'")
+        div( v-else-if="tempObject.auditType === 'ERP定价'")
           .bg-white.card(v-for="(item, index) in dataList", :key="index")
             .row.justify-between.padding-bottom-xs
               .text-black.col {{item.name}} {{item.standard}}
@@ -103,23 +104,23 @@ div
           .bg-white.card(v-for="(item, idx) in dataList", :key="idx")
             .row.justify-between.padding-bottom-xs
               .text-black.col {{item.name}} {{item.standard}} {{item.material}}
-              .text-blue ¥ {{tempObject.auditType === '定向' ? item.order_price : item.price}}
+              .text-blue ¥ {{tempObject.auditType === '定向' ? item.oldSalePrice : item.price}}
             .text-gray
               template(v-if="tempObject.auditType === '定向'")
                 .row.justify-between.padding-bottom-xs
                   .col
                     span.padding-right-xs {{item.length}}
-                    span.padding-right-xs {{item.warehouse}}
+                    span.padding-right-xs {{item.wh_name}}
                     span.sub-mark.ml-5 {{item.supply}}
-                  span ({{item.metering_way}})
-                .padding-bottom-xs {{item.amount}}支/{{item.weight}}吨
+                  span ({{item.quantityTypeValue}})
+                .padding-bottom-xs {{item.max_count}}支/{{item.max_weight}}吨
                 .padding-bottom-xs
-                  span.padding-right-xs(v-if="item.tolerance_range") 公差范围 {{item.tolerance_range}}
-                  span(v-if="item.weight_range") 重量范围 {{item.weight_range}}
+                  span.padding-right-xs(v-if="item.toleranceRange") 公差范围 {{item.toleranceRange}}
+                  span(v-if="item.weightRange") 重量范围 {{item.weightRange}}
                 .solid-top.padding-top-xs.padding-bottom-xs.text-black
                   span 定向价：
-                  span.text-blue ￥{{item.dx_price}}
-                  span.padding-left-xs 费用：￥{{item.cost_price}}
+                  span.text-blue ￥{{item.inTaxPrice}}
+                  span.padding-left-xs 费用：￥{{item.inTaxMoney}}
                   span.padding-left-xs 价差：
                   span.text-red ￥{{item.diff}}
                 span.text-black(v-if="detailData.is_talk_price == 1 && item.xs_price != item.order_price") 销售定价：
@@ -150,7 +151,7 @@ div
             span.ft-16.font-bold 审批人
           .flex.justify-between.text-gray.ft-14.border-left-line.padding-left-xl
             span.ft-14.font-bold 可审批人:{{detailData.lastTask.userName}}
-            span.ft-14.text-blue 当前节点/待审批
+            span.ft-14.text-blue(style="white-space: nowrap;") 当前节点/待审批
           .circle.bg-blue 2
         .relative.padding-top-xl.padding-left-xl.padding-right-sm.padding-bottom-sm
           .flex.justify-between.padding-bottom-xs.border-left-line.padding-left-xl
@@ -161,9 +162,10 @@ div
 
   .footer.row.bg-white.text-center.text-white.padding-sm(:style="{height: isIpx ? '188rpx' : '120rpx', 'padding-bottom': isIpx ? '68rpx' : '20rpx'}",
    v-if="btnShow && tempObject.fromPage !== 'reviewHistory'")
-    .col.foot-cancel(@click="confirm('cancel')", v-if="tempObject.statusStr === '待初审' || tempObject.statusStr === '待审核'") 取消
-    .col.foot-cancel(@click="confirm('cancel')", v-else) {{tempObject.auditType === '退货' ? '驳回' : '拒绝'}}
-    .col.foot-confirm.margin-left-sm(@click="confirm('confirm')") {{tempObject.auditType === '退货' ? '退货' : '通过'}}
+    .col.foot-cancel(@click="confirm('cancel')", v-if="tempObject.auditType === 'ERP定价'") 取消
+    .col.foot-cancel(@click="confirm('cancel')", v-if="tempObject.auditType === '延时' || tempObject.auditType === '定向' || tempObject.auditType === '议价'") 拒绝
+    .col.foot-cancel(@click="confirm('cancel')", v-if="tempObject.auditType === '退货' || tempObject.auditType === '退款'") 驳回
+    .col.foot-confirm.margin-left-sm(@click="confirm('confirm')") {{(tempObject.auditType === '退货' || tempObject.auditType === '退款') ? '退货' : '通过'}}
   modal-input(v-model="modalShow", :title="modalInputTitle", confirmText="确定", type="customize", :cb="modalHandler")
     .padding-sm
       .bg-gray.input-box
@@ -264,38 +266,34 @@ export default {
     },
     // 弹窗回调
     modalHandler ({ type }) {
-      this.modalShow = false
+      console.log(type, this.modalInputTitle)
       if (type === 'confirm') {
-        // const params = {
-        //   return_id: this.tempObject.return_id,
-        //   status: 1
-        // }
-        const params = {}
+        let params = {}
         if (this.modalInputTitle === '驳回原因') {
           if (!this.modalVal) {
             this.showMsg('请输入驳回原因')
             return false
+          } else {
+            params.reason = this.modalVal
+            this.modalShow = false
           }
-          // params.reject_cause = this.modalVal
-          // params.status = 2
-          // params.kp_flag = this.detailData.invoiceFlag
-          params.taskId = this.detailData.taskId
-          params.userId = '1346277615056457730'
-          params.json = this.detailData.json
-          params.status = 3
-          params.reason = this.modalVal
-          params.tenantId = '1'
         } else {
-          // params.back_money = this.modalVal
-          params.taskId = this.detailData.taskId
-          params.userId = '1346277615056457730'
-          params.json = this.detailData.json
-          params.status = 2
-          params.reason = '理由'
-          params.tenantId = '1'
+          params.back_money = this.modalVal
         }
-        console.log(this.apiList.zf.audit)
+        // const params = {
+        //   return_id: this.tempObject.return_id,
+        //   status: 1
+        // }
+        // let testUserId = '1400343202594037762' // 员工 何建龙
+        // let testUserId = '1400343202594037762' // 采购部长 于成龙
+        params.taskId = this.detailData.taskId
+        params.userId = '1400343202594037762'
+        params.json = this.detailData.json
+        params.status = 2
+        params.tenantId = '1'
         this.confirmAudit(params, this.apiList.zf.audit)
+      } else {
+        this.modalShow = false
       }
     },
     confirm (flag) {
@@ -309,110 +307,112 @@ export default {
           case '退货':
             this.disabled = false
             this.modalShow = true
-            if (flag === 'cancel') {
-              this.modalInputTitle = '驳回原因'
-              this.modalVal = ''
-            } else {
-              this.modalInputTitle = '退款金额'
-              this.modalVal = this.detailData.totalMoeny
-            }
+            this.modalInputTitle = '退款金额'
+            this.modalVal = this.detailData.totalMoeny
+            break
+          case '退款':
+            this.disabled = false
+            this.modalShow = true
+            this.modalInputTitle = '退款金额'
+            this.modalVal = this.detailData.totalMoeny
             break
           case '定向':
             this.disabled = false
-            if (this.tempObject.statusStr === '定向初审') {
-              if (this.detailData.is_talk_price) {
-                this.erpModalShow1 = true
-              } else {
-                let params = {
-                  user_id: this.currentUser.user_id,
-                  deal_no: this.detailData.billNo,
-                  flag: flag === 'cancel' ? '0' : '1'
-                }
-                console.log('入参====>', params)
-                this.confirmAudit(params, this.apiList.xy.dxAudit)
-              }
-            } else if (this.tempObject.statusStr === '定向复审') {
-              if (this.detailData.is_talk_price) {
-                this.erpModalShow2 = true
-              } else {
-                let params = {
-                  user_id: this.currentUser.user_id,
-                  deal_no: this.detailData.billNo,
-                  flag: flag === 'cancel' ? '0' : '1',
-                  pw_reason: this.erpModalVal
-                }
-                console.log('入参====>', params)
-                this.confirmAudit(params, this.apiList.xy.dxAudit)
-              }
-            }
+            this.disabled = false
+            params.taskId = this.detailData.taskId
+            params.userId = '1400343202594037762'
+            params.json = this.detailData.json
+            params.status = 2
+            params.reason = ''
+            params.tenantId = '1'
+            this.confirmAudit(params, this.apiList.zf.audit)
             break
           case '延时':
-            if (flag === 'cancel') {
-              params.taskId = this.detailData.taskId
-              params.userId = '1346277615056457730'
-              params.json = this.detailData.json
-              params.status = 3
-              params.reason = ''
-              params.tenantId = '1'
-            } else {
-              params.taskId = this.detailData.taskId
-              params.userId = '1346277615056457730'
-              params.json = this.detailData.json
-              params.status = 2
-              params.reason = ''
-              params.tenantId = '1'
-            }
+            this.disabled = false
+            params.taskId = this.detailData.taskId
+            params.userId = '1400343202594037762'
+            params.json = this.detailData.json
+            params.status = 2
+            params.reason = ''
+            params.tenantId = '1'
             this.confirmAudit(params, this.apiList.zf.audit)
             break
           case 'ERP议价':
             this.disabled = false
-            if (this.tempObject.statusStr === '待初审') {
-              this.erpModalShow1 = true
-            } else if (this.tempObject.statusStr === '待复审') {
-              this.erpModalShow2 = true
-            }
+            params.taskId = this.detailData.taskId
+            params.userId = '1400343202594037762'
+            params.json = this.detailData.json
+            params.status = 2
+            params.reason = ''
+            params.tenantId = '1'
+            this.confirmAudit(params, this.apiList.zf.audit)
             break
-          case 'ERP销售定价':
+          case 'ERP定价':
             this.disabled = false
-            params.user_id = this.currentUser.user_id
-            params.id = this.tempObject.tstc_no
-            this.confirmAudit(params, this.apiList.xy.salePriceAudit)
+            params.taskId = this.detailData.taskId
+            params.userId = '1400343202594037762'
+            params.json = this.detailData.json
+            params.status = 2
+            params.reason = ''
+            params.tenantId = '1'
+            this.confirmAudit(params, this.apiList.zf.audit)
             break
-          // default:
-          //   console.log('default')
+          default:
+            console.log('default')
         }
       } else if (flag === 'cancel') {
-        if (this.tempObject.auditType === '退货') {
-          this.disabled = false
-          this.modalShow = true
-          if (flag === 'cancel') {
+        switch (this.tempObject.auditType) {
+          case '退货':
+            this.disabled = false
+            this.modalShow = true
             this.modalInputTitle = '驳回原因'
             this.modalVal = ''
-          }
-          return
-        }
-        if (this.tempObject.statusStr === '待复审') { // erp议价复审驳回
-          let params = {
-            id: this.detailData.billNo,
-            stage: 2, // 1初审 2复审
-            flag: '0',
-            cust_name: this.detailData.custName,
-            employee_name: this.detailData.employeeName,
-            dept_name: this.detailData.deptName,
-            nickname: this.currentUser.nickname
-          }
-          console.log('入参====>', params)
-          this.confirmAudit(params, this.apiList.xy.sellerBargainAudit)
-        } else if (this.tempObject.statusStr === '定向复审' || this.tempObject.statusStr === '定向初审') { // 定向订单待初审、待复审驳回
-          let params = {
-            user_id: this.currentUser.user_id,
-            deal_no: this.detailData.billNo,
-            flag: '0'
-          }
-          console.log('入参====>', params)
-          this.confirmAudit(params, this.apiList.xy.dxAudit)
-        } else {
-          this.back()
+            return
+          case '退款':
+            this.disabled = false
+            this.modalShow = true
+            this.modalInputTitle = '驳回原因'
+            this.modalVal = this.detailData.totalMoeny
+            break
+          case '定向':
+            params.taskId = this.detailData.taskId
+            params.userId = '1400343202594037762'
+            params.json = this.detailData.json
+            params.status = 3
+            params.reason = ''
+            params.tenantId = '1'
+            this.confirmAudit(params, this.apiList.zf.audit)
+            break
+          case '延时':
+            this.disabled = false
+            params.taskId = this.detailData.taskId
+            params.userId = '1400343202594037762'
+            params.json = this.detailData.json
+            params.status = 3
+            params.reason = ''
+            params.tenantId = '1'
+            this.confirmAudit(params, this.apiList.zf.audit)
+            break
+          case 'ERP定价':
+            params.taskId = this.detailData.taskId
+            params.userId = '1400343202594037762'
+            params.json = this.detailData.json
+            params.status = 3
+            params.reason = ''
+            params.tenantId = '1'
+            this.confirmAudit(params, this.apiList.zf.audit)
+            break
+          case 'ERP议价':
+            params.taskId = this.detailData.taskId
+            params.userId = '1400343202594037762'
+            params.json = this.detailData.json
+            params.status = 3
+            params.reason = ''
+            params.tenantId = '1'
+            this.confirmAudit(params, this.apiList.zf.audit)
+            break
+          default:
+            this.back()
         }
       }
     },
@@ -503,7 +503,7 @@ export default {
       console.log('+++>>>>')
       // this.showLoading()
       this.btnShow = true
-      let res = await this.httpGet(this.apiList.zf.getDetail + '?id=' + this.id + '&userId=1346277615056457730')
+      let res = await this.httpGet(this.apiList.zf.getDetail + '?id=' + this.id + '&userId=1400343202594037762')
       console.log(res)
       console.log(JSON.parse(res.data.json))
       let data = res.data
@@ -562,6 +562,52 @@ export default {
           }
           console.log('延时参数整理====>', this.detailData)
           break
+        case '定向':
+          this.detailData = {
+            // liftStatus: data.need_lift,
+            status: data.status,
+            billNo: jsonData.saleContractNo || jsonData.preSaleDemandNo,
+            custName: jsonData.settlementUnitName,
+            // totalAmount: data.amount,
+            // totalWeight: data.weight,
+            totalMoeny: jsonData.inTaxReceiveMoney,
+            endTime: jsonData.contractDelayDate,
+            invoiceStatus: '待复审',
+            json: data.json,
+            taskId: data.taskList[data.taskList.length - 1].taskId,
+            operName: data.taskList[data.taskList.length - 1].userName,
+            firstTask: data.taskList[0],
+            lastTask: data.taskList[data.taskList.length - 1]
+            // list: jsonData.returnDetailDTOS
+            // is_talk_price: data.is_talk_price
+          }
+          console.log('定向参数整理====>', this.detailData)
+          // name standard  material  amount  weight money
+          this.detailData.list = jsonData.saleContractDetailDTOS.map(item => {
+            return {
+              name: item.productBrandName,
+              standard: item.specification,
+              material: item.productTextureName,
+              supply: item.prodAreaName,
+              length: item.length,
+              wh_name: item.stockZoneName,
+              oldSalePrice: item.oldSalePrice,
+              quantityTypeValue: item.quantityTypeValue,
+              inTaxPrice: item.inTaxPrice,
+              inTaxMoney: item.inTaxMoney,
+              max_count: item.avbleAmount,
+              max_weight: item.quantityType === '01' ? item.managerWeight : item.poundWeight,
+              price: item.quantityType === '01' ? item.priceManager : item.pricePound,
+              quantityType: item.quantityType === '01' ? '理计' : '磅计',
+              ajuPricesetMakeprice: item.priceManager,
+              pricesetMakeprice: item.pricePound,
+              ajuPricesetOldmakeprice: item.oldPriceManager,
+              pricesetOldmakeprice: item.oldPriceManager,
+              weightRange: item.weightRange,
+              toleranceRange: item.toleranceRange
+            }
+          })
+          break
         case 'ERP议价':
           this.detailData = {
             // liftStatus: data.need_lift,
@@ -581,7 +627,7 @@ export default {
             // list: jsonData.returnDetailDTOS
             // is_talk_price: data.is_talk_price
           }
-          console.log('退货参数整理====>', this.detailData)
+          console.log('议价参数整理====>', this.detailData)
           // name standard  material  amount  weight money
           let listData = jsonData.saleContractDetailDTOS || jsonData.preDemandDetailDTOS
           this.detailData.list = listData.map(item => {
@@ -601,16 +647,16 @@ export default {
             }
           })
           break
-        case 'ERP销售定价':
+        case 'ERP定价':
           this.detailData = {
             // liftStatus: data.need_lift,
             // status: data.status,
-            billNo: jsonData.demandNo,
-            custName: jsonData.settlementUnitName,
-            amount: data.amount,
-            weight: data.weight,
+            // billNo: jsonData.demandNo,
+            // custName: jsonData.settlementUnitName,
+            // amount: data.amount,
+            // weight: data.weight,
             // totalMoeny: jsonData.inTaxReceiveMoney,
-            endTime: jsonData.extractDate,
+            endTime: jsonData.priceDate,
             invoiceStatus: '待复审',
             // json: data.json,
             // taskId: data.taskList[data.taskList.length - 1].taskId,
@@ -620,9 +666,9 @@ export default {
             list: jsonData.demandDetailDTOS,
             is_talk_price: data.is_talk_price
           }
-          console.log('退货参数整理====>', this.detailData)
+          console.log('定价参数整理====>', this.detailData)
           // name standard  material  amount  weight money
-          this.detailData.list = jsonData.demandDetailDTOS.map(item => {
+          this.detailData.list = jsonData.resourcePricingItemDTOList.map(item => {
             return {
               name: item.productBrandName,
               standard: item.specification,
@@ -636,6 +682,10 @@ export default {
               max_weight: item.quantityType === '01' ? item.managerWeight : item.poundWeight,
               price: item.quantityType === '01' ? item.priceManager : item.pricePound,
               quantityType: item.quantityType === '01' ? '理计' : '磅计',
+              ajuPricesetMakeprice: item.priceManager,
+              pricesetMakeprice: item.pricePound,
+              ajuPricesetOldmakeprice: item.oldPriceManager,
+              pricesetOldmakeprice: item.oldPriceManager,
               weightRange: item.weightRange,
               toleranceRange: item.toleranceRange
             }

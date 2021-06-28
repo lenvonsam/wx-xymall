@@ -1,6 +1,7 @@
 import UTF8 from 'utf8'
 import BASE64 from 'base-64'
 const zfBASICURL = 'http://47.103.130.166:8008/api/' // zf测试环境地址
+// const zfBASICURL = 'http://47.103.131.110:8008/api/' // zf开发环境地址
 const BASICURL = 'https://mobileapp.xingyun361.com/quasarserverdev' // 测试环境地址
 // const BASICURL = 'https://mobileapp.xingyun361.com/quasarserverstage' // 预上线环境地址
 // const BASICURL = 'https://mobileapp.xingyun361.com/quasarserver'
@@ -176,7 +177,7 @@ function httpGet (url, params) {
         }
         if (data.success) {
           resolve(data)
-        } else if (data.code === 'TK01' || data.code === 'TK02' || data.code === 'TK03' || data.code === 'TK04' || data.code === 'TC001' || data.message === 'token失效请重新登录' || data.message === '请重新登录') {
+        } else if (data.code === 'TK01' || data.code === 'TK02' || data.code === 'TK03' || data.code === 'TK04' || data.code === 'TC001' || data.message === 'token失效请重新登录' || data.message === '请重新登录' || data.message === '登录信息无效，请重新登陆') {
           _this.$store.commit('LOGOUT')
           _this.confirm({ content: '登录已失效，请重新登录' }).then((r) => {
             if (r === 'confirm') {
@@ -196,7 +197,7 @@ function httpGet (url, params) {
   })
 }
 
-function httpPost (url, params) {
+function httpPost (url, params = {}) {
   const _this = this
   let header = {}
   if (url !== 'base/online/appletLogin') {
@@ -223,15 +224,16 @@ function httpPost (url, params) {
         }
         if (data.success) {
           resolve(data)
-        } else if (data.code === 'TK01' || data.code === 'TK02' || data.code === 'TK03' || data.code === 'TK04' || data.code === 'TC001' || data.message === 'token失效请重新登录' || data.message === '请重新登录') {
-          // console.log('>>>+++++++++登陆失效模态框')
+        } else if (data.code === 'TK01' || data.code === 'TK02' || data.code === 'TK03' || data.code === 'TK04' || data.code === 'TC001' || data.message === 'token失效请重新登录' || data.message === '请重新登录' || data.message === '登录信息无效，请重新登陆') {
           _this.$store.commit('LOGOUT')
-          _this.confirm({ content: '登录已失效，请重新登录' }).then((r) => {
-            if (r === 'confirm') {
-              _this.exitUser()
-              _this.jump('/pages/account/login/main')
-            }
-          })
+          if (!params.fromApp) {
+            _this.confirm({ content: '登录已失效，请重新登录' }).then((r) => {
+              if (r === 'confirm') {
+                _this.exitUser()
+                _this.jump('/pages/account/login/main')
+              }
+            })
+          }
         } else {
           console.error(data.message)
           reject(data)

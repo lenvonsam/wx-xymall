@@ -87,27 +87,29 @@ export default {
     me.autoUser()
 
     // 获取用户信息
-    me.httpPost(me.apiList.zf.getPersonInfo, {}).then(res => {
-      console.log('用户已登陆，获取用户信息++++', res)
-      me.setUser({ token: me.token, user: res.data })
-      if (res.data.userStatus === '01') {
-        me.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
-          if (res === 'confirm') {
-            me.jump('/pages/account/companyUpdate/main')
-          }
-        })
-      }
-    }).finally(() => {
-      me.hideLoading()
-    }).catch(e => {
-      me.$store.commit('LOGOUT')
-      me.hideLoading()
-      me.showMsg('登录已失效，请重新登录')
-      setTimeout(() => {
-        me.exitUser()
-        me.jump('/pages/account/login/main')
-      }, 500)
-    })
+    if (me.isLogin) {
+      me.httpPost(me.apiList.zf.getPersonInfo, {fromApp: true}).then(res => {
+        console.log('用户已登陆，获取用户信息++++', res)
+        me.setUser({ token: me.token, user: res.data })
+        if (res.data.userStatus === '01') {
+          me.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
+            if (res === 'confirm') {
+              me.jump('/pages/account/companyUpdate/main')
+            }
+          })
+        }
+      }).finally(() => {
+        me.hideLoading()
+      }).catch(e => {
+        me.$store.commit('LOGOUT')
+        me.hideLoading()
+        me.showMsg('登录已失效，请重新登录')
+        setTimeout(() => {
+          me.exitUser()
+          me.jump('/pages/account/login/main')
+        }, 500)
+      })
+    }
     // this.ironRequest(`${this.apiList.xy.checkUUID.url}?user_id=${uid}`, {}, this.apiList.xy.checkUUID.method).then(resp => {
     //   console.log('checkUUID未失效')
     //   me.hideLoading()

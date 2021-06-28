@@ -60,7 +60,7 @@
         .cart-settle-btna.ft-16(@click="deleteLoading")
           span 删除
         .cart-settle-btnb.ft-16(@click="makeLoading")
-          span 制作提单
+          span {{saleLadingId ? '确认制作' : '制作提单'}}
     .tab-select-dialog.solid-top(:style="{top: selectDialogTop + 'rpx'}", v-show="pickWayShow")
       .bg-white(@click.stop="")
         template(v-if="tabActive === 1")
@@ -146,6 +146,7 @@ export default {
       flag: 1,
       firstLoad: false,
       saleLadingId: '',
+      saleContractId: '',
       auditDxCheckDisable: true,
       showWarningIcon: true,
       noticeClientModalShow: false,
@@ -209,7 +210,9 @@ export default {
     this.liftSelectVal = 1
     this.liftSelect = '收吊费'
     this.firstLoad = false
+    this.saleContractId = ''
     this.saleLadingId = ''
+    this.saleContractId = ''
     this.tabActive = 0
     this.totalPrice = 0
     this.totalWeight = 0
@@ -219,7 +222,8 @@ export default {
   },
   onLoad (options) {
     console.log(options)
-    this.saleLadingId = options.saleContractId
+    this.saleContractId = options.saleContractId
+    this.saleLadingId = options.saleLadingId
   },
   onUnload () {
     this.liftSelect = ''
@@ -514,9 +518,19 @@ export default {
     async loadCartData () {
       this.isLoad = false
       const self = this
-      await self.httpGet(this.apiList.zf.createSaleLadingFromContract + '?saleContractId=' + this.saleLadingId).then(res => {
+      let getSaleLoadingUrl = ''
+      if (this.saleLadingId) {
+        getSaleLoadingUrl = this.apiList.zf.editSaleLading + '?saleLadingId=' + this.saleLadingId
+      }
+      if (this.saleContractId) {
+        getSaleLoadingUrl = this.apiList.zf.createSaleLadingFromContract + '?saleContractId=' + this.saleContractId
+      }
+      await self.httpGet(getSaleLoadingUrl).then(res => {
         console.log(res)
         if (res.success) {
+          this.customerName = res.data.carNo
+          this.liftSelect = res.data.deliveryType === '01' ? '自提' : '配送'
+          // this.buyUnitName = res.data.buyUnitName
           this.loadData = [res.data]
           this.loadData.map(item => {
             item.itemAllchoosed = false
@@ -584,10 +598,25 @@ export default {
           //   }
           // })
           this.loadData[0].saleLadingDetailDTOS = this.loadData[0].ladingDetailVOList
-          this.httpPost(this.apiList.zf.addSaleLading, this.loadData[0]).then(res => {
+
+          let addSaleLadingUrl = ''
+          if (this.saleLadingId) {
+            addSaleLadingUrl = this.apiList.zf.updateSaleLading
+          }
+          if (this.saleContractId) {
+            addSaleLadingUrl = this.apiList.zf.addSaleLading
+          }
+          this.httpPost(addSaleLadingUrl, this.loadData[0]).then(res => {
             console.log(res)
             if (res.success) {
-              this.showMsg('提单制作成功！')
+              if (this.saleLadingId) {
+                this.showMsg('提单修改成功！')
+                this.back()
+              }
+              if (this.saleContractId) {
+                this.showMsg('提单制作成功！')
+                this.back()
+              }
             }
           }).catch(err => {
             this.showMsg(err.message)

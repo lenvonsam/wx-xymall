@@ -196,14 +196,14 @@ export default {
     wxLogin: 'base/online/wxLogin',
     // 商城分类
     appletQuerySpecificationList: 'xingyun/shopMall/appletQuerySpecificationList',
-    // 商城品名
-    queryProductBrandNameSortPage: 'xingyun/shopMall/queryProductBrandNameSortPage',
     // 商城筛选获取所有品名
     searchBrand: 'xingyun/shopMall/queryProductBrandNamePage',
     // 获取商城列表
     shopMallList: 'xingyun/shopMall/queryPage',
     // 获取品名分页列表
     queryProductBrandNamePage: 'xingyun/shopMall/queryProductBrandNamePage',
+    // 获取品名规则分页列表
+    queryProductBrandNameSortPage: 'xingyun/shopMall/queryProductBrandNameSortPage',
     // 获取规格分页列表
     querySpecificationPage: 'xingyun/shopMall/querySpecificationPage',
     // 获取材质分页列表
@@ -358,12 +358,53 @@ export default {
     queryCarsByUnitId: 'sale/saleLading/queryCarsByUnitId',
     // 卖家-提单制作-确认制作
     addSaleLading: 'sale/saleLading/addSaleLading',
-    // 卖家-提单详情
-    editSaleLading: 'sale/saleLading/editSaleLading',
     // 卖家-制作提单-合同详情
     createSaleLadingFromContract: 'sale/saleLading/createSaleLadingFromContract',
     // 埋点、行为日志记录
     logClickAdd: 'base/log-click/add',
-    logEventAdd: 'base/log-event/add'
+    logEventAdd: 'base/log-event/add',
+    // 卖家-提单管理列表
+    querySellerSaleLadingPage: 'sale/saleLading/querySellerSaleLadingPage',
+    // 卖家-提单详情
+    editSaleLading: 'sale/saleLading/editSaleLading',
+    // 卖家-提单管理-作废
+    dropSaleLading: 'sale/saleLading/dropSaleLading',
+    // 卖家-提单管理-货齐
+    ladingGoodsAreAll: 'sale/saleLading/ladingGoodsAreAll',
+    // 卖家-提单管理-取消货齐
+    ladingGoodsAreNotAll: 'sale/saleLading/ladingGoodsAreNotAll',
+    // 卖家-提单管理-编辑
+    updateSaleLading: 'sale/saleLading/updateSaleLading',
+    // 卖家-用户余额
+    searchCustomerFunds: 'finance/unit-fund/searchCustomerFunds',
+    // 卖家-用户余额查询接口
+    selectUnitMoney: 'finance/unitFund/selectUnitMoney',
+    // 卖家-型云小程序增加提现限制接口
+    addRestrict: 'finance/unitFund/addRestrict',
+    // 卖家-型云小程序解除提现限制接口
+    delRestrict: 'finance/unitFund/delRestrict',
+    // 卖家-合同延时列表
+    querySaleContractPage: 'sale/saleContract/querySaleContractPage',
+    // 卖家-延时操作
+    delaySaleContract: 'sale/saleContract/delaySaleContract',
+    // 型云小程序用户余额详情查询
+    lookUnitMoney: 'finance/unitFund/getUnitMoney',
+    // ERP现货物资列表查询
+    // queryWarehouseStockDetailPage: 'sale/stockDetail/queryWarehouseStockDetailPage',
+    querySaleStockPageList: 'sale/stock/querySaleStockPageList',
+    // ERP现货物资品名
+    brandQueryPage: 'foundation/product/brand/queryPage',
+    // ERP现货物资仓库
+    stockZoneQueryPage: 'foundation/stockZone/queryPage',
+    // ERP现货物资规格
+    specificationQueryPage: 'foundation/product/getSpecificationList',
+    // ERP现货物资材质
+    textureQueryPage: 'foundation/product/texture/queryPage',
+    // ERP现货物资产地
+    prodAreaQueryPage: 'foundation/prodArea/queryPage',
+    // ERP现货物资获取对应品名的规格
+    getSpecification: 'sale/stock/getSpecification',
+    // 卖家-应收款预警
+    queryTransferXy: 'finance/arStatementList/queryTransferXy'
   }
 }

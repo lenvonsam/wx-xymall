@@ -11,10 +11,11 @@ div
         .col(@click="jumpProfile")
           .flex.align-center
             .author
-              img(:src="currentUser.avatar == undefined ? (imgProxy + 'wx2104_img.png') : currentUser.avatar", v-if="imgProxy")
+              img(:src="currentUser.avatar == undefined ? (imgProxy + 'wx2104_img.png') : currentUser.avatar", v-if="imgProxy", mode="aspectFill")
             .col.padding-left-sm
-              .ft-15.padding-bottom-sm {{currentUser.user_mark}}
-              .ft-12 {{currentUser.type === 'seller' ? currentUser.nickname : currentUser.phone}}
+              template(v-if="isLogin")
+                .ft-15.padding-bottom-sm {{currentUser.companyName}}
+                .ft-12 {{currentUser.username}}
         .cuIcon-right.ft-25
       .account.vendor.bg-white.contract
         .row
@@ -163,15 +164,12 @@ export default {
   },
   onShow () {
     const self = this
-    console.log('是否登陆11++', self.isLogin)
-    setTimeout(() => {
-      console.log('是否登陆22++', self.isLogin)
-    }, 2000)
-
     if (self.isLogin) {
       self.httpPost(self.apiList.zf.queryUserCenterContractInfo, {}).then(res => {
         console.log(res.data)
         this.rowCountObj = res.data
+        this.refreshUser()
+        this.getSummaryQuantity()
       }).catch(err => {
         this.hideLoading()
         console.log(err)
@@ -179,9 +177,6 @@ export default {
       /** 判断账号状态
        * 已完善信息账号可打开“我的”
        * 未完善信息账号点击“我的”提示去完善信息 */
-      this.refreshUser()
-      this.getSummaryQuantity()
-
       // if (self.currentUser.userStatus === '01') {
       //   setTimeout(() => {
       //     self.jump('/pages/account/companyUpdate/main?type=2')
