@@ -206,12 +206,12 @@ export default {
     },
     payBill (item) {
       console.log(item)
-      this.jump(`/pages/vendor/loadMake/main?saleContractId=` + item.saleContractId)
+      this.jump(`/pages/vendor/loadMake/main?saleContractIdList=${item.saleContractId}`)
     },
     goDetail (item, stateLog) {
       console.log(item)
       if (stateLog === 'edit') {
-        this.jump(`/pages/vendor/loadMake/main?saleLadingId=${item.saleLadingId}`)
+        this.jump(`/pages/vendor/loadMake/main?saleLadingIdList=${item.saleLadingId}`)
       } else {
         this.jump(`/pages/vendor/loadDetail/main?saleLadingId=${item.saleLadingId}&stateLog=${stateLog}`)
       }
@@ -229,7 +229,18 @@ export default {
       this.jump('/pages/vendor/loadFilter/main')
     },
     goToSettle () {
-      this.jump(`/pages/vendor/loadMake/main`)
+      let saleContractIdList = []
+      let filterArray = this.listData.filter(item => {
+        if (item.choosed) {
+          saleContractIdList.push(item.saleContractId)
+          return item.choosed === true
+        }
+      })
+      if (filterArray.length > 0) {
+        this.jump(`/pages/vendor/loadMake/main?saleContractIdList=${saleContractIdList.join()}`)
+      } else {
+        this.showMsg('请选择要制作的合同')
+      }
     },
     async copyQuotation (item) {
       try {
@@ -356,9 +367,9 @@ export default {
               } else if (item.orgName === '江苏智恒达型云网络科技有限公司') {
                 item.orgNameAcronym = '型云'
               } else if (item.orgName === '江苏岳洋通金属加工有限公司') {
-                item.orgNameAcronym = '岳阳通'
+                item.orgNameAcronym = '岳洋通'
               } else {
-                item.orgNameAcronym = ''
+                item.orgNameAcronym = item.orgName
               }
             })
           }

@@ -60,7 +60,7 @@
         .cart-settle-btna.ft-16(@click="deleteLoading")
           span 删除
         .cart-settle-btnb.ft-16(@click="makeLoading")
-          span {{saleLadingId ? '确认制作' : '制作提单'}}
+          span {{saleLadingIdList ? '确认制作' : '制作提单'}}
     .tab-select-dialog.solid-top(:style="{top: selectDialogTop + 'rpx'}", v-show="pickWayShow")
       .bg-white(@click.stop="")
         template(v-if="tabActive === 1")
@@ -121,7 +121,7 @@ export default {
       pwAddr: '',
       pwAddrDetail: '',
       allChoosed: false,
-      loadData: {},
+      loadData: [],
       carts: [],
       soldCarts: [],
       btnDisable: false,
@@ -145,8 +145,8 @@ export default {
       dxFilterArray: [],
       flag: 1,
       firstLoad: false,
-      saleLadingId: '',
-      saleContractId: '',
+      saleLadingIdList: '',
+      saleContractIdList: [],
       auditDxCheckDisable: true,
       showWarningIcon: true,
       noticeClientModalShow: false,
@@ -210,9 +210,8 @@ export default {
     this.liftSelectVal = 1
     this.liftSelect = '收吊费'
     this.firstLoad = false
-    this.saleContractId = ''
-    this.saleLadingId = ''
-    this.saleContractId = ''
+    this.saleLadingIdList = ''
+    this.saleContractIdList = []
     this.tabActive = 0
     this.totalPrice = 0
     this.totalWeight = 0
@@ -222,8 +221,11 @@ export default {
   },
   onLoad (options) {
     console.log(options)
-    this.saleContractId = options.saleContractId
-    this.saleLadingId = options.saleLadingId
+    if (options.saleContractIdList) {
+      this.saleContractIdList = options.saleContractIdList.split(',')
+    } else {
+      this.saleLadingIdList = options.saleLadingIdList
+    }
   },
   onUnload () {
     this.liftSelect = ''
@@ -345,31 +347,23 @@ export default {
     },
     // 计算购物车费用
     cartCalculation (newVal) {
-      console.log('重新计算+++')
-      newVal = newVal || this.loadData
+      let newValList = newVal || this.loadData
+      console.log('重新计算+++', newValList)
       // 返回选中的物资
-      let filterArray = []
-      newVal.forEach(item => {
-        filterArray = item.ladingDetailVOList.filter(itm => {
-          item.countWeight = this.$toFixed(Number(item.amount * item.weight), 3)
-          return item.choosed === true
+      if (newValList.length > 0) {
+        console.log('长度', newValList.length)
+        this.totalWeight = 0
+        this.totalCount = 0
+        newValList.forEach(item => {
+          item.ladingDetailVOList.filter(itm => {
+            if (itm.choosed) {
+              this.totalCount += itm.amount // 总数量
+              this.totalWeight += Number(this.$toFixed(Number(itm.weight), 3)) // 总重量
+              // totalPrice += Number(this.$toFixed(Number(itm.dx_prices) * Number(itm.countWeight), 2))
+            }
+          })
         })
-      })
-      console.log('filterArray', filterArray)
-      this.allChoosed = filterArray.length === newVal.length
-      let totalPrice = 0
-      this.totalWeight = 0
-      let totalCount = 0
-      if (filterArray.length > 0) {
-        filterArray.map(itm => {
-          totalCount += itm.amount // 总数量
-          totalPrice += Number(this.$toFixed(Number(itm.dx_prices) * Number(itm.countWeight), 2))
-          this.totalWeight += Number(itm.countWeight)
-        })
-        this.totalPrice = this.$toFixed(Number(totalPrice), 2)
-        this.totalWeight = this.$toFixed(Number(this.totalWeight), 3)
       }
-      this.totalCount = totalCount
     },
     customChange (e) {
       this.customSearchVal = e.mp.detail.value
@@ -519,46 +513,78 @@ export default {
       this.isLoad = false
       const self = this
       let getSaleLoadingUrl = ''
-      if (this.saleLadingId) {
-        getSaleLoadingUrl = this.apiList.zf.editSaleLading + '?saleLadingId=' + this.saleLadingId
-      }
-      if (this.saleContractId) {
-        getSaleLoadingUrl = this.apiList.zf.createSaleLadingFromContract + '?saleContractId=' + this.saleContractId
-      }
-      await self.httpGet(getSaleLoadingUrl).then(res => {
-        console.log(res)
-        if (res.success) {
-          this.customerName = res.data.carNo
-          this.liftSelect = res.data.deliveryType === '01' ? '自提' : '配送'
-          // this.buyUnitName = res.data.buyUnitName
-          this.loadData = [res.data]
-          this.loadData.map(item => {
-            item.itemAllchoosed = false
-            item.ladingDetailVOList.map(itm => {
-              itm.choosed = false
-              itm.weight = this.calcWeight(
-                itm.quantityType, // 购物车计量方式
-                itm.amount,
-                itm.meterWeight,
-                itm.length,
-                itm.tolerance,
-                itm.floatingRatio
-              )
-              console.log([itm.quantityType, // 购物车计量方式
-                itm.amount,
-                itm.meterWeight,
-                itm.length,
-                itm.tolerance,
-                itm.floatingRatio])
+      if (this.saleLadingIdList) {
+        getSaleLoadingUrl = this.apiList.zf.editSaleLading + '?saleLadingId=' + this.saleLadingIdList
+        await self.httpGet(getSaleLoadingUrl).then(res => {
+          console.log(res)
+          if (res.success) {
+            this.customerName = res.data.carNo
+            this.liftSelect = res.data.deliveryType === '01' ? '自提' : '配送'
+            // this.buyUnitName = res.data.buyUnitName
+            res.data.forEach(item => {
+              item.itemAllchoosed = false
+              item.ladingDetailVOList.forEach(itm => {
+                itm.choosed = false
+                itm.weight = this.calcWeight(
+                  itm.quantityType, // 购物车计量方式
+                  itm.amount,
+                  itm.meterWeight,
+                  itm.length,
+                  itm.tolerance,
+                  itm.floatingRatio
+                )
+                console.log([itm.quantityType, // 购物车计量方式
+                  itm.amount,
+                  itm.meterWeight,
+                  itm.length,
+                  itm.tolerance,
+                  itm.floatingRatio])
+              })
             })
-            console.log(item)
-          })
-        }
-      }).catch(e => {
-        self.showMsg(e.message)
-      }).finally(() => {
-        this.isLoad = true
-      })
+            this.loadData = res.data
+          }
+        }).catch(e => {
+          self.showMsg(e.message)
+        }).finally(() => {
+          this.isLoad = true
+        })
+      } else {
+        getSaleLoadingUrl = this.apiList.zf.createSaleLadingFromContractList
+        let params = this.saleContractIdList
+        await self.httpPost(getSaleLoadingUrl, params).then(res => {
+          console.log(res)
+          if (res.success) {
+            this.customerName = res.data.carNo
+            this.liftSelect = res.data.deliveryType === '01' ? '自提' : '配送'
+            // this.buyUnitName = res.data.buyUnitName
+            res.data.forEach(item => {
+              item.itemAllchoosed = false
+              item.ladingDetailVOList.forEach(itm => {
+                itm.choosed = false
+                itm.weight = this.calcWeight(
+                  itm.quantityType, // 购物车计量方式
+                  itm.amount,
+                  itm.meterWeight,
+                  itm.length,
+                  itm.tolerance,
+                  itm.floatingRatio
+                )
+                console.log([itm.quantityType, // 购物车计量方式
+                  itm.amount,
+                  itm.meterWeight,
+                  itm.length,
+                  itm.tolerance,
+                  itm.floatingRatio])
+              })
+            })
+            this.loadData = res.data
+          }
+        }).catch(e => {
+          self.showMsg(e.message)
+        }).finally(() => {
+          this.isLoad = true
+        })
+      }
     },
     deleteLoading () {
       this.confirm({ content: '您确定要删除吗？' }).then((res) => {
@@ -597,23 +623,24 @@ export default {
           //     return item
           //   }
           // })
-          this.loadData[0].saleLadingDetailDTOS = this.loadData[0].ladingDetailVOList
-
+          this.loadData.forEach((item, index) => {
+            item.saleLadingDetailDTOS = item.ladingDetailVOList
+          })
           let addSaleLadingUrl = ''
-          if (this.saleLadingId) {
+          if (this.saleLadingIdList) {
             addSaleLadingUrl = this.apiList.zf.updateSaleLading
           }
-          if (this.saleContractId) {
-            addSaleLadingUrl = this.apiList.zf.addSaleLading
+          if (this.saleContractIdList) {
+            addSaleLadingUrl = this.apiList.zf.addSaleLadingList
           }
-          this.httpPost(addSaleLadingUrl, this.loadData[0]).then(res => {
+          this.httpPost(addSaleLadingUrl, this.loadData).then(res => {
             console.log(res)
             if (res.success) {
-              if (this.saleLadingId) {
+              if (this.saleLadingIdList) {
                 this.showMsg('提单修改成功！')
                 this.back()
               }
-              if (this.saleContractId) {
+              if (this.saleContractIdList) {
                 this.showMsg('提单制作成功！')
                 this.back()
               }

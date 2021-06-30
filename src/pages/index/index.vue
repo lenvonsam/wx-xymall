@@ -37,7 +37,7 @@ div
     div(:style="{height: echartHeight + 'rpx'}", v-if="!shareModalShow")
       mpvue-echarts(:echarts="echarts", :onInit="initChart")
     .text-center 型云价格指数
-  modal-intro(v-model="shareModalShow", :images="introImages", type="home")
+  modal-intro(v-model="shareModalShow", :images="introImages", :type="shareModalShowType")
   //- alert(msg="资料提交成功,请耐心等待审核", v-model="alertShow")
   //- modal-input(v-model="alertShow")
   // modal(v-model="modalShow", @cb="modalCb", :title="modalTitle" :btns="btn")
@@ -60,6 +60,7 @@ export default {
     return {
       introImages: ['home_intro.png'],
       shareModalShow: false,
+      shareModalShowType: 'home',
       echartType: ['H型钢', '工角槽', '普碳开平板'],
       echartTabIndex: 0,
       // echarts,
@@ -187,9 +188,19 @@ export default {
     // 展示首页引导图
     showShareBanner () {
       const firstShare = mpvue.getStorageSync('firstShare') || false
-      if (!firstShare) {
-        this.shareModalShow = true
-        mpvue.setStorageSync('firstShare', true)
+      const activeShare = mpvue.getStorageSync('activeShare') || false
+      if (new Date().getTime() - new Date('2021-07-10').getTime() < 0) {
+        if (!activeShare) {
+          this.shareModalShowType = 'activity'
+          this.shareModalShow = true
+          mpvue.setStorageSync('activeShare', true)
+        }
+      } else {
+        if (!firstShare) {
+          this.shareModalShowType = 'home'
+          this.shareModalShow = true
+          mpvue.setStorageSync('firstShare', true)
+        }
       }
     },
     // 点击产品分类

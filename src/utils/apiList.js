@@ -358,8 +358,10 @@ export default {
     queryCarsByUnitId: 'sale/saleLading/queryCarsByUnitId',
     // 卖家-提单制作-确认制作
     addSaleLading: 'sale/saleLading/addSaleLading',
+    addSaleLadingList: 'sale/saleLading/addSaleLadingList',
     // 卖家-制作提单-合同详情
     createSaleLadingFromContract: 'sale/saleLading/createSaleLadingFromContract',
+    createSaleLadingFromContractList: 'sale/saleLading/createSaleLadingFromContractList',
     // 埋点、行为日志记录
     logClickAdd: 'base/log-click/add',
     logEventAdd: 'base/log-event/add',

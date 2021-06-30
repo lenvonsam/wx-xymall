@@ -1,7 +1,9 @@
 <template lang="pug">
 .cu-modal(:class="modalName")
   //- 首页
-  .container.mask.mall(v-if="type === 'home'", :style="{paddingTop: customBar + 55 + 'px'}", @click="hide")
+  .container.mask.active(v-if="type === 'activity'", :style="{paddingTop: customBar + 'px'}", @click="hide")
+    img.activity(src="/static/images/activity.gif")
+  .container.mask.mall(v-else-if="type === 'home'", :style="{paddingTop: customBar + 55 + 'px'}", @click="hide")
     img.arrow(src="/static/images/mall_arrow.png", :style="{top: customBar + 'px'}")
     img.body(:src="imgProxy + 'mall_body.png'")
   //- 商城
@@ -78,6 +80,13 @@ export default {
       width 300px
       height 406px
       margin 0 auto
+  &.active
+    display flex
+    justify-content center
+    align-items center
+    .activity
+      width 250px
+      height 250px
   img
     width 100%
     height 100%
