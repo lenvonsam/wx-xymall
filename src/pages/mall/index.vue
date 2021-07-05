@@ -555,6 +555,16 @@ export default {
             this.showMsg('请完善信息，耐心等待审批通过')
             break
           case 'notice':
+            this.httpPost(this.apiList.zf.arrivalNotice, obj)
+              .then(res => {
+                if (res.success) {
+                  this.showMsg('已设置到货通知提醒，一有库存我们会短信通知您，谢谢！')
+                }
+              })
+              .catch(e => {
+                this.showMsg(e.message, true)
+              })
+            break
           case 'cart':
             this.currentUser.type === 'seller' ? this.logEventGet({ event: 'click_app_mall_add_cart_seller' }) : this.logEventGet({ event: 'click_app_mall_add_cart' })
             if (this.currentUser.userStatus === '01' || this.currentUser.userStatus === '02' || this.currentUser.userStatus === '03') {

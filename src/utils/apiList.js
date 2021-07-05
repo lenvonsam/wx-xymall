@@ -407,6 +407,8 @@ export default {
     // ERP现货物资获取对应品名的规格
     getSpecification: 'sale/stock/getSpecification',
     // 卖家-应收款预警
-    queryTransferXy: 'finance/arStatementList/queryTransferXy'
+    queryTransferXy: 'finance/arStatementList/queryTransferXy',
+    // 短信到货通知
+    arrivalNotice: 'xingyun/shopMall/arrivalNotice'
   }
 }
