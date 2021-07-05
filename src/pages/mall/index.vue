@@ -705,7 +705,7 @@ export default {
               if (resData.length < 10) self.loadFinish = 2
             } else {
               self.currentPage--
-              if (self.currentPage > 2 && self.goodsNameList[idx].data.length > 10) self.loadFinish = 2
+              if (self.currentPage > 0) self.loadFinish = 2
             }
           }
           self.$forceUpdate()
