@@ -170,13 +170,14 @@ export default {
         }
         // 判断机型
         const model = e.model
+        console.log('model', e.model)
         if (/iphone\sx/i.test(model) ||
           (/iphone/i.test(model) && /unknown/.test(model)) ||
           /iphone\s11/i.test(model)) {
-          console.log('model', e.model)
+          console.log('x机型+++++')
           me.configVal({ key: 'isIpx', val: true })
         } else {
-          console.log('机型+++++')
+          console.log('非x机型+++++')
           me.configVal({ key: 'isIpx', val: false })
         }
         console.log('capsule:>>', capsule)

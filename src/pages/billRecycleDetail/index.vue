@@ -59,7 +59,7 @@ div
                     .col(style="flex: 0 0 60px;")
                       count-step(v-model="cart.amount", @change="rowCartCount($event, cart)", :max="cart.ratioAvailableAmount")
                     .padding-left-xs {{cart.countWeight}}吨
-  .s-footer(v-if="carts.length > 0", style="height: 140rpx")
+  .s-footer(v-if="carts.length > 0")
     .cart-footer.justify-between
       .col.cart-footer-col
         .row.justify-between
@@ -72,6 +72,7 @@ div
             span 合计：
             b.text-red ￥{{totalPrice}}
         .text-right.ft-12(style="color:#999;", v-show="!isEdit") 共{{totalCount}}支 ，{{totalWeight}}吨，吊费: {{totalLiftCharge}}元
+        .padding-bottom(v-if="isIpx")
       .cart-settle-btn.ft-16(@click="goToSettle")
         span {{isEdit ? '删除' : '生成合同'}}
   alert(:msg="alertText", :cb="alertCb", v-model="alertShow", force)
@@ -158,7 +159,7 @@ export default {
     })
   },
   beforeMount () {
-    console.log(this.$store.state.isIpx)
+    console.log('是否是x机型++', this.$store.state.isIpx)
     this.height = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight)
   },
   watch: {
