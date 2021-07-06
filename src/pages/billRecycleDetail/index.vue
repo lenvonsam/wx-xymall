@@ -159,7 +159,6 @@ export default {
     })
   },
   beforeMount () {
-    console.log('是否是x机型++', this.$store.state.isIpx)
     this.height = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight)
   },
   watch: {

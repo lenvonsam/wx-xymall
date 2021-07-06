@@ -293,7 +293,11 @@ export default {
           return false
         } else {
           this.showLoading()
-          this.httpPost(this.apiList.zf.updateSaleContract, this.contractDetail)
+          let params = this.contractDetail
+          params.contractDetailList = this.carts
+          params.saleContractDetailDTOS = this.carts
+          params.list = this.carts
+          this.httpPost(this.apiList.zf.updateSaleContract, params)
             .then((res) => {
               this.hideLoading()
               this.btnDisabled = false
@@ -325,6 +329,7 @@ export default {
       this.confirm({ content: '删除后将从合同中移除此规格，是否继续？(点击申请修改后，删除操作生效)' }).then((res) => {
         if (res === 'confirm') {
           me.carts = list
+          console.log('剩下的++++++', me.carts)
         }
       })
     },
