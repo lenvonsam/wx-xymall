@@ -52,7 +52,7 @@ div
           .ft-12 吊费: {{billDetail.liftingFeeMoney}}
           .padding-top-xs
             span 合同金额：
-            span.text-red ￥{{billDetail.inTaxLadingMoney}}
+            span.text-red ￥{{billDetail.inTaxReceiveMoney}}
       .bg-white.mt-half-rem(v-if="billDetail.status_desc !== '待补款' && billDetail.status_desc !== '违约'")
         .padding-sm.text-black.text-bold.solid-bottom 实发信息
         .text-gray.padding-sm
@@ -76,15 +76,15 @@ div
             .flex.padding-bottom-xs
               .col 支付方式
               .col.text-right.text-black {{billDetail.payMethod === '01' ? '全款' : billDetail.payMethod === '02' ? '定金' : '白条'}}
-                span(v-if="billDetail.status_desc === '待审核' && billDetail.payMethod === '02'") (预计定金: {{billDetail.pre_front_price}})
+                span(v-if="billDetail.status_desc === '待审核' && billDetail.payMethod === '02'") (预计定金: {{billDetail.advancePaymentMoney}})
             .flex.padding-bottom-xs
               .col 已支付
               .col.text-right.text-black
-                span.ft-12.pr-5(v-if="billDetail.payMethod === '02'") (定金支付：{{billDetail.front_price}}元)
+                span.ft-12.pr-5(v-if="billDetail.payMethod === '02'") (定金支付：{{billDetail.advancePaymentMoney}}元)
                 span {{billDetail.inTaxPayMoney}} 元
             .flex.padding-bottom-xs(v-if="billDetail.payMethod === '02'")
               .col 定金抵扣
-              .col.text-right.text-black {{billDetail.used_front_price}} 元
+              .col.text-right.text-black {{billDetail.depositMoney}} 元
             .flex
               .col 未支付
               .col.text-right.text-black {{billDetail.unpaidAmount}} 元
@@ -114,7 +114,7 @@ div
         .padding-bottom-xs.flex.justify-between
           div 已支付：
           .text-black {{billDetail.payment_price}}元
-        .text-right.padding-bottom-sm.text-gray.ft-12(v-if="billDetail.pay_type_desc === '定金支付'") (定金支付：{{billDetail.front_price}}元， 定金抵扣：{{billDetail.used_front_price}}元)
+        .text-right.padding-bottom-sm.text-gray.ft-12(v-if="billDetail.pay_type_desc === '定金支付'") (定金支付：{{billDetail.advancePaymentMoney}}元， 定金抵扣：{{billDetail.depositMoney}}元)
     .bg-white.mt-half-rem
       .padding-sm.text-black.text-bold.solid-bottom 供应商开户信息
       .ft-13.text-gray.padding-sm
@@ -192,7 +192,7 @@ export default {
   methods: {
     payBill () {
       this.logEventGet({ event: 'click_app_myorder_detail_pay' })
-      this.jump('/mall/pay?orderNo=' + this.billDetail.tstc_no + '&pageType=offlinePay&price=' + this.billDetail.total_money + '&frontPrice=' + this.billDetail.front_price + '&percent=' + this.billDetail.percent)
+      this.jump('/mall/pay?orderNo=' + this.billDetail.tstc_no + '&pageType=offlinePay&price=' + this.billDetail.total_money + '&frontPrice=' + this.billDetail.advancePaymentMoney + '&percent=' + this.billDetail.percent)
     },
     cancelBill () {
       this.logEventGet({ event: 'click_app_myorder_detail_cancel' })

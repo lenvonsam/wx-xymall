@@ -59,7 +59,7 @@ div
                     .col(style="flex: 0 0 60px;")
                       count-step(v-model="cart.amount", @change="rowCartCount($event, cart)", :max="cart.ratioAvailableAmount")
                     .padding-left-xs {{cart.countWeight}}吨
-  .s-footer(v-if="carts.length > 0", style="height: 100rpx")
+  .s-footer(v-if="carts.length > 0", style="height: 140rpx")
     .cart-footer.justify-between
       .col.cart-footer-col
         .row.justify-between
@@ -158,6 +158,7 @@ export default {
     })
   },
   beforeMount () {
+    console.log(this.$store.state.isIpx)
     this.height = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight)
   },
   watch: {
@@ -770,7 +771,7 @@ export default {
       top 8px
 .cart-footer
   flex 5
-  min-height 50px
+  min-height 70px
   background #fff
   display flex
   // color $mainBlack

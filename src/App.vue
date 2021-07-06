@@ -176,6 +176,7 @@ export default {
           console.log('model', e.model)
           me.configVal({ key: 'isIpx', val: true })
         } else {
+          console.log('机型+++++')
           me.configVal({ key: 'isIpx', val: false })
         }
         console.log('capsule:>>', capsule)

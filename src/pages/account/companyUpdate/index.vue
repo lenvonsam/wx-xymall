@@ -243,6 +243,25 @@ export default {
                 console.log(e.message)
               })
               break
+            case 'pic2':
+              self.dlyszUrl = tempFilePaths[0]
+              url = self.apiList.zf.uploadImage
+              self.uploadFile(url, tempFilePaths[0], updateType, '02').then(res => {
+                console.log(res)
+                console.log('pic2 第一步++++++')
+                self[key] = res.attachPath
+                self.postForm = Object.assign(self.postForm, res)
+                self.uploadFile(self.apiList.zf.ocrImage, tempFilePaths[0], '10', '02').then(res => {
+                  console.log('pic2 第二步++++++')
+                  console.log(res)
+                  self.postForm = Object.assign(self.postForm, res)
+                }).catch(e => {
+                  console.log(e.message)
+                })
+              }).catch(e => {
+                console.log(e.message)
+              })
+              break
             default:
               self.dlyszUrl = tempFilePaths[0]
               url = self.apiList.zf.uploadImage

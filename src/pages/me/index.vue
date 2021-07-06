@@ -61,7 +61,7 @@ div
       .account.bg-white.flex.align-center(@click="jumpBalance")
         .ft-16.text-bold 账户余额
         .col.ft-16.text-right
-          span(v-if="isLogin").text-blue.text-bold ￥ {{rowCountObj.unitFundBalance}}
+          span(v-if="isLogin").text-blue.text-bold ￥ {{rowCountObj.unitFundBalance || 0}}
           span(v-else).text-blue.text-bold ￥--
           span.text-gray.cuIcon-right
     .padding-sm
