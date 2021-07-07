@@ -207,7 +207,7 @@ export default {
     classifyClick (id, name) {
       // this.configVal({ key: 'tempObject', val: { name: title } })
       this.logEventGet({ event: 'click_app_index_category', name: name })
-      this.configVal({ key: 'tempObject', val: { name: id, fromPage: 'home' } })
+      this.configVal({ key: 'tempObject', val: { name: name, fromPage: 'home' } })
       this.tab('/pages/mall/main')
     },
     // 点击功能图标

@@ -67,9 +67,10 @@ div
                     span(v-else) --支/--吨
                   .text-blue.ft-15.text-bold
                     //- ￥{{item[mallTypeObject[itemType].price]}}
-                    span.text-red.ft-13(v-if="item.price === '--'") 开售时间:{{item.show_time}}
-                    span(v-else-if="item.show_price === true") ￥{{item[mallTypeObject[itemType].price]}}
-                    //- .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)") 查看价格
+                    span.text-red.ft-13(v-if="item.price === '--' || (isLogin && !isNineClocks && item.productClassName ==='H型钢') || (isLogin && !isNineClocks && item.productClassName ==='板材')") 开售时间:{{item.show_time}}
+                    span.text-blue(v-else-if="isLogin") ￥{{item.price}}
+                    // span(v-else-if="item.show_price === true") ￥{{item[mallTypeObject[itemType].price]}}
+                    .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)") 查看价格
                   .text-gray.flex
                     .ft-11.col ({{item.weightMark}})
                     .text-right
@@ -308,9 +309,11 @@ export default {
     }
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 285
     if (this.tempObject.fromPage === 'home') {
+      console.log(this.tempObject, 'tempObject++++')
       // 首页
       this.mallTabVal = this.tempObject.name
       this.queryObject.name = this.tempObject.name
+      this.refresher()
     } else if (this.tempObject.fromPage === 'search' && this.tempObject.noBack) {
       // 搜索
       this.isRefresh = 'refresh'

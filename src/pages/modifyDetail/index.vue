@@ -287,32 +287,43 @@ export default {
     applyEdit () {
       if (this.btnDisabled) return false
       this.btnDisabled = true
-      this.confirm({ content: '请确认修改合同' }).then((res) => {
-        if (res !== 'confirm') {
-          this.btnDisabled = false
-          return false
-        } else {
-          this.showLoading()
-          let params = this.contractDetail
-          params.contractDetailList = this.carts
-          params.saleContractDetailDTOS = this.carts
-          params.list = this.carts
-          this.httpPost(this.apiList.zf.updateSaleContract, params)
-            .then((res) => {
-              this.hideLoading()
-              this.btnDisabled = false
-              this.showMsg('修改成功')
-              setTimeout(() => {
-                this.back()
-              }, 1500)
-            })
-            .catch((e) => {
-              this.hideLoading()
-              this.btnDisabled = false
-              this.showMsg(e.message)
-            })
-        }
+      console.log(this.carts)
+      let filterArray = this.carts.filter(item => {
+        return item.choosed
       })
+      console.log(filterArray)
+      if (filterArray.length === 0) {
+        this.showMsg('请选择结算商品', 'none')
+        this.btnDisabled = false
+      } else {
+        this.carts = filterArray
+        this.confirm({ content: '请确认修改合同' }).then((res) => {
+          if (res !== 'confirm') {
+            this.btnDisabled = false
+            return false
+          } else {
+            this.showLoading()
+            let params = this.contractDetail
+            params.contractDetailList = this.carts
+            params.saleContractDetailDTOS = this.carts
+            params.list = this.carts
+            this.httpPost(this.apiList.zf.updateSaleContract, params)
+              .then((res) => {
+                this.hideLoading()
+                this.btnDisabled = false
+                this.showMsg('修改成功')
+                setTimeout(() => {
+                  this.back()
+                }, 1500)
+              })
+              .catch((e) => {
+                this.hideLoading()
+                this.btnDisabled = false
+                this.showMsg(e.message)
+              })
+          }
+        })
+      }
     },
     delCartRow () {
       const me = this
