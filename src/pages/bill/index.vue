@@ -210,11 +210,12 @@ export default {
       this.billTab[0].data = []
       this.pageHeight = this.tabName === '1' ? 150 : 100
       this.queryObj.saleContractNo = this.billNo
-      if (this.tabName === '0') {
-        this.refresher()
-      } else {
-        this.tabName = '0'
-      }
+      // if (this.tabName === '0') {
+      //   this.refresher()
+      // } else {
+      //   this.tabName = '0'
+      // }
+      this.refresher()
     },
     // 轮播切换
     swiperChange (e) {
