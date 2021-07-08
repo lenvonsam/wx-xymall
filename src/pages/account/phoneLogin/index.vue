@@ -150,55 +150,59 @@ export default {
         }
         if (this.canClick) {
           this.canClick = false
-          const data = await this.httpPost(url, params)
-          // 存储用户token和信息user
-          this.setUser(data.data)
-          const self = this
-          if (self.pageType === 'smsLogin') {
-            self.showMsg('登录成功')
-          }
-          setTimeout(() => {
+          try {
+            const data = await this.httpPost(url, params)
+            // 存储用户token和信息user
+            this.setUser(data.data)
+            const self = this
             if (self.pageType === 'smsLogin') {
-              self.resetVal()
-              // 短信验证码登陆成功，获取用户信息
-              console.log('短信验证码登陆成功，获取用户信息+++++')
-              self.httpPost(self.apiList.zf.getPersonInfo, {}).then(res => {
-                if (res.data.userTypeLogo === '01') {
-                  this.logEventGet({event: 'click_app_login'})
-                } else {
-                  this.logEventGet({event: 'click_app_login_seller'})
-                }
-                self.setUser({ token: self.token, user: res.data })
-                // console.log(res.data.userStatus, res.data.userTypeLogo, 'hahah++++')
-                if (res.data.userStatus === '01') {
-                  self.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
-                    if (res === 'confirm') {
-                      self.jump('/pages/account/companyUpdate/main')
-                    } else {
-                      // self.exitUser()
-                      self.tab('/pages/index/main')
-                    }
-                  })
-                } else {
-                  self.tab('/pages/index/main')
-                }
-              })
-              self.configVal({ key: 'oldVersion', val: self.currentVersion })
-              // self.getRemoteSearchHistory(data)
-            } else {
-              self.confirm({ title: '友情提示', content: '登录密码修改成功，请重新登录' }).then(res => {
-                if (res === 'confirm') {
-                  self.resetVal()
-                  if (self.tempObject.action && self.tempObject.action === 'pageForward') {
-                    self.configVal({ key: 'tempObject', val: {} })
-                    self.back(2)
-                  } else {
-                    self.back()
-                  }
-                }
-              })
+              self.showMsg('登录成功')
             }
-          }, 500)
+            setTimeout(() => {
+              if (self.pageType === 'smsLogin') {
+                self.resetVal()
+                // 短信验证码登陆成功，获取用户信息
+                console.log('短信验证码登陆成功，获取用户信息+++++')
+                self.httpPost(self.apiList.zf.getPersonInfo, {}).then(res => {
+                  if (res.data.userTypeLogo === '01') {
+                    this.logEventGet({event: 'click_app_login'})
+                  } else {
+                    this.logEventGet({event: 'click_app_login_seller'})
+                  }
+                  self.setUser({ token: self.token, user: res.data })
+                  // console.log(res.data.userStatus, res.data.userTypeLogo, 'hahah++++')
+                  if (res.data.userStatus === '01') {
+                    self.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
+                      if (res === 'confirm') {
+                        self.jump('/pages/account/companyUpdate/main')
+                      } else {
+                        // self.exitUser()
+                        self.tab('/pages/index/main')
+                      }
+                    })
+                  } else {
+                    self.tab('/pages/index/main')
+                  }
+                })
+                self.configVal({ key: 'oldVersion', val: self.currentVersion })
+                // self.getRemoteSearchHistory(data)
+              } else {
+                self.confirm({ title: '友情提示', content: '登录密码修改成功，请重新登录' }).then(res => {
+                  if (res === 'confirm') {
+                    self.resetVal()
+                    if (self.tempObject.action && self.tempObject.action === 'pageForward') {
+                      self.configVal({ key: 'tempObject', val: {} })
+                      self.back(2)
+                    } else {
+                      self.back()
+                    }
+                  }
+                })
+              }
+            }, 500)
+          } catch (e) {
+            this.showMsg(e.message)
+          }
         }
       } catch (e) {
         this.showMsg(e)
