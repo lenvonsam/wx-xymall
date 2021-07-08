@@ -27,7 +27,7 @@ div
             span.padding-left-sm.padding-right-sm {{item.stockZoneName}}
             span.sub-mark {{item.prodAreaName}}
           .text-right （{{item.quantityType == '02' ? '磅计' : '理计'}}）
-        .text-gray {{item.amount}} 支 / {{item.quantityType == '02' ? item.outPoundWeight : item.outManagerWeight}}吨
+        .text-gray {{item.amount}} 支 / {{item.quantityType == '02' ? item.poundWeight : item.managerWeight}}吨
         .text-gray(v-if="item.toleranceRange || item.weightRange")
           span.padding-right-sm(v-if="item.toleranceRange") 公差范围 {{item.toleranceRange}}
           span(v-if="item.weightRange") 重量范围 {{item.weightRange}}
@@ -47,9 +47,9 @@ div
             .col 付款截止时间
             .col.text-black.text-right {{billDetail.invalidDate}}
       .bg-white.solid-top.padding-sm.flex
-        .col 共{{billDetail.contractAmount}}支，{{billDetail.contractManagerWeight}}吨
+        .col 共{{billDetail.contractAmount}}支，{{billDetail.quantityType == '02' ? billDetail.contractPoundWeight : billDetail.contractManagerWeight}}吨
         .col.text-right
-          .ft-12 吊费: {{billDetail.liftingFeeMoney}}
+          .ft-12 吊费: ¥{{billDetail.liftingFeeMoney}}
           .padding-top-xs
             span 合同金额：
             span.text-red ￥{{billDetail.inTaxReceiveMoney}}
@@ -64,7 +64,7 @@ div
             .col.text-right.text-black {{billDetail.totalPayment}}元
           .flex.padding-bottom-xs
             .col 实发吊费
-            .col.text-right.text-black {{billDetail.totalLiftCharge === '0.00' ? '0' : billDetail.totalLiftCharge}}元
+            .col.text-right.text-black {{billDetail.totalLiftCharge}}元
           .flex
             .col 实发总金额
             .col.text-right.text-black {{billDetail.totalContractAmount}}元
@@ -113,7 +113,7 @@ div
           .text-black {{billDetail.desposit_can}}元
         .padding-bottom-xs.flex.justify-between
           div 已支付：
-          .text-black {{billDetail.payment_price}}元
+          .text-black {{billDetail.inTaxPayMoney}}元
         .text-right.padding-bottom-sm.text-gray.ft-12(v-if="billDetail.pay_type_desc === '定金支付'") (定金支付：{{billDetail.advancePaymentMoney}}元， 定金抵扣：{{billDetail.depositMoney}}元)
     .bg-white.mt-half-rem
       .padding-sm.text-black.text-bold.solid-bottom 供应商开户信息

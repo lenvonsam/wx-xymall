@@ -173,7 +173,7 @@ export default {
     },
     // 点击确认提现
     confirmWithdraw () {
-      if (this.chargeVal.trim().length === 0) {
+      if (!String(this.chargeVal).trim().length) {
         this.showMsg('请输入提现金额')
         return
       }
