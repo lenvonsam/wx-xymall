@@ -49,7 +49,7 @@ div
               img(:src="currentUser.avatar == undefined ? (imgProxy + 'wx2104_img.png') : currentUser.avatar", v-if="imgProxy", mode="aspectFill")
             .col.padding-left-sm
               template(v-if="isLogin")
-                .ft-15.padding-bottom-sm {{currentUser.username}}
+                .ft-15.padding-bottom-sm {{currentUser.companyName}}
                 .ft-12 {{currentUser.phone}}
               template(v-else)
                 .ft-16.padding-bottom-xs
