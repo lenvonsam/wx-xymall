@@ -382,14 +382,14 @@ export default {
         // }
         // ++++三证合一
         if (this.tabName === '1') {
-          // if (this.pic1.length === 0) {
-          //   this.showMsg('三证合一不能为空')
-          //   this.canHttp = false
-          // }
-          // if (this.pic2.length === 0) {
-          //   this.showMsg('开票资料不能为空')
-          //   this.canHttp = false
-          // }
+          if (this.pic1.length === 0) {
+            this.showMsg('三证合一不能为空')
+            this.canHttp = false
+          }
+          if (this.pic2.length === 0) {
+            this.showMsg('开票资料不能为空')
+            this.canHttp = false
+          }
         } else {
           // ++++三证未合一
           if (this.pic1.length === 0 || this.pic2.length === 0 || this.pic3.length === 0 || this.pic4.length === 0) {
