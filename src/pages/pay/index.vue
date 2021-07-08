@@ -118,6 +118,9 @@ export default {
     },
     frontPrice (newVal) {
       this.frontBalance = this.$toFixed(Number(newVal - this.currentBalance), 2)
+    },
+    payPwd (newVal) {
+      this.payPwd = newVal.trim()
     }
   },
   onShow () {
@@ -241,13 +244,16 @@ export default {
             paramsOnj.paymentType = '02'
             paramsOnj.depositRatio = this.percent
           }
+          this.showLoading()
           self.httpPost(this.apiList.zf.contractOrderPayment, paramsOnj)
             .then(() => {
+              this.hideLoading()
               self.showMsg('支付成功！')
               setTimeout(() => {
                 this.back(2)
               }, 1000)
             }).catch((e) => {
+              this.hideLoading()
               self.showMsg(e.message)
             })
           // if (this.chooseType === 'offpay') {
