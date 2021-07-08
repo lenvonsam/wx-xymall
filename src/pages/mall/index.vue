@@ -526,9 +526,7 @@ export default {
       this.queryObject.current_page = this.currentPage
       this.queryObject.name = this.mallTabVal
       Object.assign(this.queryObject, obj)
-      if (!this.tempObject.standards) {
-        this.refresher()
-      }
+      this.refresher()
     },
     // 监听子组件触发切换商城排版格式
     selectMall (flag) {
