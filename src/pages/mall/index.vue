@@ -311,9 +311,21 @@ export default {
     if (this.tempObject.fromPage === 'home') {
       console.log(this.tempObject, 'tempObject++++')
       // 首页
-      this.mallTabVal = this.tempObject.name
-      this.queryObject.name = this.tempObject.name
-      this.refresher()
+      this.isRefresh = 'refresh'
+      this.currentPage = 1
+      this.swiperCount = 0
+      this.swiperFirst = 1
+      this.queryObject.current_page = this.currentPage
+      this.queryObject.name = this.mallTabVal
+      this.queryObject.search = this.tempObject.name
+      delete this.queryObject.standards
+      delete this.queryObject.materials
+      delete this.queryObject.supplys
+      delete this.queryObject.fromPage
+      console.log('tempObject++++++', this.tempObject.name)
+      if (this.tempObject.name) {
+        this.refresher()
+      }
     } else if (this.tempObject.fromPage === 'search' && this.tempObject.noBack) {
       // 搜索
       this.isRefresh = 'refresh'

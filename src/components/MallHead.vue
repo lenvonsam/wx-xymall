@@ -195,16 +195,19 @@ export default {
     // }
   },
   beforeMount () {
-    // 如果是从搜索页面进来
-    if (this.tempObject.fromPage === 'search' && this.tempObject.noBack) {
-      this.searchVal = this.tempObject.search || ''
-    }
     // 获取滑动tab条（品名）的数据
     this.sortCb('name')
     // 下拉筛选框高度
     this.filterHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 95
   },
   onShow () {
+    // 如果是从搜索页面进来
+    if (this.tempObject.fromPage === 'search' && this.tempObject.noBack) {
+      this.searchVal = this.tempObject.search || ''
+    }
+    if (this.tempObject.fromPage === 'home') {
+      this.searchVal = this.tempObject.name || ''
+    }
     this.isFilter = false
     if (this.sortList[0].data.length === 0) this.sortCb('name')
     // 如果是从搜索页面过来
