@@ -250,9 +250,13 @@ export default {
     jumpDetail (obj) {
       // this.configVal({key: 'tempObject', val: obj})
       // this.jump({path: '/invoice/detail', query: {id: this.tabName}})
+      // 合同编号
       let ids = obj.sourceBusiBillNo
+      // 发票确认编码
+      let sus = [obj.arInvocieId]
+      sus = JSON.stringify(sus)
       if (this.tabName !== '0') {
-        this.jump('/pages/invoiceDetail/main?tabName=' + this.tabName + '&ids=' + ids + '&name=查看详情')
+        this.jump('/pages/invoiceDetail/main?tabName=' + this.tabName + '&ids=' + ids + '&sus=' + sus + '&name=查看详情')
       }
       // this.ironRequest('invoiceDetail.shtml?id=' + obj.id, {}, 'get').then(resp => {
       //   if (resp.returncode === '0') {
@@ -267,6 +271,20 @@ export default {
       //   this.disabledBtn = false
       //   this.showMsg('查看失败')
       // })
+      // 获取发票信息
+      if (this.tabName === '0') {
+        this.httpPost(this.apiList.zf.invoiceUnApplyDetail, ids.split(',')).then(res => {
+          console.log(res)
+          this.configVal({ key: 'tempObject', val: res.data })
+          // this.showObj = res.data
+        })
+      } else {
+        this.httpGet(this.apiList.zf.customerAppliedDetail + '?sourceBusiBillNo=' + ids).then(res => {
+          console.log(res)
+          this.configVal({ key: 'tempObject', val: res.data })
+          // this.showObj = res.data
+        })
+      }
     },
     // 批量申请/批量确认
     invoiceAction () {
@@ -294,6 +312,20 @@ export default {
           tabName: this.tabName
         }
         self.configVal({ key: 'tempObject', val: obj })
+        // 获取发票信息
+        if (this.tabName === '0') {
+          this.httpPost(this.apiList.zf.invoiceUnApplyDetail, ids.split(',')).then(res => {
+            console.log(res)
+            this.configVal({ key: 'tempObject', val: res.data })
+            // this.showObj = res.data
+          })
+        } else {
+          this.httpGet(this.apiList.zf.customerAppliedDetail + '?sourceBusiBillNo=' + ids).then(res => {
+            console.log(res)
+            this.configVal({ key: 'tempObject', val: res.data })
+            // this.showObj = res.data
+          })
+        }
         if (this.tabName === '0') {
           this.jump('/pages/invoiceDetail/main?tabName=' + this.tabName + '&ids=' + ids + '&sds=' + sds + '&sus=' + sus)
           // 发票申请
@@ -381,6 +413,9 @@ export default {
         self.queryObj.receiptSignFlagList = ['3']
       }
       self.httpPost(self.postUrl, self.queryObj).then(res => {
+        if (!res.data) {
+          res.data = []
+        }
         if (res.data.length > 0 && self.currentPage === 1) {
           self.listData = []
           res.data.map(itm => {

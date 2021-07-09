@@ -6,7 +6,7 @@ div
       .bg-white(:class="{'margin-top-sm': idx == 1 && sidx == 0}", v-if="idx<2", v-for="(subItem,sidx) in item", :key="sidx")
         .row.padding-sm.padding-lr(:class="{'pt-0': sidx > 0}")
           .col.flex-100 {{subItem.label}}
-          .col.text-right {{compObj[subItem.content]}}
+          .col.text-right {{compObj[subItem.content] || ''}}
       div(v-if="idx==2")
         template(v-if="compObj['isThreeCertificatesInOne']")
           .bg-white.margin-top-sm

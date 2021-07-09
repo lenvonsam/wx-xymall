@@ -11,7 +11,7 @@ div
         icon.adjust.cuIcon-right
     .bg-white.row.padding.border-bottom-line(@click="jump('/pages/account/companyInfo/main')", :class="{'margin-top-sm': currentUser.type === 'buyer'}")
       .col 公司信息
-      .col.text-right.text-gray.text-autohide {{currentUser.companyName}}
+      .col.text-right.text-gray.text-autohide {{currentUser.companyName || ''}}
       .col.flex-25.text-gray.text-right
         icon.adjust.cuIcon-right
     //- .bg-white.row.padding.ft-16.border-bottom-line
@@ -19,13 +19,13 @@ div
       .col.text-right.text-gray {{currentUser.user_mark}}
     .bg-white.row.padding.border-bottom-line
       .col 登录账号
-      .col.text-right.text-gray {{currentUser.username}}
+      .col.text-right.text-gray {{currentUser.username || ''}}
     .bg-white.row.padding.border-bottom-line
       .col 姓名
-      .col.text-right.text-gray {{currentUser.name || currentUser.nickName}}
+      .col.text-right.text-gray {{currentUser.name || currentUser.nickName || ''}}
     .bg-white.row.padding( v-if="currentUser.type === 'seller'")
       .col 手机号
-      .col.text-right.text-gray {{currentUser.phone}}
+      .col.text-right.text-gray {{currentUser.phone || ''}}
     .bg-white.row.ft-16.padding(v-for="(item,idx) in jumpArray", :key="idx", :class="{'margin-top-sm': idx === 0, 'border-bottom-line': (idx < (jumpArray.length - 1))}", @click="jump(item.url)", v-if="currentUser.type === 'buyer'")
       .col {{item.name}}
       .col.text-right.text-gray(v-if="idx == (jumpArray.length - 1)") {{currentUser.phone}}

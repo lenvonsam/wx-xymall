@@ -128,6 +128,7 @@ export default {
     this.tabName = ''
   },
   beforeMount () {
+    this.showObj = this.tempObject
     this.tabName = this.$root.$mp.query.tabName
     this.ids = this.$root.$mp.query.ids
     this.sds = this.$root.$mp.query.sds
@@ -139,38 +140,45 @@ export default {
     console.log(this.tabName)
     if (this.tabName !== '0' || this.tabName !== '1' || this.tabName !== '2' || this.tabName !== '3') {
       this.pageTitle = this.$root.$mp.query.name || '申请发票'
-      this.loadData()
+      // this.loadData()
     } else {
       this.pageTitle = this.$root.$mp.query.name
     }
-    this.nosArray = this.ids.split(',') // 合同编号
-    this.sdsArray = JSON.parse(this.sds) // 申请发票
-    this.susArray = JSON.parse(this.sus) // 发票确认
+    if (this.ids) {
+      this.nosArray = this.ids.split(',') // 合同编号
+    }
+    if (this.sds) {
+      this.sdsArray = JSON.parse(this.sds) // 申请发票
+    }
+    if (this.sus) {
+      this.susArray = JSON.parse(this.sus) // 发票确认
+    }
     // this.nosArray = this.tempObject.contract_no.split(',')
     // this.nosArrayTotal = this.nosArray.length
-    // if (this.tempObject.status && this.tempObject.status !== '申请') {
-    //   if (this.tempObject.invoice_type) {
-    //     this.pickVal = this.tempObject.invoice_type === '快递发票' ? '快递邮寄' : '线下领取'
-    //   }
-    //   if (this.tempObject.receive_addr) {
-    //     this.receiverAddr = this.tempObject.receive_addr
-    //   }
-    //   if (this.tempObject.receive_phone) {
-    //     this.receiverMobile = this.tempObject.receive_phone
-    //   }
-    //   if (this.tempObject.receive_name) {
-    //     this.receiver = this.tempObject.receive_name
-    //   }
-    //   if (this.tempObject.express_name) {
-    //     this.expressName = this.tempObject.express_name
-    //   }
-    //   if (this.tempObject.express_no) {
-    //     this.expressNo = this.tempObject.express_no
-    //   }
-    //   if (this.tempObject.invoice_no) {
-    //     this.invoiceNo = this.tempObject.invoice_no
-    //   }
-    // }
+    console.log(this.tabName, this.tempObject.postFlag, '哈哈哈+++++')
+    if (this.tabName !== '0') {
+      if (this.tempObject.postFlag) {
+        this.pickVal = this.tempObject.postFlag === '1' ? '快递邮寄' : '线下领取'
+      }
+      if (this.tempObject.receiptSignAdress) {
+        this.receiverAddr = this.tempObject.receiptSignAdress
+      }
+      if (this.tempObject.receiptSignPhone) {
+        this.receiverMobile = this.tempObject.receiptSignPhone
+      }
+      if (this.tempObject.receiptSignName) {
+        this.receiver = this.tempObject.receiptSignName
+      }
+      if (this.tempObject.expressCompany) {
+        this.expressName = this.tempObject.expressCompany
+      }
+      if (this.tempObject.expressNo) {
+        this.expressNo = this.tempObject.expressNo
+      }
+      if (this.tempObject.invoiceNumber) {
+        this.invoiceNo = this.tempObject.invoiceNumber
+      }
+    }
   },
   computed: {
     ...mapState({
@@ -259,20 +267,20 @@ export default {
     },
     pickCb (e) {
       this.pickVal = this.pickItems[e.mp.detail.value]
-    },
-    // 获取发票信息
-    loadData () {
-      const self = this
-      if (this.tabName === '0') {
-        self.httpPost(self.apiList.zf.invoiceUnApplyDetail, self.ids.split(',')).then(res => {
-          self.showObj = res.data
-        })
-      } else {
-        self.httpGet(self.apiList.zf.customerAppliedDetail + '?sourceBusiBillNo=' + self.ids).then(res => {
-          self.showObj = res.data
-        })
-      }
     }
+    // 获取发票信息
+    // loadData () {
+    //   const self = this
+    //   if (this.tabName === '0') {
+    //     self.httpPost(self.apiList.zf.invoiceUnApplyDetail, self.ids.split(',')).then(res => {
+    //       self.showObj = res.data
+    //     })
+    //   } else {
+    //     self.httpGet(self.apiList.zf.customerAppliedDetail + '?sourceBusiBillNo=' + self.ids).then(res => {
+    //       self.showObj = res.data
+    //     })
+    //   }
+    // }
   }
 }
 </script>

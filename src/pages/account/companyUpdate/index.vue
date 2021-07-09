@@ -222,6 +222,11 @@ export default {
         sourceType: ['album', 'camera'],
         success (res) {
           const tempFilePaths = res.tempFilePaths
+          var reg = /(\.gif|\.jpeg|\.png|\.jpg)/i
+          if (!reg.test(tempFilePaths)) {
+            self.showMsg('请上传png,jpg,jpeg,gif格式的图片')
+            return
+          }
           let updateType = ''
           let url = self.apiList.zf.uploadImage
           switch (key) {

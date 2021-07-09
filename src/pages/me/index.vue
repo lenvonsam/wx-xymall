@@ -168,12 +168,12 @@ export default {
       self.httpPost(self.apiList.zf.queryUserCenterContractInfo, {}).then(res => {
         console.log(res.data)
         this.rowCountObj = res.data
-        this.refreshUser()
         this.getSummaryQuantity()
       }).catch(err => {
         this.hideLoading()
         console.log(err)
       })
+      this.refreshUser()
       /** 判断账号状态
        * 已完善信息账号可打开“我的”
        * 未完善信息账号点击“我的”提示去完善信息 */
@@ -321,7 +321,9 @@ export default {
     // 完善公司信息弹窗回调
     alertCb () {
       if (this.isLogin) {
-        if (this.currentUser.type === 'buyer') this.jump('/pages/account/companyUpdate/main?type=2')
+        if (this.currentUser.type === 'buyer') {
+          this.jump('/pages/account/companyUpdate/main?type=2')
+        }
       } else {
         this.jump('/pages/account/login/main')
       }
@@ -337,9 +339,12 @@ export default {
         //   this.ruleModalShow = true
         // }
         // 信息未完善提示
-        if (this.currentUser.userStatus === '01') {
-          this.alertText = '您还需要完善公司信息才能正常工作'
-          this.alertShow = true
+        // console.log('experienceDays+++++', 7 - res.data.experienceDays)
+        if (this.currentUser.type === 'buyer') {
+          if (this.currentUser.userStatus === '01' && (7 - res.data.experienceDays < 0)) {
+            this.alertText = '您还需要完善公司信息才能正常工作'
+            this.alertShow = true
+          }
         }
       } catch (e) {
         console.error(e)

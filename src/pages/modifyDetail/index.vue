@@ -39,7 +39,7 @@ div
                   //- .text-blue ￥{{cart.price}}/吨
                   //-   span {{cart.onlineProductBrandName}}
                   //-   span.padding-left-xs {{cart.specification}}
-                  .text-blue ￥{{cart.price}}/吨
+                  .text-blue ￥{{cart.inTaxPrice}}/吨
                 .content.ft-13
                   .flex.flex-center.justify-between
                     div
@@ -49,7 +49,7 @@ div
                         span.ml-5 {{cart.stockZoneName}}
                         span.sub-mark.ml-5 {{cart.prodAreaName}}
                       .pt-5
-                        span {{cart.ratioAvailableAmount}}支 / {{cart.quantityType == '02' ? cart.ratioAvailablePoundWeight : cart.ratioAvailableManagerWeight}}吨
+                        span {{cart.firstAmount}}支 / {{cart.quantityType == '02' ? cart.availablePoundWeight : cart.avbleManagerWeight}}吨
                         span.padding-left-xs 吊费:
                         span.ml-10 {{cart.price === '--' ? '--' : cart.liftingFee > 0 ? '￥' + cart.liftingFee + '/吨' : cart.liftingFee == 0 ? '无' : '线下结算'}}
                       .pt-5(v-if="cart.toleranceRange || cart.weightRange")
@@ -206,14 +206,14 @@ export default {
         if (filterArray.length > 0) {
           filterArray.map(itm => {
             totalCount += itm.amount
-            if (String(itm.price).indexOf('--') < 0) {
+            if (String(itm.inTaxPrice).indexOf('--') < 0) {
               if (Number(itm.liftingFee) > 0) {
                 const countWeight = itm.weight
                 const countLiftWeight = countWeight * itm.liftingFee
-                this.totalPrice += itm.price * countWeight + countLiftWeight
+                this.totalPrice += itm.inTaxPrice * countWeight + countLiftWeight
                 this.totalLiftCharge += countLiftWeight
               } else {
-                this.totalPrice += itm.price * itm.weight
+                this.totalPrice += itm.inTaxPrice * itm.weight
               }
               this.totalWeight += itm.weight
             }
@@ -306,7 +306,6 @@ export default {
             let params = this.contractDetail
             params.contractDetailList = this.carts
             params.saleContractDetailDTOS = this.carts
-            params.list = this.carts
             this.httpPost(this.apiList.zf.updateSaleContract, params)
               .then((res) => {
                 this.hideLoading()
@@ -822,7 +821,7 @@ export default {
           //   this.carts.push(itm)
           // }
         })
-        res.data.saleContractDetailDTOS = arr
+        // res.data.saleContractDetailDTOS = arr
         res.data.list = arr
         this.contractDetail = res.data
       }).catch(e => {
