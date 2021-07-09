@@ -83,7 +83,8 @@ export default {
       billTab: [
         { title: '全部', status: '-2', data: [], isActive: true },
         { title: '待提货', status: '0', data: [], isActive: false },
-        { title: '已完成', status: '3', data: [], isActive: false }
+        { title: '已完成', status: '3', data: [], isActive: false },
+        { title: '已取消', status: '4', data: [], isActive: false }
       ],
       loading: false,
       tabName: '-2',
@@ -145,7 +146,8 @@ export default {
     this.billTab = [
       { title: '全部', status: '-2', data: [], isActive: true },
       { title: '待提货', status: '0', data: [], isActive: false },
-      { title: '已完成', status: '3', data: [], isActive: false }
+      { title: '已完成', status: '3', data: [], isActive: false },
+      { title: '已取消', status: '4', data: [], isActive: false }
     ]
   },
   methods: {
@@ -165,8 +167,10 @@ export default {
         this.queryObj.billLadingStatus = ''
       } else if (this.tabName === '0') {
         this.queryObj.billLadingStatus = '01'
-      } else {
+      } else if (this.tabName === '3') {
         this.queryObj.billLadingStatus = '02'
+      } else {
+        this.queryObj.billLadingStatus = '03'
       }
       this.billTab[idx].data = []
       this.currentPage = 1
