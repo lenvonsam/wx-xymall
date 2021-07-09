@@ -84,8 +84,13 @@ export default {
       pageSize: 10000,
       currentPage: 0,
       queryObject: {
-        current_page: 0,
-        page_size: 10000
+        pageNum: 1,
+        pageSize: 10000,
+        productBrandName: '',
+        specification: '',
+        productTextureName: '',
+        prodAreaName: '',
+        stockZoneName: ''
       },
       temporary: [],
       sortList: [
@@ -476,8 +481,8 @@ export default {
     // },
     // 品名、规格、材质、产地
     sortCb (key, standard) {
-      this.queryObject.name = this.tabVal
-      this.queryObject.current_page = this.currentPage
+      this.queryObject.productBrandName = this.tabVal
+      this.queryObject.currentPage = this.currentPage
       let queryObj = Object.assign({}, this.queryObject)
       this.showLoading()
       this.httpPost(this.apiList.zf[this.sortQueryList[key].reqUrl], queryObj, 'post').then(resp => {

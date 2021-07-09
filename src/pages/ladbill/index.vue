@@ -31,11 +31,11 @@ div
                     copy-btn(:copyUrl="item.saleLadingNo")
                   .col.flex-120.text-right.ft-13
                     //- q-btn(color="red-5", small, outline, rounded, v-if="ladObject.status == '待出库'", @click="cb(ladObject, 'cancel')") 待出库可取消
-                    .text-blue(v-if="item.status == '待收货'", @click="labObjectCb(item, 'confirm')") 确认收货
                     //- q-btn.ft-13(color="primary", small, outline, rounded, v-else-if="ladObject.status == '待付款' && ladObject.pay_price > 0", @click="cb(ladObject, 'pay')") 去支付
-                    .text-red(v-else-if="item.status == '待付款' && item.pay_price > 0", @click="labObjectCb(item, 'pay')") 待付款
-                    .text-gray(v-else-if="item.status == '待付款' && item.pay_price == 0") 审核中
-                    .text-gray(v-else) {{item.status}}
+                    // .text-blue(v-if="item.status == '待收货'", @click="labObjectCb(item, 'confirm')") 确认收货
+                    // .text-red(v-else-if="item.status == '待付款' && item.pay_price > 0", @click="labObjectCb(item, 'pay')") 待付款
+                    // .text-gray(v-else-if="item.status == '待付款' && item.pay_price == 0") 审核中
+                    .text-gray {{item.ladingStatus}}
                 div(@click="jump('/pages/ladbillDetail/main?id=' + item.saleLadingId)")
                   .text-gray.solid-bottom.padding-sm.text-content(v-for="(itm, ladIdx) in item.ladingDetailVOList", :key="ladIdx")
                     .text-black.padding-bottom-xs

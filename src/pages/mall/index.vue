@@ -659,13 +659,13 @@ export default {
         this.queryObject.pageNum = this.currentPage
         this.queryObject.pageSize = this.pageSize
         // 品名
-        this.queryObject.productBrandNames = this.queryObject.name ? [this.queryObject.name] : []
+        this.queryObject.productBrandNames = this.queryObject.name ? this.queryObject.name.split(',') : []
         // 规格
-        this.queryObject.specifications = this.queryObject.standards ? [this.queryObject.standards] : []
+        this.queryObject.specifications = this.queryObject.standards ? this.queryObject.standards.split(',') : []
         // 材质
-        this.queryObject.productTextureNames = this.queryObject.materials ? [this.queryObject.materials] : []
+        this.queryObject.productTextureNames = this.queryObject.materials ? this.queryObject.materials.split(',') : []
         // 产地
-        this.queryObject.prodAreaNames = this.queryObject.supplys ? [this.queryObject.supplys] : []
+        this.queryObject.prodAreaNames = this.queryObject.supplys ? this.queryObject.supplys.split(',') : []
         // 关键词
         this.queryObject.keyword = this.queryObject.search ? this.queryObject.search : ''
         // delete this.queryObject.current_page

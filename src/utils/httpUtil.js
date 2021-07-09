@@ -180,6 +180,7 @@ function httpGet (url, params) {
         } else if (data.code === 'TK01' || data.code === 'TK02' || data.code === 'TK03' || data.code === 'TK04' || data.code === 'TC001' || data.message === 'token失效请重新登录' || data.message === '请重新登录' || data.message === '登录信息无效，请重新登陆') {
           _this.$store.commit('LOGOUT')
           _this.confirm({ content: '登录已失效，请重新登录' }).then((r) => {
+            console.log('确定+++', r)
             if (r === 'confirm') {
               _this.exitUser()
               _this.jump('/pages/account/login/main')
@@ -228,6 +229,7 @@ function httpPost (url, params = {}) {
           _this.$store.commit('LOGOUT')
           if (!params.fromApp) {
             _this.confirm({ content: '登录已失效，请重新登录' }).then((r) => {
+              console.log('确定+++', r)
               if (r === 'confirm') {
                 _this.exitUser()
                 _this.jump('/pages/account/login/main')
@@ -263,7 +265,7 @@ function httpPostForm (url, params) {
         if (res.code === 'TK01' || res.code === 'TK02' || res.code === 'TK03' || res.code === 'TK04' || res.code === 'TC001') {
           this.confirm({ content: '登录已失效，请重新登录' }).then((r) => {
             if (r === 'confirm') {
-              this.jump('/pages/account/login')
+              this.jump('/pages/account/login/main')
             }
           })
         } else {
