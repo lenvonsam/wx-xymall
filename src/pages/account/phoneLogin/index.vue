@@ -158,6 +158,7 @@ export default {
             if (self.pageType === 'smsLogin') {
               self.showMsg('登录成功')
             }
+            this.canClick = true
             setTimeout(() => {
               if (self.pageType === 'smsLogin') {
                 self.resetVal()
@@ -201,6 +202,7 @@ export default {
               }
             }, 500)
           } catch (e) {
+            this.canClick = true
             this.showMsg(e.message)
           }
         }
