@@ -58,7 +58,7 @@ div
         .text-gray.padding-sm
           .flex.padding-bottom-xs
             .col 实发总数量/总重量
-            .col.text-right.text-black {{billDetail.outAmount}}支，{{billDetail.totalWeight}}吨
+            .col.text-right.text-black {{billDetail.outAmount}}支，{{billDetail.actualTonnage}}吨
           .flex.padding-bottom-xs
             .col 实发货款
             .col.text-right.text-black {{billDetail.totalPayment}}元
@@ -75,15 +75,18 @@ div
           .ft-13.padding-sm.text-gray
             .flex.padding-bottom-xs
               .col 支付方式
-              .col.text-right.text-black(v-if="billDetail.payMethod") {{billDetail.payMethod === '01' ? '全款' : billDetail.payMethod === '02' ? '定金' : '白条'}}
+              .col.text-right.text-black(v-if="billDetail.payMethod=='01'") 全款支付
+              .col.text-right.text-black(v-if="billDetail.payMethod=='03'") 定金支付
+              .col.text-right.text-black(v-if="billDetail.payMethod=='02'") 白条支付
+              // .col.text-right.text-black(v-if="billDetail.payMethod") {{billDetail.payMethod === '01' ? '全款' : billDetail.payMethod === '02' ? '定金' : '白条'}}
                 span(v-if="billDetail.status_desc === '待审核' && billDetail.payMethod === '02'") (预计定金: {{billDetail.advancePaymentMoney}})
               .col.text-right.text-black(v-else) --
             .flex.padding-bottom-xs
               .col 已支付
               .col.text-right.text-black
-                span.ft-12.pr-5(v-if="billDetail.payMethod === '02'") (定金支付：{{billDetail.advancePaymentMoney}}元)
+                span.ft-12.pr-5(v-if="billDetail.payMethod === '03'") (定金支付：{{billDetail.advancePaymentMoney}}元)
                 span {{billDetail.inTaxPayMoney}} 元
-            .flex.padding-bottom-xs(v-if="billDetail.payMethod === '02'")
+            .flex.padding-bottom-xs(v-if="billDetail.payMethod === '03'")
               .col 定金抵扣
               .col.text-right.text-black {{billDetail.depositMoney}} 元
             .flex
@@ -93,7 +96,7 @@ div
       .bg-white.solid-top.padding-sm.flex
         .col 共{{billDetail.amount}}支，{{billDetail.weight}}吨
         .col.text-right 合同金额：
-          span.text-red ￥{{billDetail.total_money}}
+          span.text-red ￥{{billDetail.inTaxReceiveMoney}}
           .ft-12.text-gray 含吊费: {{billDetail.lift_money}}
     .bg-white.mt-half-rem(v-if="billDetail.status_desc === '待补款'")
       .padding-sm.text-black.text-bold.solid-bottom 补款详情
@@ -103,7 +106,7 @@ div
           span.text-black {{billDetail.outAmount}}支
         .padding-bottom-xs.flex.justify-between
           div 实发重量:
-          .text-black {{billDetail.totalWeight}}吨
+          .text-black {{billDetail.actualTonnage}}吨
         .padding-bottom-xs.flex.align-center.justify-between
           div 需补款：
           .text-right

@@ -57,7 +57,7 @@ div
         .padding-left-xs.cuIcon-phone
   .footer.row.bg-white.text-center.text-white.padding-sm(v-if="ladObject.status === '提单待确认'", :style="{'padding-bottom': isIpx ? '68rpx' : '20rpx'}")
     .bg-red.col.padding-sm.round(@click="ladCancel(ladObject.saleLadingId)") 驳回
-    .bg-blue.col.margin-left-sm.padding-sm.round(@click="ladConfirm(ladObject.saleLadingId)") 确认提单
+    .bg-blue.col.margin-left-sm.padding-sm.round(@click="ladConfirm(ladObject.saleLadingId)") 确认修改提单
 </template>
 <script>
 import copyBtn from '@/components/CopyBtn.vue'
@@ -103,7 +103,7 @@ export default {
       me.totalWeight = me.$toFixed(me.totalWeight, 3)
       this.ladObject = res.data.saleLadingList[0]
       this.ladObject.status = '提单待确认'
-      if (this.ladObject.status === '提单待确认') this.navTitle = '确认提单'
+      if (this.ladObject.status === '提单待确认') this.navTitle = '确认修改提单'
     })
   },
   computed: {

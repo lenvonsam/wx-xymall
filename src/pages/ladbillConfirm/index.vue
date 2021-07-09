@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  nav-bar(title="待确认提单", isBack)
+  nav-bar(title="修改待确认提单", isBack)
   //- template(v-if="isload")
     time-line(type="mallist")
   //- template(v-if="!isload")
@@ -9,12 +9,12 @@ div
       .bg-white.text-gray.padding-sm.margin-top-sm(v-for="(item, idx) in listData", :key="idx")
         .row.margin-bottom-sm
           .col
-            span.ft-15.text-blue.text-bold {{item.saleLadingNo}}
-            copy-btn(:copyUrl="item.saleLadingNo")
-          .confirm-btn.text-blue(@click="jumpConfirm(item)") 确认提单
+            span.ft-15.text-blue.text-bold {{item.saleContractNo}}
+            copy-btn(:copyUrl="item.saleContractNo")
+          .confirm-btn.text-blue(@click="jumpConfirm(item)") 确认修改提单
         .padding-bottom-xs {{item.orgName}}
         .padding-bottom-xs
-          span 共{{item.ladingAmount}}支，{{item.ladingWeight}}吨
+          span 共{{item.contractAmount}}支，{{item.estimatedTonnage}}吨
         .padding-bottom-xs 生成时间：{{item.createDate}}
   .text-center.text-gray.pt-100(v-else)
     empty-image(url="bill_empty.png", className="img-empty")
@@ -104,28 +104,49 @@ export default {
       //   this.showMsg(err || '网络错误')
       // })
       this.queryObj = {
+        contractStateType: '03',
         pageNum: this.currentPage,
         pageSize: this.pageSize
       }
       const me = this
-      this.httpPost(this.apiList.zf.queryLadingPage + '?pageNum=' + this.queryObj.pageNum + '&pageSize=' + this.queryObj.pageSize, this.queryObj).then(res => {
-        const arr = res.data
-        if (arr.length === 0 && me.currentPage === 1) {
-          me.listData = []
-        } else if (arr.length > 0 && me.currentPage === 1) {
-          me.listData = arr
-        } else if (arr.length > 0 && me.currentPage > 1) {
-          me.listData.push(...arr)
-        } else {
-          me.currentPage--
-          if (me.listData.length >= 10) me.loadFinish = 2
-        }
-        if (this.listData.length < 10) this.loadFinish = 3
-        if (done) done()
-      }).finally(() => {
-        this.isload = false
-        this.hideLoading()
-      })
+      this.httpPost(this.apiList.zf.contractList, this.queryObj)
+        .then(res => {
+          const arr = res.data
+          if (arr.length === 0 && me.currentPage === 1) {
+            me.listData = []
+          } else if (arr.length > 0 && me.currentPage === 1) {
+            me.listData = arr
+          } else if (arr.length > 0 && me.currentPage > 1) {
+            me.listData.push(...arr)
+          } else {
+            me.currentPage--
+            if (me.listData.length >= 10) me.loadFinish = 2
+          }
+          if (this.listData.length < 10) this.loadFinish = 3
+          if (done) done()
+        })
+        .finally(() => {
+          this.isload = false
+          this.hideLoading()
+        })
+      // this.httpPost(this.apiList.zf.queryLadingPage + '?pageNum=' + this.queryObj.pageNum + '&pageSize=' + this.queryObj.pageSize, this.queryObj).then(res => {
+      //   const arr = res.data
+      //   if (arr.length === 0 && me.currentPage === 1) {
+      //     me.listData = []
+      //   } else if (arr.length > 0 && me.currentPage === 1) {
+      //     me.listData = arr
+      //   } else if (arr.length > 0 && me.currentPage > 1) {
+      //     me.listData.push(...arr)
+      //   } else {
+      //     me.currentPage--
+      //     if (me.listData.length >= 10) me.loadFinish = 2
+      //   }
+      //   if (this.listData.length < 10) this.loadFinish = 3
+      //   if (done) done()
+      // }).finally(() => {
+      //   this.isload = false
+      //   this.hideLoading()
+      // })
     }
   }
 }
