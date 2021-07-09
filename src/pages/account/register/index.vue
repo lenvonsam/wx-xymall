@@ -47,6 +47,14 @@ export default {
       qrCodeForGoodsName: state => state.qrCodeForGoodsName
     })
   },
+  watch: {
+    phone (newVal) {
+      this.phone = newVal.trim()
+    },
+    code (newVal) {
+      this.code = newVal.trim()
+    }
+  },
   onShow () {
     this.canClick = true
     this.codeBtnShow = true

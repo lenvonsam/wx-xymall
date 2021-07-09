@@ -44,6 +44,14 @@ export default {
       currentVersion: state => state.currentVersion
     })
   },
+  watch: {
+    uname (newVal) {
+      this.uname = newVal.trim()
+    },
+    upwd (newVal) {
+      this.upwd = newVal.trim()
+    }
+  },
   onUnload () {
     if (this.backType === 2) this.tab('/pages/index/main')
   },

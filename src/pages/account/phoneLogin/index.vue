@@ -54,6 +54,17 @@ export default {
       token: state => state.user.token
     })
   },
+  watch: {
+    phone (newVal) {
+      this.phone = newVal.trim()
+    },
+    code (newVal) {
+      this.code = newVal.trim()
+    },
+    pwd (newVal) {
+      this.pwd = newVal.trim()
+    }
+  },
   components: {
     authBtn,
     wxLogin
