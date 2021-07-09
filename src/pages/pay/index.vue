@@ -248,7 +248,12 @@ export default {
           self.httpPost(this.apiList.zf.contractOrderPayment, paramsOnj)
             .then(() => {
               this.hideLoading()
-              self.showMsg('支付成功！')
+              // 余额充足的情况下，付款成功后未提示通知仓储信息
+              if (this.currentBalance >= this.payMountInfo) {
+                self.showMsg('支付成功！请联系司机去平台仓库提货!')
+              } else {
+                self.showMsg('支付成功！')
+              }
               setTimeout(() => {
                 this.back(2)
               }, 1000)
