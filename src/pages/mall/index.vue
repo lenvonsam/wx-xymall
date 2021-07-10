@@ -675,9 +675,8 @@ export default {
         // delete this.queryObject.supplys
         // delete this.queryObject.search
         const res = await this.httpPost(this.apiList.zf.shopMallList, this.queryObject)
-        let currentDate = res.data.currentDate
+        let currentDate = res.data.currentDate.replace(/-/g, '/')
         let $this = new Date(currentDate) === 'Invalid Date' ? new Date(currentDate.substr(0, 19)) : new Date(currentDate)
-        console.log('时间+++++', $this.getHours())
         if ($this.getHours() < 9) {
           this.isNineClocks = false
         } else {

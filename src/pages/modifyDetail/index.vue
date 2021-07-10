@@ -34,7 +34,7 @@ div
                     img.choose-icon(src="/static/images/blue_check.png", v-if="cart.choosed")
                     img.choose-icon(src="/static/images/btn_ck_n.png", v-else)
                   .col(@click="cart.choosed = !cart.choosed")
-                    span {{cart.onlineProductBrandName}}
+                    span {{cart.productBrandName}}
                     span.padding-left-xs {{cart.specification}}
                   //- .text-blue ￥{{cart.price}}/吨
                   //-   span {{cart.onlineProductBrandName}}
@@ -49,7 +49,7 @@ div
                         span.ml-5 {{cart.stockZoneName}}
                         span.sub-mark.ml-5 {{cart.prodAreaName}}
                       .pt-5
-                        span {{cart.firstAmount}}支 / {{cart.quantityType == '02' ? cart.availablePoundWeight : cart.avbleManagerWeight}}吨
+                        span {{cart.firstAmount}}支 / {{cart.quantityType == '02' ? cart.firstPound : cart.firstManager}}吨
                         span.padding-left-xs 吊费:
                         span.ml-10 {{cart.price === '--' ? '--' : cart.liftingFee > 0 ? '￥' + cart.liftingFee + '/吨' : cart.liftingFee == 0 ? '无' : '线下结算'}}
                       .pt-5(v-if="cart.toleranceRange || cart.weightRange")
@@ -650,6 +650,8 @@ export default {
       this.isLoad = false
       const self = this
       await self.httpPost(this.apiList.zf.saleContractDetail, {contractId: this.$root.$mp.query.contractId}).then(res => {
+        this.saleContractNo = res.data.saleContractNo
+        this.cStatus = this.getStatus(res.data.xingyunContractStatus)
         // this.deliveryType = res.data.deliveryType // 01：表示自提
         // this.sourceType = res.data.sourceType // 合同来源：01:ERP,02:型云商城,03:小程序
         this.oldOrderPrice.allPrice = res.data.inTaxReceiveMoney
