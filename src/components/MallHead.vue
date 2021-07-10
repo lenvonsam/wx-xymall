@@ -480,89 +480,106 @@ export default {
     //   }
     // },
     // 品名、规格、材质、产地
-    sortCb (key, standard) {
+    async sortCb (key, standard) {
       this.queryObject.productBrandName = this.tabVal
       this.queryObject.currentPage = this.currentPage
       let queryObj = Object.assign({}, this.queryObject)
       this.showLoading()
-      this.httpPost(this.apiList.zf[this.sortQueryList[key].reqUrl], queryObj, 'post').then(resp => {
-        console.log('sortCb++++++', resp)
-        // 获取对应的下拉筛选框数据
-        let arr = resp.data[this.sortQueryList[key].respKey]
-        const tabList = []
-        // 获取当前点击的key（规格、材质、产地）的下标
-        const idx = this.sortList.findIndex((item) => {
-          return item.key === key
-        })
-        console.log('idx', idx)
-        if (arr.length > 0) {
-          if (standard) {
-            // const standardIdx = arr.findIndex(item => item.name === standard)
-            arr.unshift({ name: '全部', isActive: false })
-            arr[1].isActive = true
-            this.sortList[1].data = arr
-          } else {
-            console.log('sortList++++', this.sortList[idx].data)
-            var newArr = arr.map(item => {
-              item = {
-                name: item,
-                id: item,
-                isActive: false
-              }
-              // console.log(item)
-              this.sortList[idx].data.filter((itemFilter) => {
-                if (itemFilter.name === item.name && itemFilter.isActive) {
-                  item.isActive = true
-                }
-                return itemFilter.name === item.name && itemFilter.isActive
-              })
-              // console.log('resActive', resActive)
-              // if (key === 'name') {
-              //   const obj = {
-              //     name: item.name,
-              //     key: item.name
-              //   }
-              //   tabList.push(obj)
-              // }
-              tabList.push(item)
-              return item
-            })
-            newArr.unshift({ name: '全部', id: '', isActive: false })
-            // 将数据存入sortList对应项的data中
-            this.sortList[idx].data = newArr
-            // if ((this.currentPage === 0 || key !== 'standard') && !this.isMore) {
-            //   arr.unshift({ name: '全部', id: '', isActive: false })
-            //   this.sortList[idx].data = arr
-            // } else {
-            //   this.sortList[idx].data.push(...arr)
-            // }
-          }
-        } else {
-          this.sortList[idx].data = arr
+      let arr = []
+      if (key === 'name') {
+        let inputSearch = {
+          pageNum: 1,
+          pageSize: 50
         }
-        // else if (this.currentPage !== 0) {
-        //   this.currentPage--
-        // }
-        // 如果选择的是品名
-        if (key === 'name') {
-          tabList.unshift({ name: '全部', id: '', isActive: true })
-          this.sortList[0].data = tabList
-          this.mallTabValChange()
-          this.$emit('getName', tabList)
-        } else if (standard) {
-          this.activeTab = ''
-          this.queryObject.search = ''
-          this.standardVal = ''
-        } else {
-          this.activeTab = key // standard、material、origin
+        try {
+          const res = await this.httpPost(this.apiList.zf.queryProductBrandNameSortPage, inputSearch)
+          arr = res.data.map(item => {
+            return item.productBrandName
+          })
+        } catch (e) {
+          console.log('sortQueryList_catch=======>' + JSON.stringify(e))
+          this.hideLoading()
         }
-        this.isMore = false
-        this.hideLoading()
-      }).catch((e) => {
-        console.log('sortQueryList_catch=======>' + JSON.stringify(e))
-        this.hideLoading()
+      } else {
+        try {
+          let resp = await this.httpPost(this.apiList.zf[this.sortQueryList[key].reqUrl], queryObj, 'post')
+          console.log('sortCb++++++', resp)
+          // 获取对应的下拉筛选框数据
+          arr = resp.data[this.sortQueryList[key].respKey]
+        } catch (e) {
+          console.log('sortQueryList_catch=======>' + JSON.stringify(e))
+          this.hideLoading()
+        }
+      }
+      const tabList = []
+      // 获取当前点击的key（规格、材质、产地）的下标
+      const idx = this.sortList.findIndex((item) => {
+        return item.key === key
       })
-
+      console.log('idx', idx)
+      if (arr.length > 0) {
+        if (standard) {
+          // const standardIdx = arr.findIndex(item => item.name === standard)
+          arr.unshift({ name: '全部', isActive: false })
+          arr[1].isActive = true
+          this.sortList[1].data = arr
+        } else {
+          console.log('sortList++++', this.sortList[idx].data)
+          var newArr = arr.map(item => {
+            item = {
+              name: item,
+              id: item,
+              isActive: false
+            }
+            // console.log(item)
+            this.sortList[idx].data.filter((itemFilter) => {
+              if (itemFilter.name === item.name && itemFilter.isActive) {
+                item.isActive = true
+              }
+              return itemFilter.name === item.name && itemFilter.isActive
+            })
+            // console.log('resActive', resActive)
+            // if (key === 'name') {
+            //   const obj = {
+            //     name: item.name,
+            //     key: item.name
+            //   }
+            //   tabList.push(obj)
+            // }
+            tabList.push(item)
+            return item
+          })
+          newArr.unshift({ name: '全部', id: '', isActive: false })
+          // 将数据存入sortList对应项的data中
+          this.sortList[idx].data = newArr
+          // if ((this.currentPage === 0 || key !== 'standard') && !this.isMore) {
+          //   arr.unshift({ name: '全部', id: '', isActive: false })
+          //   this.sortList[idx].data = arr
+          // } else {
+          //   this.sortList[idx].data.push(...arr)
+          // }
+        }
+      } else {
+        this.sortList[idx].data = arr
+      }
+      // else if (this.currentPage !== 0) {
+      //   this.currentPage--
+      // }
+      // 如果选择的是品名
+      if (key === 'name') {
+        tabList.unshift({ name: '全部', id: '', isActive: true })
+        this.sortList[0].data = tabList
+        this.mallTabValChange()
+        this.$emit('getName', tabList)
+      } else if (standard) {
+        this.activeTab = ''
+        this.queryObject.search = ''
+        this.standardVal = ''
+      } else {
+        this.activeTab = key // standard、material、origin
+      }
+      this.isMore = false
+      this.hideLoading()
       // this.ironRequest(this.sortQueryList[key].reqUrl, queryObj, 'post').then(resp => {
       //   console.log('sortCb++++++', resp)
       //   if (resp.returncode === '0') {
