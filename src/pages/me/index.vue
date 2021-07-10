@@ -163,6 +163,7 @@ export default {
   onLoad () {
   },
   onShow () {
+    console.log('是否依然是登陆状态', this.isLogin)
     const self = this
     if (self.isLogin) {
       self.httpPost(self.apiList.zf.queryUserCenterContractInfo, {}).then(res => {
@@ -332,19 +333,24 @@ export default {
     async refreshUser () {
       try {
         const res = await this.httpPost(this.apiList.zf.getPersonInfo, {})
-        this.modalShow = false
-        this.setUser({ user: res.data })
-        // 超时未提货物模态框
-        // if (this.isLogin && this.currentUser.type === 'buyer' && !this.currentUser.userGeneralAgreement) {
-        //   this.ruleModalShow = true
-        // }
-        // 信息未完善提示
-        // console.log('experienceDays+++++', 7 - res.data.experienceDays)
-        if (this.currentUser.type === 'buyer') {
-          if (this.currentUser.userStatus === '01' && (7 - res.data.experienceDays < 0)) {
-            this.alertText = '您还需要完善公司信息才能正常工作'
-            this.alertShow = true
+        if (res.data.phone) {
+          this.modalShow = false
+          this.setUser({ user: res.data })
+          // 超时未提货物模态框
+          // if (this.isLogin && this.currentUser.type === 'buyer' && !this.currentUser.userGeneralAgreement) {
+          //   this.ruleModalShow = true
+          // }
+          // 信息未完善提示
+          // console.log('experienceDays+++++', 7 - res.data.experienceDays)
+          if (this.currentUser.type === 'buyer') {
+            if (this.currentUser.userStatus === '01' && (7 - res.data.experienceDays < 0)) {
+              this.alertText = '您还需要完善公司信息才能正常工作'
+              this.alertShow = true
+            }
           }
+        } else {
+          this.hideLoading()
+          this.exitUser()
         }
       } catch (e) {
         console.error(e)

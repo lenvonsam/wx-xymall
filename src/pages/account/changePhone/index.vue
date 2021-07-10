@@ -130,10 +130,22 @@ export default {
             phone: this.newPhone,
             verificationCode: this.code2
           }
-          let res = await this.httpPost(this.apiList.zf.updatePersonInfo, params)
-          console.log('更新用户手机号+++++++', res)
-          this.exitUser()
-          this.alertShow = true
+          try {
+            let res = await this.httpPost(this.apiList.zf.updatePersonInfo, params)
+            console.log('更新用户手机号+++++++', res)
+            if (res.success) {
+              this.bindClick = true
+              this.exitUser()
+              this.showMsg('修改成功！')
+              setTimeout(() => {
+                this.redirect('/pages/account/login/main?type=2')
+              }, 1500)
+            }
+            // this.alertShow = true
+          } catch (e) {
+            this.bindClick = true
+            this.showMsg(e.message)
+          }
         }
       } catch (e) {
         // console.log(e)

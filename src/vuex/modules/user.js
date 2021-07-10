@@ -122,6 +122,7 @@ export default {
         mpvue.setStorageSync('lastExperienceDay', '')
         mpvue.setStorageSync('overdueReminder', '')
         mpvue.setStorageSync('isAuditingReminder', '')
+        mpvue.clearStorageSync()
       } catch (e) {
         console.error('exituser:>>', e)
       }
