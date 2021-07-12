@@ -409,6 +409,8 @@ export default {
     // 卖家-应收款预警
     queryTransferXy: 'finance/arStatementList/queryTransferXy',
     // 短信到货通知
-    arrivalNotice: 'xingyun/shopMall/arrivalNotice'
+    arrivalNotice: 'xingyun/shopMall/arrivalNotice',
+    // 点击合同待确认
+    saleContractUpateAffirm: 'sale/saleContract/saleContractUpateAffirm'
   }
 }

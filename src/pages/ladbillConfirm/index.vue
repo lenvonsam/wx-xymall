@@ -62,7 +62,7 @@ export default {
     },
     jumpConfirm (item) {
       this.logEventGet({ event: 'click_app_td_confirm' })
-      this.jump('/pages/ladbillConfirmDetail/main?saleLadingId=' + item.saleLadingId)
+      this.jump('/pages/ladbillConfirmDetail/main?contractId=' + item.saleContractId)
     },
     loadData (done) {
       // const reqUrl = 'orderLadList.shtml'

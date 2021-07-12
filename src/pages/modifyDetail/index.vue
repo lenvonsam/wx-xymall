@@ -296,13 +296,13 @@ export default {
         this.showMsg('请选择结算商品', 'none')
         this.btnDisabled = false
       } else {
-        this.carts = filterArray
         this.confirm({ content: '请确认修改合同' }).then((res) => {
           if (res !== 'confirm') {
             this.btnDisabled = false
             return false
           } else {
             this.showLoading()
+            this.carts = filterArray
             let params = this.contractDetail
             params.contractDetailList = this.carts
             params.saleContractDetailDTOS = this.carts
