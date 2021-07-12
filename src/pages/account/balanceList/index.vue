@@ -144,12 +144,17 @@ export default {
         newYear++ // 年份增
       }
       var newDate = new Date(newYear, newMonth, 1) // 取当年当月中的第一天
-      var firstMounthDay = `${year}-${month - 1}-01`
+      if (month < 10) {
+        month = '0' + (month - 1)
+      } else {
+        month = month - 1
+      }
+      var firstMounthDay = `${year}-${month}-01`
       var lastDay = (new Date(newDate.getTime() - 1000 * 60 * 60 * 24)).getDate()
       if (lastDay < 10) {
         lastDay = '0' + lastDay
       }
-      var lastMounthDay = `${year}-${month - 1}-${lastDay}`
+      var lastMounthDay = `${year}-${month}-${lastDay}`
       return {
         firstMounthDay,
         lastMounthDay
