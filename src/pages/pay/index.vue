@@ -188,18 +188,12 @@ export default {
   methods: {
     alertCb () {
       const me = this
-      if (this.alertFlag === 1) {
-        me.showLoading()
-        setTimeout(() => {
-          me.hideLoading()
-          me.redirect('/pages/bill/main?tabName=6')
-        }, 3000)
-        me.btnDisable = false
-      } else if (this.alertFlag === 2) {
-        me.redirect('/pages/bill/main?tabName=0')
-        me.btnDisable = false
-      }
       this.alertShow = false
+      if (this.alertFlag === 1) {
+        me.redirect('/pages/bill/main?tabName=02')
+      } else if (this.alertFlag === 2) {
+        me.redirect('/pages/bill/main')
+      }
     },
     sendSmsChoosed () {
       this.smsNotify = !this.smsNotify
@@ -226,12 +220,16 @@ export default {
         // }
       }
       if (!this.btnDisable) {
+        this.btnDisable = true
         // let ordernos = this.orderNos.join(',')
         // let encyptPwd = me.base64Str(this.payPwd)
         const msgs = '磅计物资提货时，如需实提补款，平台将从余额扣取相应金额'
         console.log('1')
         this.confirm({ content: msgs }).then((res) => {
-          if (res !== 'confirm') return false
+          if (res !== 'confirm') {
+            this.btnDisable = false
+            return false
+          }
           let paramsOnj = {
             contractIdList: [self.saleContractId],
             paymentType: self.paymentType,
@@ -248,16 +246,36 @@ export default {
           self.httpPost(this.apiList.zf.contractOrderPayment, paramsOnj)
             .then(() => {
               this.hideLoading()
+              this.btnDisable = false
               // 余额充足的情况下，付款成功后未提示通知仓储信息
               if (this.currentBalance >= this.payMountInfo) {
-                self.showMsg('支付成功！请联系司机去平台仓库提货!')
+                // self.showMsg('支付成功！请联系司机去平台仓库提货!')
+                this.alertTitle = '支付成功！请联系司机去平台仓库提货!'
+                this.alertFlag = 1
+                this.alertShow = true
+                // this.confirm({ content: '支付成功！请联系司机去平台仓库提货!' }).then((res) => {
+                //   if (res === 'confirm') {
+                //     this.redirect('/pages/bill/main?tabName=02')
+                //   }
+                //   this.btnDisable = false
+                // })
               } else {
-                self.showMsg('支付成功！')
+                // self.showMsg('支付成功！')
+                this.alertTitle = '支付成功'
+                this.alertFlag = 2
+                this.alertShow = true
+                // this.confirm('支付成功!').then((res) => {
+                //   if (res === 'confirm') {
+                //     this.redirect('/pages/bill/main?tabName=00')
+                //   }
+                //   this.btnDisable = false
+                // })
               }
-              setTimeout(() => {
-                this.back(2)
-              }, 1000)
+              // setTimeout(() => {
+              //   this.back(2)
+              // }, 1000)
             }).catch((e) => {
+              this.btnDisable = false
               this.hideLoading()
               self.showMsg(e.message)
             })
