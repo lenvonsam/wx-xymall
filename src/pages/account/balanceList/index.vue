@@ -28,7 +28,9 @@ div
               div {{item.content}}
               .text-gray.ft-12.margin-top {{item.ctime}}
             .col.text-right
-              .ft-16(v-if="item.flowMoney", :class="{'text-red': item.flowType == 2, 'text-green': item.flowType == 1}") {{item.flowMoney}}
+              .ft-16(v-if="item.flowMoney", :class="{'text-red': item.flowType == 2, 'text-green': item.flowType == 1}")
+                span(v-if="item.flowType == 1") {{'+' + item.flowMoney}}
+                span(v-else) {{item.flowMoney}}
               .text-gray.margin-top(v-if="item.nowAvlbFund") {{item.nowAvlbFund}}
           //- .padding.text-gray.ft-13.text-center(v-if="loading") 努力加载中...
       .text-center.padding-top-xl(v-else)
@@ -45,7 +47,7 @@ export default {
       typeStatusList: [
         { label: '全部', val: '' },
         { label: '合同付款', val: 'EXSHT0002' },
-        { label: '退款', val: 'EXSHT0001' },
+        { label: '退款', val: 'EXSHT0009' },
         { label: '充值', val: 'ECWSK0001' },
         { label: '提现', val: 'ECWSK0003' }
       ],

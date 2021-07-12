@@ -40,25 +40,25 @@ div
                         .ft-18.text-black ￥{{item.inTaxReceiveMoney}}
                       .flex.justify-between.padding-bottom-xs
                         span 吊费：¥{{item.liftingFeeMoney}}
-                        span(v-if="item.status === '待制作提单'", style="display: flex;")
-                          span(v-if="item.status === '待制作提单' && !item.overdue") 提货倒计时：
+                        span(v-if="item.status === '已付款'", style="display: flex;")
+                          span(v-if="item.status === '已付款' && !item.overdue") 提货倒计时：
                           span(v-else) 提货已超时：
-                          span.text-blue(v-if="item.status === '待制作提单' && !item.overdue") {{item.timeDown}}
+                          span.text-blue(v-if="item.status === '已付款' && !item.overdue") {{item.timeDown}}
                           span.text-red(v-else) {{item.timeDown}}
-                  .solid-top.text-black.ft-15.padding-sm.row(v-if="item.status === '待补款' || item.status === '待支付'")
+                  .solid-top.text-black.ft-15.padding-sm.row(v-if="item.status === '待支付'")
                     .col
                       template(v-if="item.status === '待支付'")
                         span 倒计时：
                         span.padding-left-xs.text-red {{item.timeDown}}
-                      template(v-if="item.status === '待补款'")
-                        span 待补款：
-                        span.padding-left-xs.text-red ￥{{item.paid_price}}
+                      // template(v-if="item.status === '待补款'")
+                      //   span 待补款：
+                      //   span.padding-left-xs.text-red ￥{{item.paid_price}}
                     .flex
                       template(v-if="item.status === '待支付'")
                         .bill-btn.round(@click.stop="payBill(item)") 去付款
                         .bill-red-btn.round.margin-left-sm(@click.stop="billCancel(item)") 取消
-                      template(v-if="item.status === '待补款'")
-                        .bill-btn.round 待补款
+                      // template(v-if="item.status === '待补款'")
+                      //   .bill-btn.round 待补款
         .text-center.c-gray.pt-100(v-else)
           empty-image(url="bill_empty.png", className="img-empty")
           .empty-content 您暂时没有相关合同
@@ -353,9 +353,9 @@ export default {
       const idx = this.swiperCount
       const arr = this.billTab[idx].data
       arr.map((item, index) => {
-        if (item.status === '待支付' || item.status === '待制作提单') {
+        if (item.status === '待支付' || item.status === '已付款') {
           const nowTime = this.serverTime
-          // const endTimeFormat = item.status === '待制作提单' ? item.end_pack_time.replace(/-/g, '/') : item.end_pay_time.replace(/-/g, '/')
+          // const endTimeFormat = item.status === '已付款' ? item.end_pack_time.replace(/-/g, '/') : item.end_pay_time.replace(/-/g, '/')
           // const nowTime = item.currentDate
           const endTimeFormat = item.invalidDate
           const endTime = new Date(endTimeFormat.replace(/-/g, '/')).getTime()
@@ -366,7 +366,7 @@ export default {
           let s = 0
           if (leftTime >= 0) {
             // h = Math.floor(leftTime / 1000 / 60 / 60 % 24)
-            if (item.status === '待制作提单') {
+            if (item.status === '已付款') {
               item.overdue = false
               d = Math.floor(leftTime / (24 * 3600 * 1000))
               let leave1 = leftTime % (24 * 3600 * 1000) // 计算天数后剩余的毫秒数
@@ -388,7 +388,7 @@ export default {
             }
           } else {
             let overTime = Math.abs(leftTime)
-            if (item.status === '待制作提单') {
+            if (item.status === '已付款') {
               item.overdue = true
               d = Math.floor(overTime / (24 * 3600 * 1000))
               let leave1 = overTime % (24 * 3600 * 1000) // 计算天数后剩余的毫秒数
@@ -399,21 +399,22 @@ export default {
               s = Math.round(leave3 / 1000)
               console.log(d + h + m + s)
               item.timeDown = `${d}天${h}小时${m}分`
-            } else {
-              item.status = '违约'
-              h = Math.floor(overTime / 1000 / 60 / 60)
-              m = Math.floor(overTime / 1000 / 60 % 60)
-              s = Math.floor(overTime / 1000 % 60)
-              h = h < 10 ? '0' + h : h
-              m = m < 10 ? '0' + m : m
-              s = s < 10 ? '0' + s : s
-              item.timeDown = `${h}:${m}:${s}`
-              console.log('++++>>>>', this.tabName, item.status)
-              if (this.tabName === '01' && item.status === '违约') {
-                // item = null
-                this.billTab[this.swiperCount].data.splice(index, 1)
-              }
             }
+            // else {
+            //   item.status = '违约'
+            //   h = Math.floor(overTime / 1000 / 60 / 60)
+            //   m = Math.floor(overTime / 1000 / 60 % 60)
+            //   s = Math.floor(overTime / 1000 % 60)
+            //   h = h < 10 ? '0' + h : h
+            //   m = m < 10 ? '0' + m : m
+            //   s = s < 10 ? '0' + s : s
+            //   item.timeDown = `${h}:${m}:${s}`
+            //   console.log('++++>>>>', this.tabName, item.status)
+            //   if (this.tabName === '01' && item.status === '违约') {
+            //     // item = null
+            //     this.billTab[this.swiperCount].data.splice(index, 1)
+            //   }
+            // }
           }
           // if (h + m + s === 0) {
           //   if (item.status === '待支付') {
