@@ -120,7 +120,8 @@ export default {
       this.frontBalance = this.$toFixed(Number(newVal - this.currentBalance), 2)
     },
     payPwd (newVal) {
-      this.payPwd = newVal.trim()
+      // this.payPwd = newVal.trim()
+      this.payPwd = newVal.replace(/\s/g, '')
     }
   },
   onShow () {
