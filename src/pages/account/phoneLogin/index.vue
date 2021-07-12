@@ -55,10 +55,18 @@ export default {
     })
   },
   watch: {
-    phone (newVal) {
+    phone (newVal, oldVal) {
+      if (!this.numReg(newVal)) {
+        this.phone = oldVal
+        return
+      }
       this.phone = newVal.trim()
     },
-    code (newVal) {
+    code (newVal, oldVal) {
+      if (!this.numReg(newVal)) {
+        this.code = oldVal
+        return
+      }
       this.code = newVal.trim()
     },
     pwd (newVal) {

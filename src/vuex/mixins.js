@@ -221,6 +221,13 @@ const wxMixins = {
       var reg = /^1[3-9][0-9]\d{4,8}$/
       return reg.test(mobile)
     },
+    // 注册修改密码时校验仅可输入字母或数字
+    pwdReg (pwd) {
+      return (/^[0-9a-z]{6,12}$/).test(pwd)
+    },
+    numReg (num) {
+      return (/^[0-9]*$/).test(num)
+    },
     // 节流
     throttle (func, delay = 100) {
       let timer = null
