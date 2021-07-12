@@ -222,6 +222,7 @@ export default {
         sourceType: ['album', 'camera'],
         success (res) {
           const tempFilePaths = res.tempFilePaths
+          console.log('临时图片地址++++', tempFilePaths)
           var reg = /(\.gif|\.jpeg|\.png|\.jpg)/i
           if (!reg.test(tempFilePaths)) {
             self.showMsg('请上传png,jpg,jpeg,gif格式的图片')
@@ -237,12 +238,13 @@ export default {
               self.uploadFile(url, tempFilePaths[0], updateType, '02').then(res => {
                 console.log('pic1++++++')
                 console.log(res)
-                res.businessLicenseCode = res.creditCode // 社会统一代码
-                res.unitRegisterDate = res.unitRegisterDate.replace('年', '-').replace('月', '-').replace('日', '') // 注册时间
-                self.companyInfo.cust_name = res.unitName // 单位名称
+                console.log('注册时间++', res.unitRegisterDate)
+                res.businessLicenseCode = res.creditCode || '' // 社会统一代码
+                res.unitRegisterDate = res.unitRegisterDate ? res.unitRegisterDate.replace('年', '-').replace('月', '-').replace('日', '') : '' // 注册时间
+                self.companyInfo.cust_name = res.unitName || '' // 单位名称
                 // self.companyInfo.contact_phone = res.unitPhone
-                self.companyInfo.linkman = res.legalPerson // 联系人
-                self[key] = res.fileAddress
+                self.companyInfo.linkman = res.legalPerson || '' // 联系人
+                self[key] = res.fileAddress || ''
                 self.postForm = Object.assign(self.postForm, res)
               }).catch(e => {
                 console.log(e.message)
@@ -254,7 +256,7 @@ export default {
               self.uploadFile(url, tempFilePaths[0], updateType, '02').then(res => {
                 console.log(res)
                 console.log('pic2 第一步++++++')
-                self[key] = res.attachPath
+                self[key] = res.attachPath || ''
                 self.postForm = Object.assign(self.postForm, res)
                 self.uploadFile(self.apiList.zf.ocrImage, tempFilePaths[0], '10', '02').then(res => {
                   console.log('pic2 第二步++++++')
@@ -272,7 +274,7 @@ export default {
               url = self.apiList.zf.uploadImage
               self.uploadFile(url, tempFilePaths[0], updateType, '02').then(res => {
                 console.log(res)
-                self[key] = res.attachPath
+                self[key] = res.attachPath || ''
                 self.postForm = Object.assign(self.postForm, res)
               }).catch(e => {
                 console.log(e.message)
