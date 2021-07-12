@@ -93,6 +93,7 @@ export default {
   },
   onShow () {
     this.listData = []
+    this.currentPage = 1
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 160
     if (this.$root.$mp.query.tabName) this.tabName = this.$root.$mpd.query.tabName
     this.loadData()

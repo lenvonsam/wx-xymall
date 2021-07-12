@@ -302,10 +302,10 @@ export default {
             return false
           } else {
             this.showLoading()
-            this.carts = filterArray
             let params = this.contractDetail
-            params.contractDetailList = this.carts
-            params.saleContractDetailDTOS = this.carts
+            params.contractDetailList = filterArray
+            params.saleContractDetailDTOS = filterArray
+            params.list = filterArray
             this.httpPost(this.apiList.zf.updateSaleContract, params)
               .then((res) => {
                 this.hideLoading()
@@ -824,7 +824,7 @@ export default {
           // }
         })
         // res.data.saleContractDetailDTOS = arr
-        res.data.list = arr
+        // res.data.list = arr
         this.contractDetail = res.data
       }).catch(e => {
         self.showMsg(e.message)

@@ -60,17 +60,20 @@ export default {
         this.phone = oldVal
         return
       }
-      this.phone = newVal.trim()
+      // this.phone = newVal.trim()
+      this.phone = newVal.replace(/\s/g, '')
     },
     code (newVal, oldVal) {
       if (!this.numReg(newVal)) {
         this.code = oldVal
         return
       }
-      this.code = newVal.trim()
+      // this.code = newVal.trim()
+      this.code = newVal.replace(/\s/g, '')
     },
     pwd (newVal) {
-      this.pwd = newVal.trim()
+      // this.pwd = newVal.trim()
+      this.pwd = newVal.replace(/\s/g, '')
     }
   },
   components: {

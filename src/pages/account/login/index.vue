@@ -46,10 +46,12 @@ export default {
   },
   watch: {
     uname (newVal) {
-      this.uname = newVal.trim()
+      // this.uname = newVal.trim()
+      this.uname = newVal.replace(/\s/g, '')
     },
     upwd (newVal) {
-      this.upwd = newVal.trim()
+      // this.upwd = newVal.trim()
+      this.upwd = newVal.replace(/\s/g, '')
     }
   },
   onUnload () {
