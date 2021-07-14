@@ -174,7 +174,9 @@ export default {
         this.hideLoading()
         console.log(err)
       })
-      this.refreshUser()
+      if (this.currentUser.type === 'buyer') {
+        this.refreshUser()
+      }
       /** 判断账号状态
        * 已完善信息账号可打开“我的”
        * 未完善信息账号点击“我的”提示去完善信息 */

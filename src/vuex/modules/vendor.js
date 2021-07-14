@@ -9,10 +9,16 @@ export default {
         path: '/pages/vendor/contractTrack/main',
         event: 'click_app_index_order_seller'
       },
+      // {
+      //   url: '/static/images/td_icon.png',
+      //   title: '我的报价单',
+      //   path: '/pages/vendor/quotationList/main',
+      //   event: 'click_app_index_quotation_seller'
+      // },
       {
         url: '/static/images/td_icon.png',
-        title: '我的报价单',
-        path: '/pages/vendor/quotationList/main',
+        title: '提单管理',
+        path: '/pages/vendor/loadBillList/main',
         event: 'click_app_index_quotation_seller'
       },
       {
@@ -95,15 +101,15 @@ export default {
           path: '/pages/vendor/contractDelay/main'
         }
       },
-      {
-        icon: '/static/images/seller_order_icon.png',
-        name: '报价单管理',
-        dotKey: '',
-        event: 'click_app_me_quotation_seller',
-        url: {
-          path: '/pages/vendor/quotationList/main'
-        }
-      },
+      // {
+      //   icon: '/static/images/seller_order_icon.png',
+      //   name: '报价单管理',
+      //   dotKey: '',
+      //   event: 'click_app_me_quotation_seller',
+      //   url: {
+      //     path: '/pages/vendor/quotationList/main'
+      //   }
+      // },
       {
         icon: '/static/images/seller_order_icon.png',
         name: '提单管理',
