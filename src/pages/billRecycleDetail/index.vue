@@ -41,7 +41,7 @@ div
                         span.ml-5 {{cart.stockZoneName}}
                         span.sub-mark.ml-5 {{cart.prodAreaName}}
                       .pt-5
-                        span {{cart.ratioAvailableAmount}}支 / {{cart.quantityType == '02' ? cart.ratioAvailablePoundWeight : cart.ratioAvailableManagerWeight}}吨
+                        span {{cart.originAmount}}支 / {{cart.quantityType == '02' ? cart.avblePoundWeight : cart.avbleManagerWeight}}吨
                         span.padding-left-xs 吊费:
                         span.ml-10 {{cart.price === '--' ? '--' : cart.liftingFee > 0 ? '￥' + cart.liftingFee + '/吨' : cart.liftingFee == 0 ? '无' : '线下结算'}}
                       .pt-5(v-if="cart.toleranceRange || cart.weightRange")
@@ -631,6 +631,7 @@ export default {
           //   if (Number(itm.lj_price16) > 0) itm.radios[0].price = itm.lj_price16
           // }
           itm.choosed = false
+          itm.originAmount = itm.amount
           // itm.num = Number(itm.amount)
           // 该物资当前计量方式的总重量
           itm.weight = self.calcWeight(
