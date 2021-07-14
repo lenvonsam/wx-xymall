@@ -11,11 +11,12 @@
               .flex
                 img.margin-right-xs(src="/static/images/user.png", style="height:40rpx;width:40rpx;")
                 span.ft-bold 江苏钢铁贸易有限公司
-              span(@click.stop="openPickWay(2)", class="'text-blue") {{liftSelect || '自提'}}
+              span(@click.stop="openPickWay(2)", class="'text-blue") {{liftSelect}}
             .row.bg-white.padding-sm(style="height: 100rpx")
               span.tab-select.text-left 提货车牌
               .row.col.tab-select.text-gray.text-center(@click.stop="openPickWay(1)")
-                .col.text-cut {{customerName || '请输入或选择车牌'}}
+                // .col.text-cut {{customerName || '请输入或选择车牌'}}
+                input.col.text-cut(v-model="customerName", placeholder="请输入或选择车牌")
                 i(:class="pickWayShow && tabActive === 1 ? 'cuIcon-fold' : 'cuIcon-unfold'")
           div(style="margin-top: 200rpx")
             scroll-view.scroll-view(scroll-y, :style="{height: scrollHeight}")
@@ -135,6 +136,7 @@ export default {
         label: '配送',
         val: '02'
       }],
+      pageType: '',
       pickWayList: [],
       scrollHeight: 0,
       cstmCurrentPage: 1,
@@ -218,17 +220,23 @@ export default {
     this.totalLiftCharge = 0
     this.totalCount = 0
     this.noticeClientModalShow = false
+    this.pageType = ''
   },
   onLoad (options) {
     console.log(options)
     if (options.saleContractIdList) {
+      // 制作提单
       this.saleContractIdList = options.saleContractIdList.split(',')
+      this.pageType = 'make'
     } else {
+      // 修改提单
       this.saleLadingIdList = options.saleLadingIdList
+      this.pageType = 'edit'
     }
   },
   onUnload () {
-    this.liftSelect = ''
+    this.allChoosed = false
+    this.liftSelect = '自提'
     this.customerName = ''
   },
   onShow () {
@@ -358,11 +366,12 @@ export default {
           item.ladingDetailVOList.filter(itm => {
             if (itm.choosed) {
               this.totalCount += itm.amount // 总数量
-              this.totalWeight += Number(this.$toFixed(Number(itm.weight), 3)) // 总重量
+              this.totalWeight += Number(itm.weight) // 总重量
               // totalPrice += Number(this.$toFixed(Number(itm.dx_prices) * Number(itm.countWeight), 2))
             }
           })
         })
+        this.totalWeight = this.totalWeight.toFixed(3)
       }
     },
     customChange (e) {
@@ -554,8 +563,8 @@ export default {
         await self.httpPost(getSaleLoadingUrl, params).then(res => {
           console.log(res)
           if (res.success) {
-            this.customerName = res.data.carNo
-            this.liftSelect = res.data.deliveryType === '01' ? '自提' : '配送'
+            // this.customerName = res.data.carNo
+            // this.liftSelect = res.data.deliveryType === '01' ? '自提' : '配送'
             // this.buyUnitName = res.data.buyUnitName
             res.data.forEach(item => {
               item.itemAllchoosed = false
@@ -623,6 +632,10 @@ export default {
           //     return item
           //   }
           // })
+          if (!this.customerName) {
+            this.showMsg('请输入或选择提货车牌')
+            return
+          }
           this.loadData.forEach((item, index) => {
             item.saleLadingDetailDTOS = item.ladingDetailVOList
           })
@@ -638,11 +651,15 @@ export default {
             if (res.success) {
               if (this.saleLadingIdList) {
                 this.showMsg('提单修改成功！')
-                this.back()
+                setTimeout(() => {
+                  this.back()
+                }, 1500)
               }
               if (this.saleContractIdList) {
                 this.showMsg('提单制作成功！')
-                this.back()
+                setTimeout(() => {
+                  this.back()
+                }, 1500)
               }
             }
           }).catch(err => {

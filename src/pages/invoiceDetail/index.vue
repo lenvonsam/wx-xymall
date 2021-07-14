@@ -235,8 +235,28 @@ export default {
           console.log('tabName0', this.sdsArray)
           url = self.apiList.zf.invoiceAdd
           postList = this.sdsArray
+          if (this.pickVal === '快递邮寄') {
+            postList = this.sdsArray.map(item => {
+              return {
+                ...item,
+                postFlag: 1,
+                receiptSignId: null,
+                receiptSignName: this.receiver,
+                receiptSignPhone: this.receiverMobile,
+                receiptSignAdress: this.receiverAddr
+              }
+            })
+          } else {
+            postList = this.sdsArray.map(item => {
+              return {
+                ...item,
+                postFlag: 0
+              }
+            })
+          }
+          console.log('参数+++', postList)
         } else {
-          console.log('tabName2', this.sdsArray)
+          console.log('tabName2', this.susArray)
           url = self.apiList.zf.confirmReceipt
           postList = this.susArray
         }

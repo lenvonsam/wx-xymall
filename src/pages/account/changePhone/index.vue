@@ -136,12 +136,8 @@ export default {
             if (res.success) {
               this.bindClick = true
               this.exitUser()
-              this.showMsg('修改成功！')
-              setTimeout(() => {
-                this.redirect('/pages/account/login/main?type=2')
-              }, 1500)
+              this.alertShow = true
             }
-            // this.alertShow = true
           } catch (e) {
             this.bindClick = true
             this.showMsg(e.message)
