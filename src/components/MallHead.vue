@@ -308,11 +308,13 @@ export default {
         mpvue.setStorageSync('firstShareMallClassify', true)
       } else {
         this.openFilter()
+        this.modalIntroShow = false
       }
     },
     // 分类使用引导图回调
     modalIntroCb () {
       this.openFilter()
+      this.modalIntroShow = false
     },
     // 防止滑动穿透
     catchtouchmove () {
