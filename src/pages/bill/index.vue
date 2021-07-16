@@ -29,7 +29,7 @@ div
                       .col
                         .flex.align-center
                           .ft-16.padding-right-sm {{item.saleContractNo}}
-                          img.ding-icon(src="/static/images/ding.png", v-if="item.is_dx")
+                          img.ding-icon(src="/static/images/ding.png", v-if="item.payMethod == '02'")
                       .text-gray(v-if="item.status === '已完成' || item.status === '违约' || item.status === '已取消'") {{item.status}}
                       .text-red(v-else-if="item.status !== '待补款'") {{item.status}}
 
@@ -275,7 +275,9 @@ export default {
       self.httpPost(self.apiList.zf.contractList, self.queryObj).then(res => {
         const idx = self.swiperCount
         self.billTab[idx].data = []
-        this.serverTime = new Date(res.data[0].currentDate.replace(/-/g, '/')).getTime()
+        if (res.data[0].length) {
+          this.serverTime = new Date(res.data[0].currentDate.replace(/-/g, '/')).getTime()
+        }
         let arr = res.data
         if (arr.length > 0 && self.currentPage === 1) {
           const list = []
@@ -284,13 +286,14 @@ export default {
             item.status = self.contractStatus.find(c => {
               return c.id === item.xingyunContractStatus
             }).name
-            console.log(item.status)
+            // console.log(item.status)
             // if (!(self.swiperIdx === 1 && item.status === '违约')) {
             //   list.push(item)
             // }
             list.push(item)
           })
           self.billTab[idx].data = list
+          console.log(idx, self.billTab[idx].data)
           self.listData = list
           self.isLoad = false
         } else if (arr.length === 0 && self.currentPage === 1) {
@@ -353,81 +356,53 @@ export default {
       const idx = this.swiperCount
       const arr = this.billTab[idx].data
       arr.map((item, index) => {
-        if (item.status === '待支付' || item.status === '已付款') {
-          const nowTime = this.serverTime
-          // const endTimeFormat = item.status === '已付款' ? item.end_pack_time.replace(/-/g, '/') : item.end_pay_time.replace(/-/g, '/')
-          // const nowTime = item.currentDate
-          const endTimeFormat = item.invalidDate
-          const endTime = new Date(endTimeFormat.replace(/-/g, '/')).getTime()
-          const leftTime = Number(endTime - nowTime)
-          let d = 0
-          let h = 0
-          let m = 0
-          let s = 0
-          if (leftTime >= 0) {
-            // h = Math.floor(leftTime / 1000 / 60 / 60 % 24)
-            if (item.status === '已付款') {
-              item.overdue = false
-              d = Math.floor(leftTime / (24 * 3600 * 1000))
-              let leave1 = leftTime % (24 * 3600 * 1000) // 计算天数后剩余的毫秒数
-              h = Math.floor(leave1 / (3600 * 1000))
-              let leave2 = leave1 % (3600 * 1000) // 计算小时数后剩余的毫秒数
-              m = Math.floor(leave2 / (60 * 1000))
-              let leave3 = leave2 % (60 * 1000) // 计算分钟数后剩余的毫秒数
-              s = Math.round(leave3 / 1000)
-              console.log(d + h + m + s)
-              item.timeDown = `${d}天${h}小时${m}分`
-            } else {
-              h = Math.floor(leftTime / 1000 / 60 / 60)
-              m = Math.floor(leftTime / 1000 / 60 % 60)
-              s = Math.floor(leftTime / 1000 % 60)
-              h = h < 10 ? '0' + h : h
-              m = m < 10 ? '0' + m : m
-              s = s < 10 ? '0' + s : s
+        // const nowTime = this.serverTime
+        // const endTimeFormat = item.status === '已付款' ? item.end_pack_time.replace(/-/g, '/') : item.end_pay_time.replace(/-/g, '/')
+        // const nowTime = item.currentDate
+        // const endTimeFormat = item.invalidDate
+        // const endTime = new Date(endTimeFormat.replace(/-/g, '/')).getTime()
+        // const leftTime = Number(endTime - nowTime)
+
+        item.timeDiff = new Date(item.currentDate).getTime() - new Date().getTime() // 服务器时间与本地时间的差额
+        item.timeEnd = new Date(item.invalidDate).getTime()
+        item.timeEndLading = new Date(item.ladingInvalidDate).getTime()
+
+        if (item.timeDiff && (item.timeEnd || item.timeEndLading)) {
+          if (item.status === '待支付') {
+            const leftTime = item.timeEnd - (new Date().getTime() + item.timeDiff)
+            const seconds = Math.floor(leftTime / 1000) % 60
+            const minutes = Math.floor(leftTime / 1000 / 60) % 60
+            const hours = Math.floor(leftTime / 1000 / 60 / 60) % 24
+            // const day = Math.floor(leftTime / 1000 / 60 / 60 / 24)
+            const h = Math.abs(hours) >= 10 ? Math.abs(hours) + '' : '0' + Math.abs(hours)
+            const m = Math.abs(minutes) >= 10 ? Math.abs(minutes) + '' : '0' + Math.abs(minutes)
+            const s = Math.abs(seconds) >= 10 ? Math.abs(seconds) + '' : '0' + Math.abs(seconds)
+            if (leftTime >= 0) {
+              // item.name = '待支付'
               item.timeDown = `${h}:${m}:${s}`
+            } else {
+              // item.name = '已超时'
+              // item.value = `${h}:${m}:${s}`
             }
-          } else {
-            let overTime = Math.abs(leftTime)
-            if (item.status === '已付款') {
+          } else if (item.status === '已付款') {
+            const leftTime = item.timeEndLading - new Date().getTime() + item.timeDiff
+            // console.log(leftTime)
+            // const seconds = Math.floor(leftTime / 1000) % 60
+            const minutes = Math.floor(leftTime / 1000 / 60) % 60
+            const hours = Math.floor(leftTime / 1000 / 60 / 60) % 24
+            const day = Math.abs(Math.floor(leftTime / 1000 / 60 / 60 / 24))
+            const h = Math.abs(hours) >= 10 ? Math.abs(hours) + '' : '0' + Math.abs(hours)
+            const m = Math.abs(minutes) >= 10 ? Math.abs(minutes) + '' : '0' + Math.abs(minutes)
+            // const s = Math.abs(seconds) >= 10 ? Math.abs(seconds) + '' : '0' + Math.abs(seconds)
+            // console.log(`${day}天${h}时${m}分`)
+            if (leftTime >= 0) {
+              item.overdue = false
+              item.timeDown = `${day}天${h}时${m}分`
+            } else {
               item.overdue = true
-              d = Math.floor(overTime / (24 * 3600 * 1000))
-              let leave1 = overTime % (24 * 3600 * 1000) // 计算天数后剩余的毫秒数
-              h = Math.floor(leave1 / (3600 * 1000))
-              let leave2 = leave1 % (3600 * 1000) // 计算小时数后剩余的毫秒数
-              m = Math.floor(leave2 / (60 * 1000))
-              let leave3 = leave2 % (60 * 1000) // 计算分钟数后剩余的毫秒数
-              s = Math.round(leave3 / 1000)
-              console.log(d + h + m + s)
-              item.timeDown = `${d}天${h}小时${m}分`
+              item.timeDown = `${day}天${h}时${m}分`
             }
-            // else {
-            //   item.status = '违约'
-            //   h = Math.floor(overTime / 1000 / 60 / 60)
-            //   m = Math.floor(overTime / 1000 / 60 % 60)
-            //   s = Math.floor(overTime / 1000 % 60)
-            //   h = h < 10 ? '0' + h : h
-            //   m = m < 10 ? '0' + m : m
-            //   s = s < 10 ? '0' + s : s
-            //   item.timeDown = `${h}:${m}:${s}`
-            //   console.log('++++>>>>', this.tabName, item.status)
-            //   if (this.tabName === '01' && item.status === '违约') {
-            //     // item = null
-            //     this.billTab[this.swiperCount].data.splice(index, 1)
-            //   }
-            // }
           }
-          // if (h + m + s === 0) {
-          //   if (item.status === '待支付') {
-          //     item.status = '违约'
-          //   }
-          // } else {
-          //   if (item.status === '待支付') {
-          //     h = h < 10 ? '0' + h : h
-          //     m = m < 10 ? '0' + m : m
-          //     s = s < 10 ? '0' + s : s
-          //     item.timeDown = `${h}:${m}:${s}`
-          //   }
-          // }
         }
       })
       this.$forceUpdate()
@@ -445,8 +420,11 @@ export default {
       self.httpPost(self.apiList.zf.contractList, self.queryObj).then(res => {
         const idx = self.swiperCount
         // self.billTab[idx].data = []
-        this.serverTime = new Date(res.data[0].currentDate.replace(/-/g, '/')).getTime()
         let arr = res.data
+        // if (res.data.length) {
+        //   this.serverTime = new Date(res.data[0].currentDate.replace(/-/g, '/')).getTime()
+        // }
+        console.log(arr.length, self.currentPage, '+++++')
         if (arr.length > 0 && self.currentPage === 1) {
           let list = []
           arr.map(item => {
@@ -454,18 +432,22 @@ export default {
             item.status = self.contractStatus.find(c => {
               return c.id === item.xingyunContractStatus
             }).name
-            console.log(item.status)
+            // console.log(item.status)
             // if (!(self.swiperIdx === 1 && item.status === '违约')) {
             //   list.push(item)
             // }
             list.push(item)
           })
+          console.log(list, '测试+++')
           self.billTab[idx].data = list
           self.listData = list
           self.isLoad = false
         } else if (arr.length === 0 && self.currentPage === 1) {
           self.listData = []
           this.billTab[idx].data = []
+          self.isload = false
+        } else if (arr.length === 0 && self.currentPage > 1) {
+          self.loadFinish = 2
           self.isload = false
         } else if (arr.length > 0 && self.currentPage > 1) {
           let list = []
@@ -474,7 +456,7 @@ export default {
             item.status = self.contractStatus.find(c => {
               return c.id === item.xingyunContractStatus
             }).name
-            console.log(item.status)
+            // console.log(item.status)
             list.push(item)
           })
           this.billTab[idx].data = this.billTab[idx].data.concat(list)

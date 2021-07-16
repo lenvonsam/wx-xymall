@@ -76,11 +76,11 @@ div
             .flex.padding-bottom-xs
               .col 支付方式
               .col.text-right.text-black(v-if="billDetail.payMethod=='01'") 全款支付
-              .col.text-right.text-black(v-if="billDetail.payMethod=='03'") 定金支付
-              .col.text-right.text-black(v-if="billDetail.payMethod=='02'") 白条支付
+              .col.text-right.text-black(v-else-if="billDetail.payMethod=='03'") 定金支付
+              .col.text-right.text-black(v-else-if="billDetail.payMethod=='02'") 白条支付
+              .col.text-right.text-black(v-else) --
               // .col.text-right.text-black(v-if="billDetail.payMethod") {{billDetail.payMethod === '01' ? '全款' : billDetail.payMethod === '02' ? '定金' : '白条'}}
                 span(v-if="billDetail.status_desc === '待审核' && billDetail.payMethod === '02'") (预计定金: {{billDetail.advancePaymentMoney}})
-              .col.text-right.text-black(v-else) --
             .flex.padding-bottom-xs
               .col 已支付
               .col.text-right.text-black

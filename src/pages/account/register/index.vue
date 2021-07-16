@@ -123,41 +123,40 @@ export default {
             paramsObj.promotion = q
           }
           // const data = await this.ironRequest(this.apiList.xy.userRegister.url, paramsObj, this.apiList.xy.userRegister.method)
-          await this.httpGet(this.apiList.zf.userRegister, paramsObj).then(res => {
-            this.removeStoreKey('qrp')
-            console.log('res', res)
-            const me = this
-            // const newUser = {
-            //   account_balance: 0,
-            //   avatar: '/webpage/gzql/for-etrade/images/default_logo.png',
-            //   contact_phone: this.phone,
-            //   credit_balance: 0,
-            //   isnew: 1,
-            //   message_switch: '1',
-            //   nickname: this.phone,
-            //   phone: this.phone,
-            //   user_id: res.user_id,
-            //   user_mark: res.emp_acct,
-            //   server_time: res.server_time,
-            //   type: 'buyer'
-            // }
-            // this.setUser(newUser)
+          let res = await this.httpGet(this.apiList.zf.userRegister, paramsObj)
+          console.log('res', res)
+          this.removeStoreKey('qrp')
+          const me = this
+          // const newUser = {
+          //   account_balance: 0,
+          //   avatar: '/webpage/gzql/for-etrade/images/default_logo.png',
+          //   contact_phone: this.phone,
+          //   credit_balance: 0,
+          //   isnew: 1,
+          //   message_switch: '1',
+          //   nickname: this.phone,
+          //   phone: this.phone,
+          //   user_id: res.user_id,
+          //   user_mark: res.emp_acct,
+          //   server_time: res.server_time,
+          //   type: 'buyer'
+          // }
+          // this.setUser(newUser)
 
-            // 存储用户token和信息user
+          // 存储用户token和信息user
+          // me.tab('/pages/index/main')
+          this.setUser({token: res.data.token, user: res.data.user})
+          me.jump('/pages/account/companyUpdate/main?type=3')
 
-            me.tab('/pages/index/main')
-
-            // this.setUser({token: res.data.token, user: res.data.user})
-            // this.confirm({ content: '注册成功，但您是新用户，请先完成公司信息' }).then(res => {
-            //   me.canClick = true
-            //   me.resetVal()
-            //   if (res === 'confirm') {
-            //     me.jump('/pages/account/companyUpdate/main?type=3')
-            //   } else {
-            //     me.tab('/pages/index/main')
-            //   }
-            // })
-          })
+          // this.confirm({ content: '注册成功，但您是新用户，请先完成公司信息' }).then(res => {
+          //   me.canClick = true
+          //   me.resetVal()
+          //   if (res === 'confirm') {
+          //     me.jump('/pages/account/companyUpdate/main?type=3')
+          //   } else {
+          //     me.tab('/pages/index/main')
+          //   }
+          // })
         }
       } catch (e) {
         this.showMsg(e.message)

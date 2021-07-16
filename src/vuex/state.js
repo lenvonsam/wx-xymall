@@ -131,6 +131,7 @@ export default {
     { id: '06', name: '修改中' },
     { id: '07', name: '已完成' },
     { id: '08', name: '违约' },
-    { id: '09', name: '已取消' }
+    { id: '09', name: '已取消' },
+    { id: '10', name: '审核中' }
   ]
 }
