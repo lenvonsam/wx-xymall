@@ -526,6 +526,7 @@ export default {
           cart.tolerance,
           cart.floatingRatio
         )
+        cart.showWeight = cart.weight
         // cart.originPrice = cart.radios[0].originPrice
       } else {
         // 磅计
@@ -541,6 +542,7 @@ export default {
           cart.tolerance,
           cart.floatingRatio
         )
+        cart.showWeight = cart.weight
         // cart.originPrice = cart.radios[1].price
       }
       let paramsObj = {
@@ -566,6 +568,7 @@ export default {
         cart.floatingRatio
       )
       console.log('修改后的商品重量', cart.weight)
+      cart.showWeight = cart.weight
       let params = {
         id: cart.id,
         num: cart.count,

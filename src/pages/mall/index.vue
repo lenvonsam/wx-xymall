@@ -226,6 +226,9 @@ export default {
   onTabItemTap (item) {
     this.logEventGet({ event: 'click_app_nav_mall' })
   },
+  onUnload () {
+    this.btnDisable = false
+  },
   onShow () {
     this.isload = true
     if (this.currentUser.type === 'buyer' && this.isLogin) {
@@ -498,7 +501,6 @@ export default {
       })
       console.log('goodsNameList+++', list)
       this.goodsNameList = list
-      this.btnDisable = false
       // this.refresher()
       this.onRefresh()
     },
@@ -622,22 +624,26 @@ export default {
       try {
         obj.cartQuantityType = obj.onlineQuantityType
         // self.showLoading()
-        await self.httpPost(this.apiList.zf.addCartItem, obj)
-        setTimeout(() => {
-          self.showMsg('购物车成功')
-        }, 500)
-        self.btnDisable = false
-        // 显示底部tabbar购物车数量
-        var cartAllCount = mpvue.getStorageSync('cartAllCount') || 0
-        this.tabDot(cartAllCount + 1)
-        mpvue.setStorageSync('cartAllCount', cartAllCount + 1)
+        let res = await self.httpPost(this.apiList.zf.addCartItem, obj)
+        if (res.success) {
+          self.btnDisable = false
+          setTimeout(() => {
+            self.showMsg('购物车成功')
+          }, 500)
+          // 显示底部tabbar购物车数量
+          var cartAllCount = mpvue.getStorageSync('cartAllCount') || 0
+          this.tabDot(cartAllCount + 1)
+          mpvue.setStorageSync('cartAllCount', cartAllCount + 1)
+        } else {
+          self.btnDisable = false
+        }
         // self.hideLoading()
       } catch (e) {
+        self.hideLoading()
+        self.btnDisable = false
         setTimeout(() => {
           self.showMsg(e.message)
         }, 500)
-        self.hideLoading()
-        self.btnDisable = false
       }
     },
     // 监听子组件触发点击选择滑动tab（品名）
