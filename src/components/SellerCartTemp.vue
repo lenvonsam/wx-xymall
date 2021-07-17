@@ -839,6 +839,7 @@ export default {
             itm.tolerance,
             itm.floatingRatio
           )
+          itm.showWeight = itm.weight
           itm.price = itm.cartQuantityType === '02' ? itm.ratioPricePound : itm.ratioPriceManager
           itm.dx_prices = itm.cartQuantityType === '02' ? itm.directionPoundPrice : itm.directionManagerPrice
           console.log('购物车数据整理')

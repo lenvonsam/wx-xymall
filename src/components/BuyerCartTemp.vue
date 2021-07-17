@@ -784,6 +784,7 @@ export default {
             itm.tolerance,
             itm.floatingRatio
           )
+          itm.showWeight = itm.weight
           // 该物资当前计量方式的定价
           itm.price = itm.cartQuantityType === '02' ? itm.ratioPricePound : itm.ratioPriceManager
 

@@ -230,6 +230,7 @@ export default {
     this.btnDisable = false
   },
   onShow () {
+    this.btnDisable = false
     this.isload = true
     if (this.currentUser.type === 'buyer' && this.isLogin) {
       console.log('++++++++>>>>>>>>')
@@ -582,6 +583,7 @@ export default {
             break
           case 'cart':
             this.currentUser.type === 'seller' ? this.logEventGet({ event: 'click_app_mall_add_cart_seller' }) : this.logEventGet({ event: 'click_app_mall_add_cart' })
+            console.log(this.btnDisable)
             if (this.currentUser.userStatus === '01' || this.currentUser.userStatus === '02' || this.currentUser.userStatus === '03') {
               this.fillModalMsg = '请先完善信息'
               this.fillModalShow = true
