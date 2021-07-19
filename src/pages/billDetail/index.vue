@@ -47,7 +47,7 @@ div
             .col 付款截止时间
             .col.text-black.text-right {{billDetail.invalidDate}}
       .bg-white.solid-top.padding-sm.flex
-        .col 共{{billDetail.contractAmount}}支，{{billDetail.quantityType == '02' ? billDetail.contractPoundWeight : billDetail.contractManagerWeight}}吨
+        .col 共{{billDetail.totalAmount}}支，{{billDetail.totalWeight}}吨
         .col.text-right
           .ft-12 吊费: ¥{{billDetail.liftingFeeMoney}}
           .padding-top-xs
@@ -78,7 +78,7 @@ div
               .col.text-right.text-black(v-if="billDetail.payMethod=='01'") 全款支付
               .col.text-right.text-black(v-else-if="billDetail.payMethod=='03'") 定金支付
               .col.text-right.text-black(v-else-if="billDetail.payMethod=='02'") 白条支付
-              .col.text-right.text-black(v-else) --
+              // .col.text-right.text-black(v-else) --
               // .col.text-right.text-black(v-if="billDetail.payMethod") {{billDetail.payMethod === '01' ? '全款' : billDetail.payMethod === '02' ? '定金' : '白条'}}
                 span(v-if="billDetail.status_desc === '待审核' && billDetail.payMethod === '02'") (预计定金: {{billDetail.advancePaymentMoney}})
             .flex.padding-bottom-xs
@@ -166,6 +166,19 @@ export default {
     this.httpPost(this.apiList.zf.saleContractDetail, {contractId: this.$root.$mp.query.contractId}).then(res => {
       console.log(res.data)
       this.billDetail = res.data
+      let totalWeight = 0
+      let totalAmount = 0
+      res.data.contractDetailList.map((ic, idx) => {
+        totalAmount += ic.amount
+        if (ic.quantityType === '01') {
+          totalWeight += ic.managerWeight
+        }
+        if (ic.quantityType === '02') {
+          totalWeight += ic.poundWeight
+        }
+      })
+      this.billDetail.totalAmount = totalAmount
+      this.billDetail.totalWeight = totalWeight
       this.billDetail.status_desc = this.contractStatus.find(c => {
         return c.id === res.data.xingyunContractStatus
       }).name
