@@ -111,34 +111,57 @@ export default {
       this.getStandardList()
     },
     // 获取商品信息
+    // getGoods () {
+    //   // this.ironRequest(this.apiList.xy.goodsList.url, {}, this.apiList.xy.goodsList.method).then((res) => {
+    //   //   const nameId = this.$root.$mp.query.name
+    //   //   this.queryObject = {
+    //   //     current_page: this.currentPage,
+    //   //     page_size: this.pageSize,
+    //   //     search: '',
+    //   //     name: nameId,
+    //   //     only_available: 1
+    //   //   }
+    //   //   this.getStandardList()
+    //   //   this.filterNameList = res.goods
+    //   //   this.filterNameList.unshift({ name: '全部', id: '', isActive: false })
+    //   //   const tempObject = {
+    //   //     name: nameId,
+    //   //     standards: ''
+    //   //   }
+    //   //   this.configVal({ key: 'tempObject', val: tempObject })
+    //   //   this.filterNameList.map(item => {
+    //   //     if (item.id === nameId) {
+    //   //       item.isActive = true
+    //   //     } else {
+    //   //       item.isActive = false
+    //   //     }
+    //   //   })
+    //   // })
+    //   //获取分类名称
+    //   this.httpPost(this.apiList.zf.searchBrand, {}).then(res => {
+    //     const nameId = this.$root.$mp.query.name
+    //     console.log('nameId+++', nameId)
+    //     this.queryObject = {
+    //       'productBrandName': nameId,
+    //       'specification': ''
+    //     }
+    //     // 获取某个分类对应的规格
+    //     this.getStandardList()
+    //     this.filterNameList = res.data.productBrandNameList.map(item => ({
+    //       name: item
+    //     }))
+    //     this.filterNameList.unshift({ name: '全部', isActive: false })
+    //     this.filterNameList.map(item => {
+    //       if (item.name === nameId) {
+    //         item.isActive = true
+    //       } else {
+    //         item.isActive = false
+    //       }
+    //     })
+    //   })
+    // },
     getGoods () {
-      // this.ironRequest(this.apiList.xy.goodsList.url, {}, this.apiList.xy.goodsList.method).then((res) => {
-      //   const nameId = this.$root.$mp.query.name
-      //   this.queryObject = {
-      //     current_page: this.currentPage,
-      //     page_size: this.pageSize,
-      //     search: '',
-      //     name: nameId,
-      //     only_available: 1
-      //   }
-      //   this.getStandardList()
-      //   this.filterNameList = res.goods
-      //   this.filterNameList.unshift({ name: '全部', id: '', isActive: false })
-      //   const tempObject = {
-      //     name: nameId,
-      //     standards: ''
-      //   }
-      //   this.configVal({ key: 'tempObject', val: tempObject })
-      //   this.filterNameList.map(item => {
-      //     if (item.id === nameId) {
-      //       item.isActive = true
-      //     } else {
-      //       item.isActive = false
-      //     }
-      //   })
-      // })
-      // 获取分类名称
-      this.httpPost(this.apiList.zf.searchBrand, {}).then(res => {
+      this.httpPost(this.apiList.zf.queryProductBrandNameSortPage, {}).then(res => {
         const nameId = this.$root.$mp.query.name
         console.log('nameId+++', nameId)
         this.queryObject = {
@@ -147,9 +170,11 @@ export default {
         }
         // 获取某个分类对应的规格
         this.getStandardList()
-        this.filterNameList = res.data.productBrandNameList.map(item => ({
-          name: item
-        }))
+        this.filterNameList = res.data.map(item => {
+          return {
+            name: item.productBrandName
+          }
+        })
         this.filterNameList.unshift({ name: '全部', isActive: false })
         this.filterNameList.map(item => {
           if (item.name === nameId) {
@@ -229,6 +254,9 @@ export default {
   height 40px
   line-height 40px
   color #262626
+  white-space nowrap
+  overflow hidden
+  text-overflow ellipsis
   &.active
     background #fff
     color #0081ff

@@ -170,22 +170,36 @@ export default {
   components: {
     invoiceModal
   },
+  // onLoad (options) {
+  //   console.log('返回类型+++', options.type)
+  //   this.fromType = options.type
+  // },
   onShow () {
     if (this.$root.$mp.query.type) this.fromType = Number(this.$root.$mp.query.type)
   },
-  onUnload () {
-    // this.exitUser()
-    if (this.backType === 1) {
-      this.resetConfig()
-      this.tab('/pages/index/main')
-    } else {
-      this.resetConfig()
-    }
-  },
+  // onUnload () {
+  //   // this.exitUser()
+  //   if (this.backType === 1) {
+  //     this.resetConfig()
+  //     this.tab('/pages/index/main')
+  //   } else {
+  //     this.resetConfig()
+  //   }
+  // },
   methods: {
     ...mapActions([
       'exitUser'
     ]),
+    // 返回上一页
+    pageBack () {
+      if (this.fromType === 3) {
+        this.exitUser()
+        this.redirect('/pages/index/main')
+      } else {
+        this.resetConfig()
+        this.tab('/pages/index/main')
+      }
+    },
     // 切换账户
     backToLogin () {
       this.backType = 2
@@ -329,8 +343,10 @@ export default {
     },
     // 提交审核模态框回调
     alertCb () {
-      this.resetConfig()
-      this.back()
+      this.exitUser()
+      this.toHome()
+      // this.resetConfig()
+      // this.back()
     },
     // 重置公司信息
     resetInfo () {
@@ -357,11 +373,6 @@ export default {
       this.fromType = 1
       this.canClick = true
       this.alertShow = false
-    },
-    // 返回上一页
-    pageBack () {
-      this.resetConfig()
-      this.tab('/pages/index/main')
     },
     // 选择三证合一/三证未合一
     selectTabs (item) {

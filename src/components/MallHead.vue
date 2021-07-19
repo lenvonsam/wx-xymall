@@ -70,6 +70,30 @@ export default {
     mallTabVal: {
       type: String,
       default: ''
+    },
+    productBrandNames: {
+      type: Array,
+      default: () => {
+        return []
+      }
+    },
+    specifications: {
+      type: Array,
+      default: () => {
+        return []
+      }
+    },
+    productTextureNames: {
+      type: Array,
+      default: () => {
+        return []
+      }
+    },
+    prodAreaNames: {
+      type: Array,
+      default: () => {
+        return []
+      }
     }
   },
   data () {
@@ -99,32 +123,6 @@ export default {
         { label: '材质', key: 'material', data: [], selectSort: [], title: '材质展示' },
         { label: '产地', key: 'origin', data: [], selectSort: [], title: '产地展示' }
       ],
-      // sortQueryList: {
-      //   'standard': {
-      //     reqUrl: 'standardList.shtml',
-      //     chooseIdx: [0, 0],
-      //     respKey: 'standards'
-      //   },
-      //   'name': {
-      //     reqUrl: 'goodsList.shtml',
-      //     chooseIdx: [0, 0],
-      //     respKey: 'goods'
-      //   },
-      //   'material': {
-      //     reqUrl: 'materialList.shtml',
-      //     chooseIdx: [0, 0],
-      //     respKey: 'materials'
-      //   },
-      //   'origin': {
-      //     reqUrl: 'supplyList.shtml',
-      //     chooseIdx: [0, 0],
-      //     respKey: 'supplies'
-      //   },
-      //   'more': {
-      //     reqUrl: 'toleranceAndWeightList.shtml',
-      //     chooseIdx: [0, 0]
-      //   }
-      // },
       sortQueryList: {
         'standard': {
           reqUrl: 'querySpecificationPage',
@@ -177,7 +175,16 @@ export default {
       tempObject: state => state.tempObject,
       screenWidth: state => state.screenWidth,
       bottomBarHeight: state => state.bottomBarHeight
-    })
+    }),
+    sortList: function () {
+      let arr = [
+        { label: '品名', key: 'name', data: this.productBrandNames, selectSort: [], title: '品名展示' },
+        { label: '规格', key: 'standard', data: this.specifications, selectSort: [], title: '规格展示' },
+        { label: '材质', key: 'material', data: this.productTextureNames, selectSort: [], title: '材质展示' },
+        { label: '产地', key: 'origin', data: this.prodAreaNames, selectSort: [], title: '产地展示' }
+      ]
+      return arr
+    }
   },
   onHide () {
     // sortList: [
@@ -199,8 +206,7 @@ export default {
     //   this.throttle(this.searchChange, 300)
     // }
   },
-  beforeMount () {
-    // 获取滑动tab条（品名）的数据
+  mounted () {
     this.sortCb('name')
     // 下拉筛选框高度
     this.filterHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 95
@@ -224,6 +230,10 @@ export default {
       this.sortList[1].data = []
       this.sortList[2].data = []
       this.sortList[3].data = []
+    } else if (this.tempObject.fromPage === 'home') {
+      this.standardStr = ''
+      this.materialStr = ''
+      this.originStr = ''
     } else if (this.tempObject.fromPage === 'mallFilter' && this.tempObject.noBack) {
       // 如果是从分类页面过来
       const filters = {
@@ -481,12 +491,21 @@ export default {
     //     this.sortCb(this.activeTab)
     //   }
     // },
+
     // 品名、规格、材质、产地
+    // productBrandNames
+    // specifications
+    // productTextureNames
+    // prodAreaNames
+
+    // sortList: [
+    //   { label: '品名', key: 'name', data: [], selectSort: [], title: '品名展示' },
+    //   { label: '规格', key: 'standard', data: [], selectSort: [], title: '规格展示' },
+    //   { label: '材质', key: 'material', data: [], selectSort: [], title: '材质展示' },
+    //   { label: '产地', key: 'origin', data: [], selectSort: [], title: '产地展示' }
+    // ],
     async sortCb (key, standard) {
-      this.queryObject.productBrandName = this.tabVal
-      this.queryObject.currentPage = this.currentPage
-      let queryObj = Object.assign({}, this.queryObject)
-      this.showLoading()
+      console.log('==', this.productBrandNames, this.specifications)
       let arr = []
       if (key === 'name') {
         let inputSearch = {
@@ -502,16 +521,12 @@ export default {
           console.log('sortQueryList_catch=======>' + JSON.stringify(e))
           this.hideLoading()
         }
-      } else {
-        try {
-          let resp = await this.httpPost(this.apiList.zf[this.sortQueryList[key].reqUrl], queryObj, 'post')
-          console.log('sortCb++++++', resp)
-          // 获取对应的下拉筛选框数据
-          arr = resp.data[this.sortQueryList[key].respKey]
-        } catch (e) {
-          console.log('sortQueryList_catch=======>' + JSON.stringify(e))
-          this.hideLoading()
-        }
+      } else if (key === 'standard') {
+        arr = this.specifications
+      } else if (key === 'material') {
+        arr = this.productTextureNames
+      } else if (key === 'origin') {
+        arr = this.prodAreaNames
       }
       const tabList = []
       // 获取当前点击的key（规格、材质、产地）的下标
@@ -519,54 +534,31 @@ export default {
         return item.key === key
       })
       console.log('idx', idx)
+      console.log(arr.length)
       if (arr.length > 0) {
-        if (standard) {
-          // const standardIdx = arr.findIndex(item => item.name === standard)
-          arr.unshift({ name: '全部', isActive: false })
-          arr[1].isActive = true
-          this.sortList[1].data = arr
-        } else {
-          console.log('sortList++++', this.sortList[idx].data)
-          var newArr = arr.map(item => {
-            item = {
-              name: item,
-              id: item,
-              isActive: false
+        console.log('sortList++++', this.sortList[idx].data)
+        var newArr = arr.map(item => {
+          item = {
+            name: item,
+            id: item,
+            isActive: false
+          }
+          // console.log(item)
+          this.sortList[idx].data.filter((itemFilter) => {
+            if (itemFilter.name === item.name && itemFilter.isActive) {
+              item.isActive = true
             }
-            // console.log(item)
-            this.sortList[idx].data.filter((itemFilter) => {
-              if (itemFilter.name === item.name && itemFilter.isActive) {
-                item.isActive = true
-              }
-              return itemFilter.name === item.name && itemFilter.isActive
-            })
-            // console.log('resActive', resActive)
-            // if (key === 'name') {
-            //   const obj = {
-            //     name: item.name,
-            //     key: item.name
-            //   }
-            //   tabList.push(obj)
-            // }
-            tabList.push(item)
-            return item
+            return itemFilter.name === item.name && itemFilter.isActive
           })
-          newArr.unshift({ name: '全部', id: '', isActive: false })
-          // 将数据存入sortList对应项的data中
-          this.sortList[idx].data = newArr
-          // if ((this.currentPage === 0 || key !== 'standard') && !this.isMore) {
-          //   arr.unshift({ name: '全部', id: '', isActive: false })
-          //   this.sortList[idx].data = arr
-          // } else {
-          //   this.sortList[idx].data.push(...arr)
-          // }
-        }
+          tabList.push(item)
+          return item
+        })
+        newArr.unshift({ name: '全部', id: '', isActive: false })
+        // 将数据存入sortList对应项的data中
+        this.sortList[idx].data = newArr
       } else {
         this.sortList[idx].data = arr
       }
-      // else if (this.currentPage !== 0) {
-      //   this.currentPage--
-      // }
       // 如果选择的是品名
       if (key === 'name') {
         tabList.unshift({ name: '全部', id: '', isActive: true })
@@ -582,78 +574,180 @@ export default {
       }
       this.isMore = false
       this.hideLoading()
-      // this.ironRequest(this.sortQueryList[key].reqUrl, queryObj, 'post').then(resp => {
-      //   console.log('sortCb++++++', resp)
-      //   if (resp.returncode === '0') {
-      //     // 获取对应的下拉筛选框数据
-      //     let arr = resp[this.sortQueryList[key].respKey]
-      //     console.log(arr)
-      //     const tabList = []
-      //     // 获取当前点击的key（规格、材质、产地）的下标
-      //     const idx = this.sortList.findIndex((item) => {
-      //       return item.key === key
-      //     })
-      //     if (arr.length > 0) {
-      //       if (standard) {
-      //         // const standardIdx = arr.findIndex(item => item.name === standard)
-      //         arr.unshift({ name: '全部', id: '', isActive: false })
-      //         arr[1].isActive = true
-      //         this.sortList[1].data = arr
-      //       } else {
-      //         arr.map(item => {
-      //           item.isActive = false
-      //           // const resActive = this.sortList[idx].data.filter((itemFilter) => {
-      //           //   if (itemFilter.name === item.name && itemFilter.isActive) {
-      //           //     item.isActive = true
-      //           //   }
-      //           //   return itemFilter.name === item.name && itemFilter.isActive
-      //           // })
-      //           // console.log('resActive', resActive)
-      //           if (key === 'name') {
-      //             const obj = {
-      //               name: item.name,
-      //               id: item.id
-      //             }
-      //             tabList.push(obj)
-      //           }
-      //         })
-      //         arr.unshift({ name: '全部', id: '', isActive: false })
-      //         // 将数据存入sortList对应项的data中
-      //         this.sortList[idx].data = arr
-      //         // if ((this.currentPage === 0 || key !== 'standard') && !this.isMore) {
-      //         //   arr.unshift({ name: '全部', id: '', isActive: false })
-      //         //   this.sortList[idx].data = arr
-      //         // } else {
-      //         //   this.sortList[idx].data.push(...arr)
-      //         // }
-      //       }
-      //     } else {
-      //       this.sortList[idx].data = arr
-      //     }
-      //     // else if (this.currentPage !== 0) {
-      //     //   this.currentPage--
-      //     // }
-      //     // 如果选择的是品名
-      //     if (key === 'name') {
-      //       tabList.unshift({ name: '全部', id: '', isActive: true })
-      //       this.sortList[0].data = tabList
-      //       this.mallTabValChange()
-      //       this.$emit('getName', tabList)
-      //     } else if (standard) {
-      //       this.activeTab = ''
-      //       this.queryObject.search = ''
-      //       this.standardVal = ''
-      //     } else {
-      //       this.activeTab = key // standard、material、origin
-      //     }
-      //     this.isMore = false
-      //     this.hideLoading()
-      //   }
-      // }).catch((e) => {
-      //   console.log('sortQueryList_catch=======>' + JSON.stringify(e))
-      //   this.hideLoading()
-      // })
     },
+    // 品名、规格、材质、产地
+    // async sortCb (key, standard) {
+    //   this.queryObject.productBrandName = this.tabVal
+    //   this.queryObject.currentPage = this.currentPage
+    //   let queryObj = Object.assign({}, this.queryObject)
+    //   this.showLoading()
+    //   let arr = []
+    //   if (key === 'name') {
+    //     let inputSearch = {
+    //       pageNum: 1,
+    //       pageSize: 50
+    //     }
+    //     try {
+    //       const res = await this.httpPost(this.apiList.zf.queryProductBrandNameSortPage, inputSearch)
+    //       arr = res.data.map(item => {
+    //         return item.productBrandName
+    //       })
+    //     } catch (e) {
+    //       console.log('sortQueryList_catch=======>' + JSON.stringify(e))
+    //       this.hideLoading()
+    //     }
+    //   } else {
+    //     try {
+    //       let resp = await this.httpPost(this.apiList.zf[this.sortQueryList[key].reqUrl], queryObj, 'post')
+    //       console.log('sortCb++++++', resp)
+    //       // 获取对应的下拉筛选框数据
+    //       arr = resp.data[this.sortQueryList[key].respKey]
+    //     } catch (e) {
+    //       console.log('sortQueryList_catch=======>' + JSON.stringify(e))
+    //       this.hideLoading()
+    //     }
+    //   }
+    //   const tabList = []
+    //   // 获取当前点击的key（规格、材质、产地）的下标
+    //   const idx = this.sortList.findIndex((item) => {
+    //     return item.key === key
+    //   })
+    //   console.log('idx', idx)
+    //   if (arr.length > 0) {
+    //     if (standard) {
+    //       // const standardIdx = arr.findIndex(item => item.name === standard)
+    //       arr.unshift({ name: '全部', isActive: false })
+    //       arr[1].isActive = true
+    //       this.sortList[1].data = arr
+    //     } else {
+    //       console.log('sortList++++', this.sortList[idx].data)
+    //       var newArr = arr.map(item => {
+    //         item = {
+    //           name: item,
+    //           id: item,
+    //           isActive: false
+    //         }
+    //         // console.log(item)
+    //         this.sortList[idx].data.filter((itemFilter) => {
+    //           if (itemFilter.name === item.name && itemFilter.isActive) {
+    //             item.isActive = true
+    //           }
+    //           return itemFilter.name === item.name && itemFilter.isActive
+    //         })
+    //         // console.log('resActive', resActive)
+    //         // if (key === 'name') {
+    //         //   const obj = {
+    //         //     name: item.name,
+    //         //     key: item.name
+    //         //   }
+    //         //   tabList.push(obj)
+    //         // }
+    //         tabList.push(item)
+    //         return item
+    //       })
+    //       newArr.unshift({ name: '全部', id: '', isActive: false })
+    //       // 将数据存入sortList对应项的data中
+    //       this.sortList[idx].data = newArr
+    //       // if ((this.currentPage === 0 || key !== 'standard') && !this.isMore) {
+    //       //   arr.unshift({ name: '全部', id: '', isActive: false })
+    //       //   this.sortList[idx].data = arr
+    //       // } else {
+    //       //   this.sortList[idx].data.push(...arr)
+    //       // }
+    //     }
+    //   } else {
+    //     this.sortList[idx].data = arr
+    //   }
+    //   // else if (this.currentPage !== 0) {
+    //   //   this.currentPage--
+    //   // }
+    //   // 如果选择的是品名
+    //   if (key === 'name') {
+    //     tabList.unshift({ name: '全部', id: '', isActive: true })
+    //     this.sortList[0].data = tabList
+    //     this.mallTabValChange()
+    //     this.$emit('getName', tabList)
+    //   } else if (standard) {
+    //     this.activeTab = ''
+    //     this.queryObject.search = ''
+    //     this.standardVal = ''
+    //   } else {
+    //     this.activeTab = key // standard、material、origin
+    //   }
+    //   this.isMore = false
+    //   this.hideLoading()
+    //   // this.ironRequest(this.sortQueryList[key].reqUrl, queryObj, 'post').then(resp => {
+    //   //   console.log('sortCb++++++', resp)
+    //   //   if (resp.returncode === '0') {
+    //   //     // 获取对应的下拉筛选框数据
+    //   //     let arr = resp[this.sortQueryList[key].respKey]
+    //   //     console.log(arr)
+    //   //     const tabList = []
+    //   //     // 获取当前点击的key（规格、材质、产地）的下标
+    //   //     const idx = this.sortList.findIndex((item) => {
+    //   //       return item.key === key
+    //   //     })
+    //   //     if (arr.length > 0) {
+    //   //       if (standard) {
+    //   //         // const standardIdx = arr.findIndex(item => item.name === standard)
+    //   //         arr.unshift({ name: '全部', id: '', isActive: false })
+    //   //         arr[1].isActive = true
+    //   //         this.sortList[1].data = arr
+    //   //       } else {
+    //   //         arr.map(item => {
+    //   //           item.isActive = false
+    //   //           // const resActive = this.sortList[idx].data.filter((itemFilter) => {
+    //   //           //   if (itemFilter.name === item.name && itemFilter.isActive) {
+    //   //           //     item.isActive = true
+    //   //           //   }
+    //   //           //   return itemFilter.name === item.name && itemFilter.isActive
+    //   //           // })
+    //   //           // console.log('resActive', resActive)
+    //   //           if (key === 'name') {
+    //   //             const obj = {
+    //   //               name: item.name,
+    //   //               id: item.id
+    //   //             }
+    //   //             tabList.push(obj)
+    //   //           }
+    //   //         })
+    //   //         arr.unshift({ name: '全部', id: '', isActive: false })
+    //   //         // 将数据存入sortList对应项的data中
+    //   //         this.sortList[idx].data = arr
+    //   //         // if ((this.currentPage === 0 || key !== 'standard') && !this.isMore) {
+    //   //         //   arr.unshift({ name: '全部', id: '', isActive: false })
+    //   //         //   this.sortList[idx].data = arr
+    //   //         // } else {
+    //   //         //   this.sortList[idx].data.push(...arr)
+    //   //         // }
+    //   //       }
+    //   //     } else {
+    //   //       this.sortList[idx].data = arr
+    //   //     }
+    //   //     // else if (this.currentPage !== 0) {
+    //   //     //   this.currentPage--
+    //   //     // }
+    //   //     // 如果选择的是品名
+    //   //     if (key === 'name') {
+    //   //       tabList.unshift({ name: '全部', id: '', isActive: true })
+    //   //       this.sortList[0].data = tabList
+    //   //       this.mallTabValChange()
+    //   //       this.$emit('getName', tabList)
+    //   //     } else if (standard) {
+    //   //       this.activeTab = ''
+    //   //       this.queryObject.search = ''
+    //   //       this.standardVal = ''
+    //   //     } else {
+    //   //       this.activeTab = key // standard、material、origin
+    //   //     }
+    //   //     this.isMore = false
+    //   //     this.hideLoading()
+    //   //   }
+    //   // }).catch((e) => {
+    //   //   console.log('sortQueryList_catch=======>' + JSON.stringify(e))
+    //   //   this.hideLoading()
+    //   // })
+    // },
     sortRest (key) {
       const keyArray = ['area', 'name', 'material', 'origin', 'more']
       const me = this

@@ -2,8 +2,28 @@
 div
   nav-bar(title="商城")
   div(style="height: 285rpx;")
-    mall-head(:mallTabVal="mallTabVal", @cleanSearch="cleanSearch", @getName="getName", @filter="multipleFilter", @selectMall="selectMall", @selectTab="selectTab", @searchChange="searchChange")
-
+    // mall-head(
+    //   :mallTabVal="mallTabVal", 
+    //   @cleanSearch="cleanSearch", 
+    //   @getName="getName", 
+    //   @filter="multipleFilter", 
+    //   @selectMall="selectMall", 
+    //   @selectTab="selectTab", 
+    //   @searchChange="searchChange"
+    // )
+    mall-head(
+      :mallTabVal="mallTabVal", 
+      @cleanSearch="cleanSearch", 
+      @getName="getName", 
+      @filter="multipleFilter", 
+      @selectMall="selectMall", 
+      @selectTab="selectTab", 
+      @searchChange="searchChange"
+      :productBrandNames="productBrandNames"
+      :specifications="specifications"
+      :productTextureNames="productTextureNames"
+      :prodAreaNames="prodAreaNames"
+    )
   swiper(v-if="goodsNameList.length > 0", @change="swiperChange", @transition="swiperTransition", :current="swiperCount", :style="{height: scrollHeight+'rpx'}")
     swiper-item(v-for="(tabItem, swiperIdx) in goodsNameList.length", :key="swiperIdx")
       .bg-gray.text-center.text-gray.pt-100(:style="{height: scrollHeight + 'rpx'}", v-if="swiperCount === swiperIdx && !isload && goodsNameList[swiperIdx].data.length === 0")
@@ -126,6 +146,10 @@ export default {
   },
   data () {
     return {
+      productBrandNames: [],
+      specifications: [],
+      productTextureNames: [],
+      prodAreaNames: [],
       ballValue: null,
       mallTypeObject: {
         'product': {
@@ -690,6 +714,11 @@ export default {
         } else {
           this.isNineClocks = true
         }
+        this.productBrandNames = res.data.productBrandNames || []
+        console.log(this.productBrandNames)
+        this.specifications = res.data.specifications || []
+        this.productTextureNames = res.data.productTextureNames || []
+        this.prodAreaNames = res.data.prodAreaNames || []
         const resData = res.data.stocks || []
         console.log('stocks++++', resData)
         const idx = this.swiperCount
