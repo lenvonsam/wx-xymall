@@ -175,12 +175,12 @@ export default {
       }
     }
   },
-  mounted () {
+  onLoad () {
     this.$nextTick(() => {
       const me = this
       this.timeInterval = setInterval(() => {
         me.countTime()
-        me.serverTime += 1000
+        // me.serverTime += 1000
       }, 1000)
     })
   },
@@ -241,6 +241,7 @@ export default {
     },
     // 刷新
     refresher (done) {
+      console.log('刷新+++++')
       this.loadFinish = 1
       const self = this
       this.isLoad = true
@@ -283,6 +284,11 @@ export default {
           const list = []
           arr.map(item => {
             item.choosed = false
+            item.overdue = false
+            item.timeDown = ''
+            item.timeDiff = new Date(item.currentDate).getTime() - new Date().getTime() // 服务器时间与本地时间的差额
+            item.timeEnd = new Date(item.invalidDate).getTime()
+            item.timeEndLading = new Date(item.ladingInvalidDate).getTime()
             item.status = self.contractStatus.find(c => {
               return c.id === item.xingyunContractStatus
             }).name
@@ -292,6 +298,7 @@ export default {
             // }
             list.push(item)
           })
+          console.log('>>>>', list)
           self.billTab[idx].data = list
           console.log(idx, self.billTab[idx].data)
           self.listData = list
@@ -362,11 +369,11 @@ export default {
         // const endTimeFormat = item.invalidDate
         // const endTime = new Date(endTimeFormat.replace(/-/g, '/')).getTime()
         // const leftTime = Number(endTime - nowTime)
-
-        item.timeDiff = new Date(item.currentDate).getTime() - new Date().getTime() // 服务器时间与本地时间的差额
-        item.timeEnd = new Date(item.invalidDate).getTime()
-        item.timeEndLading = new Date(item.ladingInvalidDate).getTime()
-
+        // if (index === 0) {
+        //   console.log('timeDiff', item.timeDiff)
+        //   console.log('timeEnd', item.timeEnd)
+        //   console.log('leftTime', item.timeEnd - (new Date().getTime() + item.timeDiff))
+        // }
         if (item.timeDiff && (item.timeEnd || item.timeEndLading)) {
           if (item.status === '待支付') {
             const leftTime = item.timeEnd - (new Date().getTime() + item.timeDiff)
@@ -381,6 +388,7 @@ export default {
               // item.name = '待支付'
               item.timeDown = `${h}:${m}:${s}`
             } else {
+              item.timeDown = '00:00:00'
               // item.name = '已超时'
               // item.value = `${h}:${m}:${s}`
             }
@@ -405,6 +413,7 @@ export default {
           }
         }
       })
+      console.log('倒计时', arr)
       this.$forceUpdate()
     },
     // 获取合同列表
@@ -429,6 +438,11 @@ export default {
           let list = []
           arr.map(item => {
             item.choosed = false
+            item.choosed = false
+            item.overdue = false
+            item.timeDiff = new Date(item.currentDate).getTime() - new Date().getTime() // 服务器时间与本地时间的差额
+            item.timeEnd = new Date(item.invalidDate).getTime()
+            item.timeEndLading = new Date(item.ladingInvalidDate).getTime()
             item.status = self.contractStatus.find(c => {
               return c.id === item.xingyunContractStatus
             }).name
@@ -453,12 +467,18 @@ export default {
           let list = []
           arr.map(item => {
             item.choosed = false
+            item.choosed = false
+            item.overdue = false
+            item.timeDiff = new Date(item.currentDate).getTime() - new Date().getTime() // 服务器时间与本地时间的差额
+            item.timeEnd = new Date(item.invalidDate).getTime()
+            item.timeEndLading = new Date(item.ladingInvalidDate).getTime()
             item.status = self.contractStatus.find(c => {
               return c.id === item.xingyunContractStatus
             }).name
             // console.log(item.status)
             list.push(item)
           })
+          console.log('初始化数据+++', list)
           this.billTab[idx].data = this.billTab[idx].data.concat(list)
           self.listData = self.listData.concat(list)
           self.isLoad = false

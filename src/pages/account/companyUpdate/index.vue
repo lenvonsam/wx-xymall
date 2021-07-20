@@ -194,7 +194,7 @@ export default {
     pageBack () {
       if (this.fromType === 3) {
         this.exitUser()
-        this.redirect('/pages/index/main')
+        this.toHome()
       } else {
         this.resetConfig()
         this.tab('/pages/index/main')

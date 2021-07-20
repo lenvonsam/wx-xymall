@@ -401,8 +401,12 @@ export default {
       if (idx !== -1) {
         this.sortClose(idx)
       }
+      if (!this.tabVal) {
+        this.jump('/pages/mallFilter/main?name=全部')
+      } else {
+        this.jump('/pages/mallFilter/main?name=' + this.tabVal)
+      }
       // 跳转分类页面
-      this.jump('/pages/mallFilter/main?name=' + this.tabVal)
     },
     // 规格下拉筛选框搜索框搜索内容改变
     standardChange (e) {

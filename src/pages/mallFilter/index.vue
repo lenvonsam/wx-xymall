@@ -164,9 +164,16 @@ export default {
       this.httpPost(this.apiList.zf.queryProductBrandNameSortPage, {}).then(res => {
         const nameId = this.$root.$mp.query.name
         console.log('nameId+++', nameId)
-        this.queryObject = {
-          'productBrandName': nameId,
-          'specification': ''
+        if (nameId === '全部') {
+          this.queryObject = {
+            'productBrandName': '',
+            'specification': ''
+          }
+        } else {
+          this.queryObject = {
+            'productBrandName': nameId,
+            'specification': ''
+          }
         }
         // 获取某个分类对应的规格
         this.getStandardList()
