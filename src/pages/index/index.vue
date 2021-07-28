@@ -188,17 +188,8 @@ export default {
     // 展示首页引导图
     showShareBanner () {
       const firstShare = mpvue.getStorageSync('firstShare') || false
-      const activeShare = mpvue.getStorageSync('activeShare') || false
       const downtimeShare = mpvue.getStorageSync('downtimeShare') || false
-
-      if (new Date().getTime() - new Date('2021-07-10').getTime() < 0) {
-        if (!activeShare) {
-          this.shareModalShowType = 'activity'
-          this.shareModalShow = true
-          mpvue.setStorageSync('activeShare', true)
-        }
-      } else if (new Date('2021-07-20').getTime() < new Date().getTime() && new Date().getTime() < new Date('2021-07-31 08:00').getTime()) {
-        console.log('ok++++++')
+      if (new Date('2021/07/20').getTime() < new Date().getTime() && new Date().getTime() < new Date('2021/07/31 08:00').getTime()) {
         if (!downtimeShare) {
           this.shareModalShowType = 'downtime'
           this.shareModalShow = true

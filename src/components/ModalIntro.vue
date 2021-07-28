@@ -1,10 +1,10 @@
 <template lang="pug">
 .cu-modal(:class="modalName")
   //- 首页
-  .container.mask.active(v-if="type === 'activity'", :style="{paddingTop: customBar + 'px'}", @click="hide")
-    img.activity(:src="imgProxy + 'activity-100.gif'")
-  .container.mask.active(v-else-if="type === 'downtime'", :style="{paddingTop: customBar + 'px'}", @click="hide")
-    img.activity(:src="imgProxy + 'downtime.png'")
+  // .container.mask.active(v-if="type === 'activity'", :style="{paddingTop: customBar + 'px'}", @click="hide")
+  //   img.activity(:src="imgProxy + 'activity-100.gif'")
+  .container.mask.active(v-if="type === 'downtime'", :style="{paddingTop: customBar + 'px'}", @click="hide")
+    img.activity(:src="imgProxy + 'timedown.png'")
   .container.mask.mall(v-else-if="type === 'home'", :style="{paddingTop: customBar + 55 + 'px'}", @click="hide")
     img.arrow(src="/static/images/mall_arrow.png", :style="{top: customBar + 'px'}")
     img.body(:src="imgProxy + 'mall_body.png'")
@@ -87,8 +87,8 @@ export default {
     justify-content center
     align-items center
     .activity
-      width 250px
-      height 250px
+      width 300px
+      height 375px
   img
     width 100%
     height 100%
