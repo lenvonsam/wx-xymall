@@ -107,7 +107,7 @@ export default {
       'configVal'
     ]),
     jumpBack () {
-      this.logEventGet({ event: 'click_app_login_pwd' })
+      this.logEventGet({ event: 'click_app_login_pwd', type: '01' })
       this.back()
     },
     // 跳转注册页面
@@ -188,9 +188,9 @@ export default {
                 console.log('短信验证码登陆成功，获取用户信息+++++')
                 self.httpPost(self.apiList.zf.getPersonInfo, {}).then(res => {
                   if (res.data.userTypeLogo === '01') {
-                    this.logEventGet({event: 'click_app_login'})
+                    this.logEventGet({event: 'click_app_login', type: '01'})
                   } else {
-                    this.logEventGet({event: 'click_app_login_seller'})
+                    this.logEventGet({event: 'click_app_login_seller', type: '01'})
                   }
                   self.setUser({ token: self.token, user: res.data })
                   // console.log(res.data.userStatus, res.data.userTypeLogo, 'hahah++++')

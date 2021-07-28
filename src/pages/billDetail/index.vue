@@ -208,11 +208,11 @@ export default {
   },
   methods: {
     payBill () {
-      this.logEventGet({ event: 'click_app_myorder_detail_pay' })
+      this.logEventGet({ event: 'click_app_myorder_detail_pay', type: '01' })
       this.jump('/mall/pay?orderNo=' + this.billDetail.tstc_no + '&pageType=offlinePay&price=' + this.billDetail.total_money + '&frontPrice=' + this.billDetail.advancePaymentMoney + '&percent=' + this.billDetail.percent)
     },
     cancelBill () {
-      this.logEventGet({ event: 'click_app_myorder_detail_cancel' })
+      this.logEventGet({ event: 'click_app_myorder_detail_cancel', type: '01' })
       const me = this
       if (!this.btnDisable) {
         this.confirm({ content: '您确定要取消合同吗？' }).then((res) => {

@@ -162,6 +162,7 @@ function httpGet (url, params) {
   url = zfBASICURL + url
   let header = {
     'PlatformId': 'ZF',
+    'AppType': 'xingyun-miniapp',
     'Authorization': _this.token
   }
   return new Promise((resolve, reject) => {
@@ -204,11 +205,13 @@ function httpPost (url, params = {}) {
   if (url !== 'base/online/appletLogin') {
     header = {
       'PlatformId': 'ZF',
+      'AppType': 'xingyun-miniapp',
       'Authorization': _this.token
     }
   } else {
     header = {
-      'PlatformId': 'ZF'
+      'PlatformId': 'ZF',
+      'AppType': 'xingyun-miniapp'
     }
   }
   url = zfBASICURL + url
@@ -253,6 +256,7 @@ function httpPostForm (url, params) {
   let header = {
     'Content-Type': 'multipart/form-data',
     'PlatformId': 'ZF',
+    'AppType': 'xingyun-miniapp',
     'Authorization': this.token
   }
   return new Promise((resolve, reject) => {
@@ -280,12 +284,42 @@ function httpPostForm (url, params) {
 }
 
 // statisticRequest
+function logEvent (params, noSeller) {
+  if (noSeller && this.currentUser.type === 'seller') {
+    return false
+  } else {
+    let header = {
+      'PlatformId': 'ZF',
+      'AppType': 'xingyun-miniapp'
+    }
+    let url = zfBASICURL + this.apiList.zf.logSave
+    mpvue.request({
+      url: url,
+      data: params,
+      header: header,
+      method: 'POST',
+      success (res) {
+        console.log(res)
+        if (res.data.success) {
+          console.log('埋点事件记录:', params.event)
+        } else {
+          console.error(res.data.message)
+        }
+      },
+      fail (error) {
+        console.error(error.errMsg)
+      }
+    })
+  }
+}
+
 function logEventGet (params, noSeller) {
   if (noSeller && this.currentUser.type === 'seller') {
     return false
   } else {
     let header = {
-      'PlatformId': 'ZF'
+      'PlatformId': 'ZF',
+      'AppType': 'xingyun-miniapp'
     }
     let url = zfBASICURL + this.apiList.zf.logClickAdd
     mpvue.request({
@@ -296,7 +330,7 @@ function logEventGet (params, noSeller) {
       success (res) {
         console.log(res)
         if (res.data.success) {
-          console.log('埋点事件记录:', params.event)
+          console.log('埋点点击记录:', params.event)
         } else {
           console.error(res.data.message)
         }
@@ -313,7 +347,8 @@ function logEventPost (params, noSeller) {
     return false
   } else {
     let header = {
-      'PlatformId': 'ZF'
+      'PlatformId': 'ZF',
+      'AppType': 'xingyun-miniapp'
     }
     let url = zfBASICURL + this.apiList.zf.logEventAdd
     mpvue.request({
@@ -340,6 +375,7 @@ export default {
   httpGet,
   httpPost,
   httpPostForm,
+  logEvent,
   logEventGet,
   logEventPost,
   zfBASICURL,

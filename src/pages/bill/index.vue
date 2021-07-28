@@ -31,8 +31,7 @@ div
                           .ft-16.padding-right-sm {{item.saleContractNo}}
                           img.ding-icon(src="/static/images/ding.png", v-if="item.payMethod == '02'")
                       .text-gray(v-if="item.status === '已完成' || item.status === '违约' || item.status === '已取消'") {{item.status}}
-                      .text-red(v-else-if="item.status !== '待补款'") {{item.status}}
-
+                      .text-red(v-else) {{item.status}}
                     .text-gray
                       .padding-bottom-xs {{item.orgName}}
                       .flex.justify-between.padding-bottom-xs
@@ -72,7 +71,7 @@ export default {
       billTab: [
         { title: '全部', status: '', data: [], isActive: true },
         { title: '待付款', status: '01', data: [], isActive: false },
-        { title: '待补款', status: '03', data: [], isActive: false },
+        { title: '待补款', status: '09', data: [], isActive: false },
         { title: '待提货', status: '02', data: [], isActive: false },
         { title: '已完成', status: '04', data: [], isActive: false }
       ],
@@ -123,8 +122,8 @@ export default {
       this.queryObj.contractStateType = '02'
       this.queryObj.xingyunContractStatus = ''
     } else if (this.tabName === '03') {
-      this.queryObj.contractStateType = ''
-      this.queryObj.xingyunContractStatus = '03'
+      this.queryObj.contractStateType = '09'
+      this.queryObj.xingyunContractStatus = ''
     } else if (this.tabName === '04') {
       this.queryObj.contractStateType = '04'
       this.queryObj.xingyunContractStatus = ''
@@ -200,7 +199,7 @@ export default {
     },
     // 搜索合同
     searchOrder () {
-      this.logEventGet({ event: 'click_app_order_search' })
+      this.logEventGet({ event: 'click_app_order_search', type: '01' })
       this.startDate = ''
       this.endDate = ''
       this.listData = []
@@ -554,7 +553,7 @@ export default {
       console.log('点击取消+++++')
       // if (this.tabName === '0') this.logEventGet({ event: 'click_app_myorder_all_cancel' })
       // if (this.tabName === '1') this.logEventGet({ event: 'click_app_myorder_needpay_cancel' })
-      this.logEventGet({ event: 'click_app_order_cancel' })
+      this.logEventGet({ event: 'click_app_order_cancel', type: '01' })
       const me = this
       this.confirm({ content: '您确定要取消合同吗？' }).then((res) => {
         console.log(me.btnDisable, res)
@@ -585,7 +584,7 @@ export default {
     payBill (item) {
       // if (this.tabName === '0') this.logEventGet({ event: 'click_app_myorder_all_pay' })
       // if (this.tabName === '1') this.logEventGet({ event: 'click_app_myorder_needpay_pay' })
-      this.logEventGet({ event: 'click_app_order_to_pay' })
+      this.logEventGet({ event: 'click_app_order_to_pay', type: '01' })
       this.jump(`/pages/pay/main?pageType=offlinePay&orderNo=${item.saleContractId}`)
     }
   }

@@ -103,7 +103,7 @@ export default {
     }
   },
   onTabItemTap (item) {
-    this.logEventGet({ event: 'click_app_nav_cart' })
+    this.logEventGet({ event: 'click_app_nav_cart', type: '01' })
   },
   methods: {
     ...mapActions([

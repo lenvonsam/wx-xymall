@@ -654,7 +654,7 @@ export default {
       console.log('点击取消+++++')
       // if (this.tabName === '0') this.logEventGet({ event: 'click_app_myorder_all_cancel' })
       // if (this.tabName === '1') this.logEventGet({ event: 'click_app_myorder_needpay_cancel' })
-      this.logEventGet({ event: 'click_app_order_cancel' })
+      this.logEventGet({ event: 'click_app_order_cancel', type: '01' })
       const me = this
       this.confirm({ content: '您确定要取消合同吗？' }).then((res) => {
         console.log(me.btnDisable, res)

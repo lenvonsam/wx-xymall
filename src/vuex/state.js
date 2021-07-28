@@ -96,7 +96,7 @@ export default {
     },
     {
       icon: '/static/images/submit_orders_icon.png',
-      name: '修改待确认',
+      name: '修改中',
       dotKey: 'ladingConfirmNumber',
       event: 'click_app_me_to_confirm',
       url: {

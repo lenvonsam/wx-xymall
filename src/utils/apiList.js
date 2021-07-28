@@ -365,6 +365,7 @@ export default {
     // 埋点、行为日志记录
     logClickAdd: 'base/log-click/add',
     logEventAdd: 'base/log-event/add',
+    logSave: 'foundation/logEvent/save',
     // 卖家-提单管理列表
     querySellerSaleLadingPage: 'sale/saleLading/querySellerSaleLadingPage',
     // 卖家-提单详情

@@ -437,7 +437,7 @@ export default {
       }
     },
     openEdit () {
-      if (!this.isEdit) this.logEventGet({ event: 'click_app_quotation_modify' })
+      if (!this.isEdit) this.logEventGet({ event: 'click_app_quotation_modify', type: '01' })
       this.pickWayShow = false
       this.isEdit = !this.isEdit
       this.auditDxCheckDisable = !this.auditDxCheckDisable
@@ -474,7 +474,7 @@ export default {
     },
     // 清空购物车
     clearCarts () {
-      this.logEventGet({ event: 'click_app_quotation_del_all' })
+      this.logEventGet({ event: 'click_app_quotation_del_all', type: '01' })
       const self = this
       console.log(this.carts)
       if (this.carts.length > 0) {
@@ -521,7 +521,7 @@ export default {
       }
     },
     choosedAll () {
-      this.logEventGet({ event: 'click_app_quotation_checkall' })
+      this.logEventGet({ event: 'click_app_quotation_checkall', type: '01' })
       this.allChoosed = !this.allChoosed
       if (this.allChoosed) {
         this.carts.map(itm => {
@@ -541,11 +541,11 @@ export default {
       setTimeout(async () => {
         this.hideLoading()
         try {
-          if (flag === 2) this.logEventGet({ event: 'click_app_quotation_generate' })
+          if (flag === 2) this.logEventGet({ event: 'click_app_quotation_generate', type: '01' })
           let filterArray = this.carts.filter(itm => itm.choosed === true)
           // 编辑操作
           if (this.isEdit) {
-            if (flag === 1) this.logEventGet({ event: 'click_app_quotation_del' })
+            if (flag === 1) this.logEventGet({ event: 'click_app_quotation_del', type: '01' })
             this.btnDisable = false
             if (filterArray.length === 0) {
               this.showMsg('请选择所需删除的商品')
@@ -555,7 +555,7 @@ export default {
             this.delCartRow(filterArray)
             return false
           } else if (flag === 1) {
-            this.logEventGet({ event: 'click_app_quotation_dx' })
+            this.logEventGet({ event: 'click_app_quotation_dx', type: '01' })
           }
           // 定向操作
           if (filterArray.length === 0) {

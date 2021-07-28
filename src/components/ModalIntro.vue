@@ -3,6 +3,8 @@
   //- 首页
   .container.mask.active(v-if="type === 'activity'", :style="{paddingTop: customBar + 'px'}", @click="hide")
     img.activity(:src="imgProxy + 'activity-100.gif'")
+  .container.mask.active(v-else-if="type === 'downtime'", :style="{paddingTop: customBar + 'px'}", @click="hide")
+    img.activity(:src="imgProxy + 'downtime.png'")
   .container.mask.mall(v-else-if="type === 'home'", :style="{paddingTop: customBar + 55 + 'px'}", @click="hide")
     img.arrow(src="/static/images/mall_arrow.png", :style="{top: customBar + 'px'}")
     img.body(:src="imgProxy + 'mall_body.png'")

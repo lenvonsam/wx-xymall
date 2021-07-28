@@ -38,7 +38,7 @@ export default {
   },
   methods: {
     jumpNotice (id) {
-      this.logEventGet({ event: 'click_app_index_notice_more' })
+      this.logEventGet({ event: 'click_app_index_notice_more', type: '01' })
       this.jump('/pages/h5/main?title=公告详情&type=noticeDetail&id=' + id)
     },
     start () {

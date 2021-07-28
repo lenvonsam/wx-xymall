@@ -177,23 +177,32 @@ export default {
     ]),
     // 跳转公告页面
     jumpNotice () {
-      this.logEventGet({ event: 'click_app_index_notice_more' })
+      this.logEventGet({ event: 'click_app_index_notice_more', type: '01' })
       this.jump('/pages/cardList/main?title=型云公告&type=notices')
     },
     // 跳转搜索页面
     jumpSearch () {
-      this.currentUser.type === 'seller' ? this.logEventGet({ event: 'click_app_index_search_seller' }) : this.logEventGet({ event: 'click_app_index_search' })
+      this.currentUser.type === 'seller' ? this.logEventGet({ event: 'click_app_index_search_seller', type: '01' }) : this.logEventGet({ event: 'click_app_index_search', type: '01' })
       this.jump('/pages/search/main')
     },
     // 展示首页引导图
     showShareBanner () {
       const firstShare = mpvue.getStorageSync('firstShare') || false
       const activeShare = mpvue.getStorageSync('activeShare') || false
+      const downtimeShare = mpvue.getStorageSync('downtimeShare') || false
+
       if (new Date().getTime() - new Date('2021-07-10').getTime() < 0) {
         if (!activeShare) {
           this.shareModalShowType = 'activity'
           this.shareModalShow = true
           mpvue.setStorageSync('activeShare', true)
+        }
+      } else if (new Date('2021-07-20').getTime() < new Date().getTime() && new Date().getTime() < new Date('2021-07-31 08:00').getTime()) {
+        console.log('ok++++++')
+        if (!downtimeShare) {
+          this.shareModalShowType = 'downtime'
+          this.shareModalShow = true
+          mpvue.setStorageSync('downtimeShare', true)
         }
       } else {
         if (!firstShare) {
@@ -206,13 +215,13 @@ export default {
     // 点击产品分类
     classifyClick (id, name) {
       // this.configVal({ key: 'tempObject', val: { name: title } })
-      this.logEventGet({ event: 'click_app_index_category', name: name })
+      this.logEventGet({ event: 'click_app_index_category', name: name, type: '01' })
       this.configVal({ key: 'tempObject', val: { name: name, fromPage: 'home' } })
       this.tab('/pages/mall/main')
     },
     // 点击功能图标
     iconJump (icon) {
-      this.logEventGet({ event: icon.event })
+      this.logEventGet({ event: icon.event, type: '01' })
       if (this.isLogin) {
         if (icon.dotKey && this.currentUser.type === 'seller' && !this.modules[icon.dotKey]) {
           this.showMsg('暂无权限')
@@ -227,7 +236,7 @@ export default {
     },
     // 点击查看更多
     mallMore () {
-      this.logEventGet({ event: 'click_app_index_category', name: '查看更多' })
+      this.logEventGet({ event: 'click_app_index_category', name: '查看更多', type: '01' })
       this.tab('/pages/mall/main')
     },
     // initChart (canvas, width, height) {

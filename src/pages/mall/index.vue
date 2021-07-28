@@ -159,7 +159,7 @@ export default {
           standard: 'specification',
           material: 'productTextureName',
           wh_name: 'stockZoneName',
-          max_count: 'avbleAmount',
+          max_count: 'ratioAvailableAmount',
           max_weight: 'ratioAvailableManagerWeight',
           tolerance: 'toleranceRange',
           length: 'length',
@@ -248,7 +248,7 @@ export default {
     }
   },
   onTabItemTap (item) {
-    this.logEventGet({ event: 'click_app_nav_mall' })
+    this.logEventGet({ event: 'click_app_nav_mall', type: '01' })
   },
   onUnload () {
     this.btnDisable = false
@@ -602,11 +602,11 @@ export default {
                 }
               })
               .catch(e => {
-                this.showMsg(e.message, true)
+                this.showMsg(e.message)
               })
             break
           case 'cart':
-            this.currentUser.type === 'seller' ? this.logEventGet({ event: 'click_app_mall_add_cart_seller' }) : this.logEventGet({ event: 'click_app_mall_add_cart' })
+            this.currentUser.type === 'seller' ? this.logEventGet({ event: 'click_app_mall_add_cart_seller', type: '01' }) : this.logEventGet({ event: 'click_app_mall_add_cart', type: '01' })
             console.log(this.btnDisable)
             if (this.currentUser.userStatus === '01' || this.currentUser.userStatus === '02' || this.currentUser.userStatus === '03') {
               this.fillModalMsg = '请先完善信息'
@@ -715,7 +715,6 @@ export default {
           this.isNineClocks = true
         }
         this.productBrandNames = res.data.productBrandNames || []
-        console.log(this.productBrandNames)
         this.specifications = res.data.specifications || []
         this.productTextureNames = res.data.productTextureNames || []
         this.prodAreaNames = res.data.prodAreaNames || []
