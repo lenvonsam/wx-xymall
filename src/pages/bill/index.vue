@@ -29,7 +29,7 @@ div
                       .col
                         .flex.align-center
                           .ft-16.padding-right-sm {{item.saleContractNo}}
-                          img.ding-icon(src="/static/images/ding.png", v-if="item.payMethod == '02'")
+                          img.ding-icon(src="/static/images/ding.png", v-if="item.sourceType == '01'")
                       .text-gray(v-if="item.status === '已完成' || item.status === '违约' || item.status === '已取消'") {{item.status}}
                       .text-red(v-else) {{item.status}}
                     .text-gray

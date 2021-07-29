@@ -189,7 +189,7 @@ export default {
     showShareBanner () {
       const firstShare = mpvue.getStorageSync('firstShare') || false
       const downtimeShare = mpvue.getStorageSync('downtimeShare') || false
-      if (new Date('2021/07/20').getTime() < new Date().getTime() && new Date().getTime() < new Date('2021/07/31 08:00').getTime()) {
+      if (new Date('2021/07/30').getTime() < new Date().getTime() && new Date().getTime() < new Date('2021/07/31 08:00').getTime()) {
         if (!downtimeShare) {
           this.shareModalShowType = 'downtime'
           this.shareModalShow = true

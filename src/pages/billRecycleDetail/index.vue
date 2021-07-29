@@ -76,14 +76,14 @@ div
       .cart-settle-btn.ft-16(@click="goToSettle")
         span {{isEdit ? '删除' : '生成合同'}}
   alert(:msg="alertText", :cb="alertCb", v-model="alertShow", force)
-  modal(v-model="modalShow", @cb="modalCb", :showWarningIcon = "showWarningIcon", :title="modalTitle")
-    .padding-lr-22(style="text-align: left;")
-      div 1、合同提交后请
-        sapn(style="color: red;font-size: 16px") 2小时
-          sapn(style="color: #000;font-size: 14px") 内完成付款，超时合同将会自动取消！
-      div 2、付款成功后请
-        sapn(style="color: red;font-size: 16px") 5天内
-          sapn(style="color: #000;font-size: 14px") 完成提货，超期未提需缴纳相应的仓储费用
+  // modal(v-model="modalShow", @cb="modalCb", :showWarningIcon = "showWarningIcon", :title="modalTitle")
+  //   .padding-lr-22(style="text-align: left;")
+  //     div 1、合同提交后请
+  //       sapn(style="color: red;font-size: 16px") 2小时
+  //         sapn(style="color: #000;font-size: 14px") 内完成付款，超时合同将会自动取消！
+  //     div 2、付款成功后请
+  //       sapn(style="color: red;font-size: 16px") 5天内
+  //         sapn(style="color: #000;font-size: 14px") 完成提货，超期未提需缴纳相应的仓储费用
 </template>
 
 <script>
@@ -205,7 +205,7 @@ export default {
     this.soldCarts = []
     this.alertShow = false
     this.firstLoad = false
-    this.modalShow = false
+    // this.modalShow = false
   },
   onUnload () {
     this.carts = []
@@ -354,49 +354,86 @@ export default {
       }
       console.log(filterArray)
       if (filterArray.length > 0 && !this.btnDisable) {
-        this.modalShow = true // 是否继续提交说明弹窗
+        // this.modalShow = true // 是否继续提交说明弹窗
+        this.confirm({
+          title: '友情提示',
+          content: '一经结算将无法更改商品数量'
+        }).then(res => {
+          if (res === 'confirm') {
+            let filterArray = this.carts.filter(itm => itm.choosed === true)
+            let detailList = filterArray.map(item => {
+              return {
+                id: item.id,
+                num: item.amount,
+                quantityType: item.quantityType,
+                oldQuantityType: item.oldQuantityType
+              }
+            })
+            this.btnDisable = true
+            this.showLoading()
+            let params = {
+              deliveryType: this.deliveryType,
+              sourceType: this.sourceType,
+              detailList: detailList
+            }
+            // 生成合同
+            this.httpPost(this.apiList.zf.generateContractRecovery, params).then(res => {
+              // this.modalShow = false
+              this.hideLoading()
+              this.btnDisable = false
+              this.tab('/pages/me/main')
+            }).catch(e => {
+              this.btnDisable = false
+              // this.modalShow = false
+              this.hideLoading()
+              this.alertText = e.message || '网络异常' // 合同生成失败弹窗提示
+              this.alertShow = true
+              console.log(e)
+            })
+          }
+        })
       } else {
         this.showMsg('请选择结算商品', 'warn')
       }
     },
     // 提交说明弹窗回调
-    async modalCb (flag) {
-      let self = this
-      let filterArray = this.carts.filter(itm => itm.choosed === true)
-      let detailList = filterArray.map(item => {
-        return {
-          id: item.id,
-          num: item.amount,
-          quantityType: item.quantityType,
-          oldQuantityType: item.oldQuantityType
-        }
-      })
-      if (flag.toString() === 'confirm') {
-        self.btnDisable = true
-        this.showLoading()
-        let params = {
-          deliveryType: this.deliveryType,
-          sourceType: this.sourceType,
-          detailList: detailList
-        }
-        // 生成合同
-        self.httpPost(this.apiList.zf.generateContractRecovery, params).then(res => {
-          this.modalShow = false
-          this.hideLoading()
-          self.btnDisable = false
-          this.tab('/pages/me/main')
-        }).catch(e => {
-          self.btnDisable = false
-          this.modalShow = false
-          this.hideLoading()
-          this.alertText = e.message || '网络异常' // 合同生成失败弹窗提示
-          this.alertShow = true
-          console.log(e)
-        })
-      } else {
-        this.modalShow = false
-      }
-    },
+    // async modalCb (flag) {
+    //   let self = this
+    //   let filterArray = this.carts.filter(itm => itm.choosed === true)
+    //   let detailList = filterArray.map(item => {
+    //     return {
+    //       id: item.id,
+    //       num: item.amount,
+    //       quantityType: item.quantityType,
+    //       oldQuantityType: item.oldQuantityType
+    //     }
+    //   })
+    //   if (flag.toString() === 'confirm') {
+    //     self.btnDisable = true
+    //     this.showLoading()
+    //     let params = {
+    //       deliveryType: this.deliveryType,
+    //       sourceType: this.sourceType,
+    //       detailList: detailList
+    //     }
+    //     // 生成合同
+    //     self.httpPost(this.apiList.zf.generateContractRecovery, params).then(res => {
+    //       this.modalShow = false
+    //       this.hideLoading()
+    //       self.btnDisable = false
+    //       this.tab('/pages/me/main')
+    //     }).catch(e => {
+    //       self.btnDisable = false
+    //       this.modalShow = false
+    //       this.hideLoading()
+    //       this.alertText = e.message || '网络异常' // 合同生成失败弹窗提示
+    //       this.alertShow = true
+    //       console.log(e)
+    //     })
+    //   } else {
+    //     this.modalShow = false
+    //   }
+    // },
     // 选择计量方式
     // weightChoose (val, rowItem) {
     //   rowItem.measure_way_id = val
