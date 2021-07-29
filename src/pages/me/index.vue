@@ -345,7 +345,11 @@ export default {
           // 信息未完善提示
           // console.log('experienceDays+++++', 7 - res.data.experienceDays)
           if (this.currentUser.type === 'buyer') {
-            if (this.currentUser.userStatus === '01' && (7 - res.data.experienceDays < 0)) {
+            // if (this.currentUser.userStatus === '01' && (7 - res.data.experienceDays < 0)) {
+            //   this.alertText = '您还需要完善公司信息才能正常工作'
+            //   this.alertShow = true
+            // }
+            if (this.currentUser.userStatus === '01') {
               this.alertText = '您还需要完善公司信息才能正常工作'
               this.alertShow = true
             }
