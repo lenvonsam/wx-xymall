@@ -412,6 +412,8 @@ export default {
     // 短信到货通知
     arrivalNotice: 'xingyun/shopMall/arrivalNotice',
     // 点击合同待确认
-    saleContractUpateAffirm: 'sale/saleContract/saleContractUpateAffirm'
+    saleContractUpateAffirm: 'sale/saleContract/saleContractUpateAffirm',
+    // 退出登录
+    logout: 'base/user/logout'
   }
 }

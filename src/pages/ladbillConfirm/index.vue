@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  nav-bar(title="修改待确认提单", isBack)
+  nav-bar(title="修改待确认", isBack)
   //- template(v-if="isload")
     time-line(type="mallist")
   //- template(v-if="!isload")
@@ -11,7 +11,7 @@ div
           .col
             span.ft-15.text-blue.text-bold {{item.saleContractNo}}
             copy-btn(:copyUrl="item.saleContractNo")
-          .confirm-btn.text-blue(@click="jumpConfirm(item)") 确认修改提单
+          .confirm-btn.text-blue(@click="jumpConfirm(item)") 确认修改
         .padding-bottom-xs {{item.orgName}}
         .padding-bottom-xs
           span 共{{item.contractAmount}}支，{{item.estimatedTonnage}}吨

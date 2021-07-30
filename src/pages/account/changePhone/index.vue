@@ -60,8 +60,14 @@ export default {
     this.phone = this.maskPhone(this.currentUser.phone)
   },
   onUnload () {
+    this.exitUser()
     this.codeBtnShow = false
     this.alertShow = false
+    this.httpGet(this.apiList.zf.logout).then(res => {
+      // console.log('退出登录+++')
+    }).catch(err => {
+      this.showMsg(err.message)
+    })
   },
   methods: {
     ...mapActions([
@@ -137,6 +143,11 @@ export default {
               this.bindClick = true
               this.exitUser()
               this.alertShow = true
+              this.httpGet(this.apiList.zf.logout).then(res => {
+                // console.log('退出登录+++')
+              }).catch(err => {
+                this.showMsg(err.message)
+              })
             }
           } catch (e) {
             this.bindClick = true
