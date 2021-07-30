@@ -128,6 +128,7 @@ div
       div 恭喜您成为型云用户，您的信息正在审核中，请耐心等待
   modal(v-model="fillModalShow", :title="modalTitle", @cb="fillModalCb")
     .padding-sm {{fillModalMsg}}
+  my-toast(:toastShow="toastShow" :toastMsg="toastMsg")
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
@@ -136,13 +137,16 @@ import mallItem from '@/components/MallItem'
 import modalIntro from '@/components/ModalIntro.vue'
 import cartBall from '@/components/ParabolicPic.vue'
 import modal from '@/components/Modal.vue'
+import myToast from '@/components/MyToast.vue'
+
 export default {
   components: {
     mallHead,
     mallItem,
     modalIntro,
     cartBall,
-    modal
+    modal,
+    myToast
   },
   data () {
     return {
@@ -151,6 +155,8 @@ export default {
       productTextureNames: [],
       prodAreaNames: [],
       ballValue: null,
+      toastShow: false,
+      toastMsg: '',
       mallTypeObject: {
         'product': {
           name: 'onlineProductBrandName',
@@ -581,8 +587,13 @@ export default {
       console.log('evt', evt)
       const self = this
       self.ballValue = evt
+      if (this.btnDisable) {
+        return
+      }
+      this.btnDisable = true
       if (obj.name === 'H型钢' && obj.price === '--') {
         this.showMsg(`此商品会在${obj.show_time}后开售`)
+        this.btnDisable = false
         return
       }
       if (this.isLogin) {
@@ -593,42 +604,53 @@ export default {
             //   return false
             // }
             this.showMsg('请完善信息，耐心等待审批通过')
+            this.btnDisable = false
             break
           case 'notice':
             this.httpPost(this.apiList.zf.arrivalNotice, obj)
               .then(res => {
                 if (res.success) {
-                  this.showMsg('已设置到货通知提醒，一有库存我们会短信通知您，谢谢！')
+                  this.toastShow = true
+                  this.toastMsg = '已设置到货通知提醒，一有库存我们会短信通知您，谢谢！'
+                  setTimeout(() => {
+                    this.toastShow = false
+                    this.toastMsg = ''
+                    this.btnDisable = false
+                  }, 1500)
                 }
               })
               .catch(e => {
-                this.showMsg(e.message)
+                this.btnDisable = false
+                this.toastShow = true
+                this.toastMsg = e.message
+                setTimeout(() => {
+                  this.toastShow = false
+                  this.toastMsg = ''
+                  this.btnDisable = false
+                }, 1500)
+                // this.showMsg(e.message)
               })
             break
           case 'cart':
             this.currentUser.type === 'seller' ? this.logEventGet({ event: 'click_app_mall_add_cart_seller', type: '01' }) : this.logEventGet({ event: 'click_app_mall_add_cart', type: '01' })
-            console.log(this.btnDisable)
             if (this.currentUser.userStatus === '01' || this.currentUser.userStatus === '02' || this.currentUser.userStatus === '03') {
               this.fillModalMsg = '请先完善信息'
               this.fillModalShow = true
             } else {
-              if (!this.btnDisable) {
-                this.btnDisable = true
-                obj.num = 1
-                this.addCartItem(obj)
-                // this.addCart(obj, type, this.currentUser.user_id).then(
-                //   rt => {
-                //     // self.ballValue = evt
-                //     self.showMsg(rt.msg, '', 1000)
-                //     // if (type === 'cart') self.setCartCount(self.currentUser.user_id)
-                //     self.btnDisable = false
-                //   },
-                //   err => {
-                //     self.showMsg(err === '该商品已经存在于购物车中' ? '该商品已加入购物车' : err)
-                //     self.btnDisable = false
-                //   }
-                // )
-              }
+              obj.num = 1
+              this.addCartItem(obj)
+              // this.addCart(obj, type, this.currentUser.user_id).then(
+              //   rt => {
+              //     // self.ballValue = evt
+              //     self.showMsg(rt.msg, '', 1000)
+              //     // if (type === 'cart') self.setCartCount(self.currentUser.user_id)
+              //     self.btnDisable = false
+              //   },
+              //   err => {
+              //     self.showMsg(err === '该商品已经存在于购物车中' ? '该商品已加入购物车' : err)
+              //     self.btnDisable = false
+              //   }
+              // )
             }
             break
           default:
@@ -646,30 +668,33 @@ export default {
     },
     // 添加到购物车
     async addCartItem (obj) {
-      const self = this
       try {
         obj.cartQuantityType = obj.onlineQuantityType
-        // self.showLoading()
-        let res = await self.httpPost(this.apiList.zf.addCartItem, obj)
+        // this.showLoading()
+        let res = await this.httpPost(this.apiList.zf.addCartItem, obj)
         if (res.success) {
-          self.btnDisable = false
-          setTimeout(() => {
-            self.showMsg('购物车成功')
-          }, 500)
+          this.showMsg('购物车成功', 500)
+          this.btnDisable = false
           // 显示底部tabbar购物车数量
           var cartAllCount = mpvue.getStorageSync('cartAllCount') || 0
           this.tabDot(cartAllCount + 1)
           mpvue.setStorageSync('cartAllCount', cartAllCount + 1)
         } else {
-          self.btnDisable = false
+          this.btnDisable = false
         }
-        // self.hideLoading()
+        // this.hideLoading()
       } catch (e) {
-        self.hideLoading()
-        self.btnDisable = false
+        this.hideLoading()
+        // setTimeout(() => {
+        //   this.showMsg(e.message)
+        // }, 500)
+        this.toastShow = true
+        this.toastMsg = e.message
         setTimeout(() => {
-          self.showMsg(e.message)
-        }, 500)
+          this.btnDisable = false
+          this.toastShow = false
+          this.toastMsg = ''
+        }, 1500)
       }
     },
     // 监听子组件触发点击选择滑动tab（品名）

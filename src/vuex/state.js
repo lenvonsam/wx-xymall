@@ -97,7 +97,7 @@ export default {
     {
       icon: '/static/images/submit_orders_icon.png',
       name: '修改中',
-      dotKey: 'ladingConfirmNumber',
+      dotKey: 'updateContractNumber',
       event: 'click_app_me_to_confirm',
       url: {
         path: '/pages/ladbillConfirm/main'

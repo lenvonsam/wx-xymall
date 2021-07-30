@@ -39,14 +39,14 @@ div
                         .ft-18.text-black ￥{{item.inTaxReceiveMoney}}
                       .flex.justify-between.padding-bottom-xs
                         span 吊费：¥{{item.liftingFeeMoney}}
-                        span(v-if="item.status === '已付款'", style="display: flex;")
+                        span(v-if="item.status === '已付款' && item.timeDown", style="display: flex;")
                           span(v-if="item.status === '已付款' && !item.overdue") 提货倒计时：
                           span(v-else) 提货已超时：
                           span.text-blue(v-if="item.status === '已付款' && !item.overdue") {{item.timeDown}}
                           span.text-red(v-else) {{item.timeDown}}
                   .solid-top.text-black.ft-15.padding-sm.row(v-if="item.status === '待支付'")
                     .col
-                      template(v-if="item.status === '待支付'")
+                      template(v-if="item.status === '待支付' && item.timeDown")
                         span 倒计时：
                         span.padding-left-xs.text-red {{item.timeDown}}
                       // template(v-if="item.status === '待补款'")
@@ -284,10 +284,9 @@ export default {
           arr.map(item => {
             item.choosed = false
             item.overdue = false
-            item.timeDown = ''
-            item.timeDiff = new Date(item.currentDate).getTime() - new Date().getTime() // 服务器时间与本地时间的差额
-            item.timeEnd = new Date(item.invalidDate).getTime()
-            item.timeEndLading = new Date(item.ladingInvalidDate).getTime()
+            item.timeDiff = new Date(item.currentDate.replace(/-/g, '/')).getTime() - new Date().getTime() // 服务器时间与本地时间的差额
+            item.timeEnd = new Date(item.invalidDate.replace(/-/g, '/')).getTime()
+            item.timeEndLading = new Date(item.ladingInvalidDate.replace(/-/g, '/')).getTime()
             item.status = self.contractStatus.find(c => {
               return c.id === item.xingyunContractStatus
             }).name
@@ -439,9 +438,10 @@ export default {
             item.choosed = false
             item.choosed = false
             item.overdue = false
-            item.timeDiff = new Date(item.currentDate).getTime() - new Date().getTime() // 服务器时间与本地时间的差额
-            item.timeEnd = new Date(item.invalidDate).getTime()
-            item.timeEndLading = new Date(item.ladingInvalidDate).getTime()
+            item.timeDown = ''
+            item.timeDiff = new Date(item.currentDate.replace(/-/g, '/')).getTime() - new Date().getTime() // 服务器时间与本地时间的差额
+            item.timeEnd = new Date(item.invalidDate.replace(/-/g, '/')).getTime()
+            item.timeEndLading = new Date(item.ladingInvalidDate.replace(/-/g, '/')).getTime()
             item.status = self.contractStatus.find(c => {
               return c.id === item.xingyunContractStatus
             }).name
