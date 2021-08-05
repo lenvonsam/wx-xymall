@@ -286,7 +286,8 @@ export default {
             item.overdue = false
             item.timeDiff = new Date(item.currentDate.replace(/-/g, '/')).getTime() - new Date().getTime() // 服务器时间与本地时间的差额
             item.timeEnd = new Date(item.invalidDate.replace(/-/g, '/')).getTime()
-            item.timeEndLading = new Date(item.ladingInvalidDate.replace(/-/g, '/')).getTime()
+            item.timeEndLading = item.timeEndLading && (new Date(item.ladingInvalidDate.replace(/-/g, '/')).getTime() || 0)
+            console.log('>>>>')
             item.status = self.contractStatus.find(c => {
               return c.id === item.xingyunContractStatus
             }).name
@@ -386,7 +387,10 @@ export default {
               // item.name = '待支付'
               item.timeDown = `${h}:${m}:${s}`
             } else {
-              item.timeDown = '00:00:00'
+              if (item.status.name !== '待补款') {
+                item.status.name = '已超时'
+              }
+              // item.timeDown = '00:00:00'
               // item.name = '已超时'
               // item.value = `${h}:${m}:${s}`
             }
@@ -411,7 +415,7 @@ export default {
           }
         }
       })
-      console.log('倒计时', arr)
+      // console.log('倒计时', arr)
       this.$forceUpdate()
     },
     // 获取合同列表
@@ -441,7 +445,7 @@ export default {
             item.timeDown = ''
             item.timeDiff = new Date(item.currentDate.replace(/-/g, '/')).getTime() - new Date().getTime() // 服务器时间与本地时间的差额
             item.timeEnd = new Date(item.invalidDate.replace(/-/g, '/')).getTime()
-            item.timeEndLading = new Date(item.ladingInvalidDate.replace(/-/g, '/')).getTime()
+            item.timeEndLading = item.timeEndLading && (new Date(item.ladingInvalidDate.replace(/-/g, '/')).getTime() || 0)
             item.status = self.contractStatus.find(c => {
               return c.id === item.xingyunContractStatus
             }).name
