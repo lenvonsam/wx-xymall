@@ -395,7 +395,7 @@ export default {
               // item.value = `${h}:${m}:${s}`
             }
           } else if (item.status === '已付款') {
-            const leftTime = item.timeEndLading - new Date().getTime() + item.timeDiff
+            const leftTime = item.timeEndLading - (new Date().getTime() + item.timeDiff)
             // console.log(leftTime)
             // const seconds = Math.floor(leftTime / 1000) % 60
             const minutes = Math.floor(leftTime / 1000 / 60) % 60
@@ -410,7 +410,7 @@ export default {
               item.timeDown = `${day}天${h}时${m}分`
             } else {
               item.overdue = true
-              item.timeDown = `${day}天${h}时${m}分`
+              item.timeDown = ''
             }
           }
         }
@@ -445,7 +445,7 @@ export default {
             item.timeDown = ''
             item.timeDiff = new Date(item.currentDate.replace(/-/g, '/')).getTime() - new Date().getTime() // 服务器时间与本地时间的差额
             item.timeEnd = new Date(item.invalidDate.replace(/-/g, '/')).getTime()
-            item.timeEndLading = item.timeEndLading && (new Date(item.ladingInvalidDate.replace(/-/g, '/')).getTime() || 0)
+            item.timeEndLading = (item.ladingInvalidDate && new Date(item.ladingInvalidDate.replace(/-/g, '/')).getTime()) || 0
             item.status = self.contractStatus.find(c => {
               return c.id === item.xingyunContractStatus
             }).name
@@ -472,9 +472,9 @@ export default {
             item.choosed = false
             item.choosed = false
             item.overdue = false
-            item.timeDiff = new Date(item.currentDate).getTime() - new Date().getTime() // 服务器时间与本地时间的差额
-            item.timeEnd = new Date(item.invalidDate).getTime()
-            item.timeEndLading = new Date(item.ladingInvalidDate).getTime()
+            item.timeDiff = new Date(item.currentDate.replace(/-/g, '/')).getTime() - new Date().getTime() // 服务器时间与本地时间的差额
+            item.timeEnd = new Date(item.invalidDate.replace(/-/g, '/')).getTime()
+            item.timeEndLading = (item.ladingInvalidDate && new Date(item.ladingInvalidDate.replace(/-/g, '/')).getTime()) || 0
             item.status = self.contractStatus.find(c => {
               return c.id === item.xingyunContractStatus
             }).name
