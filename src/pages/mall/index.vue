@@ -3,21 +3,21 @@ div
   nav-bar(title="商城")
   div(style="height: 285rpx;")
     // mall-head(
-    //   :mallTabVal="mallTabVal", 
-    //   @cleanSearch="cleanSearch", 
-    //   @getName="getName", 
-    //   @filter="multipleFilter", 
-    //   @selectMall="selectMall", 
-    //   @selectTab="selectTab", 
+    //   :mallTabVal="mallTabVal",
+    //   @cleanSearch="cleanSearch",
+    //   @getName="getName",
+    //   @filter="multipleFilter",
+    //   @selectMall="selectMall",
+    //   @selectTab="selectTab",
     //   @searchChange="searchChange"
     // )
     mall-head(
-      :mallTabVal="mallTabVal", 
-      @cleanSearch="cleanSearch", 
-      @getName="getName", 
-      @filter="multipleFilter", 
-      @selectMall="selectMall", 
-      @selectTab="selectTab", 
+      :mallTabVal="mallTabVal",
+      @cleanSearch="cleanSearch",
+      @getName="getName",
+      @filter="multipleFilter",
+      @selectMall="selectMall",
+      @selectTab="selectTab",
       @searchChange="searchChange"
       :productBrandNames="productBrandNames"
       :specifications="specifications"
@@ -61,13 +61,13 @@ div
                     span.ml-8(v-if="item[mallTypeObject[itemType].weightRange]") 重量范围: {{item[mallTypeObject[itemType].weightRange]}}
                   .row.pt-5.flex-center.ft-13.text-gray
                     .col
-                      span(v-if="(!isNineClocks && item.productClassName =='H型钢') || (!isNineClocks && item.productClassName =='板材')") --支/--吨
-                      span(v-else-if="item[mallTypeObject[itemType].max_count] > 0 && isLogin") {{item[mallTypeObject[itemType].max_count]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
+                      // span(v-if="(!isNineClocks && item.productClassName =='H型钢') || (!isNineClocks && item.productClassName =='板材')") --支/--吨
+                      span(v-if="item[mallTypeObject[itemType].max_count] > 0 && isLogin") {{item[mallTypeObject[itemType].max_count]}}支/{{item[mallTypeObject[itemType].max_weight]}}吨
                       span(v-else) --支/--吨
                     .flex-120.relative.text-right.ft-14.row.justify-end
                       //- .mall-row(:class="{'notice': item.max_count === 0}")
-                      .blue-buy(v-if="(isLogin && !isNineClocks && item.productClassName =='H型钢') || (isLogin && !isNineClocks && item.productClassName =='板材')",style="display:none!important")
-                      .blue-buy(v-else-if="item[mallTypeObject[itemType].max_count] == 0 && isLogin",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
+                      // .blue-buy(v-if="(isLogin && !isNineClocks && item.productClassName =='H型钢') || (isLogin && !isNineClocks && item.productClassName =='板材')",style="display:none!important")
+                      .blue-buy(v-if="item[mallTypeObject[itemType].max_count] == 0 && isLogin",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
                       .blue-buy(v-else-if="isLogin", @click="mallItemCb(item, 'cart', $event)") 购买
                 template(v-else)
                   .ft-15.row
@@ -166,7 +166,7 @@ export default {
           material: 'productTextureName',
           wh_name: 'stockZoneName',
           max_count: 'ratioAvailableAmount',
-          max_weight: 'ratioAvailableManagerWeight',
+          max_weight: 'max_weight',
           tolerance: 'toleranceRange',
           length: 'length',
           weightRange: 'weightRange'
@@ -591,11 +591,11 @@ export default {
         return
       }
       this.btnDisable = true
-      if (obj.name === 'H型钢' && obj.price === '--') {
-        this.showMsg(`此商品会在${obj.show_time}后开售`)
-        this.btnDisable = false
-        return
-      }
+      // if (obj.price === '--') {
+      //   this.showMsg(`此商品会在${obj.show_time}后开售`)
+      //   this.btnDisable = false
+      //   return
+      // }
       if (this.isLogin) {
         switch (type) {
           case 'showPrice':

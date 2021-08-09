@@ -55,7 +55,7 @@ export default {
     if (self.isLogin) {
       console.log('cart_state.currentUser======>' + JSON.stringify(this.currentUser))
       self.showCartContent = true
-
+      // this.getSummaryQuantity()
       // 超时未提货物收费标准
       if (this.currentUser.type === 'buyer' && !this.currentUser.userGeneralAgreement) {
         this.modalShow = true
@@ -109,6 +109,17 @@ export default {
     ...mapActions([
       'exitUser'
     ]),
+    // getSummaryQuantity () {
+    //   this.httpGet(this.apiList.zf.summaryQuantity).then(res => {
+    //     if (res.success) {
+    //       let cartNumber = res.data.cartNumber || 0
+    //       this.tabDot(cartNumber)
+    //       mpvue.setStorageSync('cartAllCount', cartNumber)
+    //     }
+    //   }).catch(err => {
+    //     console.log(err)
+    //   })
+    // },
     modalCb (flag) {
       this.httpPost(this.apiList.zf.updatePersonAgreement, {userGeneralAgreement: true}).then(res => {
         console.log('updateRule_res=====>' + JSON.stringify(res))
