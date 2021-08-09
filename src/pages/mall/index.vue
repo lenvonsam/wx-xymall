@@ -300,7 +300,7 @@ export default {
           }
         }
       })
-
+      this.getSummaryQuantity()
       // this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(data => {
       //   if (data.returncode === '0') {
       //     this.trial = data.trial
@@ -443,6 +443,17 @@ export default {
   },
   methods: {
     ...mapActions(['configVal', 'exitUser']),
+    getSummaryQuantity () {
+      this.httpGet(this.apiList.zf.summaryQuantity).then(res => {
+        if (res.success) {
+          let cartNumber = res.data.cartNumber || 0
+          this.tabDot(cartNumber)
+          mpvue.setStorageSync('cartAllCount', cartNumber)
+        }
+      }).catch(err => {
+        console.log(err)
+      })
+    },
     ballCb () {
       console.log('ball cb')
     },
