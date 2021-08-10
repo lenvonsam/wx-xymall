@@ -11,7 +11,7 @@ div
           .col
             span.ft-15.text-blue.text-bold {{item.saleContractNo}}
             copy-btn(:copyUrl="item.saleContractNo")
-          .confirm-btn.text-blue(@click="jumpConfirm(item)") 确认修改
+          .confirm-btn.text-blue(@click="jumpConfirm(item)", v-if="item.auditStatus !== '20'") 确认修改
         .padding-bottom-xs {{item.orgName}}
         .padding-bottom-xs
           span 共{{item.contractAmount}}支，{{item.estimatedTonnage}}吨
