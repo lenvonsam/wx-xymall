@@ -127,7 +127,7 @@ export default {
     this.configVal({ key: 'tempObject', val: '' })
   },
   onShow () {
-    console.log('打印当前tabName+++', this.tempObject.tabName)
+    // console.log('打印当前tabName+++', this.tempObject.tabName)
     // this.listData = []
     this.disabledBtn = false
     if (this.tempObject.tabName) {
@@ -318,75 +318,79 @@ export default {
             console.log(res)
             this.configVal({ key: 'tempObject', val: res.data })
             // this.showObj = res.data
+            this.jump('/pages/invoiceDetail/main?tabName=' + this.tabName + '&ids=' + ids + '&sds=' + sds + '&sus=' + sus)
           })
         } else {
           this.httpGet(this.apiList.zf.customerAppliedDetail + '?sourceBusiBillNo=' + ids).then(res => {
             console.log(res)
             this.configVal({ key: 'tempObject', val: res.data })
+            if (this.tabName === '2') {
+              this.jump('/pages/invoiceDetail/main?tabName=' + this.tabName + '&ids=' + ids + '&sds=' + sds + '&sus=' + sus + '&name=发票确认')
+            }
             // this.showObj = res.data
           })
         }
-        if (this.tabName === '0') {
-          this.jump('/pages/invoiceDetail/main?tabName=' + this.tabName + '&ids=' + ids + '&sds=' + sds + '&sus=' + sus)
-          // 发票申请
-          // let title = filterArray[0].title
-          // let type = filterArray[0].type
-          // 发票编号
-          // let nos = filterArray.map(item => item.settlementUnitId).join(',')
-          // // 总金额
-          // let totalPrice = filterArray.map(item => item.settleTotalMoney).reduce((a, b) => a + b)
-          // totalPrice = this.$toFixed(totalPrice, 2)
-          // // 货款金额
-          // let goodsPrice = filterArray.map(item => item.goods_price).reduce((a, b) => a + b).toFixed(2)
-          // // 吊费金额
-          // let liftPrice = filterArray.map(item => item.lift_price).reduce((a, b) => a + b).toFixed(2)
-          // let obj = {
-          //   contract_no: nos,
-          //   id: ids,
-          //   price: totalPrice,
-          //   goods_price: goodsPrice,
-          //   lift_price: liftPrice,
-          //   title,
-          //   type
-          // }
-          // if (nos.split(',').length === 1) {
-          //   // self.httpPost(self.apiList.zf.invoiceAdd, obj).then(res => {
-          //   //   debugger
-          //   //   console.log(res)
-          //   // })
-          //   // this.ironRequest('invoiceDetail.shtml?id=' + filterArray[0].id, {}, 'get').then(resp => {
-          //   //   if (resp.returncode === '0') {
-          //   //     obj.goods_price = resp.goods_price
-          //   //     obj.lift_price = resp.lift_price
-          //   //     obj.invoice_no = resp.invoice_no
-          //   //     // self.showMsg('申请成功')
-          //   //     self.configVal({ key: 'tempObject', val: obj })
-          //   //     // self.back(-1)
-          //   //     self.jump('/pages/invoiceDetail/main?id=' + self.tabName)
-          //   //   } else {
-          //   //     self.showMsg(resp ? resp.errormsg : '网络错误')
-          //   //     self.disabledBtn = false
-          //   //   }
-          //   //   self.allChecked = false
-          //   // })
-          // } else {
-          //   // this.configVal({ key: 'tempObject', val: obj })
-          //   this.jump('/pages/invoiceDetail/main?id=' + this.tabName)
-          //   this.allChecked = false
-          // }
-        }
-        if (this.tabName === '2') {
-          this.jump('/pages/invoiceDetail/main?tabName=' + this.tabName + '&ids=' + ids + '&sds=' + sds + '&sus=' + sus + '&name=发票确认')
-          // 发票确认
-          // this.ironRequest('confirmInvoice.shtml', { user_id: this.currentUser.user_id, id: ids }, 'post').then(resp => {
-          //   if (resp && resp.returncode === '0') {
-          //     self.showMsg('发票确认成功')
-          //     self.listData = []
-          //     self.loadData()
-          //     self.disabledBtn = false
-          //   }
-          // })
-        }
+        // if (this.tabName === '0') {
+        //   this.jump('/pages/invoiceDetail/main?tabName=' + this.tabName + '&ids=' + ids + '&sds=' + sds + '&sus=' + sus)
+        //   // 发票申请
+        //   // let title = filterArray[0].title
+        //   // let type = filterArray[0].type
+        //   // 发票编号
+        //   // let nos = filterArray.map(item => item.settlementUnitId).join(',')
+        //   // // 总金额
+        //   // let totalPrice = filterArray.map(item => item.settleTotalMoney).reduce((a, b) => a + b)
+        //   // totalPrice = this.$toFixed(totalPrice, 2)
+        //   // // 货款金额
+        //   // let goodsPrice = filterArray.map(item => item.goods_price).reduce((a, b) => a + b).toFixed(2)
+        //   // // 吊费金额
+        //   // let liftPrice = filterArray.map(item => item.lift_price).reduce((a, b) => a + b).toFixed(2)
+        //   // let obj = {
+        //   //   contract_no: nos,
+        //   //   id: ids,
+        //   //   price: totalPrice,
+        //   //   goods_price: goodsPrice,
+        //   //   lift_price: liftPrice,
+        //   //   title,
+        //   //   type
+        //   // }
+        //   // if (nos.split(',').length === 1) {
+        //   //   // self.httpPost(self.apiList.zf.invoiceAdd, obj).then(res => {
+        //   //   //   debugger
+        //   //   //   console.log(res)
+        //   //   // })
+        //   //   // this.ironRequest('invoiceDetail.shtml?id=' + filterArray[0].id, {}, 'get').then(resp => {
+        //   //   //   if (resp.returncode === '0') {
+        //   //   //     obj.goods_price = resp.goods_price
+        //   //   //     obj.lift_price = resp.lift_price
+        //   //   //     obj.invoice_no = resp.invoice_no
+        //   //   //     // self.showMsg('申请成功')
+        //   //   //     self.configVal({ key: 'tempObject', val: obj })
+        //   //   //     // self.back(-1)
+        //   //   //     self.jump('/pages/invoiceDetail/main?id=' + self.tabName)
+        //   //   //   } else {
+        //   //   //     self.showMsg(resp ? resp.errormsg : '网络错误')
+        //   //   //     self.disabledBtn = false
+        //   //   //   }
+        //   //   //   self.allChecked = false
+        //   //   // })
+        //   // } else {
+        //   //   // this.configVal({ key: 'tempObject', val: obj })
+        //   //   this.jump('/pages/invoiceDetail/main?id=' + this.tabName)
+        //   //   this.allChecked = false
+        //   // }
+        // }
+        // if (this.tabName === '2') {
+        //   this.jump('/pages/invoiceDetail/main?tabName=' + this.tabName + '&ids=' + ids + '&sds=' + sds + '&sus=' + sus + '&name=发票确认')
+        //   // 发票确认
+        //   // this.ironRequest('confirmInvoice.shtml', { user_id: this.currentUser.user_id, id: ids }, 'post').then(resp => {
+        //   //   if (resp && resp.returncode === '0') {
+        //   //     self.showMsg('发票确认成功')
+        //   //     self.listData = []
+        //   //     self.loadData()
+        //   //     self.disabledBtn = false
+        //   //   }
+        //   // })
+        // }
       } else {
         this.showMsg('请选择需开发票')
         self.disabledBtn = false

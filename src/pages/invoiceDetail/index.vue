@@ -128,6 +128,7 @@ export default {
     this.tabName = ''
   },
   beforeMount () {
+    console.log('>>>>>>', this.tempObject)
     this.showObj = this.tempObject
     this.tabName = this.$root.$mp.query.tabName
     this.ids = this.$root.$mp.query.ids
