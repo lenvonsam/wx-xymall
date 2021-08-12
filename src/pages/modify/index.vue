@@ -20,7 +20,7 @@ div
             .flex.justify-between.text-gray.align-center.margin-top-sm
               .col.text-content
                 p {{item.orgName}}
-                p 共{{item.contractAmount}}支，{{item.estimatedTonnage}}吨
+                p 共{{item.contractAmount}}支，{{tabName === '1' ? item.weight : item.estimatedTonnage}}吨
                 p 吊费：¥{{item.liftingFeeMoney}}
               .card-right
                 .ft-16.padding-bottom-xs.text-bold.text-black ￥{{item.inTaxReceiveMoney}}
