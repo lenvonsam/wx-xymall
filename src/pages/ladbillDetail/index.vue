@@ -4,19 +4,19 @@ div
   .padding-sm.bg-white
     .row.solid-bottom.list
       span 提货人名称
-      .col.text-right {{detailObject.driverName}}
+      .col.text-right {{detailObject.driverName || ''}}
     .row.solid-bottom.list
       span 提货人电话
-      .col.text-right {{detailObject.driverPhone}}
+      .col.text-right {{detailObject.driverPhone || ''}}
     .row.solid-bottom.list
       span 身份证号码
-      .col.text-right {{detailObject.driverIdcard}}
+      .col.text-right {{detailObject.driverIdcard || ''}}
     .row.solid-bottom.list
       span 车牌号
-      .col.text-right {{detailObject.carNo}}     
-    //- .row.solid-bottom.list
-    //-   span 单位名称
-    //-   .col.text-right {{detailObject.buyUnitName}}
+      .col.text-right {{detailObject.carNo || ''}}
+    .row.solid-bottom.list
+      span 单位名称
+      .col.text-right {{detailObject.buyUnitName || ''}}
 </template>
 <script>
 export default {
@@ -24,6 +24,9 @@ export default {
     return {
       detailObject: {}
     }
+  },
+  onUnload () {
+    this.detailObject = {}
   },
   beforeMount () {
     this.httpPost(this.apiList.zf.billLadingDetail, {saleLadingId: this.$root.$mp.query.id}).then(res => {
