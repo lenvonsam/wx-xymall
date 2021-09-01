@@ -171,6 +171,15 @@ export default {
         url: {
           path: '/pages/vendor/returnApplicationList/main'
         }
+      },
+      {
+        icon: '/static/images/business_card.png',
+        name: '电子名片',
+        dotKey: 'card',
+        event: '',
+        url: {
+          path: '/pages/vendor/businessCard/main'
+        }
       }
     ]
   },

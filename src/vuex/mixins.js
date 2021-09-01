@@ -169,6 +169,8 @@ const wxMixins = {
         mpvue.showModal({
           title: config.title || '友情提示',
           content: config.content || '',
+          confirmText: config.confirmText || '确定',
+          cancelText: config.cancelText || '取消',
           confirmColor: config.confirmColor || '#000',
           cancelColor: config.cancelColor || '#000',
           success (res) {

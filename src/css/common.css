@@ -205,6 +205,14 @@ page,
   margin-top: 20rpx;
 }
 
+.mt-15 {
+  margin-top: 30rpx;
+}
+
+.mt-20 {
+  margin-top: 40rpx;
+}
+
 .mt-35 {
   margin-top: 70rpx;
 }

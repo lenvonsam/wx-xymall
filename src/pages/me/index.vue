@@ -41,8 +41,8 @@ div
                 label {{rowCountObj[ficon.dotKey] > 99 ? '99+' : rowCountObj[ficon.dotKey]}}
             .padding-top-xs.ft-15 {{ficon.name}}
   template(v-else)
-    .relative
-      .bg-blue.flex.padding-sm.text-white.align-center.me-header
+    .relative.bg-blue.padding-sm(style="height: 240rpx")
+      .flex.text-white.align-center.me-header
         .col(@click="jumpProfile")
           .flex.align-center
             .author

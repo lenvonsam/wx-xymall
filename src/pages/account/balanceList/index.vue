@@ -49,7 +49,7 @@ export default {
         { label: '合同付款', val: 'EXSHT0002' },
         { label: '退款', val: 'EXSHT0009' },
         { label: '充值', val: 'ECWSK0001' },
-        { label: '提现', val: 'ECWSK0003' }
+        { label: '提现', val: 'ECWSK0016' }
       ],
       selectActive: '',
       activeName: '',

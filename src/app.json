@@ -56,6 +56,8 @@
         "me/main",
         "returnApplicationDetail/main",
         "returnApplicationList/main",
+        "businessCard/main",
+        "companyInfo/main",
         "returnApplication/main",
         "returnApplicationFilter/main",
         "sumGoods/main",

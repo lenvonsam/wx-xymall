@@ -414,6 +414,8 @@ export default {
     // 点击合同待确认
     saleContractUpateAffirm: 'sale/saleContract/saleContractUpateAffirm',
     // 退出登录
-    logout: 'base/user/logout'
+    logout: 'base/user/logout',
+    // 电子名片-获取用户信息
+    businesscardInfo: 'businesscard/businessCard/getInfoByName'
   }
 }
