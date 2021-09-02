@@ -1,7 +1,7 @@
 <template lang="pug">
 div
   nav-bar(title="商城")
-  div(style="height: 285rpx;")
+  div(style="height: 300rpx;")
     // mall-head(
     //   :mallTabVal="mallTabVal",
     //   @cleanSearch="cleanSearch",
