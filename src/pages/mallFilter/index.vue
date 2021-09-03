@@ -32,7 +32,9 @@ export default {
       standardList: [],
       searchVal: '',
       searchIdx: 1,
-      isLoad: false
+      isLoad: false,
+      scrollHeight: '',
+      loadFinish: 0
     }
   },
   computed: {
@@ -56,6 +58,10 @@ export default {
       this.filterLeftSty = `height: ${this.screenHeight} - ${this.customBar} + 'px'`
     })
   },
+  // onShow () {
+  //   this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 90
+  //   console.log('scrollHeight', this.scrollHeight)
+  // },
   // onReachBottom () {
   //   console.log('onReachBottom')
   //   this.currentPage++
@@ -76,6 +82,23 @@ export default {
     ...mapActions([
       'configVal'
     ]),
+    // 刷新页面
+    // onRefresh (done) {
+    //   this.isRefresh = 'refresh'
+    //   this.currentPage = 1
+    //   this.getStandardList(done)
+    // },
+    // // 上拉加载
+    // loadMore () {
+    //   const self = this
+    //   this.throttle(function () {
+    //     self.isload = true
+    //     self.loadFinish = 1
+    //     self.currentPage++
+    //     self.isRefresh = 'reachBottom'
+    //     self.getStandardList()
+    //   }, 300)
+    // },
     // 清除搜索关键词
     cleanSearch () {
       this.searchVal = ''
