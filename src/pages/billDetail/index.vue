@@ -61,13 +61,13 @@ div
             .col.text-right.text-black {{billDetail.outAmount}}支，{{billDetail.actualTonnage}}吨
           .flex.padding-bottom-xs
             .col 实发货款
-            .col.text-right.text-black {{billDetail.totalPayment}}元
+            .col.text-right.text-black {{billDetail.ladingGoodsMoney}}元
           .flex.padding-bottom-xs
             .col 实发吊费
-            .col.text-right.text-black {{billDetail.totalLiftCharge}}元
+            .col.text-right.text-black {{billDetail.ladingLiftingFeeMoney}}元
           .flex
             .col 实发总金额
-            .col.text-right.text-black {{billDetail.totalContractAmount}}元
+            .col.text-right.text-black {{billDetail.inTaxLadingMoney}}元
       //- .padding.c-orange.ft-12(style="background:#fefcee") 温馨提示：合同生成 120 分钟之后不可取消，逾期支付视为违约！ 请在合同支付后 5 天内提货，如出现多次延时提货，平台将酌情收取仓储费用！
       .pt-half-rem(v-if="billDetail.status_desc !== '待补款' && billDetail.status_desc !== '违约'")
         .bg-white

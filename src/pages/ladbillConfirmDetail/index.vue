@@ -25,12 +25,13 @@ div
             span.padding-left-sm.padding-right-sm {{item.stockZoneName}}
             span.sub-mark {{item.prodAreaName}}
           .text-right （{{item.quantityType == '02' ? '磅计' : '理计'}}）
-        .text-gray {{item.amount}} 支 / {{item.quantityType == '02' ? item.poundWeight : item.managerWeight}}吨
+        // .text-gray {{item.amount}} 支 / {{item.quantityType == '02' ? item.poundWeight : item.managerWeight}}吨
+        .text-gray {{item.amount}} 支 / {{item.secondWeight}}吨
         .text-gray(v-if="item.toleranceRange || item.weightRange")
           span.padding-right-sm(v-if="item.toleranceRange") 公差范围 {{item.toleranceRange}}
           span(v-if="item.weightRange") 重量范围 {{item.weightRange}}
     .bg-white.margin-top-sm.text-content
-      .padding-sm.text-black.text-bold.solid-bottom.ft-15 旧单信息 
+      .padding-sm.text-black.text-bold.solid-bottom.ft-15 旧单信息
       .padding-sm
         .flex 货款：
           span.text-gray {{oldOrder.paymentForGoods}}元
@@ -43,7 +44,7 @@ div
         .flex 已结算：
           span.text-gray {{oldOrder.inTaxExecuteMoney}}元
     .bg-white.margin-top-sm.text-content
-      .padding-sm.text-black.text-bold.solid-bottom.ft-15 新单信息 
+      .padding-sm.text-black.text-bold.solid-bottom.ft-15 新单信息
       .padding-sm
         .flex 货款：
           span.text-gray {{newOrder.paymentForGoods}}元
@@ -52,7 +53,7 @@ div
         .flex 合同合计：
           span.text-gray {{newOrder.totalContract}}元
         .flex 预计需补尾款：
-          span.text-gray {{newOrder.balancePayment}}元 
+          span.text-gray {{newOrder.balancePayment}}元
     .footer.row.bg-white.text-center.text-white.padding-sm(:style="{'padding-bottom': isIpx ? '68rpx' : '20rpx'}")
      .bg-red.col.padding-sm.round(@click="updateBill('02')") 驳回
      .bg-blue.col.margin-left-sm.padding-sm.round(@click="updateBill('01')") 确认修改提单
@@ -166,6 +167,7 @@ export default {
               ic.tolerance,
               ic.floatingRatio
             )
+            console.log('ic.secondWeight', ic.secondWeight)
             if (ic.weight.quantityType === '01') {
               ic.managerWeight = ic.secondWeight
             } else {

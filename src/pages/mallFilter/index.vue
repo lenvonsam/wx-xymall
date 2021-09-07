@@ -11,6 +11,7 @@ div
         input.col.pl-10(type="text", placeholder="搜索规格", v-model="searchVal")
         .close-icon(@click="cleanSearch", v-if="searchVal")
           .cuIcon-roundclosefill.ft-18
+      // iron-scroll(@scrolltolower="getStandardList", heightUnit="rpx", :height="scrollHeight", :loadFinish="loadFinish")
       scroll-view.padding-top-sm.filter-right-content(scroll-y, :scroll-into-view="searchCurId", :style="{height: screenHeight - customBar - 60 + 'px'}", v-if="standardList.length > 0")
         .filter-right-list(:id="'idx-' + item.first", v-for="(item, index) in standardList", :key="index", @click="selectStandard(item.name)") {{item.name}}
         .ft-12.padding.text-gray.text-center(v-if="standardList.length > 15") 加载完成
@@ -59,7 +60,7 @@ export default {
     })
   },
   // onShow () {
-  //   this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 90
+  //   this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 200
   //   console.log('scrollHeight', this.scrollHeight)
   // },
   // onReachBottom () {

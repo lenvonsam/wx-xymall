@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  nav-bar(title="修改待确认", isBack)
+  nav-bar(title="修改中", isBack)
   //- template(v-if="isload")
     time-line(type="mallist")
   //- template(v-if="!isload")
