@@ -7,7 +7,7 @@
           img(:src="ficon.icon", mode="widthFix")
           .dot(v-if="ficon.count > 0")
           .text-name
-            .ft-13.text-bold {{ficon.name}}
+            .ft-13.text-bold.text-overflow {{ficon.name}}
             .num.padding-top-xs.ft-10
               span.text-bold.text-red.margin-right-xs(v-if="ficon.count > 0") {{ficon.count}}
               span.text-bold.text-gray.margin-right-xs(v-else) {{ficon.count}}
@@ -104,7 +104,7 @@ export default {
     },
     getData () {
       // let testUserId = '1346277615056457730' // 员工 何建龙
-      let testUserId = '1346282719734140929' // 采购部长 于成龙
+      let testUserId = '59bb9e74-e88b-11eb-9a0b-00163e0ba72f' // 采购部长 于成龙
       let params = {
         'startCreateTime': '',
         'endCreateTime': '',
@@ -152,4 +152,9 @@ export default {
     .text-name
       .num
         color #999999
+    .text-overflow
+      width 240rpx
+      overflow hidden
+      text-overflow ellipsis
+      white-space nowrap
 </style>

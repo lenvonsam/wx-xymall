@@ -207,16 +207,16 @@ export default {
       //   // url += `&search=${this.searchVal}`
       // }
 
-      let testUserId = '1400343202594037762' // 员工 何建龙
+      // let testUserId = '1400343202594037762' // 员工 何建龙
       // let testUserId = '1346282719734140929' // 采购部长 于成龙
 
       let params = {
         configId: this.configId,
-        limit: 20,
-        offset: 0,
+        limit: 100,
+        offset: this.currentPage,
         tenantId: 1,
         businessId: this.searchVal || '',
-        userId: testUserId,
+        userId: this.currentUser.employeeId,
         status: [0, 1]
       }
       this.httpPost(this.apiList.zf.queryWorkflowProcessList, params).then(res => {

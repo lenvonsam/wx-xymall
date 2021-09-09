@@ -7,7 +7,7 @@ div
         .bg-white.card
           .row.justify-between.padding-bottom-xs
             .col.text-blue(@click="jumpBillDetail") {{detailData.saleContractNo}}
-            .text-red {{statusList[status] || '待审核'}}
+            .text-red {{statusList[detailData.auditStatus] || '待审核'}}
           .row.justify-between.padding-bottom-xs
             .text-gray.col {{detailData.custName}}
             .text-black ¥ {{detailData.totalMoeny}}
@@ -31,7 +31,7 @@ div
           div(v-else)
             .row.justify-between.padding-bottom-xs
               .col.text-black {{detailData.productBrandName}}
-              .text-red 待审核
+              .text-red {{statusList[status] || '待审核'}}
           template(v-if="tempObject.auditType === '退货'")
             .text-gray.padding-bottom-xs
               // .row.justify-between
@@ -198,8 +198,11 @@ export default {
       },
       disabled: false,
       statusList: {
-        '5': '定向初审',
-        '3': '定向复审'
+        10: '待提交',
+        20: '待审核',
+        30: '审批通过',
+        40: '审批驳回',
+        50: '取消审核'
       },
       liftStatus: {
         '1': '收吊费',
@@ -284,10 +287,8 @@ export default {
         //   return_id: this.tempObject.return_id,
         //   status: 1
         // }
-        // let testUserId = '1400343202594037762' // 员工 何建龙
-        // let testUserId = '1400343202594037762' // 采购部长 于成龙
         params.taskId = this.detailData.taskId
-        params.userId = '1400343202594037762'
+        params.userId = this.currentUser.employeeId
         params.json = this.detailData.json
         params.status = 2
         params.tenantId = '1'
@@ -320,7 +321,7 @@ export default {
             this.disabled = false
             this.disabled = false
             params.taskId = this.detailData.taskId
-            params.userId = '1400343202594037762'
+            params.userId = this.currentUser.employeeId
             params.json = this.detailData.json
             params.status = 2
             params.reason = ''
@@ -330,7 +331,7 @@ export default {
           case '延时':
             this.disabled = false
             params.taskId = this.detailData.taskId
-            params.userId = '1400343202594037762'
+            params.userId = this.currentUser.employeeId
             params.json = this.detailData.json
             params.status = 2
             params.reason = ''
@@ -340,7 +341,7 @@ export default {
           case 'ERP议价':
             this.disabled = false
             params.taskId = this.detailData.taskId
-            params.userId = '1400343202594037762'
+            params.userId = this.currentUser.employeeId
             params.json = this.detailData.json
             params.status = 2
             params.reason = ''
@@ -350,7 +351,7 @@ export default {
           case 'ERP定价':
             this.disabled = false
             params.taskId = this.detailData.taskId
-            params.userId = '1400343202594037762'
+            params.userId = this.currentUser.employeeId
             params.json = this.detailData.json
             params.status = 2
             params.reason = ''
@@ -376,7 +377,7 @@ export default {
             break
           case '定向':
             params.taskId = this.detailData.taskId
-            params.userId = '1400343202594037762'
+            params.userId = this.currentUser.employeeId
             params.json = this.detailData.json
             params.status = 3
             params.reason = ''
@@ -386,7 +387,7 @@ export default {
           case '延时':
             this.disabled = false
             params.taskId = this.detailData.taskId
-            params.userId = '1400343202594037762'
+            params.userId = this.currentUser.employeeId
             params.json = this.detailData.json
             params.status = 3
             params.reason = ''
@@ -395,7 +396,7 @@ export default {
             break
           case 'ERP定价':
             params.taskId = this.detailData.taskId
-            params.userId = '1400343202594037762'
+            params.userId = this.currentUser.employeeId
             params.json = this.detailData.json
             params.status = 3
             params.reason = ''
@@ -404,7 +405,7 @@ export default {
             break
           case 'ERP议价':
             params.taskId = this.detailData.taskId
-            params.userId = '1400343202594037762'
+            params.userId = this.currentUser.employeeId
             params.json = this.detailData.json
             params.status = 3
             params.reason = ''
@@ -503,7 +504,7 @@ export default {
       console.log('+++>>>>')
       // this.showLoading()
       this.btnShow = true
-      let res = await this.httpGet(this.apiList.zf.getDetail + '?id=' + this.id + '&userId=1400343202594037762')
+      let res = await this.httpGet(this.apiList.zf.getDetail + '?id=' + this.id + '&userId=' + this.currentUser.employeeId)
       console.log(res)
       console.log(JSON.parse(res.data.json))
       let data = res.data
@@ -521,6 +522,7 @@ export default {
             totalMoeny: jsonData.returnMoney,
             endTime: jsonData.returnDate,
             invoiceStatus: '待开票',
+            auditStatus: jsonData.auditStatus,
             json: data.json,
             taskId: data.taskList[data.taskList.length - 1].taskId,
             operName: data.taskList[data.taskList.length - 1].userName,
@@ -554,6 +556,7 @@ export default {
             totalMoeny: jsonData.inTaxReceiveMoney,
             delayTime: jsonData.contractDelayDate,
             invoiceStatus: '待付款',
+            auditStatus: jsonData.auditStatus,
             json: data.json,
             taskId: data.taskList[data.taskList.length - 1].taskId,
             operName: data.taskList[data.taskList.length - 1].userName,
@@ -573,6 +576,7 @@ export default {
             totalMoeny: jsonData.inTaxReceiveMoney,
             endTime: jsonData.contractDelayDate,
             invoiceStatus: '待复审',
+            auditStatus: jsonData.auditStatus,
             json: data.json,
             taskId: data.taskList[data.taskList.length - 1].taskId,
             operName: data.taskList[data.taskList.length - 1].userName,
@@ -619,6 +623,7 @@ export default {
             totalMoeny: jsonData.inTaxReceiveMoney,
             endTime: jsonData.contractDelayDate,
             invoiceStatus: '待复审',
+            auditStatus: jsonData.auditStatus,
             json: data.json,
             taskId: data.taskList[data.taskList.length - 1].taskId,
             operName: data.taskList[data.taskList.length - 1].userName,
@@ -658,6 +663,7 @@ export default {
             // totalMoeny: jsonData.inTaxReceiveMoney,
             endTime: jsonData.priceDate,
             invoiceStatus: '待复审',
+            auditStatus: jsonData.auditStatus,
             // json: data.json,
             // taskId: data.taskList[data.taskList.length - 1].taskId,
             operName: data.taskList[data.taskList.length - 1].userName,
