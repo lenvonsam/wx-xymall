@@ -60,14 +60,8 @@ export default {
     this.phone = this.maskPhone(this.currentUser.phone)
   },
   onUnload () {
-    this.exitUser()
     this.codeBtnShow = false
     this.alertShow = false
-    this.httpGet(this.apiList.zf.logout).then(res => {
-      // console.log('退出登录+++')
-    }).catch(err => {
-      this.showMsg(err.message)
-    })
   },
   methods: {
     ...mapActions([
@@ -76,6 +70,11 @@ export default {
     // 弹窗回调
     alertCb () {
       this.exitUser()
+      this.httpGet(this.apiList.zf.logout).then(res => {
+        // console.log('退出登录+++')
+      }).catch(err => {
+        this.showMsg(err.message)
+      })
       this.bindClick = true
       this.redirect('/pages/account/login/main?type=2')
     },
