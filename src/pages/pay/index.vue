@@ -234,7 +234,10 @@ export default {
           let paramsOnj = {
             contractIdList: [self.saleContractId],
             paymentType: self.paymentType,
-            paymentPassword: self.payPwd
+            paymentPassword: self.payPwd,
+            creditEndFlag: false,
+            creditSupplyFlag: false,
+            sendPhone: self.smsNotify
           }
           // console.log(this.chooseType)
           if (this.payTabsActive === '全款支付') {
