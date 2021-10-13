@@ -11,7 +11,7 @@ div
         .col(@click="jumpProfile")
           .flex.align-center
             .author
-              img(:src="currentUser.avatar == undefined ? (imgProxy + 'wx2104_img.png') : currentUser.avatar", v-if="imgProxy", mode="aspectFill")
+              img(v-if="imgProxy", mode="aspectFill" :src="(currentUser.avatar && isLogin) ? currentUser.avatar : (imgProxy + 'wx2104_img.png')")
             .col.padding-left-sm
               template(v-if="isLogin")
                 .ft-15.padding-bottom-sm {{currentUser.companyName}}
