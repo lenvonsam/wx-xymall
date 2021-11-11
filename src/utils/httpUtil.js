@@ -10,6 +10,7 @@ const BASICURL = 'https://mobileapp.xingyun361.com/quasarserverdev' // 测试环
 // const BASICURL = 'http://localhost:8077'
 const PROXYDCODEURL = BASICURL + '/common/proxyDecode'
 const COMMURL = BASICURL + '/common/proxy'
+const JSONURL = BASICURL + '/common/proxyJson'
 
 function serializeformQuery (requestParams, encodeUrl = false) {
   let query = ''
@@ -46,19 +47,25 @@ function basicRequest (type, url, params, urlMethod, inputCharset = 'utf8') {
     type: urlMethod,
     charset: inputCharset
   }
+  const header = {
+    'content-type': 'application/x-www-form-urlencoded'
+  }
+  if (type === 'zf') {
+    header.PlatformId = 'ZF'
+    reqBody.charset = 'utf8'
+  }
   if (type === 'erp' || type === 'wh') {
     reqBody.outCharset = 'gbk'
   }
   return new Promise((resolve, reject) => {
     let body = {
-      header: {
-        'content-type': 'application/x-www-form-urlencoded'
-      },
+      header: header,
       method: 'POST',
       data: reqBody,
       success (res) {
         if (res.statusCode === 200) {
-          console.log('comm', res)
+          // console.log('res', res)
+          // console.log('type', type)
           if (type === 'comm') {
             if (res.data.return_code === 0 || res.data.returncode === '0') {
               resolve(res.data)
@@ -81,6 +88,8 @@ function basicRequest (type, url, params, urlMethod, inputCharset = 'utf8') {
               } else {
                 resolve(res.data)
               }
+            } else if (res.data.success) {
+              resolve(res.data)
             } else {
               let errMsg = res.data.msg
               // erp返回错误特殊处理
@@ -101,6 +110,8 @@ function basicRequest (type, url, params, urlMethod, inputCharset = 'utf8') {
     }
     if (type === 'erp' || type === 'wh') {
       body.url = PROXYDCODEURL
+    } else if (type === 'zf') {
+      body.url = JSONURL
     } else {
       body.url = COMMURL
     }
@@ -406,9 +417,13 @@ export default {
     // prod
     // crm: 'http://crmadmin.xingyun361.com/api/v1/wxmini/'
     // dev
-    scp: 'http://scp-dev.xingyun361.com/api/'
+    scp: 'http://scp-dev.xingyun361.com/api/',
     // prod
     // scp: 'http://scp.xingyun361.com/api/'
+    // 测试环境
+    // zf: 'http://47.103.131.110:8008/api/'
+    // 预上线
+    zf: 'https://gatepro.xingyun361.com/api/'
   },
   ironRequest,
   request (url, params, urlMethod) {

@@ -541,7 +541,7 @@ export default {
   border-right 1px #EEEEEE solid
   &:nth-child(3n)
     border-right none
-  &:nth-child(n+7)
+  &:nth-child(n+10)
     border-bottom none
   .contract-img
     width 25px

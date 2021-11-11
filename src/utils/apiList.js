@@ -415,7 +415,23 @@ export default {
     saleContractUpateAffirm: 'sale/saleContract/saleContractUpateAffirm',
     // 退出登录
     logout: 'base/user/logout',
-    // 电子名片-获取用户信息
-    businesscardInfo: 'businesscard/businessCard/getInfoByName'
+    // 获取业务员名片信息
+    getInfoByName: { url: 'businesscard/public/businessCard/getInfoByName', method: 'get' },
+    // 获取业务员名片信息
+    getInfoById: { url: 'businesscard/public/businessCard/get', method: 'get' },
+    // 获取评价信息
+    getOptionsData: { url: 'businesscard/public/businessOption/getOptionsData', method: 'get' },
+    // 获取头像
+    getBusinessCardHead2Base64: { url: 'businesscard/public/businessCard/getBusinessCardHead2Base64', method: 'get' },
+    // 交换名片
+    businessCustomerAdd: { url: 'businesscard/public/businessCustomer/add', method: 'post' },
+    // 评价业务员
+    businessRemarkAdd: { url: 'businesscard/public/businessRemark/add', method: 'post' },
+    // 生成名片
+    getBusinessCardPoster: { url: 'businesscard/public/businessCard/getBusinessCardPoster', method: 'get' },
+    // 获取是否评价以及平均分
+    displayRemarkInfo: { url: 'businesscard/public/businessRemark/displayRemarkInfo', method: 'get' },
+    // 公司信息
+    companyContent: { url: 'businesscard/public/companyContent/queryList', method: 'get' }
   }
 }
