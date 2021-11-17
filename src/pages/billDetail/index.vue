@@ -178,7 +178,7 @@ export default {
         }
       })
       this.billDetail.totalAmount = totalAmount
-      this.billDetail.totalWeight = totalWeight
+      this.billDetail.totalWeight = this.toFixed(totalWeight, 3)
       this.billDetail.status_desc = this.contractStatus.find(c => {
         return c.id === res.data.xingyunContractStatus
       }).name
@@ -207,6 +207,13 @@ export default {
     // })
   },
   methods: {
+    // 重写toFixed方法
+    toFixed (num, s) {
+      var times = Math.pow(10, s)
+      var des = num * times + 0.5
+      des = parseInt(des, 10) / times
+      return des
+    },
     payBill () {
       this.logEventGet({ event: 'click_app_myorder_detail_pay', type: '01' })
       this.jump('/mall/pay?orderNo=' + this.billDetail.tstc_no + '&pageType=offlinePay&price=' + this.billDetail.total_money + '&frontPrice=' + this.billDetail.advancePaymentMoney + '&percent=' + this.billDetail.percent)
