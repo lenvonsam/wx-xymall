@@ -282,6 +282,7 @@ export default {
       //   self.jump('/pages/account/login/main')
       // }, 1000)
     }
+    this.getSystemInfo()
   },
   methods: {
     ...mapActions([
@@ -289,6 +290,42 @@ export default {
       'configVal',
       'exitUser'
     ]),
+    getSystemInfo () {
+      // 获取系统信息
+      // 设置自定义customer bar
+      const me = this
+      mpvue.getSystemInfo({
+        success (e) {
+          console.log(e)
+          const statusBar = e.statusBarHeight
+          me.configVal({ key: 'screenWidth', val: e.screenWidth })
+          me.configVal({ key: 'screenHeight', val: e.screenHeight })
+          me.configVal({ key: 'statusBar', val: statusBar })
+          me.configVal({ key: 'bottomBarHeight', val: (e.screenHeight - e.windowHeight) })
+          // 获取菜单按钮（右上角胶囊按钮）的布局位置信息。坐标信息以屏幕左上角为原点。
+          const capsule = wx.getMenuButtonBoundingClientRect()
+          if (capsule) {
+            me.configVal({ key: 'custom', val: capsule })
+            me.configVal({ key: 'customBar', val: capsule.bottom + capsule.top - statusBar })
+          } else {
+            me.configVal({ key: 'customBar', val: statusBar + 50 })
+          }
+          // 判断机型
+          const model = e.model
+          console.log('model', e.model)
+          if (/iphone\sx/i.test(model) ||
+            (/iphone/i.test(model) && /unknown/.test(model)) ||
+            /iphone\s11/i.test(model)) {
+            me.configVal({ key: 'isIpx', val: true })
+          } else {
+            me.configVal({ key: 'isIpx', val: false })
+          }
+        },
+        fail (err) {
+          console.error('获取系统信息失败', err)
+        }
+      })
+    },
     getSummaryQuantity () {
       this.httpGet(this.apiList.zf.summaryQuantity).then(res => {
         if (res.success) {

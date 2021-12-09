@@ -1,7 +1,7 @@
 <template lang="pug">
 div
   nav-bar(title="公司介绍", isBack)
-  .fixed-top.flex
+  .fixed-top.flex(:style="{top: customBar + 'px'}")
     .top-cell.ft-16(@click="selectTab('1')", :class="tabIndex === '1' ? 'active-tab' : ''") 智恒达
     .top-cell.ft-16(@click="selectTab('2')", :class="tabIndex === '2' ? 'active-tab' : ''") 型云
   .content
@@ -136,10 +136,11 @@ export default {
 .fixed-top
   width 100%
   position fixed
-  top 128rpx
-  left 0
+  // top 128rpx
+  // left 0
   background-color #fff
   border-bottom 1rpx solid #eee
+  z-index 999
   .top-cell
     width 50%
     height 100rpx
