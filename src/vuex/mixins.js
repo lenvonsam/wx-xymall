@@ -16,7 +16,8 @@ const wxMixins = {
       // 静态资源图片地址
       imgProxy: 'http://xymobile.xingyun361.com/',
       // 型云动态图片访问地址
-      imgOuterUrl: 'http://47.103.130.166:8008',
+      // imgOuterUrl: 'http://47.103.130.166:8008',
+      imgOuterUrl: 'http://gatepro.xingyun361.com', // uat环境地址
       // imgOuterUrl: 'http://web-test.xingyun361.com', // 测试环境图片地址
       // imgOuterUrl: 'http://xyweb-pro.xingyun361.com', // 预上线环境图片地址
       // imgOuterUrl: 'https://www.xingyun361.com',
