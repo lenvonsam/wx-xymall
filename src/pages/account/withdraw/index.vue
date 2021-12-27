@@ -101,17 +101,17 @@ export default {
       try {
         const { data } = await this.httpGet(this.apiList.zf.prepareWithdrawApply)
         console.log('tag', data)
-        this.record.withdrawUnitBankName = data.withdrawUnitBankName
-        this.record.withdrawUnitBankAccount = data.withdrawUnitBankAccount
-        this.record.withdrawUnitBankAccountName = data.withdrawUnitBankAccountName
-        this.record.canWithdrawAmt = data.canWithdrawAmt
-        this.record.withdrawUnitId = data.withdrawUnitId
-        this.record.withdrawUnitName = data.withdrawUnitName
-        this.record.withdrawUnitBankCode = data.withdrawUnitBankCode
-        this.record.withdrawUnitBankCodeName = data.withdrawUnitBankCodeName
-        this.record.withdrawUnitBankNo = data.withdrawUnitBankNo
-        this.record.companyCode = data.companyCode
-        this.record.companyName = data.companyName
+        this.record.withdrawUnitBankName = data.withdrawUnitBankName || ''
+        this.record.withdrawUnitBankAccount = data.withdrawUnitBankAccount || ''
+        this.record.withdrawUnitBankAccountName = data.withdrawUnitBankAccountName || ''
+        this.record.canWithdrawAmt = data.canWithdrawAmt || ''
+        this.record.withdrawUnitId = data.withdrawUnitId || ''
+        this.record.withdrawUnitName = data.withdrawUnitName || ''
+        this.record.withdrawUnitBankCode = data.withdrawUnitBankCode || ''
+        this.record.withdrawUnitBankCodeName = data.withdrawUnitBankCodeName || ''
+        this.record.withdrawUnitBankNo = data.withdrawUnitBankNo || ''
+        this.record.companyCode = data.companyCode || ''
+        this.record.companyName = data.companyName || ''
       } catch (e) {
         this.msg(e.message)
       }

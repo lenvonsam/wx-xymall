@@ -65,7 +65,7 @@
                     .col(style="flex: 0 0 60px;")
                       count-step(v-model="cart.count", @change="rowCartCount($event, cart)", :max="cart.ratioAvailableAmount")
                     .padding-left-xs {{cart.countWeight}}吨
-            .margin-top-sm.padding-bottom-sm(v-if="soldCarts.length > 0", :class="{'padding-top-sm': carts.length === 0}")
+            .margin-top-sm.padding-bottom-sm(v-if="soldCarts.length > 0")
               .bg-white
                 .row.padding.flex-center.border-bottom-line
                   .col 失效物资{{soldCarts.length}}件
@@ -247,7 +247,7 @@ export default {
   },
   onReady () {
     if (this.isLogin) {
-      this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 200 + 'rpx'
+      // this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 200 + 'rpx'
       if (this.carts.length === 0 && !this.firstLoad) {
         this.firstLoad = true
         this.loadCartData()
@@ -264,7 +264,7 @@ export default {
         this.pwAddrDetail = this.tempObject.detail
       }
     }
-    this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 200 + 'rpx'
+    // this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 200 + 'rpx'
     if (this.carts.length === 0 && !this.firstLoad) {
       this.firstLoad = true
       this.loadCartData()
@@ -814,6 +814,13 @@ export default {
         // 显示底部tabbar购物车数量
         this.tabDot(this.carts.length + this.soldCarts.length)
         mpvue.setStorageSync('cartAllCount', this.carts.length + this.soldCarts.length)
+        this.$nextTick(() => {
+          if (this.carts.length) {
+            this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 200 + 'rpx'
+          } else {
+            this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) + 'rpx'
+          }
+        })
       }).catch(e => {
         self.showMsg(e.message)
       }).finally(() => {
