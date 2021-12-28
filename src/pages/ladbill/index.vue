@@ -122,6 +122,9 @@ export default {
       tempObject: state => state.tempObject
     })
   },
+  onLoad () {
+    this.loadData()
+  },
   onShow () {
     this.swiperHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 170 + 'rpx'
     this.loading = false
@@ -134,9 +137,9 @@ export default {
     if (this.tempObject.carNo) this.carNo = this.tempObject.carNo
     if (this.tempObject.startDate) this.startDate = this.tempObject.startDate
     if (this.tempObject.endDate) this.endDate = this.tempObject.endDate
-    if (!this.swiperCount) {
-      this.loadData()
-    }
+    // if (!this.swiperCount) {
+    //   this.loadData()
+    // }
   },
   onUnload () {
     this.swiperCount = 0

@@ -31,7 +31,8 @@ div
       .col.flex-50.text-blue.ft-12(@click="withdrawAll") 全部提出
   .padding.margin-top-lg
    .main-btn(hover-class="hover-gray", @click="confirmWithdraw") 确认提现
-  modal-input(v-model="modalShow", placeholder="请输入支付密码", title="支付密码", type="password", :cb="inputChange", confirmText="提现")
+  template(v-if="modalShow")
+    modal-input(v-model="modalShow", placeholder="请输入支付密码", title="支付密码", type="password", :cb="inputChange", confirmText="提现")
   alert(msg="提现申请成功，请耐心等待审批", :cb="alertCb", v-model="alertShow")
 </template>
 

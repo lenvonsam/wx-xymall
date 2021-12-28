@@ -33,6 +33,7 @@ export default {
     ]),
     bindWxBtn () {
       console.log('aaaa++++')
+      console.log('self.bindwx===>' + this.bindwx)
       let self = this
       if ((Date.now() - this.onpresscTime) > 2000) {
         this.onpresscTime = Date.now()
@@ -42,7 +43,6 @@ export default {
        */
         if (self.bindwx) {
           // 微信自动登录接口
-          console.log('self.bindwx===>' + self.bindwx)
           let paramsObj = {
             openId: self.openId,
             unionId: mpvue.getStorageSync('unionId')
@@ -99,6 +99,8 @@ export default {
           //   self.jump('/pages/account/wxBind/main')
           //   // modal提示是否绑定
           // })
+        } else {
+          self.jump('/pages/account/wxBind/main')
         }
       } else {
         self.showMsg('点击过于频繁，请稍等！')
