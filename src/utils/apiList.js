@@ -432,6 +432,8 @@ export default {
     // 获取是否评价以及平均分
     displayRemarkInfo: { url: 'businesscard/public/businessRemark/displayRemarkInfo', method: 'get' },
     // 公司信息
-    companyContent: { url: 'businesscard/public/companyContent/queryList', method: 'get' }
+    companyContent: { url: 'businesscard/public/companyContent/queryList', method: 'get' },
+    // 首页banner图
+    onlineBanner: 'sale/onlineBanner/queryPage'
   }
 }

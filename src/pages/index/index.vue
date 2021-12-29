@@ -10,7 +10,7 @@ div
           .col.padding-left-sm 请输入关键词搜索
     swiper(v-if="gallery.length > 0", :indicator-dots="true", :autoplay="true", circular,indicator-active-color="#fff", indicator-color="rgba(255, 255, 255, .3)")
       swiper-item.border-radius(v-for="(g,idx) in gallery", :key="idx")
-        img.response(:src="g.bannerName", v-if="g.bannerName", style="height: 300rpx", mode="widthFix")
+        img.response(:src="imgOuterUrl + '/api/foundation/public/user/picture/view?path=' + g.bannerName", v-if="g.bannerName", style="height: 300rpx", mode="widthFix")
     time-line(v-else, type="gallery")
   .row.bg-white.padding-bottom-sm
     .col.text-center(v-for="(icon,idx) in (currentUser.type === 'seller' ? sellerMainIcons : mainIcons)", :key="idx", @click="iconJump(icon)")
@@ -263,8 +263,9 @@ export default {
     // },
     // 获取轮播图
     async loadBanner () {
+      console.log('onlineBanner', this.apiList.zf)
       try {
-        const data = await this.httpPost(this.apiList.zf.banner, {
+        const data = await this.httpPost(this.apiList.zf.onlineBanner, {
           bannerType: '02'
         })
         this.gallery = data.data

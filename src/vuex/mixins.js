@@ -12,7 +12,7 @@ const wxMixins = {
     return {
       apiList,
       pageSize: 10,
-      appKey: 'XingYunMallMini',
+      appKey: 'xingYunMallMini',
       // 静态资源图片地址
       imgProxy: 'http://xymobile.xingyun361.com/',
       // 型云动态图片访问地址
