@@ -45,7 +45,7 @@ export default {
       this.timer = setInterval(() => {
         this.currentIdx++
         this.noAnimate = false
-        if (this.currentIdx > (this.items - 1)) {
+        if (this.currentIdx > (this.quees.length - 1)) {
           this.noAnimate = true
           this.currentIdx = 0
         }

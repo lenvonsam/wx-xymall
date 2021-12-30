@@ -67,7 +67,7 @@ export default {
       echartHeight: 0,
       lineOptionData: [],
       gallery: [],
-      notices: {},
+      notices: [],
       lineOptions: lineOpts,
       alertShow: true,
       top: 0,

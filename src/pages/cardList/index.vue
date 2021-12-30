@@ -131,7 +131,7 @@ export default {
         const data = await this.httpPost(url, params)
         console.log('get data', data)
         this.isLoad = true
-        const arr = data.data
+        const arr = data.data || []
         if (this.currentPage === 1 && arr.length > 0) {
           this.listData = arr
         } else if (this.currentPage > 1 && arr.length > 0) {
@@ -148,7 +148,7 @@ export default {
         console.log('searchWithdraw+++', this.pageType)
         console.log(this.listData)
       } catch (e) {
-        this.showMsg(e)
+        this.showMsg(e.message)
         this.loadFinish = 0
       }
     }
