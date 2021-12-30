@@ -30,7 +30,7 @@
         .col
           input.no-border.ft-16(placeholder="请输入验证码", type="number", v-model="code")
         .flex-90.text-center(style="border-left: 1rpx solid #888")
-          auth-btn(:phone="phone",v-if="codeBtnShow",:codeType="1", :cb="authBtnCB")
+          auth-btn(:phone="phone",v-if="codeBtnShow",:codeType="2", :cb="authBtnCB")
       .row
         .col.padding-top.ft-12 新用户绑定即完成注册
   .padding-40
