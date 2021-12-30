@@ -160,12 +160,8 @@ export default {
       console.log('authBtnCB(obj)======>' + JSON.stringify(obj))
       if (obj.toString() === '手机号已被注册') { // 已注册
         self.isNew = false
-        self.ironRequest(self.apiList.xy.captcha.url + '?user_phone=' + this.phone + '&type=7',
-          {},
-          self.apiList.xy.captcha.method).then((r) => {
+        this.httpGet(self.apiList.zf.getSmsVerifyCode + '?phone=' + self.phone + '&type=7', {}).then((r) => {
           console.log('已注册获取登录验证码r------------>' + JSON.stringify(r))
-          if (r.returncode.toString() === '0') {
-          }
         }).catch((err) => {
           console.log('已注册获取登录验证码err------------>' + JSON.stringify(err))
         })
