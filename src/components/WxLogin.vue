@@ -21,16 +21,47 @@ export default {
     }
   },
   onLoad () {
-    this.openId = mpvue.getStorageSync('openId')
-    console.log('openId===>' + this.openId)
-    if (typeof this.openId !== 'undefined' && this.openId) {
-      this.bindwx = true
-    }
+    // this.openId = mpvue.getStorageSync('openId')
+    // console.log('openId===>' + this.openId)
+    this.wxAuthLogin()
   },
   methods: {
     ...mapActions([
       'setUser'
     ]),
+    // 微信小程序登陆
+    wxAuthLogin () {
+      const me = this
+      try {
+        const localOpenId = mpvue.getStorageSync('openId') || false
+        if (!localOpenId) {
+          mpvue.login({
+            success (res) {
+              console.log('login data', res)
+              me.request(me.scpProxy + me.apiList.scp.login.url, { code: res.code, appKey: me.appKey }, me.apiList.scp.login.method).then(data => {
+                if (data.return_code === 0 && data.openId) {
+                  me.openId = data.openId
+                  mpvue.setStorage({
+                    key: 'openId',
+                    data: data.openId
+                  })
+                  me.bindwx = true
+                }
+              }).catch(e => {
+                console.error('login fail', e)
+              })
+            },
+            fail (err) {
+              console.error('login error', err)
+            }
+          })
+        } else {
+          me.openId = mpvue.getStorageSync('openId')
+        }
+      } catch (e) {
+        console.error('get storage info error:>>', e)
+      }
+    },
     bindWxBtn () {
       console.log('aaaa++++')
       console.log('self.bindwx===>' + this.bindwx)
