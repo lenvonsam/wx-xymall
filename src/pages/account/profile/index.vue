@@ -107,7 +107,7 @@ export default {
           self.uploadFile(url, tempFilePaths[0]).then(res => {
             console.log('pic1++++++')
             console.log(res)
-            self.newAvatar = self.imgOuterUrl + '/api/foundation/public/user/picture/view?path=' + res
+            self.newAvatar = self.zfBASICURL + 'foundation/public/user/picture/view?path=' + res
             self.updatePersonInfo(res)
           }).catch(e => {
             console.log(e.message)

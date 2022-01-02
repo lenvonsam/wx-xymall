@@ -40,7 +40,7 @@ div
             .flex-60 三证合一
             .col
             .flex-30.row(v-if="pic1")
-              img(:src="imgOuterUrl + '/api/foundation/public/user/picture/view?path=' + pic1", style="width: 40rpx; height: 60rpx", @click="previewImage(imgOuterUrl + '/api/foundation/public/user/picture/view?path=' + pic1)")
+              img(:src="zfBASICURL + 'foundation/public/user/picture/view?path=' + pic1", style="width: 40rpx; height: 60rpx", @click="previewImage(zfBASICURL + 'foundation/public/user/picture/view?path=' + pic1)")
             .flex-30.row(@click="handlerImage('pic1')")
               img.add-icon(src="/static/images/add_icon.png")
         .row.padding.relative.h-50
@@ -50,7 +50,7 @@ div
             .flex-60 开票资料
             .col.text-right
             .flex-30.row(v-if="pic2")
-              img(:src="imgOuterUrl + '/api/foundation/public/user/picture/view?path=' + pic2", style="width: 40rpx; height: 60rpx", @click="previewImage(imgOuterUrl + '/api/foundation/public/user/picture/view?path=' + pic2)")
+              img(:src="zfBASICURL + 'foundation/public/user/picture/view?path=' + pic2", style="width: 40rpx; height: 60rpx", @click="previewImage(zfBASICURL + 'foundation/public/user/picture/view?path=' + pic2)")
             .flex-30.row(@click="handlerImage('pic2')")
               img.add-icon(src="/static/images/add_icon.png")
       .bg-white(v-else)
@@ -61,7 +61,7 @@ div
           .col.row
             .col 营业执照
             .flex-30.row(v-if="pic1")
-              img(:src="imgOuterUrl + '/api/foundation/public/user/picture/view?path=' + pic1", style="width: 40rpx; height: 60rpx", @click="previewImage(imgOuterUrl + '/api/foundation/public/user/picture/view?path=' + pic1)")
+              img(:src="zfBASICURL + 'foundation/public/user/picture/view?path=' + pic1", style="width: 40rpx; height: 60rpx", @click="previewImage(zfBASICURL + 'foundation/public/user/picture/view?path=' + pic1)")
             .flex-30.row(@click="handlerImage('pic1')")
               img.add-icon(src="/static/images/add_icon.png")
         .row.padding.relative.h-50
@@ -71,7 +71,7 @@ div
           .col.row
             .col 开票资料
             .flex-30.row(v-if="pic2")
-              img(:src="imgOuterUrl + '/api/foundation/public/user/picture/view?path=' + pic2", style="width: 40rpx; height: 60rpx", @click="previewImage(imgOuterUrl + '/api/foundation/public/user/picture/view?path=' + pic2)")
+              img(:src="zfBASICURL + 'foundation/public/user/picture/view?path=' + pic2", style="width: 40rpx; height: 60rpx", @click="previewImage(zfBASICURL + 'foundation/public/user/picture/view?path=' + pic2)")
             .flex-30.row(@click="handlerImage('pic2')")
               img.add-icon(src="/static/images/add_icon.png")
         .row.padding.relative.h-50
@@ -81,7 +81,7 @@ div
           .col.row
             .col 税务登记证
             .flex-30.row(v-if="pic3")
-              img(:src="imgOuterUrl + '/api/foundation/public/user/picture/view?path=' + pic3", style="width: 40rpx; height: 60rpx", @click="previewImage(imgOuterUrl + '/api/foundation/public/user/picture/view?path=' + pic3)")
+              img(:src="zfBASICURL + 'foundation/public/user/picture/view?path=' + pic3", style="width: 40rpx; height: 60rpx", @click="previewImage(zfBASICURL + 'foundation/public/user/picture/view?path=' + pic3)")
             .flex-30.row(@click="handlerImage('pic3')")
               img.add-icon(src="/static/images/add_icon.png")
         .row.padding.relative.h-50
@@ -90,7 +90,7 @@ div
           .col.row
             .col 组织机构代码证
             .flex-30.row(v-if="pic4")
-              img(:src="imgOuterUrl + '/api/foundation/public/user/picture/view?path=' + pic4", style="width: 40rpx; height: 60rpx", @click="previewImage(imgOuterUrl + '/api/foundation/public/user/picture/view?path=' + pic4)")
+              img(:src="zfBASICURL + 'foundation/public/user/picture/view?path=' + pic4", style="width: 40rpx; height: 60rpx", @click="previewImage(zfBASICURL + 'foundation/public/user/picture/view?path=' + pic4)")
             .flex-30.row(@click="handlerImage('pic4')")
               img.add-icon(src="/static/images/add_icon.png")
     .margin-top.padding
