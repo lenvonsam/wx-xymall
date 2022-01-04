@@ -479,10 +479,18 @@ export default {
       } else {
         this.scrollId = 'idx_0'
       }
+      let tabArr = []
       // 选中项
       this.sortList[0].data.map((item, idx) => {
         item.isActive = this.tabVal === item.id
+        tabArr.push(item.name)
       })
+      if (tabArr.includes(this.searchVal) && item.name !== '全部') {
+        this.searchVal = ''
+        this.$emit('cleanSearch')
+      }
+      // this.currentPage = 0
+
       // 存储选中项的id
       this.configVal({ key: 'tempObject', val: { name: item.id } })
       console.log('触发selectTab筛选++++', item.id, index)
