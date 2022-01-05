@@ -372,7 +372,7 @@ export default {
     async refreshUser () {
       try {
         const res = await this.httpPost(this.apiList.zf.getPersonInfo, {})
-        if (res.data.phone) {
+        if (res.data.username) {
           this.modalShow = false
           this.setUser({ user: res.data })
           // 超时未提货物模态框
