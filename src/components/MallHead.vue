@@ -564,7 +564,7 @@ export default {
           })
           tabList.push(item)
           return item
-        })
+        }).sort()
         newArr.unshift({ name: '全部', id: '', isActive: false })
         // 将数据存入sortList对应项的data中
         this.sortList[idx].data = newArr

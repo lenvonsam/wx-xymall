@@ -15,7 +15,7 @@ div
             .col.padding-left-sm
               template(v-if="isLogin")
                 .ft-15.padding-bottom-sm {{currentUser.companyName}}
-                .ft-12 {{currentUser.name}}
+                .ft-12 {{currentUser.name || ''}}
         .cuIcon-right.ft-25
       .account.vendor.bg-white.contract
         .row
@@ -50,7 +50,7 @@ div
             .col.padding-left-sm
               template(v-if="isLogin")
                 .ft-15.padding-bottom-sm {{currentUser.companyName || currentUser.username}}
-                .ft-12 {{currentUser.phone}}
+                .ft-12 {{currentUser.phone  || ''}}
               template(v-else)
                 .ft-16.padding-bottom-xs
                   span 登录
