@@ -24,16 +24,15 @@ div
           .text.flex.justify-center.align-center 图片
       .numberText {{typeIndex === '1' ? numberVideoText : numberImgText}}
     .wrap.padding.bg-white
-      .ft-13(v-html="currentObj.texts")
+      .ft-14(v-html="currentObj.texts")
   .empty
-  .go.text-bold.ft-14(@click="goShop") 去型云采购
+  .go.text-bold.ft-14(@click="goShop") {{isSalesman == 0 ? '去型云采购' : '去型云商城'}}
 </template>
+
 <script>
+import { mapState } from 'vuex'
 
 export default {
-  components: {
-
-  },
   data () {
     return {
       tabIndex: '1',
@@ -57,13 +56,21 @@ export default {
       },
       currentSwiperIndex: 1,
       currentImgLength: 0,
-      currentVideoLength: 0
+      currentVideoLength: 0,
+      isSalesman: ''
     }
+  },
+  onLoad (options) {
+    console.log('isSalesman', options.isSalesman)
+    this.isSalesman = options.isSalesman
   },
   mounted () {
     this.loadData()
   },
   computed: {
+    ...mapState({
+      isIpx: state => state.isIpx
+    }),
     numberImgText: function () {
       return this.currentObj.imgs.length + '/' + this.currentSwiperIndex
     },
@@ -109,10 +116,9 @@ export default {
       this.tab('/pages/mall/main')
     },
     async loadData () {
-      console.log('res+++++')
       try {
-        const res = await this.requestDecode('zf', this.zfProxy + this.apiList.zf.companyContent.url, {}, this.apiList.zf.companyContent.method, 'utf8')
-        console.log('res+++', res)
+        const res = await this.httpGet(this.apiList.zf.companyContent.url)
+        // const res = await this.requestDecode('zf', this.zfProxy + this.apiList.zf.companyContent.url, {}, this.apiList.zf.companyContent.method, 'utf8')
         if (res.data[0].title === '智恒达') {
           this.zhdObj = res.data[0]
           this.xyObj = res.data[1]
@@ -136,8 +142,7 @@ export default {
 .fixed-top
   width 100%
   position fixed
-  // top 128rpx
-  // left 0
+  left 0
   background-color #fff
   border-bottom 1rpx solid #eee
   z-index 999
@@ -160,7 +165,7 @@ export default {
       width 42rpx
       background-color: #2485FF
 .content
-  margin-top 120rpx
+  margin-top 112rpx
   margin-bottom 60rpx
   .cover
     height 100%

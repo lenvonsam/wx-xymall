@@ -45,7 +45,7 @@ div
       .ft-12.text-gray {{QQ}}
   .about.bg-white.flex.mt-10
     .text-bold.padding.ft-14.text-gray(@click="selectTab('1')", :class="tabIndex === '1' ? 'active-tab' : ''") 关于我
-    .text-bold.padding.ft-14.text-gray(@click="selectTab('2')", :class="tabIndex === '2' ? 'active-tab' : ''") 评价我 {{openId}}
+    .text-bold.padding.ft-14.text-gray(v-if="isSalesman === 0" @click="selectTab('2')", :class="tabIndex === '2' ? 'active-tab' : ''") 评价我 {{openId}}
   .me.mt-10
     template(v-if="tabIndex === '1'")
       .padding.bg-white.margin-bottom-xs.card-content(v-for="(item,index) in aboutMeList" :key="index")
@@ -106,7 +106,8 @@ div
     img.company-img(src="/static/images/card_company.png")
     .ft-12.text-bold 公司介绍
   .empty
-  .go.text-bold.ft-14(@click="goShop") 去型云采购
+  .go.text-bold.ft-14(@click="goShop") {{isSalesman === 0 ? '去型云采购' : '去型云商城'}}
+  alert(:msg="alertText", v-model="alertShow", :cb="alertCb")
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
@@ -135,6 +136,7 @@ export default {
       customName: '',
       customPhone: '',
       customNeed: '',
+      isSalesman: '',
       isShare: false,
       isSave: false,
       isExchange: false,
@@ -144,16 +146,9 @@ export default {
       optionId: '',
       optionCardId: '',
       isSelf: false,
-      aboutMeList: [
-        {
-          title: '主要负责区域',
-          detail: ''
-        },
-        {
-          title: '擅长型材品类',
-          detail: ''
-        }
-      ],
+      aboutMeList: [],
+      alertShow: false,
+      alertText: '',
       starList: [
         {
           name: 'xjxy',
@@ -337,7 +332,7 @@ export default {
       }
 
       // 获取业务员平均分
-      if (this.cardId && this.currentUser.nickname) {
+      if (this.cardId && this.currentUser.name) {
         this.getDisplayRemarkInfo()
       }
     }
@@ -345,25 +340,34 @@ export default {
   },
   // 转发分享
   onShareAppMessage (res) {
-    let nickname = this.businessUserName // 业务员名称
+    let nickName = this.businessUserName // 业务员名称
     return {
-      title: `${nickname}的电子名片`,
-      path: '/pages/vendor/businessCard/main?id=' + nickname,
+      title: `${nickName}的电子名片`,
+      path: '/pages/vendor/businessCard/main?id=' + nickName,
       success: function (res) {
         console.log('分享成功')
       }
     }
   },
   // onShareTimeline (res) {
-  //   let nickname = this.businessUserName // 业务员名称
+  //   let nickName = this.businessUserName // 业务员名称
   //   return {
-  //     title: `${nickname}的电子名片`,
-  //     path: '/pages/vendor/businessCard/main?id=' + nickname,
+  //     title: `${nickName}的电子名片`,
+  //     path: '/pages/vendor/businessCard/main?id=' + nickName,
   //     imageUrl: 'http://xymobile.xingyun361.com/2021Q2-score-no.png'
   //   }
   // },
   methods: {
     ...mapActions(['configVal']),
+    alertCb () {
+      if (this.isLogin) {
+        if (this.currentUser.type === 'seller') {
+          this.tab('/pages/me/main')
+        }
+      } else {
+        this.jump('/pages/account/login/main')
+      }
+    },
     closePoster () {
       this.isSave = false
       this.cardIndex = ''
@@ -400,7 +404,7 @@ export default {
         // } catch (err) {
         //   console.log(err)
         // }
-        this.posterImg = this.zfProxy + 'businesscard/public/businessCard/getBusinessCardPoster?id=' + this.cardId
+        this.posterImg = this.zfBASICURL + 'businesscard/public/businessCard/getBusinessCardPoster?id=' + this.cardId
         this.isSave = true
       } else {
         console.log('交换名片')
@@ -483,7 +487,7 @@ export default {
         } else {
           let params = {
             businessCardId: this.cardId, // 名片id
-            unitName: this.currentUser.nickname, // 客户名称
+            unitName: this.currentUser.name, // 客户名称
             departmentName: this.departmentName, // 业务员部门
             businessUserName: this.businessUserName, // 业务员姓名
             positionName: this.positionName, // 业务员职位名称
@@ -493,7 +497,8 @@ export default {
             scoreObjectionTrack: this.starList[3].num,
             scoreSatisfaction: this.starList[4].num
           }
-          const res = await this.requestDecode('zf', this.zfProxy + this.apiList.zf.businessRemarkAdd.url, params, this.apiList.zf.businessCustomerAdd.method, 'utf8')
+          const res = await this.httpPost(this.apiList.zf.businessRemarkAdd.url, params)
+          // const res = await this.requestDecode('zf', this.zfProxy + this.apiList.zf.businessRemarkAdd.url, params, this.apiList.zf.businessCustomerAdd.method, 'utf8')
           if (res.success) {
             mpvue.showToast({
               title: '评价成功'
@@ -671,7 +676,8 @@ export default {
         demandMaterials: this.customNeed
       }
       try {
-        const res = await this.requestDecode('zf', this.zfProxy + this.apiList.zf.businessCustomerAdd.url, params, this.apiList.zf.businessCustomerAdd.method, 'utf8')
+        const res = await this.httpPost(this.apiList.zf.businessCustomerAdd.url, params)
+        // const res = await this.requestDecode('zf', this.zfProxy + this.apiList.zf.businessCustomerAdd.url, params, this.apiList.zf.businessCustomerAdd.method, 'utf8')
         if (res.success) {
           mpvue.showToast({
             title: '交换成功'
@@ -684,7 +690,7 @@ export default {
       }
     },
     goCompanyInfo () {
-      this.jump('/pages/vendor/companyInfo/main')
+      this.jump('/pages/vendor/companyInfo/main?isSalesman=' + this.isSalesman)
     },
     goShop () {
       this.tab('/pages/mall/main')
@@ -695,11 +701,13 @@ export default {
       if (id) {
         cardId = id
       } else {
-        cardId = this.currentUser.nickName
+        cardId = this.currentUser.name
       }
+      console.log('cardId>>>', cardId)
       // console.log(this.zfProxy + 'businesscard/public/businessCard/getInfoByName?name=' + cardId)
       try {
-        const res = await this.requestDecode('zf', this.zfProxy + this.apiList.zf.getInfoByName.url + '?name=' + encodeURIComponent(cardId), {}, this.apiList.zf.getInfoByName.method, 'utf8')
+        const res = await this.httpGet(this.apiList.zf.getInfoByName.url + '?name=' + encodeURIComponent(cardId))
+        // const res = await this.requestDecode('zf', this.zfProxy + this.apiList.zf.getInfoByName.url + '?name=' + encodeURIComponent(cardId), {}, this.apiList.zf.getInfoByName.method, 'utf8')
         console.log('+++++', res)
         let data = res.data
         console.log(data)
@@ -712,23 +720,33 @@ export default {
         this.QQ = data.qqNumber
         this.phone = data.phone
         this.mail = data.mail
+        this.isSalesman = data.isSalesman
         this.responsibleArea = data.mainAreaResponsibility
         this.goodAt = data.goodAt
-        this.urlImg = this.zfProxy + this.apiList.zf.getBusinessCardHead2Base64.url + '?id=' + this.cardId
-        this.aboutMeList = [
-          {
-            title: '主要负责区域',
-            detail: data.mainAreaResponsibility || ''
-          },
-          {
-            title: '擅长型材品类',
-            detail: data.goodAtCategory || ''
-          }
-        ]
-        console.log(this.cardId, this.businessUserName, this.departmentName)
+        console.log('*****', this.cardId, this.businessUserName, this.departmentName)
+        this.urlImg = this.zfBASICURL + this.apiList.zf.getBusinessCardHead2Base64.url + '?id=' + this.cardId
+        if (data.isSalesman === 0) {
+          this.aboutMeList = [
+            {
+              title: '主要负责区域',
+              detail: data.mainAreaResponsibility || ''
+            },
+            {
+              title: '擅长型材品类',
+              detail: data.goodAtCategory || ''
+            }
+          ]
+        } else {
+          this.aboutMeList = [
+            {
+              title: '个人介绍',
+              detail: data.introduce || ''
+            }
+          ]
+        }
         // 如果是业务员自己打开分享内容
         if (this.isLogin) {
-          if (this.businessUserName === this.currentUser.nickname) {
+          if (this.businessUserName === this.currentUser.name) {
             console.log('业务员自己打开分享内容')
             this.isSelf = true
           } else {
@@ -738,7 +756,12 @@ export default {
         // this.getHeadImg()
         this.getDisplayRemarkInfo()
       } catch (err) {
-        console.log(err)
+        mpvue.hideToast()
+        console.log('>>>', err)
+        if (this.currentUser.type === 'seller') {
+          this.alertShow = true
+          this.alertText = '请先录入您的电子名片'
+        }
       }
     },
     // 获取业务员名片信息
@@ -746,7 +769,8 @@ export default {
       const cardId = id
       // console.log(this.zfProxy + 'businesscard/public/businessCard/getInfoByName?name=' + cardId)
       try {
-        const res = await this.requestDecode('zf', this.zfProxy + this.apiList.zf.getInfoById.url + '?id=' + encodeURIComponent(cardId), {}, this.apiList.zf.getInfoById.method, 'utf8')
+        const res = await this.httpGet(this.apiList.zf.getInfoById.url + '?id=' + encodeURIComponent(cardId))
+        // const res = await this.requestDecode('zf', this.zfProxy + this.apiList.zf.getInfoById.url + '?id=' + encodeURIComponent(cardId), {}, this.apiList.zf.getInfoById.method, 'utf8')
         console.log('+++++', res)
         let data = res.data
         console.log(data)
@@ -761,7 +785,7 @@ export default {
         this.mail = data.mail
         this.responsibleArea = data.mainAreaResponsibility
         this.goodAt = data.goodAt
-        this.urlImg = this.zfProxy + this.apiList.zf.getBusinessCardHead2Base64.url + '?id=' + this.cardId
+        this.urlImg = this.zfBASICURL + this.apiList.zf.getBusinessCardHead2Base64.url + '?id=' + this.cardId
         this.aboutMeList = [
           {
             title: '主要负责区域',
@@ -775,7 +799,7 @@ export default {
         console.log(this.cardId, this.businessUserName, this.departmentName)
         // 如果是业务员自己打开分享内容
         if (this.isLogin) {
-          if (this.businessUserName === this.currentUser.nickname) {
+          if (this.businessUserName === this.currentUser.name) {
             console.log('业务员自己打开分享内容')
             this.isSelf = true
           } else {
@@ -785,7 +809,12 @@ export default {
         // this.getHeadImg()
         this.getDisplayRemarkInfo()
       } catch (err) {
-        console.log(err)
+        mpvue.hideToast()
+        console.log('>>>', err)
+        if (this.currentUser.type === 'seller' && err === '查询数据信息有误，可能是name重复或没有数据！') {
+          this.alertShow = true
+          this.alertText = '请先录入您的电子名片'
+        }
       }
     },
     // 获取用户头像
@@ -825,7 +854,8 @@ export default {
     // 获取评价信息
     async getOptionsData () {
       try {
-        const res = await this.requestDecode('zf', this.zfProxy + this.apiList.zf.getOptionsData.url, {}, this.apiList.zf.getOptionsData.method, 'utf8')
+        const res = await this.httpGet(this.apiList.zf.getOptionsData.url)
+        // const res = await this.requestDecode('zf', this.zfProxy + this.apiList.zf.getOptionsData.url, {}, this.apiList.zf.getOptionsData.method, 'utf8')
         let data = res.data
         let defaultSubTitle = [{ name: '请您评价' }]
         this.starList[0].subTitle = defaultSubTitle.concat(data.inquiryResponse)
@@ -840,7 +870,8 @@ export default {
     // 获取平均分
     async getDisplayRemarkInfo () {
       try {
-        const res = await this.requestDecode('zf', this.zfProxy + this.apiList.zf.displayRemarkInfo.url + '?businessCardId=' + this.cardId + '&unitName=' + encodeURIComponent(this.currentUser.nickname), {}, this.apiList.zf.displayRemarkInfo.method, 'utf8')
+        const res = await this.httpGet(this.apiList.zf.displayRemarkInfo.url + '?businessCardId=' + this.cardId + '&unitName=' + encodeURIComponent(this.currentUser.name))
+        // const res = await this.requestDecode('zf', this.zfProxy + this.apiList.zf.displayRemarkInfo.url + '?businessCardId=' + this.cardId + '&unitName=' + encodeURIComponent(this.currentUser.name), {}, this.apiList.zf.displayRemarkInfo.method, 'utf8')
         let data = res.data
         console.log('获取平均分')
         console.log(data)
@@ -1115,3 +1146,4 @@ export default {
     height 40rpx
     width 40rpx
 </style>
+
