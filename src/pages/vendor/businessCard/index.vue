@@ -299,6 +299,7 @@ export default {
     //   withShareTicket: true,
     //   menus: ['shareAppMessage', 'shareTimeline']
     // })
+    Object.assign(this.$data, this.$options.data())
     mpvue.showShareMenu({
       withShareTicket: true,
       menus: ['shareAppMessage']
