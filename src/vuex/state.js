@@ -47,12 +47,12 @@ export default {
   // 首页产品分类
   mainClassify: [
     [
-      { title: '普碳H型钢', id: '169' },
+      { title: 'H型钢', id: '169' },
       { title: '低合金H型钢', id: '256' },
       { title: '槽钢', id: '168' }
     ],
     [
-      { title: '等边角钢', id: '167' },
+      { title: '角钢', id: '167' },
       { title: '不等边角钢', id: '179' },
       { title: '工字钢', id: '175' }
     ],
@@ -62,8 +62,8 @@ export default {
       { title: '圆钢', id: '272,181' }
     ],
     [
-      { title: '热轧扁钢', id: '273' },
-      { title: '纵剪扁钢', id: '270' },
+      { title: '扁钢', id: '273' },
+      { title: '镀锌扁钢', id: '270' },
       { title: '镀锌槽钢', id: '213' }
     ]
   ],
