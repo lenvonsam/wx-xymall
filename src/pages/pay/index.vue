@@ -17,11 +17,11 @@ div
   .padding.c-red.ft-bold.ft-12(v-if="pageType == 'balance' || (pageType == 'ladPay' && currentBalance < payMountInfo)", style="background: rgb(254, 252, 238);")
     span.c-orange 温馨提示：请按转账银行信息汇款，款到自动进行余额充值
   template(v-if="pageType != 'balance'")
-    .pay-tabs.flex.text-center.ft-bold.bg-white.ft-16
+    .pay-tabs.flex.ft-bold.bg-white.ft-16
       .col.border-right-line.ft-666(@click="payTabs('全款支付')")
         span(:class="payTabsActive === '全款支付' ? 'pay-tab-active' : ''") 全款支付
-      .col(@click="payTabs('定金支付')")
-        span(:class="payTabsActive === '定金支付' ? 'pay-tab-active' : ''") 定金支付
+      // .col(@click="payTabs('定金支付')")
+      //   span(:class="payTabsActive === '定金支付' ? 'pay-tab-active' : ''") 定金支付
     .pay-tabs-card
       .tishi(v-show="payTabsActive === '定金支付'") 定金比例约{{percent}}%，请出库后补足尾款
 
