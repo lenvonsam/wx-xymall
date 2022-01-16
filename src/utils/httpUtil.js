@@ -4,7 +4,7 @@ import BASE64 from 'base-64'
 // const zfBASICURL = 'http://47.103.130.166:8008/api/' // zf测试环境地址
 // const zfBASICURL = 'http://47.103.131.110:8008/api/' // zf开发环境地址
 // const zfBASICURL = 'http://testway.xingyun361.com/api/' // uat环境地址
-const zfBASICURL = 'http://gateway.xingyun361.com/api/' // 正式环境地址
+const zfBASICURL = 'https://gateway.xingyun361.com/api/' // 正式环境地址
 // const BASICURL = 'https://mobileapp.xingyun361.com/quasarserverdev' // 测试环境地址
 // const BASICURL = 'https://mobileapp.xingyun361.com/quasarserverstage' // 预上线环境地址
 const BASICURL = 'https://mobileapp.xingyun361.com/quasarserver'
@@ -397,35 +397,35 @@ export default {
     // 开发
     // erp: 'http://192.168.80.147:8980/eep/interfacesAjax!',
     // dev
-    erp: 'http://erp-test.xingyun361.com/eep/interfacesAjax!',
+    // erp: 'http://erp-test.xingyun361.com/eep/interfacesAjax!',
     // stage
     // erp: 'http://erp-pro.xingyun361.com/eep/interfacesAjax!',
     // prod
-    // erp: 'http://erp.xingyun361.com/eep/interfacesAjax!',
+    erp: 'http://erp.xingyun361.com/eep/interfacesAjax!',
     // dev
-    wh: 'http://wms-test.xingyun361.com/app/interfacesAjax!',
+    // wh: 'http://wms-test.xingyun361.com/app/interfacesAjax!',
     // stage
     // wh: 'http://wms-pro.xingyun361.com/app/interfacesAjax!',
     // prod
-    // wh: 'http://wms.xingyun361.com/app/interfacesAjax!',
+    wh: 'http://wms.xingyun361.com/app/interfacesAjax!',
     // dev
-    dr: 'http://appadmin-test.xingyun361.com/driver-bk/api/',
+    // dr: 'http://appadmin-test.xingyun361.com/driver-bk/api/',
     // prod
-    // dr: 'http://appadmin.xingyun361.com/driver-bk/api/',
+    dr: 'http://appadmin.xingyun361.com/driver-bk/api/',
     // dev
-    crm: 'http://crm-admin-test.xingyun361.com/crmserver/api/v1/wxmini/', // 测试环境地址
+    // crm: 'http://crm-admin-test.xingyun361.com/crmserver/api/v1/wxmini/', // 测试环境地址
     // stage
     // crm: 'http://crm-admin-pro.xingyun361.com/crmserver/api/v1/wxmini/', // 预上线环境地址
     // prod
-    // crm: 'http://crmadmin.xingyun361.com/api/v1/wxmini/'
+    crm: 'http://crmadmin.xingyun361.com/api/v1/wxmini/',
     // dev
-    scp: 'http://scp-dev.xingyun361.com/api/',
+    // scp: 'http://scp-dev.xingyun361.com/api/',
     // prod
-    // scp: 'http://scp.xingyun361.com/api/'
+    scp: 'http://scp.xingyun361.com/api/',
     // 测试环境
     // zf: 'http://47.103.131.110:8008/api/'
     // 预上线
-    zf: 'https://gatepro.xingyun361.com/api/'
+    zf: 'https://gateway.xingyun361.com/api/'
   },
   ironRequest,
   request (url, params, urlMethod) {
