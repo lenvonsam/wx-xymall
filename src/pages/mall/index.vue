@@ -752,6 +752,12 @@ export default {
         }
         this.productBrandNames = res.data.productBrandNames || []
         this.specifications = res.data.specifications || []
+        const reg = /\d+\.*\d*/
+        this.specifications.sort(function (a, b) {
+          const aMatch = Number(a.match(reg))
+          const bMatch = Number(b.match(reg))
+          return aMatch - bMatch
+        })
         this.productTextureNames = res.data.productTextureNames || []
         this.prodAreaNames = res.data.prodAreaNames || []
         const resData = res.data.stocks || []
