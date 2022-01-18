@@ -316,6 +316,9 @@ export default {
   border-radius 10px
   text-align center
   font-size 13px
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 .padding-15
   padding 15px
 </style>
