@@ -424,7 +424,7 @@ export default {
           self.listData = []
           res.data.map(itm => {
             let temp = itm
-            temp.checked = self.allChecked
+            // temp.checked = self.allChecked
             temp.price = Number(itm.price)
             self.listData.push(temp)
           })
@@ -441,7 +441,7 @@ export default {
         } else {
           res.data.map(itm => {
             let temp = itm
-            temp.checked = self.allChecked
+            // temp.checked = self.allChecked
             temp.price = Number(itm.price)
             self.listData.push(temp)
           })
