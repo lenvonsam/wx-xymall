@@ -124,25 +124,22 @@ export default {
         ic.secondNumber = ic.pendingAmount
         ic.ratioAvailableAmount = ic.ratioAvailableAmount + ic.amount
       })
+
       // 旧单信息
       // 货款
-      let goodsMoney = res.data.goodsMoney
+      this.oldOrder.paymentForGoods = (res.data.ladingGoodsMoney + res.data.unspentLadingGoodsAmount).toFixed(2)
       // 吊费
-      let liftingFeeMoney = res.data.liftingFeeMoney
-      // 已结算
-      let inTaxPayMoney = res.data.inTaxPayMoney
-      // 货款
-      this.oldOrder.paymentForGoods = goodsMoney.toFixed(2)
-      // 吊费
-      this.oldOrder.hangingFee = liftingFeeMoney.toFixed(2)
+      this.oldOrder.hangingFee = (res.data.unspentLadingLiftingAmount + res.data.ladingLiftingFeeMoney).toFixed(2)
       // 合同共计
-      this.oldOrder.totalContract = (goodsMoney + liftingFeeMoney).toFixed(2)
+      this.oldOrder.totalContract = (res.data.unspentLadingAmount + res.data.inTaxLadingMoney).toFixed(2)
       // 实际金额
-      this.oldOrder.actualAmount = inTaxPayMoney.toFixed(2)
+      this.oldOrder.actualAmount = res.data.inTaxPayMoney.toFixed(2)
       // 已结算
-      this.oldOrder.settled = inTaxPayMoney.toFixed(2)
+      this.oldOrder.settled = res.data.inTaxPayMoney.toFixed(2)
       // 已执行金额(含税)
       this.oldOrder.inTaxExecuteMoney = res.data.inTaxExecuteMoney.toFixed(2)
+
+      // 新单信息
       this.newOrder.balancePayment = res.data.inTaxReceiveMoney
       let tableData = [res.data]
       tableData.forEach(x => {
