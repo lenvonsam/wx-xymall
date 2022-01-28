@@ -42,7 +42,7 @@ div
         .flex 实际金额：
           span.text-gray {{oldOrder.actualAmount}}元
         .flex 已结算：
-          span.text-gray {{oldOrder.inTaxExecuteMoney}}元
+          span.text-gray {{oldOrder.settled}}元
     .bg-white.margin-top-sm.text-content
       .padding-sm.text-black.text-bold.solid-bottom.ft-15 新单信息
       .padding-sm
@@ -134,10 +134,10 @@ export default {
       this.oldOrder.totalContract = (res.data.unspentLadingAmount + res.data.inTaxLadingMoney).toFixed(2)
       // 实际金额
       this.oldOrder.actualAmount = res.data.inTaxPayMoney.toFixed(2)
-      // 已结算
-      this.oldOrder.settled = res.data.inTaxPayMoney.toFixed(2)
+      // 已结算（实发合同金额）
+      this.oldOrder.settled = res.data.inTaxLadingMoney.toFixed(2)
       // 已执行金额(含税)
-      this.oldOrder.inTaxExecuteMoney = res.data.inTaxExecuteMoney.toFixed(2)
+      // this.oldOrder.inTaxExecuteMoney = res.data.inTaxExecuteMoney.toFixed(2)
 
       // 新单信息
       this.newOrder.balancePayment = res.data.inTaxReceiveMoney
