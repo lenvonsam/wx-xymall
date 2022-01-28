@@ -127,16 +127,15 @@ export default {
     this.configVal({ key: 'tempObject', val: '' })
   },
   onShow () {
-    // console.log('打印当前tabName+++', this.tempObject.tabName)
     // this.listData = []
     this.disabledBtn = false
-    if (this.tempObject.tabName) {
-      this.tabName = this.tempObject.tabName
-      this.swiperCount = this.tabName
-    } else if (this.$root.$mp.query.tabName) {
-      this.tabName = this.$root.$mp.query.tabName
-      this.swiperCount = this.tabName
-    }
+    // if (this.tempObject.tabName) {
+    //   this.tabName = this.tempObject.tabName
+    //   // this.swiperCount = this.tabName
+    // } else if (this.$root.$mp.query.tabName) {
+    //   this.tabName = this.$root.$mp.query.tabName
+    //   // this.swiperCount = this.tabName
+    // }
     const isPhoneHeight = this.isIpx ? 68 : 0
     if (this.tabName === '1' || this.tabName === '3') {
       this.pageHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - 98 - isPhoneHeight + 'rpx'
