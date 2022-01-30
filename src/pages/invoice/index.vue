@@ -254,9 +254,6 @@ export default {
       // 发票确认编码
       let sus = [obj.arInvocieId]
       sus = JSON.stringify(sus)
-      if (this.tabName !== '0') {
-        this.jump('/pages/invoiceDetail/main?tabName=' + this.tabName + '&ids=' + ids + '&sus=' + sus + '&name=查看详情')
-      }
       // this.ironRequest('invoiceDetail.shtml?id=' + obj.id, {}, 'get').then(resp => {
       //   if (resp.returncode === '0') {
       //     resp.tabName = this.tabName
@@ -283,6 +280,9 @@ export default {
           this.configVal({ key: 'tempObject', val: res.data })
           // this.showObj = res.data
         })
+      }
+      if (this.tabName !== '0') {
+        this.jump('/pages/invoiceDetail/main?tabName=' + this.tabName + '&ids=' + ids + '&sus=' + sus + '&name=查看详情')
       }
     },
     // 批量申请/批量确认

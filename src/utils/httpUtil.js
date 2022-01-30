@@ -249,7 +249,11 @@ function httpPost (url, params = {}) {
             _this.confirm({ content: '登录已失效，请重新登录' }).then((r) => {
               console.log('确定+++', r)
               if (r === 'confirm') {
-                _this.exitUser()
+                try {
+                  _this.exitUser()
+                } catch (err) {
+                  console.error(err)
+                }
                 _this.jump('/pages/account/login/main')
               }
             })
@@ -267,6 +271,7 @@ function httpPost (url, params = {}) {
 }
 
 function httpPostForm (url, params) {
+  const _this = this
   url = zfBASICURL + url
   let header = {
     'Content-Type': 'multipart/form-data',
@@ -282,9 +287,9 @@ function httpPostForm (url, params) {
       method: 'POST',
       success (res) {
         if (res.code === 'TK01' || res.code === 'TK02' || res.code === 'TK03' || res.code === 'TK04' || res.code === 'TC001') {
-          this.confirm({ content: '登录已失效，请重新登录' }).then((r) => {
+          _this.confirm({ content: '登录已失效，请重新登录' }).then((r) => {
             if (r === 'confirm') {
-              this.jump('/pages/account/login/main')
+              _this.jump('/pages/account/login/main')
             }
           })
         } else {

@@ -103,6 +103,7 @@ export default {
       }).catch(e => {
         me.$store.commit('LOGOUT')
         me.hideLoading()
+        console.log('失效111')
         me.showMsg('登录已失效，请重新登录')
         setTimeout(() => {
           me.exitUser()
