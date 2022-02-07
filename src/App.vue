@@ -16,7 +16,6 @@ export default {
         if (!localOpenId) {
           mpvue.login({
             success (res) {
-              console.log('login data', res)
               me.request(me.scpProxy + me.apiList.scp.login.url, { code: res.code, appKey: me.appKey }, me.apiList.scp.login.method).then(data => {
                 if (data.return_code === 0 && data.openId) {
                   mpvue.setStorage({

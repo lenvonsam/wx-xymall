@@ -5,7 +5,7 @@ import BASE64 from 'base-64'
 // const zfBASICURL = 'http://47.103.131.110:8008/api/' // zf开发环境地址
 const zfBASICURL = 'http://testway.xingyun361.com/api/' // 测试环境地址
 // const zfBASICURL = 'http://prepway.xingyun361.com/api/' // uat环境地址
-// const zfBASICURL = 'http://gateway.xingyun361.com/api/' // 正式环境地址
+// const zfBASICURL = 'https://gateway.xingyun361.com/api/' // 正式环境地址
 // const BASICURL = 'https://mobileapp.xingyun361.com/quasarserverdev' // 测试环境地址
 // const BASICURL = 'https://mobileapp.xingyun361.com/quasarserverstage' // 预上线环境地址
 const BASICURL = 'https://mobileapp.xingyun361.com/quasarserver'
@@ -425,9 +425,9 @@ export default {
     // prod
     // crm: 'http://crmadmin.xingyun361.com/api/v1/wxmini/'
     // dev
-    scp: 'http://scp-dev.xingyun361.com/api/',
+    // scp: 'http://scp-dev.xingyun361.com/api/',
     // prod
-    // scp: 'http://scp.xingyun361.com/api/'
+    scp: 'http://scp.xingyun361.com/api/',
     // 测试环境
     // zf: 'http://47.103.131.110:8008/api/'
     // 预上线
