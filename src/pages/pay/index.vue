@@ -124,7 +124,7 @@ export default {
       this.payPwd = newVal.replace(/\s/g, '')
     }
   },
-  onShow () {
+  onLoad () {
     this.whiteStatusBar()
     this.httpPost(this.apiList.zf.queryUserCenterContractInfo, {}).then(res => {
       this.currentBalance = res.data.unitFundBalance
