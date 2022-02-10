@@ -92,7 +92,7 @@ div
                     span.text-red.ft-13(v-if="item.price === '--' || (isLogin && !isNineClocks && item.productClassName ==='H型钢') || (isLogin && !isNineClocks && item.productClassName ==='板材')") 开售时间:{{item.show_time}}
                     span.text-blue(v-else-if="isLogin") ￥{{item.price}}
                     // span(v-else-if="item.show_price === true") ￥{{item[mallTypeObject[itemType].price]}}
-                    .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)") 查看价格
+                    // .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)") 查看价格
                   .text-gray.flex
                     .ft-11.col ({{item.weightMark}})
                     .text-right
@@ -647,6 +647,7 @@ export default {
         let msg = '请您登录后购买，去登录'
         if (type === 'showPrice') msg = '请登录后查看价格，去登录'
         this.confirm({ content: msg }).then((res) => {
+          this.btnDisable = false
           if (res === 'confirm') {
             self.jump('/pages/account/login/main')
           }
