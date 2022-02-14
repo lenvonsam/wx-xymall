@@ -143,9 +143,9 @@ export default {
   computed: {
     ...mapState({
       billIcons: state => state.billIcons,
-      meIconList: state => state.meIconList,
+      // meIconList: state => state.meIconList,
       tempObject: state => state.tempObject,
-      serviceCall: state => state.serviceCall,
+      // serviceCall: state => state.serviceCall,
       featuresIcons: state => state.vendor.featuresIcons,
       billTrackIcons: state => state.vendor.billTrackIcons
     })

@@ -16,7 +16,6 @@ export default {
         if (!localOpenId) {
           mpvue.login({
             success (res) {
-              console.log('login data', res)
               me.request(me.scpProxy + me.apiList.scp.login.url, { code: res.code, appKey: me.appKey }, me.apiList.scp.login.method).then(data => {
                 if (data.return_code === 0 && data.openId) {
                   mpvue.setStorage({
@@ -103,6 +102,7 @@ export default {
       }).catch(e => {
         me.$store.commit('LOGOUT')
         me.hideLoading()
+        console.log('失效111')
         me.showMsg('登录已失效，请重新登录')
         setTimeout(() => {
           me.exitUser()

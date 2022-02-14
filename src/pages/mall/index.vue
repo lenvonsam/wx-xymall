@@ -46,6 +46,7 @@ div
                       //- span.ml-5.ft-12(style="color:#666") ({{weightMark}})
                     .text-right.ft-16
                       span.text-red.ft-13(v-if="item.price === '--' || (isLogin && !isNineClocks && item.productClassName ==='H型钢') || (isLogin && !isNineClocks && item.productClassName ==='板材')") 开售时间:{{item.show_time}}
+                      span.text-blue(v-else-if="isLogin && modalMsg == '2'") --
                       span.text-blue(v-else-if="isLogin") ￥{{item.price}}
                       .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)") 查看价格
                   .row.pt-5.flex-center.ft-12
@@ -67,7 +68,8 @@ div
                     .flex-120.relative.text-right.ft-14.row.justify-end
                       //- .mall-row(:class="{'notice': item.max_count === 0}")
                       // .blue-buy(v-if="(isLogin && !isNineClocks && item.productClassName =='H型钢') || (isLogin && !isNineClocks && item.productClassName =='板材')",style="display:none!important")
-                      .blue-buy(v-if="item[mallTypeObject[itemType].max_count] == 0 && isLogin",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
+                      .blue-buy.text-blue(v-if="isLogin && modalMsg == '2'", @click="goComplete") 完善信息
+                      .blue-buy(v-else-if="item[mallTypeObject[itemType].max_count] == 0 && isLogin",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
                       .blue-buy(v-else-if="isLogin", @click="mallItemCb(item, 'cart', $event)") 购买
                 template(v-else)
                   .ft-15.row
@@ -90,7 +92,7 @@ div
                     span.text-red.ft-13(v-if="item.price === '--' || (isLogin && !isNineClocks && item.productClassName ==='H型钢') || (isLogin && !isNineClocks && item.productClassName ==='板材')") 开售时间:{{item.show_time}}
                     span.text-blue(v-else-if="isLogin") ￥{{item.price}}
                     // span(v-else-if="item.show_price === true") ￥{{item[mallTypeObject[itemType].price]}}
-                    .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)") 查看价格
+                    // .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)") 查看价格
                   .text-gray.flex
                     .ft-11.col ({{item.weightMark}})
                     .text-right
@@ -265,81 +267,45 @@ export default {
     if (this.currentUser.type === 'buyer' && this.isLogin) {
       console.log('++++++++>>>>>>>>')
       let isAuditing = 0 // 账号是否正在审核中
-      let lastExperienceDay = mpvue.getStorageSync('lastExperienceDay') || '' // 体验过期时间
+      // let lastExperienceDay = mpvue.getStorageSync('lastExperienceDay') || '' // 体验过期时间
       let isAuditingReminder = mpvue.getStorageSync('isAuditingReminder') || '' // 账号审核提醒
       let overdueReminder = mpvue.getStorageSync('overdueReminder') || '' // 体验过期提醒
 
       this.httpPost(this.apiList.zf.getPersonInfo, {}).then(res => {
         console.log('用户已登陆，获取用户信息++++', res)
         let data = res.data
-        this.trial = 7 - data.experienceDays
+        this.trial = Number(7 - data.experienceDays) // 体验期剩余天数
+        console.log('trial++', this.trial)
         // this.trial = 9
         isAuditing = data.userStatus // 用户状态
         // this.currentUser.isnew = data.isnew
         if (isAuditing === '01') {
-          if (this.trial <= 7) {
-            if (lastExperienceDay !== this.trial) {
-              this.modalMsg = '1' // 新用户
+          if (this.trial >= 0 && this.trial <= 7) {
+            this.modalMsg = '1' // 新用户
+            // if (lastExperienceDay !== this.trial) {
+            if (overdueReminder !== this.getDate()) {
               this.modalShow = true
               // 一天只弹一次
-              mpvue.setStorageSync('lastExperienceDay', this.trial)
+              // mpvue.setStorageSync('lastExperienceDay', this.trial)
+              mpvue.setStorageSync('overdueReminder', this.getDate())
             }
           } else {
+            this.modalMsg = '2' // 超过体验期限
             if (overdueReminder !== this.getDate()) {
-              this.modalMsg = '2' // 超过体验期限
               this.modalShow = true
               mpvue.setStorageSync('overdueReminder', this.getDate())
             }
           }
         }
         if (isAuditing === '03') {
+          this.modalMsg = '3' // 已完善未审核过
           if (isAuditingReminder !== this.getDate()) {
-            this.modalMsg = '3' // 已完善未审核过
             this.modalShow = true
             mpvue.setStorageSync('isAuditingReminder', this.getDate())
           }
         }
       })
       this.getSummaryQuantity()
-      // this.ironRequest(this.apiList.xy.queryProfile.url, {}, this.apiList.xy.queryProfile.method).then(data => {
-      //   if (data.returncode === '0') {
-      //     this.trial = data.trial
-      //     isAuditing = data.is_auditing
-      //     this.currentUser.isnew = data.isnew
-      //     if (this.trial > 0) {
-      //       if (data.isnew === 1) { // 新用户
-      //         if (lastExperienceDay !== this.trial) {
-      //           this.modalMsg = '1'
-      //           this.modalShow = true
-      //           mpvue.setStorageSync('lastExperienceDay', this.trial)
-      //         }
-      //       } else if (data.isnew === 0 && isAuditing === 1) { // 已完善未审核过
-      //         if (isAuditingReminder !== this.getDate()) {
-      //           this.modalMsg = '3'
-      //           this.modalShow = true
-      //           mpvue.setStorageSync('isAuditingReminder', this.getDate())
-      //         }
-      //       }
-      //     } else if (this.trial === 0) { // 超过体验期限
-      //       if (overdueReminder !== this.getDate()) {
-      //         this.modalMsg = '2'
-      //         this.modalShow = true
-      //         mpvue.setStorageSync('lastExperienceDay', this.trial)
-      //         mpvue.setStorageSync('overdueReminder', this.getDate())
-      //         // 超过体验时间，商城显示未登录状态页面
-      //       }
-      //     } else {
-      //       mpvue.setStorageSync('lastExperienceDay', this.trial)
-      //     }
-      //   } else {
-      //     this.showMsg(data.errormsg)
-      //     this.exitUser()
-      //   }
-      // }).catch(e => {
-      //   console.log('mall.vue_queryProfile_catch=====>', JSON.stringify(e))
-      //   // this.showMsg(e)
-      //   this.isLogin = false
-      // })
     }
     this.scrollHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 285
     if (this.tempObject.fromPage === 'home') {
@@ -443,6 +409,16 @@ export default {
   },
   methods: {
     ...mapActions(['configVal', 'exitUser']),
+    // 完善公司信息
+    goComplete () {
+      if (this.isLogin) {
+        if (this.currentUser.type === 'buyer') {
+          this.jump('/pages/account/companyUpdate/main?type=2')
+        }
+      } else {
+        this.jump('/pages/account/login/main')
+      }
+    },
     getSummaryQuantity () {
       this.httpGet(this.apiList.zf.summaryQuantity).then(res => {
         if (res.success) {
@@ -671,6 +647,7 @@ export default {
         let msg = '请您登录后购买，去登录'
         if (type === 'showPrice') msg = '请登录后查看价格，去登录'
         this.confirm({ content: msg }).then((res) => {
+          this.btnDisable = false
           if (res === 'confirm') {
             self.jump('/pages/account/login/main')
           }

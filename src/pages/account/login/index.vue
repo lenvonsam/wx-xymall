@@ -115,7 +115,7 @@ export default {
             password: this.upwd
           }
           const data = await this.httpPost(this.apiList.zf.login, paramsObj)
-          // console.log('user login', data)
+          console.log('user login msg ++++', data)
           this.canClick = true
           // 存储用户token和信息user
           this.setUser({token: data.data.token, user: data.data.user})
