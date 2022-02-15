@@ -246,7 +246,7 @@ export default {
     // },
 
     // 点击查看详情
-    jumpDetail (obj) {
+    async jumpDetail (obj) {
       // this.configVal({key: 'tempObject', val: obj})
       // this.jump({path: '/invoice/detail', query: {id: this.tabName}})
       // 合同编号
@@ -269,17 +269,15 @@ export default {
       // })
       // 获取发票信息
       if (this.tabName === '0') {
-        this.httpPost(this.apiList.zf.invoiceUnApplyDetail, ids.split(',')).then(res => {
-          console.log(res)
-          this.configVal({ key: 'tempObject', val: res.data })
-          // this.showObj = res.data
-        })
+        const res = await this.httpPost(this.apiList.zf.invoiceUnApplyDetail, ids.split(','))
+        console.log(res)
+        this.configVal({ key: 'tempObject', val: res.data })
+        // this.showObj = res.data
       } else {
-        this.httpGet(this.apiList.zf.customerAppliedDetail + '?sourceBusiBillNo=' + ids).then(res => {
-          console.log(res)
-          this.configVal({ key: 'tempObject', val: res.data })
-          // this.showObj = res.data
-        })
+        const res = await this.httpGet(this.apiList.zf.customerAppliedDetail + '?sourceBusiBillNo=' + ids)
+        console.log(res)
+        this.configVal({ key: 'tempObject', val: res.data })
+        // this.showObj = res.data
       }
       if (this.tabName !== '0') {
         this.jump('/pages/invoiceDetail/main?tabName=' + this.tabName + '&ids=' + ids + '&sus=' + sus + '&name=查看详情')
