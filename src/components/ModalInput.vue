@@ -1,5 +1,5 @@
 <template lang="pug">
-.cu-modal(:class="modalName") 
+.cu-modal(:class="modalName")
   .cu-dialog.bg-white(style="mix-height: 280rpx; width: 60%")
     .close(@click="btnClick('cancel')")
       .cuIcon-close
@@ -38,6 +38,10 @@ export default {
     },
     cb: {
       default: false
+    },
+    emptyMsg: {
+      type: 'String',
+      default: '不能为空'
     }
   },
   data () {
@@ -60,7 +64,7 @@ export default {
     btnClick (val) {
       if (val === 'confirm' && this.type !== 'customize') {
         if (this.inputVal.trim().length === 0) {
-          this.showMsg('不能为空')
+          this.showMsg(this.emptyMsg)
           return
         }
         if (!this.pwdReg.test(this.inputVal)) {

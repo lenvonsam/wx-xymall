@@ -211,6 +211,11 @@ export default {
     // 下拉筛选框高度
     this.filterHeight = this.getRpx(this.screenHeight) - this.getRpx(this.customBar) - this.getRpx(this.bottomBarHeight) - 95
   },
+  onLoad () {
+    if (this.tempObject.fromPage === 'home') {
+      this.searchVal = this.tempObject.name || ''
+    }
+  },
   onShow () {
     // 如果是从搜索页面进来
     if (this.tempObject.fromPage === 'search' && this.tempObject.noBack) {
@@ -492,7 +497,7 @@ export default {
       // this.currentPage = 0
 
       // 存储选中项的id
-      this.configVal({ key: 'tempObject', val: { name: item.id } })
+      this.configVal({ key: 'tempObject', val: { name: item.id, fromPage: this.tempObject.fromPage } })
       console.log('触发selectTab筛选++++', item.id, index)
       this.$emit('selectTab', { id: item.id, idx: index })
     },

@@ -266,6 +266,7 @@ export default {
   onShow () {
     this.btnDisable = false
     this.isload = true
+    console.log('tempObject++++******', this.tempObject)
     if (this.currentUser.type === 'buyer' && this.isLogin) {
       console.log('++++++++>>>>>>>>')
       let isAuditing = 0 // 账号是否正在审核中
@@ -323,7 +324,7 @@ export default {
       delete this.queryObject.standards
       delete this.queryObject.materials
       delete this.queryObject.supplys
-      delete this.queryObject.fromPage
+      // delete this.queryObject.fromPage
       console.log('tempObject++++++', this.tempObject.name)
       if (this.tempObject.name) {
         this.refresher()
@@ -350,8 +351,8 @@ export default {
       // 分类
       this.swiperFirst = 1
       Object.assign(this.queryObject, this.tempObject)
-      delete this.queryObject.fromPage
-      delete this.queryObject.search
+      // delete this.queryObject.fromPage
+      // delete this.queryObject.search
       if (this.tempObject.name === '') {
         this.isRefresh = 'refresh'
         this.currentPage = 1
@@ -394,6 +395,9 @@ export default {
     }
   },
   onHide () {
+    console.log('onHide+++++')
+    this.configVal({ key: 'tempObject', val: '' })
+
     if (this.modalShow) {
       this.modalShow = false
     }
@@ -490,7 +494,7 @@ export default {
     },
     // 切换轮播图，触发刷新页面数据
     swiperChange (e) {
-      console.log('swiperChange---------')
+      console.log('swiperChange---------', 'from+++', this.tempObject)
       const idx = e.mp.detail.current
       this.mallTabVal = this.goodsNameList[idx].id
       console.log('mallTabVal', this.mallTabVal)
@@ -498,6 +502,7 @@ export default {
         this.showLoading()
         this.isload = true
         this.isRefresh = 'refresh'
+
         this.queryObject.current_page = this.currentPage
         this.queryObject.name = this.mallTabVal
         if (this.swiperFirst !== 1) {
@@ -692,6 +697,11 @@ export default {
       console.log('goodsNameList++++', this.goodsNameList)
       if (this.goodsNameList[idx]) {
         this.mallTabVal = id
+        console.log('idx', idx, this.tempObject)
+        if (idx !== 0 && this.tempObject.fromPage === 'home') {
+          this.queryObject.keyword = ''
+          this.queryObject.search = ''
+        }
         this.swiperCount = idx
         console.log('prevIdx', this.prevIdx)
       }
@@ -796,15 +806,15 @@ export default {
           this.hideLoading()
           this.isload = false
           if (this.swiperFirst === 1) {
-            this.configVal({ key: 'tempObject', val: '' })
+            // this.configVal({ key: 'tempObject', val: '' })
             this.swiperFirst = 0
           }
-          this.$nextTick(() => {
-            const self = this
-            setTimeout(() => {
-              self.hideLoading()
-            }, 800)
-          })
+          // this.$nextTick(() => {
+          //   const self = this
+          //   setTimeout(() => {
+          //     self.hideLoading()
+          //   }, 800)
+          // })
           if (done) done()
         }
       } catch (err) {
