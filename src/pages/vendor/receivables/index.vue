@@ -15,7 +15,7 @@ div
   template(v-else)
     template(v-if="listData.length > 0")
       div(:style="{height: scrollHeight+'rpx'}")
-        iron-scroll(@scrolltolower="loadMore", heightUnit="rpx", :height="scrollHeight", :refresh="true", @onRefresh="onRefresh", :loadFinish="loadFinish")          
+        iron-scroll(@scrolltolower="loadMore", heightUnit="rpx", :height="scrollHeight", :refresh="true", @onRefresh="onRefresh", :loadFinish="loadFinish")
           .bill-list(v-for="(item, itemIdx) in listData", :key="itemIdx")
             .bg-white.box
               .padding-sm
@@ -25,20 +25,20 @@ div
                       .ft-16.padding-right-sm {{item.unitName}}
                   .text-black ￥{{item.sumMoney}}
                 .text-gray
-                  .padding-bottom-xs 
+                  .padding-bottom-xs
                     span 智恒达：￥{{item.jxMoney}}
-                    span.padding-left-xs 岳阳通：￥{{item.yytMoney}}
+                    span.padding-left-xs 岳洋通：￥{{item.yytMoney}}
                   .padding-bottom-xs
                     span {{item.departmentName}}
                     span.padding-left-xs {{item. businessUserName}}
                 .solid-top.text-black.ft-15.margin-top-xs.padding-top-sm.row.justify-between(v-if="item.lastMakeMoneyTime")
                   .col
                     span 最近应收：
-                    span.padding-left-xs.text-red {{item.lastMakeMoneyTime}}  
+                    span.padding-left-xs.text-red {{item.lastMakeMoneyTime}}
                   span {{item.days}}天
     .text-center.c-gray.pt-100(v-else)
       empty-image(url="bill_empty.png", className="img-empty")
- 
+
 </template>
 <script>
 import { mapState } from 'vuex'
