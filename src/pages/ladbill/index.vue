@@ -65,7 +65,7 @@ div
                   span 共 {{item.outAmount}} 支
                   .col.text-right
                     span 预计/实提：
-                    span.ml-5 {{item.quantityType === '02' ? item.ladingPoundWeight : item.ladingManagerWeight}}吨 / {{item.quantityType === '02' ? item.outPoundWeight : item.outManagerWeight}}吨
+                    span.ml-5 {{item.predictWeight}}吨 / {{item.realityWeight}}吨
             .padding.text-gray.ft-13.text-center(v-if="loading") 努力加载中...
             .text-center.text-gray.padding(v-else-if="finished && billTab[idx].data.length > 10") 加载完成
         .text-center.text-gray.pt-100(v-else)
@@ -313,49 +313,26 @@ export default {
           // self.isload = true
           self.currentPage--
         }
+        // let predictWeight = 0 // 总预计重量
+        // let realityWeight = 0 // 总实提重量
+        this.billTab[self.swiperCount].data.forEach(item => {
+          item.predictWeight = 0
+          item.realityWeight = 0
+          item.ladingDetailVOList.forEach((itm, index) => {
+            if (index === 0) {
+              console.log(Number(itm.quantityType === '02' ? itm.ladingPoundWeight : itm.ladingManagerWeight))
+            }
+            item.predictWeight += Number(itm.quantityType === '02' ? itm.ladingPoundWeight : itm.ladingManagerWeight)
+            item.realityWeight += Number(itm.quantityType === '02' ? itm.outPoundWeight : itm.outManagerWeight)
+          })
+          item.predictWeight = item.predictWeight === 0 ? 0 : item.predictWeight.toFixed(3)
+          item.realityWeight = item.realityWeight === 0 ? 0 : item.realityWeight.toFixed(3)
+        })
       }).finally(() => {
         this.loading = false
         this.isload = false
         this.hideLoading()
       })
-      // this.ironRequest('orderLadList.shtml', body, 'post').then(resp => {
-      //   if (resp && resp.returncode === '0') {
-      //     const idx = self.swiperCount
-      //     let arr = resp.order_lads
-      //     self.isload = false
-      //     if (arr.length === 0 && this.currentPage === 0) {
-      //       // self.listData = []
-      //       self.billTab[idx].data = []
-      //       self.finished = true
-      //     } else if (arr.length > 0 && this.currentPage === 0) {
-      //       // self.listData = arr
-      //       self.billTab[idx].data = arr
-      //       if (arr.length > 8) self.finished = false
-      //     } else if (arr.length > 0 && this.currentPage > 0) {
-      //       arr.map(itm => {
-      //         self.billTab[idx].data.push(itm)
-      //       })
-      //       // self.listData = self.billTab[idx].data
-      //       self.finished = false
-      //     } else {
-      //       self.finished = true
-      //       // self.isload = true
-      //       self.currentPage--
-      //     }
-      //   } else {
-      //     this.showMsg(resp === undefined ? '网络异常' : resp.errormsg)
-      //     this.currentPage--
-      //     this.finished = true
-      //     this.isload = true
-      //   }
-      //   this.hideLoading()
-      //   this.loading = false
-      // }).catch(err => {
-      //   this.hideLoading()
-      //   self.showMsg(err || '网络异常')
-      //   this.loading = false
-      //   this.isload = true
-      // })
     }
   }
 }
