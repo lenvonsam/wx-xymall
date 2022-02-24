@@ -274,22 +274,30 @@ export default {
       }, 300)
     },
     jumpDetail (item) {
+      console.log('item++++', item)
       if (this.btnDisable) return false
       this.btnDisable = true
       // this.configVal({ key: 'tempObject', val: item })
       let auditTypeText = ''
       if (this.configId === '715') {
         auditTypeText = '退货'
+        this.jump(`/pages/vendor/reviewDetailReturn/main?id=${item.id}&auditType=${auditTypeText}`)
       } else if (this.configId === '73') {
         auditTypeText = '延时'
-      } else if (this.configId === '1') {
-        auditTypeText = '定向'
+        this.jump(`/pages/vendor/reviewDetailDelay/main?id=${item.id}&auditType=${auditTypeText}`)
       } else if (this.configId === '57') {
-        auditTypeText = 'ERP定价'
-      } else if (this.configId === '710' || this.configId === '5') {
-        auditTypeText = 'ERP议价'
+        auditTypeText = '定价'
+        this.jump(`/pages/vendor/reviewDetailPrice/main?id=${item.id}&auditType=${auditTypeText}`)
+      } else if (this.configId === '726') {
+        auditTypeText = '议价'
+        this.jump(`/pages/vendor/reviewDetailDiscuss/main?id=${item.id}&auditType=${auditTypeText}`)
+      } else if (this.configId === '730') {
+        auditTypeText = '低买'
+        this.jump(`/pages/vendor/reviewDetailLower/main?id=${item.id}&auditType=${auditTypeText}`)
+      } else {
+        auditTypeText = '通用'
+        this.jump(`/pages/vendor/reviewDetailCommon/main?id=${item.id}&auditType=${auditTypeText}`)
       }
-      this.jump(`/pages/vendor/reviewDetail/main?id=${item.id}&auditType=${auditTypeText}`)
     }
   }
 }

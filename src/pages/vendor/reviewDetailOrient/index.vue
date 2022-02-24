@@ -304,117 +304,27 @@ export default {
       this.disabled = true
       let params = {}
       if (flag === 'confirm') {
-        switch (this.tempObject.auditType) {
-          case '退货':
-            this.disabled = false
-            this.modalShow = true
-            this.modalInputTitle = '退款金额'
-            this.modalVal = this.detailData.totalMoeny
-            break
-          case '退款':
-            this.disabled = false
-            this.modalShow = true
-            this.modalInputTitle = '退款金额'
-            this.modalVal = this.detailData.totalMoeny
-            break
-          case '定向':
-            this.disabled = false
-            this.disabled = false
-            params.taskId = this.detailData.taskId
-            params.userId = this.currentUser.employeeId
-            params.json = this.detailData.json
-            params.status = 2
-            params.reason = ''
-            params.tenantId = '1'
-            this.confirmAudit(params, this.apiList.zf.audit)
-            break
-          case '延时':
-            this.disabled = false
-            params.taskId = this.detailData.taskId
-            params.userId = this.currentUser.employeeId
-            params.json = this.detailData.json
-            params.status = 2
-            params.reason = ''
-            params.tenantId = '1'
-            this.confirmAudit(params, this.apiList.zf.audit)
-            break
-          case 'ERP议价':
-            this.disabled = false
-            params.taskId = this.detailData.taskId
-            params.userId = this.currentUser.employeeId
-            params.json = this.detailData.json
-            params.status = 2
-            params.reason = ''
-            params.tenantId = '1'
-            this.confirmAudit(params, this.apiList.zf.audit)
-            break
-          case 'ERP定价':
-            this.disabled = false
-            params.taskId = this.detailData.taskId
-            params.userId = this.currentUser.employeeId
-            params.json = this.detailData.json
-            params.status = 2
-            params.reason = ''
-            params.tenantId = '1'
-            this.confirmAudit(params, this.apiList.zf.audit)
-            break
-          default:
-            console.log('default')
-        }
+        this.disabled = false
+        this.disabled = false
+        params.taskId = this.detailData.taskId
+        params.userId = this.currentUser.employeeId
+        params.json = this.detailData.json
+        params.status = 2
+        params.reason = ''
+        params.tenantId = '1'
+        this.confirmAudit(params, this.apiList.zf.audit)
       } else if (flag === 'cancel') {
-        switch (this.tempObject.auditType) {
-          case '退货':
-            this.disabled = false
-            this.modalShow = true
-            this.modalInputTitle = '驳回原因'
-            this.modalVal = ''
-            return
-          case '退款':
-            this.disabled = false
-            this.modalShow = true
-            this.modalInputTitle = '驳回原因'
-            this.modalVal = this.detailData.totalMoeny
-            break
-          case '定向':
-            params.taskId = this.detailData.taskId
-            params.userId = this.currentUser.employeeId
-            params.json = this.detailData.json
-            params.status = 3
-            params.reason = ''
-            params.tenantId = '1'
-            this.confirmAudit(params, this.apiList.zf.audit)
-            break
-          case '延时':
-            this.disabled = false
-            params.taskId = this.detailData.taskId
-            params.userId = this.currentUser.employeeId
-            params.json = this.detailData.json
-            params.status = 3
-            params.reason = ''
-            params.tenantId = '1'
-            this.confirmAudit(params, this.apiList.zf.audit)
-            break
-          case 'ERP定价':
-            params.taskId = this.detailData.taskId
-            params.userId = this.currentUser.employeeId
-            params.json = this.detailData.json
-            params.status = 3
-            params.reason = ''
-            params.tenantId = '1'
-            this.confirmAudit(params, this.apiList.zf.audit)
-            break
-          case 'ERP议价':
-            params.taskId = this.detailData.taskId
-            params.userId = this.currentUser.employeeId
-            params.json = this.detailData.json
-            params.status = 3
-            params.reason = ''
-            params.tenantId = '1'
-            this.confirmAudit(params, this.apiList.zf.audit)
-            break
-          default:
-            this.back()
-        }
+        // params.taskId = this.detailData.taskId
+        // params.userId = this.currentUser.employeeId
+        // params.json = this.detailData.json
+        // params.status = 3
+        // params.reason = ''
+        // params.tenantId = '1'
+        // this.confirmAudit(params, this.apiList.zf.audit)
+        this.disabled = false
+        this.modalShow = true
+        this.modalInputTitle = '驳回原因'
+        this.modalVal = ''
       }
     },
     erpModalCb (flag) { // 初审弹框
@@ -510,305 +420,52 @@ export default {
       let data = res.data
       let jsonData = (JSON.parse(res.data.json))
       console.log('未整理参数===>', jsonData)
-      switch (this.tempObject.auditType) {
-        case '退货':
-          this.detailData = {
-            // liftStatus: data.need_lift,
-            status: data.status,
-            billNo: jsonData.returnNo,
-            custName: jsonData.settlementUnitName,
-            // totalAmount: data.amount,
-            // totalWeight: data.weight,
-            totalMoeny: jsonData.returnMoney,
-            endTime: jsonData.returnDate,
-            invoiceStatus: '待开票',
-            auditStatus: jsonData.auditStatus,
-            json: data.json,
-            taskId: data.taskList[data.taskList.length - 1].taskId,
-            operName: data.taskList[data.taskList.length - 1].userName,
-            firstTask: data.taskList[0],
-            lastTask: data.taskList[data.taskList.length - 1]
-            // list: jsonData.returnDetailDTOS
-            // is_talk_price: data.is_talk_price
-          }
-          console.log('退货参数整理====>', this.detailData)
-          // name standard  material  amount  weight money
-          this.detailData.list = jsonData.returnDetailDTOS.map(item => {
-            return {
-              name: item.productBrandName,
-              standard: item.specification,
-              material: item.productTextureName,
-              amount: item.returnAmount,
-              weight: item.quantityType === '01' ? item.returnManagerWeight : item.returnPoundWeight,
-              money: item.inTaxMoney,
-              price: item.inTaxPrice
-            }
-          })
-          break
-        case '延时':
-          this.detailData = {
-            // liftStatus: data.need_lift,
-            status: data.status,
-            saleContractNo: jsonData.saleContractNo,
-            custName: jsonData.settlementUnitName,
-            amount: jsonData.contractAmount,
-            weight: jsonData.contractType === '01' ? jsonData.contractManagerWeight : jsonData.contractPoundWeight,
-            totalMoeny: jsonData.inTaxReceiveMoney,
-            delayTime: jsonData.contractDelayDate,
-            invoiceStatus: '待付款',
-            auditStatus: jsonData.auditStatus,
-            json: data.json,
-            taskId: data.taskList[data.taskList.length - 1].taskId,
-            operName: data.taskList[data.taskList.length - 1].userName,
-            firstTask: data.taskList[0],
-            lastTask: data.taskList[data.taskList.length - 1]
-          }
-          console.log('延时参数整理====>', this.detailData)
-          break
-        case '定向':
-          this.detailData = {
-            // liftStatus: data.need_lift,
-            status: data.status,
-            billNo: jsonData.saleContractNo || jsonData.preSaleDemandNo,
-            custName: jsonData.settlementUnitName,
-            // totalAmount: data.amount,
-            // totalWeight: data.weight,
-            totalMoeny: jsonData.inTaxReceiveMoney,
-            endTime: jsonData.contractDelayDate,
-            invoiceStatus: '待复审',
-            auditStatus: jsonData.auditStatus,
-            json: data.json,
-            taskId: data.taskList[data.taskList.length - 1].taskId,
-            operName: data.taskList[data.taskList.length - 1].userName,
-            firstTask: data.taskList[0],
-            lastTask: data.taskList[data.taskList.length - 1]
-            // list: jsonData.returnDetailDTOS
-            // is_talk_price: data.is_talk_price
-          }
-          console.log('定向参数整理====>', this.detailData)
-          // name standard  material  amount  weight money
-          this.detailData.list = jsonData.saleContractDetailDTOS.map(item => {
-            return {
-              name: item.productBrandName,
-              standard: item.specification,
-              material: item.productTextureName,
-              supply: item.prodAreaName,
-              length: item.length,
-              wh_name: item.stockZoneName,
-              oldSalePrice: item.oldSalePrice,
-              quantityTypeValue: item.quantityTypeValue,
-              inTaxPrice: item.inTaxPrice,
-              inTaxMoney: item.inTaxMoney,
-              max_count: item.avbleAmount,
-              max_weight: item.quantityType === '01' ? item.managerWeight : item.poundWeight,
-              price: item.quantityType === '01' ? item.priceManager : item.pricePound,
-              quantityType: item.quantityType === '01' ? '理计' : '磅计',
-              ajuPricesetMakeprice: item.priceManager,
-              pricesetMakeprice: item.pricePound,
-              ajuPricesetOldmakeprice: item.oldPriceManager,
-              pricesetOldmakeprice: item.oldPriceManager,
-              weightRange: item.weightRange,
-              toleranceRange: item.toleranceRange
-            }
-          })
-          break
-        case 'ERP议价':
-          this.detailData = {
-            // liftStatus: data.need_lift,
-            status: data.status,
-            billNo: jsonData.saleContractNo || jsonData.preSaleDemandNo,
-            custName: jsonData.settlementUnitName,
-            // totalAmount: data.amount,
-            // totalWeight: data.weight,
-            totalMoeny: jsonData.inTaxReceiveMoney,
-            endTime: jsonData.contractDelayDate,
-            invoiceStatus: '待复审',
-            auditStatus: jsonData.auditStatus,
-            json: data.json,
-            taskId: data.taskList[data.taskList.length - 1].taskId,
-            operName: data.taskList[data.taskList.length - 1].userName,
-            firstTask: data.taskList[0],
-            lastTask: data.taskList[data.taskList.length - 1]
-            // list: jsonData.returnDetailDTOS
-            // is_talk_price: data.is_talk_price
-          }
-          console.log('议价参数整理====>', this.detailData)
-          // name standard  material  amount  weight money
-          let listData = jsonData.saleContractDetailDTOS || jsonData.preDemandDetailDTOS
-          this.detailData.list = listData.map(item => {
-            return {
-              name: item.productBrandName,
-              standard: item.specification,
-              material: item.productTextureName,
-              supply: item.prodAreaName,
-              length: item.length,
-              wh_name: item.stockZoneName,
-              max_count: item.avbleAmount,
-              max_weight: item.quantityType === '01' ? item.managerWeight : item.poundWeight,
-              price: item.quantityType === '01' ? item.priceManager : item.pricePound,
-              quantityType: item.quantityType === '01' ? '理计' : '磅计',
-              weightRange: item.weightRange,
-              toleranceRange: item.toleranceRange
-            }
-          })
-          break
-        case 'ERP定价':
-          this.detailData = {
-            // liftStatus: data.need_lift,
-            // status: data.status,
-            // billNo: jsonData.demandNo,
-            // custName: jsonData.settlementUnitName,
-            // amount: data.amount,
-            // weight: data.weight,
-            // totalMoeny: jsonData.inTaxReceiveMoney,
-            endTime: jsonData.priceDate,
-            invoiceStatus: '待复审',
-            auditStatus: jsonData.auditStatus,
-            // json: data.json,
-            // taskId: data.taskList[data.taskList.length - 1].taskId,
-            operName: data.taskList[data.taskList.length - 1].userName,
-            firstTask: data.taskList[0],
-            lastTask: data.taskList[data.taskList.length - 1],
-            list: jsonData.demandDetailDTOS,
-            is_talk_price: data.is_talk_price
-          }
-          console.log('定价参数整理====>', this.detailData)
-          // name standard  material  amount  weight money
-          this.detailData.list = jsonData.resourcePricingItemDTOList.map(item => {
-            return {
-              name: item.productBrandName,
-              standard: item.specification,
-              material: item.productTextureName,
-              supply: item.prodAreaName,
-              length: item.length,
-              wh_name: item.stockZoneName,
-              inTaxPrice: item.inTaxPrice,
-              inTaxMoney: item.inTaxMoney,
-              max_count: item.avbleAmount,
-              max_weight: item.quantityType === '01' ? item.managerWeight : item.poundWeight,
-              price: item.quantityType === '01' ? item.priceManager : item.pricePound,
-              quantityType: item.quantityType === '01' ? '理计' : '磅计',
-              ajuPricesetMakeprice: item.priceManager,
-              pricesetMakeprice: item.pricePound,
-              ajuPricesetOldmakeprice: item.oldPriceManager,
-              pricesetOldmakeprice: item.oldPriceManager,
-              weightRange: item.weightRange,
-              toleranceRange: item.toleranceRange
-            }
-          })
-          break
+      this.detailData = {
+        // liftStatus: data.need_lift,
+        status: data.status,
+        billNo: jsonData.saleContractNo || jsonData.preSaleDemandNo,
+        custName: jsonData.settlementUnitName,
+        // totalAmount: data.amount,
+        // totalWeight: data.weight,
+        totalMoeny: jsonData.inTaxReceiveMoney,
+        endTime: jsonData.contractDelayDate,
+        invoiceStatus: '待复审',
+        auditStatus: jsonData.auditStatus,
+        json: data.json,
+        taskId: data.taskList[data.taskList.length - 1].taskId,
+        operName: data.taskList[data.taskList.length - 1].userName,
+        firstTask: data.taskList[0],
+        lastTask: data.taskList[data.taskList.length - 1]
+        // list: jsonData.returnDetailDTOS
+        // is_talk_price: data.is_talk_price
       }
+      console.log('定向参数整理====>', this.detailData)
+      // name standard  material  amount  weight money
+      this.detailData.list = jsonData.saleContractDetailDTOS.map(item => {
+        return {
+          name: item.productBrandName,
+          standard: item.specification,
+          material: item.productTextureName,
+          supply: item.prodAreaName,
+          length: item.length,
+          wh_name: item.stockZoneName,
+          oldSalePrice: item.oldSalePrice,
+          quantityTypeValue: item.quantityTypeValue,
+          inTaxPrice: item.inTaxPrice,
+          inTaxMoney: item.inTaxMoney,
+          max_count: item.avbleAmount,
+          max_weight: item.quantityType === '01' ? item.managerWeight : item.poundWeight,
+          price: item.quantityType === '01' ? item.priceManager : item.pricePound,
+          quantityType: item.quantityType === '01' ? '理计' : '磅计',
+          ajuPricesetMakeprice: item.priceManager,
+          pricesetMakeprice: item.pricePound,
+          ajuPricesetOldmakeprice: item.oldPriceManager,
+          pricesetOldmakeprice: item.oldPriceManager,
+          weightRange: item.weightRange,
+          toleranceRange: item.toleranceRange
+        }
+      })
     }
-    // async loadData () {
-    //   try {
-    //     let url = ''
-    //     const modules = this.modules
-    //     switch (this.tempObject.auditType) {
-    //       case '定向':
-    //         const sellerDxAudit = this.apiList.xy.sellerDxAudit
-    //         url = `${sellerDxAudit.url}?user_id=${this.currentUser.user_id}&deal_no=${this.tempObject.tstc_no}`
-    //         break
-    //       case '退货':
-    //         this.btnShow = modules.return_audit
-    //         const sellerReturnGoodsAudit = this.apiList.xy.returnGoodsDetail
-    //         url = `${sellerReturnGoodsAudit.url}?subs_no=${this.tempObject.tstc_no}&return_id=${this.tempObject.return_id}`
-    //         if (this.tempObject.fromPage !== 'reviewHistory') {
-    //           url += `&status=5`
-    //         }
-    //         break
-    //       case '延时':
-    //         this.btnShow = modules.delay_audit
-    //         const sellerOrderDelayAudit = this.apiList.xy.sellerOrderDelayAudit
-    //         url = `${sellerOrderDelayAudit.url}?tstc_no=${this.tempObject.tstc_no}`
-    //         break
-    //       case 'ERP议价':
-    //         this.btnShow = modules.delay_audit
-    //         url = `${this.apiList.xy.sellerBargainAudit.url}?user_id=${this.currentUser.user_id}&id=${this.tempObject.tstc_no}`
-    //         break
-    //       case 'ERP销售定价':
-    //         this.btnShow = modules.delay_audit
-    //         url = `${this.apiList.xy.salePriceAudit.url}?user_id=${this.currentUser.user_id}&id=${this.tempObject.tstc_no}`
-    //         break
-    //       default:
-    //         console.log('default')
-    //         break
-    //     }
-    //     const data = await this.ironRequest(url, '', 'get')
-    //     console.log('data', data)
-    //     if (data.returncode === '0') {
-    //       switch (this.tempObject.auditType) {
-    //         case '定向':
-    //           this.detailData = {
-    //             liftStatus: data.need_lift,
-    //             billNo: data.deal_no,
-    //             custName: data.cust_name,
-    //             totalAmount: data.amount,
-    //             totalWeight: data.weight,
-    //             totalMoeny: data.moeny,
-    //             endTime: data.end_time,
-    //             status: data.status,
-    //             operName: data.oper_name,
-    //             list: data.list,
-    //             is_talk_price: data.is_talk_price
-    //           }
-    //           this.btnShow = (data.status === '待初审' && modules.audit) || (data.status === '待复审' && modules.re_audit)
-    //           break
-    //         case '退货':
-    //           const datas = data.data
-    //           this.detailData = {
-    //             billNo: datas.lad_no,
-    //             custName: datas.name,
-    //             totalAmount: datas.amount,
-    //             totalWeight: datas.weight,
-    //             totalMoeny: datas.all_price_,
-    //             endTime: datas.applyer_date,
-    //             status: datas.status_desc,
-    //             invoiceStatus: datas.kp_desc,
-    //             invoiceFlag: datas.kp_flag,
-    //             operName: datas.applyer_name,
-    //             id: datas.id,
-    //             totalLiftCharge: datas.lift_money,
-    //             list: data.list
-    //           }
-    //           break
-    //         case '延时':
-    //           this.detailData = {
-    //             list: data.data.resultlist
-    //           }
-    //           break
-    //         case 'ERP议价':
-    //           this.detailData = {
-    //             liftStatus: 1,
-    //             billNo: data.data.sbillBargainingDto.sbillBillcode,
-    //             custName: data.data.sbillBargainingDto.datasCustomername,
-    //             totalAmount: data.data.sbillBargainingDto.goodsNum,
-    //             totalWeight: data.data.sbillBargainingDto.goodsWeigh,
-    //             totalMoeny: data.data.sbillBargainingDto.totalMoney,
-    //             endTime: data.data.sbillBargainingDto.dataSystemdate,
-    //             status: data.data.sbillBargainingDto.bargainingAuditStatus,
-    //             operName: data.data.sbillBargainingDto.operatorName,
-    //             list: data.data.list,
-    //             deptName: data.data.sbillBargainingDto.deptName,
-    //             employeeName: data.data.sbillBargainingDto.employeeName
-    //           }
-    //           this.btnShow = (data.data.sbillBargainingDto.bargainingAuditStatus === '待初审' && modules.audit) || (data.data.sbillBargainingDto.bargainingAuditStatus === '待复审' && modules.re_audit)
-    //           break
-    //         case 'ERP销售定价':
-    //           this.detailData = {
-    //             list: data.data
-    //           }
-    //           break
-    //         default:
-    //           console.log('default')
-    //           break
-    //       }
-    //     }
-    //     this.hideLoading()
-    //   } catch (e) {
-    //     this.hideLoading()
-    //     console.log(e)
-    //   }
-    // }
   }
 }
 </script>

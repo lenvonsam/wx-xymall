@@ -79,7 +79,8 @@ export default {
         '1': '初审拒绝'
         // '2': '复审拒绝'
       },
-      filterArr: {}
+      filterArr: {},
+      configId: ''
     }
   },
   computed: {
@@ -97,6 +98,7 @@ export default {
   },
   onLoad (options) {
     console.log(options.configId)
+    this.configId = options.configId || ''
     // this.onRefresh()
   },
   onShow () {
@@ -176,10 +178,10 @@ export default {
         // }
 
         // let testUserId = '1346277615056457730' // 员工 何建龙
-        let testUserId = '1346282719734140929' // 采购部长 于成龙
+        let testUserId = '59bc3172-e88b-11eb-9a0b-00163e0ba72f' // 采购部长 于成龙
 
         let params = {
-          configId: '39',
+          configId: this.configId,
           limit: 20,
           offset: 0,
           tenantId: 1,
