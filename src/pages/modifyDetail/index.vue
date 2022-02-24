@@ -99,7 +99,7 @@ div
                 .col.padding-left-xs.padding-top-sm
                   button.text-white.bg-blue.ft-15(@click="applyEdit") 申请修改
             //- .bill-foot.bg-white.padding-sm
-
+  alert(:msg="alertText", v-model="alertShow")
 </template>
 
 <script>
@@ -129,8 +129,6 @@ export default {
         val: 3
       }],
       // 买家变量
-      alertText: '',
-      alertShow: false,
       totalPrice: 0,
       totalWeight: 0,
       totalLiftCharge: 0,
@@ -166,7 +164,10 @@ export default {
         liftingFeeMoney: ''
       },
       contractStatus: 20,
-      contractDetail: {}
+      contractDetail: {},
+      alertShow: false,
+      isHasRoll: false,
+      alertText: '此合同含有卷类物资，不能进行修改，如需修改请联系业务员!'
     }
   },
   components: {
@@ -285,6 +286,10 @@ export default {
       'configVal'
     ]),
     applyEdit () {
+      if (this.isHasRoll) {
+        this.alertShow = true
+        return
+      }
       if (this.btnDisabled) return false
       this.btnDisabled = true
       console.log(this.carts)
@@ -799,6 +804,11 @@ export default {
           )
           // 该物资当前计量方式的定价
           itm.price = itm.quantityType === '02' ? itm.ratioPricePound : itm.ratioPriceManager
+
+          if (itm.productBrandName.includes('卷')) {
+            this.alertShow = true
+            this.isHasRoll = true
+          }
 
           console.log('购物车数据整理')
           console.log({

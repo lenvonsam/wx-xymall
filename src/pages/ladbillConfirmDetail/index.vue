@@ -82,10 +82,7 @@ export default {
         hangingFee: 0,
         totalContract: 0,
         balancePayment: 0
-      },
-      alertShow: false,
-      isHasRoll: false,
-      alertText: '此合同含有卷类物资，不能进行修改，如需修改请联系业务员!'
+      }
     }
   },
   components: {
@@ -127,10 +124,6 @@ export default {
 
         ic.secondNumber = ic.pendingAmount
         ic.ratioAvailableAmount = ic.ratioAvailableAmount + ic.amount
-        if (ic.productBrandName.includes('卷')) {
-          this.alertShow = true
-          this.isHasRoll = true
-        }
       })
 
       // 旧单信息
@@ -204,10 +197,6 @@ export default {
   },
   methods: {
     updateBill (affirmStatus) {
-      if (this.isHasRoll) {
-        this.alertShow = true
-        return
-      }
       this.confirm({content: '请确认修改合同'}).then(res => {
         if (res === 'confirm') {
           this.showLoading()
