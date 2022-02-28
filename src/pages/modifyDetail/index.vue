@@ -30,10 +30,10 @@ div
             .cart-items(v-for="(cart, cartIdx) in carts", :key="cartIdx")
               .cart-item.padding-sm
                 .flex.flex-center.align-center.ft-15.text-bold
-                  .col.flex-25(@click="cart.choosed = !cart.choosed", style="padding-top: 5px;")
+                  .col.flex-25(@click="changeSelect(cart)", style="padding-top: 5px;")
                     img.choose-icon(src="/static/images/blue_check.png", v-if="cart.choosed")
                     img.choose-icon(src="/static/images/btn_ck_n.png", v-else)
-                  .col(@click="cart.choosed = !cart.choosed")
+                  .col(@click="changeSelect(cart)")
                     span {{cart.productBrandName}}
                     span.padding-left-xs {{cart.specification}}
                   //- .text-blue ￥{{cart.price}}/吨
@@ -52,18 +52,18 @@ div
                         span {{cart.firstAmount}}支 / {{cart.quantityType == '02' ? cart.firstPound : cart.firstManager}}吨
                         span.padding-left-xs 吊费:
                         span.ml-10 {{cart.price === '--' ? '--' : cart.liftingFee > 0 ? '￥' + cart.liftingFee + '/吨' : cart.liftingFee == 0 ? '无' : '线下结算'}}
-                      .pt-5(v-if="cart.toleranceRange || cart.weightRange")
-                        span(v-if="cart.toleranceRange") 公差范围:
-                        span.ml-10.mr-10(v-if="cart.toleranceRange") {{cart.toleranceRange}}
-                      .pt-5
-                        span(v-if="cart.weightRange") 重量范围:
-                        span.ml-10(v-if="cart.weightRange") {{cart.weightRange}}
+                      .flex
+                        .pt-5.margin-right-sm(v-if="cart.toleranceRange || cart.weightRange")
+                          span(v-if="cart.toleranceRange") 公差范围:
+                          span.ml-10.mr-10(v-if="cart.toleranceRange") {{cart.toleranceRange}}
+                        .pt-5
+                          span(v-if="cart.weightRange") 重量范围:
+                          span.ml-10(v-if="cart.weightRange") {{cart.weightRange}}
                     .text-right
                       .flex.flex-direction.justify-between
                         z-radio(@checkHander="weightChoose(r.m_way, cart)", v-for="(r, rIdx) in cart.radios", :key="rIdx", :label="r.label", :checked="cart.measure_way_id === r.m_way")
 
-                  .row.padding-xs.justify-end.align-end
-                    .col
+                  .row.padding-xs.justify-end
                     .col(style="flex: 0 0 60px;")
                       count-step(v-model="cart.amount", @change="rowCartCount($event, cart)", :max="cart.ratioAvailableAmount")
                     .padding-left-xs {{cart.countWeight}}吨
@@ -99,7 +99,7 @@ div
                 .col.padding-left-xs.padding-top-sm
                   button.text-white.bg-blue.ft-15(@click="applyEdit") 申请修改
             //- .bill-foot.bg-white.padding-sm
-
+  alert(:msg="alertText", v-model="alertShow")
 </template>
 
 <script>
@@ -129,8 +129,6 @@ export default {
         val: 3
       }],
       // 买家变量
-      alertText: '',
-      alertShow: false,
       totalPrice: 0,
       totalWeight: 0,
       totalLiftCharge: 0,
@@ -166,7 +164,10 @@ export default {
         liftingFeeMoney: ''
       },
       contractStatus: 20,
-      contractDetail: {}
+      contractDetail: {},
+      alertShow: false,
+      isHasRoll: false,
+      alertText: '此合同含有卷类物资，不能进行修改，如需修改请联系业务员!'
     }
   },
   components: {
@@ -285,6 +286,10 @@ export default {
       'configVal'
     ]),
     applyEdit () {
+      if (this.isHasRoll) {
+        this.alertShow = true
+        return
+      }
       if (this.btnDisabled) return false
       this.btnDisabled = true
       console.log(this.carts)
@@ -445,6 +450,20 @@ export default {
     openEdit () {
       this.pickWayShow = false
       this.isEdit = !this.isEdit
+      if (this.isEdit) {
+        this.carts.forEach(item => {
+          item.choosed = false
+        })
+      } else {
+        this.carts.forEach(item => {
+          item.choosed = true
+        })
+      }
+    },
+    changeSelect (cart) {
+      if (this.isEdit) {
+        cart.choosed = !cart.choosed
+      }
     },
     tabSelect (type, item) {
       if (type === 'lift') {
@@ -786,7 +805,7 @@ export default {
           //   }]
           //   if (Number(itm.lj_price16) > 0) itm.radios[0].price = itm.lj_price16
           // }
-          itm.choosed = false
+          itm.choosed = true
           // itm.num = Number(itm.amount)
           // 该物资当前计量方式的总重量
           itm.weight = self.calcWeight(
@@ -799,6 +818,11 @@ export default {
           )
           // 该物资当前计量方式的定价
           itm.price = itm.quantityType === '02' ? itm.ratioPricePound : itm.ratioPriceManager
+
+          if (itm.productBrandName.includes('卷')) {
+            this.alertShow = true
+            this.isHasRoll = true
+          }
 
           console.log('购物车数据整理')
           console.log({

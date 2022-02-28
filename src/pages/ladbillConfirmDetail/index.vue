@@ -57,6 +57,7 @@ div
     .footer.row.bg-white.text-center.text-white.padding-sm(:style="{'padding-bottom': isIpx ? '68rpx' : '20rpx'}")
      .bg-red.col.padding-sm.round(@click="updateBill('02')") 驳回
      .bg-blue.col.margin-left-sm.padding-sm.round(@click="updateBill('01')") 确认修改提单
+    alert(:msg="alertText", v-model="alertShow")
 </template>
 <script>
 import copyBtn from '@/components/CopyBtn.vue'

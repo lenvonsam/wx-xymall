@@ -14,19 +14,20 @@ div
       iron-scroll(@scrolltolower="loadMore", :height="scrollHeight", heightUnit="rpx", :refresh="true", @onRefresh="onRefresh", :loadFinish="loadFinish")
         .padding-top-sm
           .padding-sm.bg-white.margin-bottom-sm(@click="jumpModifyDetail(item)", v-for="(item, itemIdx) in listData", :key="itemIdx")
-            .flex.align-center
-              .ft-16.padding-right-sm {{item.saleContractNo}}
-              img.ding-icon(src="/static/images/ding.png", v-if="item.payMethod == '02'")
-            .flex.justify-between.text-gray.align-center.margin-top-sm
-              .col.text-content
+            .flex.flex-direction
+              .flex.justify-between.align-center.text-gray.align-center.margin-bottom-sm
+                .flex.align-center
+                  .ft-16.padding-right-xs.ft-bold.text-blue {{item.saleContractNo}}
+                  img.ding-icon(src="/static/images/ding.png", v-if="item.payMethod == '02'")
+                // .text-red.text-right(v-if="item.status === 18") 修改中
+                .bill-btn.round(style="width: 180rpx", v-if="tabName == '1'") 申请修改
+                .bill-btn.round(style="width: 180rpx", v-else-if="tabName == '2' && item.auditStatus !== '20'") 去确认
+              .flex.justify-between.align-center.text-content
                 p {{item.orgName}}
+                .ft-16.text-bold.text-black ￥{{item.inTaxReceiveMoney}}
+              .flex.justify-between.align-center.text-content
                 p 共{{item.contractAmount}}支，{{tabName === '1' ? item.weight : item.estimatedTonnage}}吨
                 p 吊费：¥{{item.liftingFeeMoney}}
-              .card-right
-                .ft-16.padding-bottom-xs.text-bold.text-black ￥{{item.inTaxReceiveMoney}}
-                  // .text-red.text-right(v-if="item.status === 18") 修改中
-                  .bill-btn.round(style="width: 200rpx", v-if="tabName == '1'") 申请修改
-                  .bill-btn.round(style="width: 200rpx", v-else-if="tabName == '2' && item.auditStatus !== '20'") 去确认
     .text-center.c-gray.pt-100(v-else)
       empty-image(url="bill_empty.png", className="img-empty")
       div 您暂时没有相关合同

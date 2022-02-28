@@ -10,7 +10,7 @@ div
         copy-btn(:copyUrl="billDetail.saleContractNo")
       .col.text-right(v-if="billDetail.status_desc === '待补款'")
         span.text-blue 待补款:
-        span.padding-left-sm.text-red.text-bold ￥{{billDetail.paid_price_desc}}
+        span.padding-left-sm.text-red.text-bold ￥{{unPayMoney}}
       .col.flex-100.text-blue.text-right(v-else, :class="{'text-red': billDetail.status_desc == '违约'}") {{billDetail.status_desc}}
     .bg-white.margin-top-sm.text-content
       .padding-sm.text-black.text-bold.solid-bottom.ft-15 商品信息
@@ -110,11 +110,11 @@ div
         .padding-bottom-xs.flex.align-center.justify-between
           div 需补款：
           .text-right
-            span.text-red {{billDetail.paid_price_desc}} 元
-            .text-gray.ft-12 (如使用余额后需转：{{billDetail.needTransfer}}元)
-        .padding-bottom-xs.flex.justify-between
-          div 账户余额：
-          .text-black {{billDetail.desposit_can}}元
+            span.text-red {{unPayMoney}} 元
+            // .text-gray.ft-12 (如使用余额后需转：{{billDetail.needTransfer}}元)
+        // .padding-bottom-xs.flex.justify-between
+        //   div 账户余额：
+        //   .text-black {{billDetail.desposit_can}}元
         .padding-bottom-xs.flex.justify-between
           div 已支付：
           .text-black {{billDetail.inTaxPayMoney}}元
@@ -160,7 +160,19 @@ export default {
   computed: {
     ...mapState({
       contractStatus: state => state.contractStatus
-    })
+    }),
+    unPayMoney () {
+      // 已支付金额inTaxPayMoney<=0  ===》 展示合同总金额
+      // 实提金额inTaxLadingMoney>已支付金额inTaxPayMoney  ===》 inTaxLadingMoney-inTaxPayMoney
+      // 如果都不满足 ===》 0
+      if (this.billDetail.inTaxPayMoney <= 0) {
+        return (this.billDetail.inTaxLadingMoney + this.billDetail.unspentLadingAmount).toFixed(2)
+      } else if (this.billDetail.inTaxLadingMoney > this.billDetail.inTaxPayMoney) {
+        return (this.billDetail.inTaxLadingMoney - this.billDetail.inTaxPayMoney).toFixed(2)
+      } else {
+        return 0
+      }
+    }
   },
   beforeMount () {
     this.httpPost(this.apiList.zf.saleContractDetail, {contractId: this.$root.$mp.query.contractId}).then(res => {

@@ -19,78 +19,15 @@ export default {
   data () {
     return {
       menuIcons: [
-        {
-          icon: '/static/images/pend_menu_1.png',
-          name: '采购计划',
-          dotKey: 'eidt_count',
-          event: '',
-          path: '/pages/vendor/contractTrack/main?tabName=10',
-          count: 4,
-          configId: 65
-        },
-        {
-          icon: '/static/images/pend_menu_2.png',
-          name: '发货集港',
-          dotKey: 'eidt_count',
-          event: '',
-          path: '/pages/vendor/contractTrack/main?tabName=10',
-          count: 8,
-          configId: 65
-        },
-        {
-          icon: '/static/images/pend_menu_3.png',
-          name: '付款申请',
-          dotKey: 'eidt_count',
-          event: '',
-          path: '/pages/vendor/contractTrack/main?tabName=10',
-          count: 0,
-          configId: 65
-        },
-        {
-          icon: '/static/images/pend_menu_4.png',
-          name: '资源定价',
-          dotKey: 'eidt_count',
-          event: '',
-          path: '/pages/vendor/contractTrack/main?tabName=10',
-          count: 4,
-          configId: 55
-        },
-        {
-          icon: '/static/images/pend_menu_5.png',
-          name: '合同延迟',
-          dotKey: 'eidt_count',
-          event: '',
-          path: '/pages/vendor/contractTrack/main?tabName=10',
-          count: 2,
-          configId: 55
-        },
-        {
-          icon: '/static/images/pend_menu_6.png',
-          name: '合同抬头变更',
-          dotKey: 'eidt_count',
-          event: '',
-          path: '/pages/vendor/contractTrack/main?tabName=10',
-          count: 4,
-          configId: 55
-        },
-        {
-          icon: '/static/images/pend_menu_7.png',
-          name: '合同货齐',
-          dotKey: 'eidt_count',
-          event: '',
-          path: '/pages/vendor/contractTrack/main?tabName=10',
-          count: 5,
-          configId: 55
-        },
-        {
-          icon: '/static/images/pend_menu_8.png',
-          name: '预售审核',
-          dotKey: 'eidt_count',
-          event: '',
-          path: '/pages/vendor/contractTrack/main?tabName=10',
-          count: 4,
-          configId: 55
-        }
+        // {
+        //   icon: '/static/images/pend_menu_1.png',
+        //   name: '采购计划',
+        //   dotKey: 'eidt_count',
+        //   event: '',
+        //   path: '/pages/vendor/contractTrack/main?tabName=10',
+        //   count: 4,
+        //   configId: 65
+        // }
       ]
     }
   },
@@ -100,7 +37,7 @@ export default {
   methods: {
     jumpModules (ficon) {
       console.log(ficon)
-      this.jump('/pages/vendor/reviewHistory/main?configId=' + ficon.configId)
+      this.jump('/pages/vendor/reviewHistory/main?ficon=' + ficon)
     },
     getData () {
       // let testUserId = '1346277615056457730' // 员工 何建龙

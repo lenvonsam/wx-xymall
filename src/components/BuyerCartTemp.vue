@@ -70,7 +70,7 @@
                 .row.padding.flex-center.border-bottom-line
                   .col 失效物资{{soldCarts.length}}件
                   .ocl.text-right
-                    span.c-blue(@click="emptySoldItems") 清空失效物资
+                    span.text-blue(@click="emptySoldItems") 清空失效物资
                 .solid-bottom.ft-12.text-gray(v-for="(itm, itmIdx) in soldCarts", :key="itmIdx")
                   .padding
                     span {{itm.onlineProductBrandName}}
@@ -79,7 +79,7 @@
                     span 仓库：{{itm.stockZoneName}}
                   .padding.pt-0
                     span 规格：{{itm.specification}}
-                    q-btn.pull-right.no-shadow(color="grey-6", rounded, small) 失效
+                    q-btn.pull-right.no-shadow(color="grey-6", rounded, small)
                   .padding.pt-0
                     span 材质：{{itm.productTextureName}}
                   .row.padding.pt-0

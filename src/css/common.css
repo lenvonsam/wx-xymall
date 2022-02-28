@@ -23,6 +23,10 @@ page,
   background: #fff !important;
 }
 
+.ft-bold {
+  font-weight: bold;
+}
+
 .container {
   height: 100%;
   display: flex;
@@ -372,3 +376,11 @@ page,
   text-align: center;
   margin-left: 10rpx;
 } */
+
+.text-ellipsis-2 {
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
