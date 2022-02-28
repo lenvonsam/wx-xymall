@@ -111,10 +111,10 @@ div
           div 需补款：
           .text-right
             span.text-red {{unPayMoney}} 元
-            .text-gray.ft-12 (如使用余额后需转：{{billDetail.needTransfer}}元)
-        .padding-bottom-xs.flex.justify-between
-          div 账户余额：
-          .text-black {{billDetail.desposit_can}}元
+            // .text-gray.ft-12 (如使用余额后需转：{{billDetail.needTransfer}}元)
+        // .padding-bottom-xs.flex.justify-between
+        //   div 账户余额：
+        //   .text-black {{billDetail.desposit_can}}元
         .padding-bottom-xs.flex.justify-between
           div 已支付：
           .text-black {{billDetail.inTaxPayMoney}}元
