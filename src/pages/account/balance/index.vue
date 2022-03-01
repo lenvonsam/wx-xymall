@@ -10,7 +10,7 @@ div
     .text-center.margin-top
       .balance-mark(@click="jump('/pages/account/balanceList/main')") 收支明细
   .bg-white
-    .padding.row.border-bottom-line(@click="jump('/pages/account/charge/main')")
+    .padding.row.border-bottom-line(@click="jump('/pages/account/charge/main?accountBalanceMoney=' + accountBalanceMoney)")
       .flex-30.flex.align-center
         img.balance-icon(src="/static/images/cz.png")
       .col 充值

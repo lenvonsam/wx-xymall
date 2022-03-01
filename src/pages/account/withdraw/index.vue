@@ -50,7 +50,7 @@ export default {
         withdrawUnitBankName: '',
         withdrawUnitBankAccount: '',
         withdrawUnitBankAccountName: '',
-        canWithdrawAmt: '',
+        canWithdrawAmt: 0,
         withdrawApplyMoney: '',
         payPwd: '',
         validCode: '',
@@ -105,7 +105,7 @@ export default {
         this.record.withdrawUnitBankName = data.withdrawUnitBankName || ''
         this.record.withdrawUnitBankAccount = data.withdrawUnitBankAccount || ''
         this.record.withdrawUnitBankAccountName = data.withdrawUnitBankAccountName || ''
-        this.record.canWithdrawAmt = data.canWithdrawAmt || ''
+        this.record.canWithdrawAmt = data.canWithdrawAmt || 0
         this.record.withdrawUnitId = data.withdrawUnitId || ''
         this.record.withdrawUnitName = data.withdrawUnitName || ''
         this.record.withdrawUnitBankCode = data.withdrawUnitBankCode || ''
@@ -128,7 +128,7 @@ export default {
             withdrawUnitBankName: this.record.withdrawUnitBankName,
             withdrawUnitBankAccount: this.record.withdrawUnitBankAccount,
             withdrawUnitBankAccountName: this.record.withdrawUnitBankAccountName,
-            canWithdrawAmt: this.currentUser.unitFundBalance,
+            canWithdrawAmt: this.record.canWithdrawAmt,
             companyCode: this.record.companyCode,
             companyName: this.record.companyName,
             withdrawApplyMoney: this.chargeVal,
@@ -179,13 +179,13 @@ export default {
         return
       }
       if (Number(this.chargeVal) <= 0) {
-        this.showMsg('提现金额大于0元')
+        this.showMsg('提现金额需大于0元')
         return
       }
-      if (Number(this.chargeVal) > Number(this.currentUser.account_balance)) {
-        this.showMsg('提现金额不能超过账户余额')
-        return
-      }
+      // if (Number(this.chargeVal) > Number(this.currentUser.account_balance)) {
+      //   this.showMsg('提现金额不能超过账户余额')
+      //   return
+      // }
       this.modalShow = true
 
       // const me = this
