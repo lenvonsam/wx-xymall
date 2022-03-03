@@ -42,7 +42,7 @@ export default {
         padding 10rpx
         display: -webkit-box
         -webkit-box-orient: vertical
-        -webkit-line-clamp: 5
+        -webkit-line-clamp: 8
         overflow hidden
         text-overflow: ellipsis
         line-height: 1.8
