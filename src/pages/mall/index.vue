@@ -102,7 +102,7 @@ div
                       //- .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="item.show_price") 购买
                       //- .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)", style="padding-top: 2rpx") 查看价格
                       .blue-buy(v-if="item[mallTypeObject[itemType].max_count] == 0 && isLogin",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
-                      .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="isLogin") 购买
+                      .blue-buy(v-else-if="isLogin", @click="mallItemCb(item, 'cart', $event)") 购买
                       .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)") 查看价格
             //- .padding.text-gray.ft-13.text-center(v-if="loading") 努力加载中...
             //- .padding.text-gray.ft-13.text-center(v-if="goodsNameList[tabIdx].finished") 加载完成
@@ -282,7 +282,7 @@ export default {
         // this.trial = 9
         isAuditing = data.userStatus // 用户状态
         // this.currentUser.isnew = data.isnew
-        if (isAuditing === '01') {
+        if (isAuditing === '01' || isAuditing === '02') {
           if (this.trial >= 0 && this.trial <= 7) {
             this.modalMsg = '1' // 新用户
             // if (lastExperienceDay !== this.trial) {

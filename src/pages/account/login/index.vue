@@ -19,12 +19,17 @@
     .mt-50.main-btn(hover-class="hover-gray", @click="remoteLogin") 登录
     .margin-top-sm.text-center.text-blue(@click="jumpPhoneLogin") 手机验证码登录
     wxLogin(:backType="wxBack")
-
-
+  modal(v-model="modalShow", :title="modalTitle", :btns="modalBtns", @cb="modalCb")
+    .padding-sm(v-if="modalMsg == '1'")
+      div 尊敬的用户，您的商城体验权限时间已经结束，如需继续查看商城物资详情，请尽快完善个人信息并等待审核通过
+    .padding-sm(v-else)
+      div 恭喜您成为型云用户，您的信息正在审核中，请耐心等待
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
 import wxLogin from '@/components/WxLogin'
+import modal from '@/components/Modal.vue'
+
 export default {
   data () {
     return {
@@ -33,11 +38,16 @@ export default {
       // 1 返回 2 跳转首页
       backType: 1,
       canClick: true,
-      wxBack: 1
+      wxBack: 1,
+      modalShow: false,
+      modalTitle: '提示',
+      modalBtns: [{ label: '确定', flag: 'confirm', className: 'main-btn' }],
+      modalMsg: '1'
     }
   },
   components: {
-    wxLogin
+    wxLogin,
+    modal
   },
   computed: {
     ...mapState({
@@ -76,6 +86,10 @@ export default {
       'setUser',
       'configVal'
     ]),
+    modalCb () {
+      this.modalShow = false
+      this.tab('/pages/index/main')
+    },
     // 跳转手机验证码注册页面
     jumpReg () {
       this.logEventGet({ event: 'click_app_register', type: '01' })
@@ -128,14 +142,23 @@ export default {
             self.setUser({token: self.token, user: res.data})
             res.data.userTypeLogo === '01' ? this.logEventGet({event: 'click_app_login', type: '01'}) : this.logEventGet({event: 'click_app_login_seller', type: '01'})
             if (res.data.userStatus === '01') {
-              self.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
-                if (res === 'confirm') {
-                  self.jump('/pages/account/companyUpdate/main')
-                } else {
-                  // self.exitUser()
-                  self.tab('/pages/me/main')
-                }
-              })
+              const trial = Number(7 - res.data.experienceDays) // 体验期剩余天数
+              if (trial >= 0 && trial <= 7) {
+                self.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {
+                  if (res === 'confirm') {
+                    self.jump('/pages/account/companyUpdate/main')
+                  } else {
+                    // self.exitUser()
+                    self.tab('/pages/me/main')
+                  }
+                })
+              } else {
+                this.modalShow = true
+                this.modalMsg = '1' // 超过体验期限
+              }
+            } else if (res.data.userStatus === '02') {
+              this.modalShow = true
+              this.modalMsg = '2' // 审核中
             } else {
               this.showMsg('登录成功')
               setTimeout(function () {
