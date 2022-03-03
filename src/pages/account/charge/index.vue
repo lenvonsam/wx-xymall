@@ -5,7 +5,7 @@ div
     div
       icon.cuIcon-vipcard
       span.margin-left 账户余额（元）
-    .text-center.margin-top-xl.text-bold.margin-bottom(style="font-size: 30px") {{currentUser.unitFundBalance}}
+    .text-center.margin-top-xl.text-bold.margin-bottom(style="font-size: 30px") {{ accountBalanceMoney }}
   .padding.ft-12(style="background: #FEF7E7")
     span.text-red 温馨提示：请按转账银行信息还款，款到自动进行余额充值
   .bg-white.padding
@@ -26,8 +26,17 @@ div
 
 <script>
 export default {
+  data () {
+    return {
+      accountBalanceMoney: 0
+    }
+  },
   onShow () {
     this.whiteStatusBar()
+  },
+  onLoad (options) {
+    console.log('options+++', options)
+    this.accountBalanceMoney = options.accountBalanceMoney || 0
   }
 }
 </script>

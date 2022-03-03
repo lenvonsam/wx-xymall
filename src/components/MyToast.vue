@@ -1,6 +1,7 @@
 <template lang="pug">
   .my-toast(v-if="toastShow")
-    .my-toast-text {{toastMsg}}
+    .my-toast-wrap
+      .my-toast-text {{toastMsg}}
 </template>
 
 <script>
@@ -29,7 +30,7 @@ export default {
     display flex
     justify-content center
     align-items center
-    .my-toast-text
+    .my-toast-wrap
       width 50%
       font-size 26rpx
       color #fff
@@ -37,6 +38,15 @@ export default {
       background-color #464646
       border-radius 24rpx
       text-align center
+      .my-toast-text
+        padding 10rpx
+        display: -webkit-box
+        -webkit-box-orient: vertical
+        -webkit-line-clamp: 8
+        overflow hidden
+        text-overflow: ellipsis
+        line-height: 1.8
+
 </style>
 
 

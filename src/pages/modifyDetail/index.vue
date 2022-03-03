@@ -100,6 +100,7 @@ div
                   button.text-white.bg-blue.ft-15(@click="applyEdit") 申请修改
             //- .bill-foot.bg-white.padding-sm
   alert(:msg="alertText", v-model="alertShow")
+  my-toast(:toastShow="toastShow" :toastMsg="toastMsg")
 </template>
 
 <script>
@@ -107,9 +108,12 @@ import CountStep from '@/components/CountStep.vue'
 // import CartItem from '@/components/CartItem.vue'
 import { mapState, mapActions } from 'vuex'
 import modal from '@/components/Modal.vue'
+import myToast from '@/components/MyToast.vue'
 export default {
   data () {
     return {
+      toastShow: false,
+      toastMsg: '',
       saleContractNo: '',
       cStatus: '',
       height: 0,
@@ -172,7 +176,8 @@ export default {
   },
   components: {
     CountStep,
-    modal
+    modal,
+    myToast
     // CartItem
   },
   computed: {
@@ -323,7 +328,13 @@ export default {
               .catch((e) => {
                 this.hideLoading()
                 this.btnDisabled = false
-                this.showMsg(e.message)
+                // this.showMsg(e.message)
+                this.toastShow = true
+                this.toastMsg = e.message
+                setTimeout(() => {
+                  this.toastShow = false
+                  this.toastMsg = ''
+                }, 1500)
               })
           }
         })
