@@ -18,29 +18,28 @@ div
           span.text-bold 参考市场价
 
       .ft-18.padding-top-sm.padding-bottom-sm 商品信息
-      div( v-if="tempObject.auditType === 'ERP议价'")
-        .bg-white.card(v-for="(item, index) in dataList", :key="index")
+      .bg-white.card(v-for="(item, index) in dataList", :key="index")
+        .row.justify-between.padding-bottom-xs
+          .text-black.col {{item.name}} {{item.standard}}
+          .text-blue ¥ {{item.price}}
+        .text-gray
           .row.justify-between.padding-bottom-xs
-            .text-black.col {{item.name}} {{item.standard}}
-            .text-blue ¥ {{item.price}}
-          .text-gray
-            .row.justify-between.padding-bottom-xs
-              .col
-                span.padding-right-xs {{item.material}}
-                span.padding-right-xs {{item.length}}
-                span.padding-right-xs {{item.wh_name}}
-                span.sub-mark.ml-5 {{item.supply}}
-              span ({{item.quantityType}})
-            .padding-bottom-xs {{item.max_count}}支/{{item.max_weight}}吨
-            .padding-bottom-xs
-              span.padding-right-xs(v-if="item.toleranceRange") 公差范围 {{item.toleranceRange}}
-              span(v-if="item.weightRange") 重量范围 {{item.weightRange}}
-            .solid-top.padding-top-xs.padding-bottom-xs.text-black(v-if="item.salePrice != 0")
-              span 销售定价：
-              span.text-blue ￥{{item.salePrice}}
-              span.padding-left-xs.delete-style.text-grey ￥{{item.oldSalePrice}}
-              span.padding-left-xs 定价差：
-              span.text-red ￥{{item.diffPrice}}
+            .col
+              span.padding-right-xs {{item.material}}
+              span.padding-right-xs {{item.length}}
+              span.padding-right-xs {{item.wh_name}}
+              span.sub-mark.ml-5 {{item.supply}}
+            span ({{item.quantityType}})
+          .padding-bottom-xs {{item.amount}}支/{{item.weight}}吨
+          .padding-bottom-xs
+            span.padding-right-xs(v-if="item.toleranceRange") 公差范围 {{item.toleranceRange}}
+            span(v-if="item.weightRange") 重量范围 {{item.weightRange}}
+          .solid-top.padding-top-xs.padding-bottom-xs.text-black(v-if="item.salePrice != 0")
+            span 销售定价：
+            span.text-red.text-bold ￥{{item.salePrice}}
+            span.padding-left-xs.delete-style.text-grey ￥{{item.oldSalePrice}}
+            span.padding-left-xs 定价差：
+            span.text-red.text-bold ￥{{item.diffPrice}}
     div(:style="{'margin-bottom': isIpx ? '188rpx' : '120rpx'}")
       .ft-18.padding-top-sm.padding-bottom-sm 审批流程
       .bg-white.border-radius
@@ -342,6 +341,8 @@ export default {
           material: item.productTextureName,
           supply: item.prodAreaName,
           length: item.length,
+          amount: item.amount,
+          weight: item.quantityType === '01' ? item.managerWeight : item.poundWeight,
           wh_name: item.stockZoneName,
           diffPrice: Number(item.salePrice) - Number(item.oldSalePrice),
           oldSalePrice: item.oldSalePrice,
