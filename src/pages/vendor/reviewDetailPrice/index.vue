@@ -10,6 +10,27 @@ div
         .row.justify-between.text-gray.padding-bottom-xs
           span 操作员：{{detailData.updateUserName}}
         span {{detailData.updateDate}}
+      .ft-18.padding-top-sm.padding-bottom-sm 商品信息
+      .bg-white.card(v-for="(item, index) in dataList", :key="index")
+        .row.justify-between.padding-bottom-xs
+          .text-black.col {{item.name}} {{item.standard}}
+          .col.text-right.text-grey ¥{{item.inTaxPrice}}/¥{{item.inTaxMoney}}
+        .text-gray
+          .row.justify-between.padding-bottom-xs
+            .col(style="position: relative;")
+              span.padding-right-xs {{item.material}}
+              span.padding-right-xs {{item.length}}米
+              span.padding-right-xs {{item.wh_name}}
+              span.sub-mark.ml-5 {{item.supply}}
+              span.text-grey.right-0 （材料价/费用）
+          .padding-bottom-xs
+            span.padding-right-xs(v-if="item.toleranceRange") 公差范围 {{item.toleranceRange}}
+            span(v-if="item.weightRange") 重量范围 {{item.weightRange}}
+          .solid-top.padding-top-xs.padding-bottom-xs.text-black(v-if="item.saleMakepriceCale != 0")
+            span 定价：
+            span.text-blue.text-bold ￥{{item.ajuPricesetMakeprice}}/￥{{item.pricesetMakeprice}}
+            span.padding-left-xs.delete-style.text-grey ￥{{item.ajuPricesetOldmakeprice}}/￥{{item.pricesetOldmakeprice}}
+            span.text-grey.font-24.right-0 （理计/磅计）
     div(:style="{'margin-bottom': isIpx ? '188rpx' : '120rpx'}")
       .ft-18.padding-top-sm.padding-bottom-sm 审批流程
       .bg-white.border-radius
