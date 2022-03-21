@@ -62,6 +62,7 @@ div
 import { mapState } from 'vuex'
 import modalInput from '@/components/ModalInput.vue'
 import modal from '@/components/Modal.vue'
+import Moment from 'moment'
 export default {
   components: {
     modalInput,
@@ -308,7 +309,7 @@ export default {
         amount: jsonData.contractAmount,
         weight: jsonData.contractType === '01' ? jsonData.contractManagerWeight : jsonData.contractPoundWeight,
         totalMoeny: jsonData.inTaxReceiveMoney,
-        delayTime: jsonData.contractDelayDate,
+        delayTime: Moment(jsonData.contractDelayDate).add(jsonData.delayTempDay, 'h').format('YYYY-MM-DD HH:mm:ss'),
         invoiceStatus: '待付款',
         auditStatus: jsonData.auditStatus,
         json: data.json,
