@@ -344,7 +344,7 @@ export default {
           amount: item.amount,
           weight: item.quantityType === '01' ? item.managerWeight : item.poundWeight,
           wh_name: item.stockZoneName,
-          diffPrice: Number(item.salePrice) - Number(item.oldSalePrice),
+          diffPrice: Number(item.oldSalePrice) - Number(item.salePrice),
           oldSalePrice: item.oldSalePrice,
           salePrice: item.salePrice,
           price: item.quantityType === '01' ? item.priceManager : item.pricePound,
