@@ -181,7 +181,7 @@ export default {
         params.taskId = this.detailData.taskId
         params.userId = this.currentUser.employeeId
         params.json = this.detailData.json
-        params.status = 2
+        params.status = 3
         params.tenantId = '1'
         this.confirmAudit(params, this.apiList.zf.audit)
       } else {
@@ -344,7 +344,7 @@ export default {
           amount: item.amount,
           weight: item.quantityType === '01' ? item.managerWeight : item.poundWeight,
           wh_name: item.stockZoneName,
-          diffPrice: Number(item.oldSalePrice) - Number(item.salePrice),
+          diffPrice: Number(item.salePrice) - Number(item.oldSalePrice), // 现价-原价
           oldSalePrice: item.oldSalePrice,
           salePrice: item.salePrice,
           price: item.quantityType === '01' ? item.priceManager : item.pricePound,

@@ -171,7 +171,7 @@ export default {
         params.taskId = this.detailData.taskId
         params.userId = this.currentUser.employeeId
         params.json = this.detailData.json
-        params.status = 2
+        params.status = 3
         params.tenantId = '1'
         this.confirmAudit(params, this.apiList.zf.audit)
       } else {

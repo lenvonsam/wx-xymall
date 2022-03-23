@@ -81,7 +81,6 @@
         "balanceList/main",
         "cart/main",
         "quotation/main",
-        "reviewDetail/main",
         "reviewDetailCommon/main",
         "reviewDetailDiscuss/main",
         "reviewDetailReturn/main",
