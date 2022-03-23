@@ -14,7 +14,7 @@ div
       .bg-white.card(v-for="(item, index) in dataList", :key="index")
         .row.justify-between.padding-bottom-xs
           .text-black.col {{item.name}} {{item.standard}}
-          .col.text-right.text-grey ¥{{item.inTaxPrice}}/¥{{item.inTaxMoney}}
+          .col.text-right.text-grey.ml-10 ¥{{item.materialAveragePrice}}/¥{{item.advancePaymentPer}}
         .text-gray
           .row.justify-between.padding-bottom-xs
             .col(style="position: relative;")
@@ -322,11 +322,13 @@ export default {
         taskId: data.taskList[data.taskList.length - 1].taskId,
         firstTask: data.taskList[0],
         lastTask: data.taskList[data.taskList.length - 1],
-        list: jsonData.demandDetailDTOS
+        list: []
       }
       console.log('定价参数整理====>', this.detailData)
       // name standard  material  amount  weight money
-      this.detailData.list = jsonData.resourcePricingItemDTOList.map(item => {
+      const result = await this.httpPost(this.apiList.zf.queryPageByPriceVersion, {priceVersion: jsonData.priceVersion})
+      console.log('result+++++++', result)
+      this.detailData.list = result.data.map(item => {
         return {
           name: item.productBrandName,
           standard: item.specification,
@@ -345,7 +347,9 @@ export default {
           ajuPricesetOldmakeprice: item.oldPriceManager,
           pricesetOldmakeprice: item.oldPriceManager,
           weightRange: item.weightRange,
-          toleranceRange: item.toleranceRange
+          toleranceRange: item.toleranceRange,
+          materialAveragePrice: item.materialAveragePrice,
+          advancePaymentPer: item.advancePaymentPer || 0
         }
       })
     }

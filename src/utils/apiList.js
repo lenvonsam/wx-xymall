@@ -434,6 +434,8 @@ export default {
     // 公司信息
     companyContent: { url: 'businesscard/public/companyContent/queryList', method: 'get' },
     // 首页banner图
-    onlineBanner: 'sale/public/onlineBanner/queryPage'
+    onlineBanner: 'sale/public/onlineBanner/queryPage',
+    // 获取资源定价详情接口
+    queryPageByPriceVersion: 'purchase/resourcePricingItem/queryPageByPriceVersion'
   }
 }

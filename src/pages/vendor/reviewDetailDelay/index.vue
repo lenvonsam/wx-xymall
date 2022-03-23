@@ -21,6 +21,8 @@ div
     div(:style="{'margin-bottom': isIpx ? '188rpx' : '120rpx'}")
       .ft-18.padding-top-sm.padding-bottom-sm 审批流程
       .bg-white.border-radius
+        .relative.padding-top-sm.padding-left-xl.padding-right-sm.padding-bottom-sm
+          .text-gray.ft-14 延时原因：{{detailData.delayReasons}}
         .relative.padding-top-xl.padding-left-xl.padding-right-sm
           .flex.justify-between.padding-bottom-xs.border-left-line.padding-left-xl
             span.ft-16.font-bold 发起申请
@@ -312,6 +314,7 @@ export default {
         delayTime: Moment(jsonData.contractDelayDate).add(jsonData.delayTempDay, 'h').format('YYYY-MM-DD HH:mm:ss'),
         invoiceStatus: '待付款',
         auditStatus: jsonData.auditStatus,
+        delayReasons: jsonData.delayReasons || '',
         json: data.json,
         taskId: data.taskList[data.taskList.length - 1].taskId,
         operName: data.taskList[data.taskList.length - 1].userName,
