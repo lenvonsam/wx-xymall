@@ -6,7 +6,8 @@ div
       .bg-white.card
         .row.justify-between.padding-bottom-xs
           .col.text-blue(@click="jumpBillDetail") {{detailData.saleContractNo}}
-          .text-red {{statusList[detailData.auditStatus] || '待审核'}}
+          // .text-red {{statusList[detailData.auditStatus] || '待审核'}}
+          .text-red 待审核
         .row.justify-between.padding-bottom-xs
           .text-gray.col {{detailData.custName}}
           .text-black ¥ {{detailData.totalMoeny}}

@@ -6,7 +6,8 @@ div
       .bg-white.card
         .row.justify-between.padding-bottom-xs
           .col.text-blue {{detailData.billNo}}
-          .text-red {{tempObject.auditType === '退货' ? '待退款' : detailData.status}}
+          // .text-red {{tempObject.auditType === '退货' ? '待退款' : detailData.status}}
+          .text-red 待审核
         .row.justify-between.padding-bottom-xs
           .text-gray.col {{detailData.custName}}
           .text-black ¥ {{detailData.totalMoeny}}
