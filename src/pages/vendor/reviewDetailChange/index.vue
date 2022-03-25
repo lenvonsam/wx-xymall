@@ -3,11 +3,39 @@ div
   nav-bar(title="待审核", isBack)
   .padding-sm
     div
-      .bg-white.card(v-if="detailData.minicontrols.length")
-        div.margin-bottom-xs(v-for="item in detailData.minicontrols" :key="item.title")
-          span {{item.title}}：
-          span.padding-left-xs {{jsonData[item.fieldValue]}}
-      // div(:style="{'margin-bottom': isIpx ? '188rpx' : '120rpx'}")
+      .bg-white.card
+        .row.justify-between.padding-bottom-xs
+          .col.text-blue(@click="jumpBillDetail") {{detailData.billNo}}
+          // .text-red {{statusList[detailData.auditStatus] || '待审核'}}
+          .text-red 待审核
+        .row.justify-between.padding-bottom-xs
+          .text-gray.col {{detailData.custName}}
+          .text-black ¥ {{detailData.totalMoeny}}
+        .row.justify-between.text-gray.padding-bottom-xs
+          .col 共{{detailData.contractAmount}}支，{{detailData.contractManagerWeight}}吨
+          span 操作员：{{detailData.operName}}
+
+      .ft-18.padding-top-sm.padding-bottom-sm 商品信息
+      .bg-white.card(v-for="(item, index) in dataList", :key="index")
+        .row.justify-between.padding-bottom-xs
+          .text-black.col {{item.name}} {{item.standard}}
+          .text-blue ¥ {{item.price}}
+        .text-gray
+          .row.justify-between.padding-bottom-sm
+            .col
+              span.padding-right-xs {{item.material}}
+              span.padding-right-xs {{item.length}}
+              span.padding-right-xs {{item.wh_name}}
+              span.sub-mark.ml-5 {{item.supply}}
+            span ({{item.quantityType}})
+          .solid-top.padding-top-sm.padding-bottom-xs.text-black
+            .row.justify-between.padding-bottom-xs
+              .col
+                .margin-bottom-xs 原合同：
+                .ft-bold.ft-16 {{item.first_count}}支 {{item.first_weight}}吨
+              .col
+                .margin-bottom-xs 修改后：
+                .ft-bold.text-red.ft-16 {{item.count}}支 {{item.weight}}吨
       .bg-white.border-radius(:style="{'margin-bottom': isIpx ? '188rpx' : '120rpx'}")
         .ft-18.padding-sm 审批流程
         .ft-12.text-ellipsis-2.padding-left-sm.padding-right-sm.padding-bottom-xs 审批原因：{{detailData.applyMessage}}
@@ -294,6 +322,15 @@ export default {
       console.log('未整理参数===>', jsonData)
       this.jsonData = jsonData
       this.detailData = {
+        status: data.status,
+        contractAmount: jsonData.contractAmount,
+        contractManagerWeight: jsonData.contractManagerWeight,
+        billNo: jsonData.saleContractNo || jsonData.preSaleDemandNo,
+        custName: jsonData.settlementUnitName,
+        // totalAmount: data.amount,
+        // totalWeight: data.weight,
+        totalMoeny: jsonData.inTaxReceiveMoney,
+        // endTime: jsonData.contractDelayDate,
         minicontrols: configData.minicontrols ? configData.minicontrols : [],
         applyMessage: jsonData.applyMessage,
         invoiceStatus: '待复审',
@@ -304,7 +341,7 @@ export default {
         firstTask: data.taskList[0],
         lastTask: data.taskList[data.taskList.length - 1]
       }
-      console.log('议价参数整理====>', this.detailData)
+      console.log('修改参数整理====>', this.detailData)
       // name standard  material  amount  weight money
       let listData = jsonData.saleContractDetailDTOS || jsonData.preDemandDetailDTOS
       this.detailData.list = listData.map(item => {
@@ -315,8 +352,10 @@ export default {
           supply: item.prodAreaName,
           length: item.length,
           wh_name: item.stockZoneName,
-          max_count: item.avbleAmount,
-          max_weight: item.quantityType === '01' ? item.managerWeight : item.poundWeight,
+          count: item.amount,
+          weight: item.quantityType === '01' ? item.managerWeight : item.poundWeight,
+          first_count: item.firstAmount,
+          first_weight: item.quantityType === '01' ? item.firstManager : item.firstPound,
           price: item.quantityType === '01' ? item.priceManager : item.pricePound,
           quantityType: item.quantityType === '01' ? '理计' : '磅计',
           weightRange: item.weightRange,

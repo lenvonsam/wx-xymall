@@ -294,6 +294,9 @@ export default {
       } else if (this.configId === '730') {
         auditTypeText = '低买'
         this.jump(`/pages/vendor/reviewDetailLower/main?id=${item.id}&auditType=${auditTypeText}`)
+      } else if (this.configId === '716') {
+        auditTypeText = '修改'
+        this.jump(`/pages/vendor/reviewDetailChange/main?id=${item.id}&auditType=${auditTypeText}`)
       } else {
         auditTypeText = '通用'
         this.jump(`/pages/vendor/reviewDetailCommon/main?id=${item.id}&auditType=${auditTypeText}`)

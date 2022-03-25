@@ -83,6 +83,7 @@
         "quotation/main",
         "reviewDetailCommon/main",
         "reviewDetailDiscuss/main",
+        "reviewDetailChange/main",
         "reviewDetailReturn/main",
         "reviewDetailDelay/main",
         "reviewDetailLower/main",
