@@ -349,7 +349,7 @@ export default {
           pricesetOldmakeprice: item.oldPriceManager,
           weightRange: item.weightRange,
           toleranceRange: item.toleranceRange,
-          materialAveragePrice: item.materialAveragePrice,
+          materialAveragePrice: item.materialAveragePrice || 0,
           advancePaymentPer: item.advancePaymentPer || 0
         }
       })
