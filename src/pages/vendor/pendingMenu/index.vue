@@ -8,7 +8,7 @@
           .dot(v-if="ficon.count > 0")
           .text-name
             .ft-13.text-bold.text-overflow {{ficon.name}}
-            .num.padding-top-xs.ft-10
+            .num.padding-top-xs.ft-12
               span.text-bold.text-red.margin-right-xs(v-if="ficon.count > 0") {{ficon.count}}
               span.text-bold.text-gray.margin-right-xs(v-else) {{ficon.count}}
               span 条待审批
