@@ -15,7 +15,7 @@ div
           .col 共{{detailData.contractAmount}}支，{{detailData.contractManagerWeight}}吨
           span 操作员：{{detailData.operName}}
 
-      .ft-18.padding-top-sm.padding-bottom-sm 商品信息
+      .ft-18.padding-top-sm.padding-bottom-sm 商品修改明细
       .bg-white.card(v-for="(item, index) in dataList", :key="index")
         .row.justify-between.padding-bottom-xs
           .text-black.col {{item.name}} {{item.standard}}
@@ -33,12 +33,17 @@ div
               .col
                 .margin-bottom-xs 原合同：
                 .ft-bold.ft-16 {{item.first_count}}支 {{item.first_weight}}吨
-              .col
+              .col(v-if="!item.count")
+                .margin-bottom-xs 修改后：
+                .ft-bold.text-red.ft-16 删除此明细
+              .col(v-else-if="item.count === item.first_count && item.weight === item.first_weight")
+              .col(v-else)
                 .margin-bottom-xs 修改后：
                 .ft-bold.text-red.ft-16 {{item.count}}支 {{item.weight}}吨
       .bg-white.border-radius(:style="{'margin-bottom': isIpx ? '188rpx' : '120rpx'}")
         .ft-18.padding-sm 审批流程
-        .ft-12.text-ellipsis-2.padding-left-sm.padding-right-sm.padding-bottom-xs 审批原因：{{detailData.applyMessage}}
+        .ft-13.padding-left-sm.padding-right-sm.padding-bottom-xs(v-if="detailData.deleteSupplies.length") 删除的物资信息：
+          div(v-for="item in detailData.deleteSupplies") {{item}}
         .relative.padding-top-xl.padding-left-xl.padding-right-sm
           .flex.justify-between.padding-bottom-xs.border-left-line.padding-left-xl
             span.ft-16.font-bold 发起申请
@@ -161,10 +166,10 @@ export default {
     this.erpModalVal = ''
   },
   methods: {
-    jumpBillDetail (item) {
+    jumpBillDetail () {
       if (this.disabled) return false
       this.disabled = true
-      this.jump(`/pages/billDetail/main?id=${item.deal_no}`)
+      this.jump(`/pages/billDetail/main?contractId=${this.detailData.saleContractId}`)
     },
     // 弹窗回调
     modalHandler ({ type }) {
@@ -322,11 +327,13 @@ export default {
       console.log('未整理参数===>', jsonData)
       this.jsonData = jsonData
       this.detailData = {
+        saleContractId: jsonData.saleContractId,
         status: data.status,
         contractAmount: jsonData.contractAmount,
         contractManagerWeight: jsonData.contractManagerWeight,
         billNo: jsonData.saleContractNo || jsonData.preSaleDemandNo,
         custName: jsonData.settlementUnitName,
+        deleteSupplies: (jsonData.deleteSupplies && jsonData.deleteSupplies.split('\n')) || [],
         // totalAmount: data.amount,
         // totalWeight: data.weight,
         totalMoeny: jsonData.inTaxReceiveMoney,

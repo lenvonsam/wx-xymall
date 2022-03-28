@@ -180,7 +180,7 @@ export default {
     jumpBillDetail (item) {
       if (this.disabled) return false
       this.disabled = true
-      this.jump(`/pages/billDetail/main?id=${item.deal_no}`)
+      this.jump(`/pages/billDetail/main?contractId=${this.detailData.saleContractId}`)
     },
     // 弹窗回调
     modalHandler ({ type }) {
@@ -319,6 +319,7 @@ export default {
       let jsonData = (JSON.parse(res.data.json))
       console.log('未整理参数===>', jsonData)
       this.detailData = {
+        saleContractId: jsonData.saleContractId,
         // liftStatus: data.need_lift,
         status: data.status,
         billNo: jsonData.returnNo,

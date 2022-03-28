@@ -25,13 +25,14 @@ div
                 .flex.justify-between.padding-bottom-sm
                   .col(style="width: 80%;")
                     .flex.align-center
-                      .ft-16.pr-40.white-nowrap {{item.name}} - {{item.businessId}}
+                      .ft-16.pr-40.white-nowrap {{item.name}}
                   .text-red {{status[item.status]}}
                 .text-gray
-                  .flex.justify-between.padding-bottom-xs
-                    span 操作人： {{item.userName}}
+                  .padding-bottom-xs 单号：{{item.businessId}}
                     // .text-black(v-if="item.audit_type === 1") 截止时间：{{item.times}}
                     // .text-black(v-else) {{item.times}}
+                  .padding-bottom-xs
+                    span 操作人：{{item.userName}}
                   .padding-bottom-xs {{item.groupName}}
                   .padding-bottom-xs(v-if="item.reason") 延时理由：{{item.reason}}
     .text-center.c-gray.pt-100(v-else)
