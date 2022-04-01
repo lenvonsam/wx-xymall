@@ -188,6 +188,7 @@ export default {
       if (type === 'confirm') {
         let params = {}
         if (this.modalInputTitle === '驳回原因') {
+          params.status = 3
           if (!this.modalVal) {
             this.showMsg('请输入驳回原因')
             return false
@@ -196,12 +197,12 @@ export default {
             this.modalShow = false
           }
         } else {
+          params.status = 2
           params.back_money = this.modalVal
         }
         params.taskId = this.detailData.taskId
         params.userId = this.currentUser.employeeId
         params.json = this.detailData.json
-        params.status = 3
         params.tenantId = '1'
         this.confirmAudit(params, this.apiList.zf.audit)
       } else {

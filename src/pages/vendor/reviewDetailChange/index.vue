@@ -42,8 +42,8 @@ div
                 .ft-bold.text-red.ft-16 {{item.count}}支 {{item.weight}}吨
       .bg-white.border-radius(:style="{'margin-bottom': isIpx ? '188rpx' : '120rpx'}")
         .ft-18.padding-sm 审批流程
-        .ft-13.padding-left-sm.padding-right-sm.padding-bottom-xs(v-if="detailData.deleteSupplies.length") 删除的物资信息：
-          div(v-for="item in detailData.deleteSupplies") {{item}}
+        //- .ft-13.padding-left-sm.padding-right-sm.padding-bottom-xs(v-if="detailData.deleteSupplies.length") 删除的物资信息：
+        //-   div(v-for="item in detailData.deleteSupplies") {{item}}
         .relative.padding-top-xl.padding-left-xl.padding-right-sm
           .flex.justify-between.padding-bottom-xs.border-left-line.padding-left-xl
             span.ft-16.font-bold 发起申请
@@ -129,7 +129,9 @@ export default {
       screenHeight: state => state.screenHeight
     }),
     dataList () {
-      return this.detailData.list
+      return this.detailData.list.filter(item => {
+        return item.count !== item.first_count && item.weight !== item.first_weight
+      })
       // return this.detailData.list.filter(item => {
       //   return item.good_name !== '吊费'
       // })
@@ -177,6 +179,7 @@ export default {
       if (type === 'confirm') {
         let params = {}
         if (this.modalInputTitle === '驳回原因') {
+          params.status = 3
           if (!this.modalVal) {
             this.showMsg('请输入驳回原因')
             return false
@@ -185,6 +188,7 @@ export default {
             this.modalShow = false
           }
         } else {
+          params.status = 2
           params.back_money = this.modalVal
         }
         // const params = {
@@ -194,7 +198,6 @@ export default {
         params.taskId = this.detailData.taskId
         params.userId = this.currentUser.employeeId
         params.json = this.detailData.json
-        params.status = 3
         params.tenantId = '1'
         this.confirmAudit(params, this.apiList.zf.audit)
       } else {
@@ -325,6 +328,9 @@ export default {
       let data = res.data
       let jsonData = (JSON.parse(res.data.json))
       console.log('未整理参数===>', jsonData)
+      // if (jsonData.deleteSupplies.endsWith('\n')) {
+      //   jsonData.deleteSupplies = jsonData.deleteSupplies.substring(0, jsonData.deleteSupplies.length)
+      // }
       this.jsonData = jsonData
       this.detailData = {
         saleContractId: jsonData.saleContractId,
@@ -333,7 +339,7 @@ export default {
         contractManagerWeight: jsonData.contractManagerWeight,
         billNo: jsonData.saleContractNo || jsonData.preSaleDemandNo,
         custName: jsonData.settlementUnitName,
-        deleteSupplies: (jsonData.deleteSupplies && jsonData.deleteSupplies.split('\n')) || [],
+        deleteSupplies: (jsonData.deleteSupplies && jsonData.deleteSupplies.trim().split('\n')) || [],
         // totalAmount: data.amount,
         // totalWeight: data.weight,
         totalMoeny: jsonData.inTaxReceiveMoney,
@@ -349,7 +355,6 @@ export default {
         lastTask: data.taskList[data.taskList.length - 1]
       }
       console.log('修改参数整理====>', this.detailData)
-      // name standard  material  amount  weight money
       let listData = jsonData.saleContractDetailDTOS || jsonData.preDemandDetailDTOS
       this.detailData.list = listData.map(item => {
         return {
@@ -369,6 +374,23 @@ export default {
           toleranceRange: item.toleranceRange
         }
       })
+      const myarr = this.detailData.deleteSupplies.map((item) => {
+        console.log('item+++', item)
+        const splitArr = item.trim().split(/\s+/)
+        return {
+          name: splitArr[0],
+          standard: splitArr[3],
+          price: splitArr[5].split(':')[1],
+          material: splitArr[2],
+          length: splitArr[4],
+          wh_name: splitArr[10].split(':')[1],
+          supply: splitArr[1],
+          quantityType: splitArr[8].split(':')[1],
+          first_count: splitArr[9].split(':')[1],
+          first_weight: splitArr[6].split(':')[1]
+        }
+      })
+      this.detailData.list = this.detailData.list.concat(myarr)
     }
   }
 }
