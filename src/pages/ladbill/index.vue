@@ -21,7 +21,8 @@ div
         time-line(type="mallist")
       template(v-else)
         template(v-if="billTab[idx].data.length > 0")
-          scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: swiperHeight}")
+          //- scroll-view(scroll-y, @scrolltolower="loadMore", :style="{height: swiperHeight}")
+          scroll-view(scroll-y, :refresher-triggered="triggered", :refresher-enabled="true", @refresherrefresh="refresher", @scrolltolower="loadMore", :style="{height: swiperHeight}")
             //- lab-bill-item(v-for="(item,itemIdx) in billTab[idx].data", :key="itemIdx", :ladObject="item", :cb="labObjectCb")
             .bg-gray.pt-half-rem(v-for="(item,itemIdx) in billTab[idx].data", :key="itemIdx")
               .bg-white
@@ -241,6 +242,11 @@ export default {
         this.jump(`/pages/pay/main?pageType=ladPay&orderNo=${obj.no}&price=${obj.pay_price}&contractNo=${obj.contract_no}`)
       }
     },
+    // 刷新页面
+    refresher () {
+      this.currentPage = 1
+      this.loadData()
+    },
     loadMore () {
       if (!this.finished) {
         const self = this
@@ -293,7 +299,7 @@ export default {
       self.queryObj.pageSize = this.pageSize
       self.httpPost(self.apiList.zf.billLading, self.queryObj).then(res => {
         const idx = self.swiperCount
-        let arr = res.data.saleLadingList
+        let arr = res.data.saleLadingList || []
         if (arr.length === 0 && this.currentPage === 1) {
           // self.listData = []
           self.billTab[idx].data = []

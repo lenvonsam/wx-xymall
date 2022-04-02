@@ -8,7 +8,7 @@ div
           span {{item.title}}：
           span.padding-left-xs {{jsonData[item.fieldValue]}}
       // div(:style="{'margin-bottom': isIpx ? '188rpx' : '120rpx'}")
-      .bg-white.border-radius
+      .bg-white.border-radius(:style="{'margin-bottom': isIpx ? '188rpx' : '120rpx'}")
         .ft-18.padding-sm 审批流程
         .ft-12.text-ellipsis-2.padding-left-sm.padding-right-sm.padding-bottom-xs 审批原因：{{detailData.applyMessage}}
         .relative.padding-top-xl.padding-left-xl.padding-right-sm
@@ -144,10 +144,12 @@ export default {
       if (type === 'confirm') {
         let params = {}
         if (this.modalInputTitle === '驳回原因') {
+          params.status = 3
           if (!this.modalVal) {
             this.showMsg('请输入驳回原因')
             return false
           } else {
+            params.status = 2
             params.reason = this.modalVal
             this.modalShow = false
           }
@@ -161,7 +163,6 @@ export default {
         params.taskId = this.detailData.taskId
         params.userId = this.currentUser.employeeId
         params.json = this.detailData.json
-        params.status = 2
         params.tenantId = '1'
         this.confirmAudit(params, this.apiList.zf.audit)
       } else {

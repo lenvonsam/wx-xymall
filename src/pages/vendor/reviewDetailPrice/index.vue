@@ -6,10 +6,32 @@ div
       .bg-white.card
         .row.justify-between.padding-bottom-xs
           .col.text-blue(@click="jumpBillDetail") {{detailData.priceVersion}}
-          .text-red {{statusList[detailData.auditStatus] || '待审核'}}
+          // .text-red {{statusList[detailData.auditStatus] || '待审核'}}
+          .text-red 待审核
         .row.justify-between.text-gray.padding-bottom-xs
           span 操作员：{{detailData.updateUserName}}
         span {{detailData.updateDate}}
+      .ft-18.padding-top-sm.padding-bottom-sm 商品信息
+      .bg-white.card(v-for="(item, index) in dataList", :key="index")
+        .row.justify-between.padding-bottom-xs
+          .text-black.col {{item.name}} {{item.standard}}
+          .col.text-right.text-grey.ml-10 ¥{{item.materialAveragePrice}}/¥{{item.advancePaymentPer}}
+        .text-gray
+          .row.justify-between.padding-bottom-xs
+            .col(style="position: relative;")
+              span.padding-right-xs {{item.material}}
+              span.padding-right-xs {{item.length}}米
+              span.padding-right-xs {{item.wh_name}}
+              span.sub-mark.ml-5 {{item.supply}}
+              span.text-grey.right-0 （材料价/费用）
+          .padding-bottom-xs
+            span.padding-right-xs(v-if="item.toleranceRange") 公差范围 {{item.toleranceRange}}
+            span(v-if="item.weightRange") 重量范围 {{item.weightRange}}
+          .solid-top.padding-top-xs.padding-bottom-xs.text-black(v-if="item.saleMakepriceCale != 0")
+            span 定价：
+            span.text-blue.text-bold ￥{{item.ajuPricesetMakeprice}}/￥{{item.pricesetMakeprice}}
+            span.padding-left-xs.delete-style.text-grey ￥{{item.ajuPricesetOldmakeprice}}/￥{{item.pricesetOldmakeprice}}
+            span.text-grey.font-24.right-0 （理计/磅计）
     div(:style="{'margin-bottom': isIpx ? '188rpx' : '120rpx'}")
       .ft-18.padding-top-sm.padding-bottom-sm 审批流程
       .bg-white.border-radius
@@ -137,7 +159,7 @@ export default {
     jumpBillDetail (item) {
       if (this.disabled) return false
       this.disabled = true
-      this.jump(`/pages/billDetail/main?id=${item.deal_no}`)
+      this.jump(`/pages/billDetail/main?contractId=${this.detailData.saleContractId}`)
     },
     // 弹窗回调
     modalHandler ({ type }) {
@@ -145,6 +167,7 @@ export default {
       if (type === 'confirm') {
         let params = {}
         if (this.modalInputTitle === '驳回原因') {
+          params.status = 3
           if (!this.modalVal) {
             this.showMsg('请输入驳回原因')
             return false
@@ -153,6 +176,7 @@ export default {
             this.modalShow = false
           }
         } else {
+          params.status = 2
           params.back_money = this.modalVal
         }
         // const params = {
@@ -162,7 +186,6 @@ export default {
         params.taskId = this.detailData.taskId
         params.userId = this.currentUser.employeeId
         params.json = this.detailData.json
-        params.status = 2
         params.tenantId = '1'
         this.confirmAudit(params, this.apiList.zf.audit)
       } else {
@@ -293,6 +316,7 @@ export default {
       let jsonData = (JSON.parse(res.data.json))
       console.log('未整理参数===>', jsonData)
       this.detailData = {
+        saleContractId: jsonData.saleContractId,
         priceVersion: jsonData.priceVersion,
         auditStatus: jsonData.auditStatus,
         updateUserName: jsonData.updateUserName,
@@ -301,11 +325,13 @@ export default {
         taskId: data.taskList[data.taskList.length - 1].taskId,
         firstTask: data.taskList[0],
         lastTask: data.taskList[data.taskList.length - 1],
-        list: jsonData.demandDetailDTOS
+        list: []
       }
       console.log('定价参数整理====>', this.detailData)
       // name standard  material  amount  weight money
-      this.detailData.list = jsonData.resourcePricingItemDTOList.map(item => {
+      const result = await this.httpPost(this.apiList.zf.queryPageByPriceVersion, {priceVersion: jsonData.priceVersion})
+      console.log('result+++++++', result)
+      this.detailData.list = result.data.map(item => {
         return {
           name: item.productBrandName,
           standard: item.specification,
@@ -324,7 +350,9 @@ export default {
           ajuPricesetOldmakeprice: item.oldPriceManager,
           pricesetOldmakeprice: item.oldPriceManager,
           weightRange: item.weightRange,
-          toleranceRange: item.toleranceRange
+          toleranceRange: item.toleranceRange,
+          materialAveragePrice: item.materialAveragePrice || 0,
+          advancePaymentPer: item.advancePaymentPer || 0
         }
       })
     }

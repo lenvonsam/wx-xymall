@@ -25,13 +25,14 @@ div
                 .flex.justify-between.padding-bottom-sm
                   .col(style="width: 80%;")
                     .flex.align-center
-                      .ft-16.pr-40.white-nowrap {{item.name}} - {{item.businessId}}
+                      .ft-16.pr-40.white-nowrap {{item.name}}
                   .text-red {{status[item.status]}}
                 .text-gray
-                  .flex.justify-between.padding-bottom-xs
-                    span 操作人： {{item.userName}}
+                  .padding-bottom-xs 单号：{{item.businessId}}
                     // .text-black(v-if="item.audit_type === 1") 截止时间：{{item.times}}
                     // .text-black(v-else) {{item.times}}
+                  .padding-bottom-xs
+                    span 操作人：{{item.userName}}
                   .padding-bottom-xs {{item.groupName}}
                   .padding-bottom-xs(v-if="item.reason") 延时理由：{{item.reason}}
     .text-center.c-gray.pt-100(v-else)
@@ -294,6 +295,9 @@ export default {
       } else if (this.configId === '730') {
         auditTypeText = '低买'
         this.jump(`/pages/vendor/reviewDetailLower/main?id=${item.id}&auditType=${auditTypeText}`)
+      } else if (this.configId === '716' || this.configId === '710') {
+        auditTypeText = '修改'
+        this.jump(`/pages/vendor/reviewDetailChange/main?id=${item.id}&auditType=${auditTypeText}`)
       } else {
         auditTypeText = '通用'
         this.jump(`/pages/vendor/reviewDetailCommon/main?id=${item.id}&auditType=${auditTypeText}`)

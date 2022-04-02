@@ -6,7 +6,8 @@ div
       .bg-white.card
         .row.justify-between.padding-bottom-xs
           .col.text-blue(@click="jumpBillDetail") {{detailData.billNo}}
-          .text-red {{statusList[detailData.auditStatus] || '待审核'}}
+          // .text-red {{statusList[detailData.auditStatus] || '待审核'}}
+          .text-red 待审核
         .row.justify-between.padding-bottom-xs
           .text-gray.col {{detailData.custName}}
           .text-black ¥ {{detailData.totalMoeny}}
@@ -18,29 +19,28 @@ div
           span.text-bold 参考市场价
 
       .ft-18.padding-top-sm.padding-bottom-sm 商品信息
-      div( v-if="tempObject.auditType === 'ERP议价'")
-        .bg-white.card(v-for="(item, index) in dataList", :key="index")
+      .bg-white.card(v-for="(item, index) in dataList", :key="index")
+        .row.justify-between.padding-bottom-xs
+          .text-black.col {{item.name}} {{item.standard}}
+          .text-blue ¥ {{item.price}}
+        .text-gray
           .row.justify-between.padding-bottom-xs
-            .text-black.col {{item.name}} {{item.standard}}
-            .text-blue ¥ {{item.price}}
-          .text-gray
-            .row.justify-between.padding-bottom-xs
-              .col
-                span.padding-right-xs {{item.material}}
-                span.padding-right-xs {{item.length}}
-                span.padding-right-xs {{item.wh_name}}
-                span.sub-mark.ml-5 {{item.supply}}
-              span ({{item.quantityType}})
-            .padding-bottom-xs {{item.max_count}}支/{{item.max_weight}}吨
-            .padding-bottom-xs
-              span.padding-right-xs(v-if="item.toleranceRange") 公差范围 {{item.toleranceRange}}
-              span(v-if="item.weightRange") 重量范围 {{item.weightRange}}
-            .solid-top.padding-top-xs.padding-bottom-xs.text-black(v-if="item.salePrice != 0")
-              span 销售定价：
-              span.text-blue ￥{{item.salePrice}}
-              span.padding-left-xs.delete-style.text-grey ￥{{item.oldSalePrice}}
-              span.padding-left-xs 定价差：
-              span.text-red ￥{{item.diffPrice}}
+            .col
+              span.padding-right-xs {{item.material}}
+              span.padding-right-xs {{item.length}}
+              span.padding-right-xs {{item.wh_name}}
+              span.sub-mark.ml-5 {{item.supply}}
+            span ({{item.quantityType}})
+          .padding-bottom-xs {{item.amount}}支/{{item.weight}}吨
+          .padding-bottom-xs
+            span.padding-right-xs(v-if="item.toleranceRange") 公差范围 {{item.toleranceRange}}
+            span(v-if="item.weightRange") 重量范围 {{item.weightRange}}
+          .solid-top.padding-top-xs.padding-bottom-xs.text-black(v-if="item.salePrice != 0")
+            span 销售定价：
+            span.text-red.text-bold ￥{{item.salePrice}}
+            span.padding-left-xs.delete-style.text-grey ￥{{item.oldSalePrice}}
+            span.padding-left-xs 定价差：
+            span.text-red.text-bold ￥{{item.diffPrice}}
     div(:style="{'margin-bottom': isIpx ? '188rpx' : '120rpx'}")
       .ft-18.padding-top-sm.padding-bottom-sm 审批流程
       .bg-white.border-radius
@@ -157,7 +157,7 @@ export default {
     jumpBillDetail (item) {
       if (this.disabled) return false
       this.disabled = true
-      this.jump(`/pages/billDetail/main?id=${item.deal_no}`)
+      this.jump(`/pages/billDetail/main?contractId=${this.detailData.saleContractId}`)
     },
     // 弹窗回调
     modalHandler ({ type }) {
@@ -165,6 +165,7 @@ export default {
       if (type === 'confirm') {
         let params = {}
         if (this.modalInputTitle === '驳回原因') {
+          params.status = 3
           if (!this.modalVal) {
             this.showMsg('请输入驳回原因')
             return false
@@ -173,6 +174,7 @@ export default {
             this.modalShow = false
           }
         } else {
+          params.status = 2
           params.back_money = this.modalVal
         }
         // const params = {
@@ -182,7 +184,6 @@ export default {
         params.taskId = this.detailData.taskId
         params.userId = this.currentUser.employeeId
         params.json = this.detailData.json
-        params.status = 2
         params.tenantId = '1'
         this.confirmAudit(params, this.apiList.zf.audit)
       } else {
@@ -312,6 +313,7 @@ export default {
       let jsonData = (JSON.parse(res.data.json))
       console.log('未整理参数===>', jsonData)
       this.detailData = {
+        saleContractId: jsonData.saleContractId,
         // liftStatus: data.need_lift,
         status: data.status,
         contractAmount: jsonData.contractAmount,
@@ -342,8 +344,10 @@ export default {
           material: item.productTextureName,
           supply: item.prodAreaName,
           length: item.length,
+          amount: item.amount,
+          weight: item.quantityType === '01' ? item.managerWeight : item.poundWeight,
           wh_name: item.stockZoneName,
-          diffPrice: Number(item.salePrice) - Number(item.oldSalePrice),
+          diffPrice: Number(item.salePrice) - Number(item.oldSalePrice), // 现价-原价
           oldSalePrice: item.oldSalePrice,
           salePrice: item.salePrice,
           price: item.quantityType === '01' ? item.priceManager : item.pricePound,

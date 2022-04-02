@@ -6,7 +6,8 @@ div
       .bg-white.card
         .row.justify-between.padding-bottom-xs
           .col.text-blue(@click="jumpBillDetail") {{detailData.billNo}}
-          .text-red {{statusList[detailData.auditStatus] || '待审核'}}
+          // .text-red {{statusList[detailData.auditStatus] || '待审核'}}
+          .text-red 待审核
         .row.justify-between.padding-bottom-xs
           .text-gray.col {{detailData.custName}}
           .text-black ¥ {{detailData.totalMoeny}}
@@ -156,7 +157,7 @@ export default {
     jumpBillDetail (item) {
       if (this.disabled) return false
       this.disabled = true
-      this.jump(`/pages/billDetail/main?id=${item.deal_no}`)
+      this.jump(`/pages/billDetail/main?contractId=${this.detailData.saleContractId}`)
     },
     // 弹窗回调
     modalHandler ({ type }) {
@@ -164,6 +165,7 @@ export default {
       if (type === 'confirm') {
         let params = {}
         if (this.modalInputTitle === '驳回原因') {
+          params.status = 3
           if (!this.modalVal) {
             this.showMsg('请输入驳回原因')
             return false
@@ -172,6 +174,7 @@ export default {
             this.modalShow = false
           }
         } else {
+          params.status = 2
           params.back_money = this.modalVal
         }
         // const params = {
@@ -181,7 +184,6 @@ export default {
         params.taskId = this.detailData.taskId
         params.userId = this.currentUser.employeeId
         params.json = this.detailData.json
-        params.status = 2
         params.tenantId = '1'
         this.confirmAudit(params, this.apiList.zf.audit)
       } else {
@@ -311,6 +313,7 @@ export default {
       let jsonData = (JSON.parse(res.data.json))
       console.log('未整理参数===>', jsonData)
       this.detailData = {
+        saleContractId: jsonData.saleContractId,
         // liftStatus: data.need_lift,
         sellLowReason: jsonData.sellLowReason,
         status: data.status,
