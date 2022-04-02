@@ -263,11 +263,12 @@ export default {
       }
       this.httpPost(this.apiList.zf.querySaleContractPage, params).then(res => {
         if (res.success) {
-          let arr = res.data
-          arr.forEach(item => {
+          let arrData = res.data
+          let arr = arrData.filter(item => {
             if (item.orgId !== 'C00011') {
               item.contractDelayTimes = item.contractDelayTimes - 1
             }
+            return item.auditStatus !== '10'
           })
           if (arr.length === 0 && me.currentPage === 1) {
             me.listData = []
