@@ -74,24 +74,24 @@ export default {
       }
     ],
     featuresIcons: [
-      // {
-      //   icon: '/static/images/audit_record_icon.png',
-      //   name: '待审核',
-      //   dotKey: 'waitAudit',
-      //   event: 'click_app_me_audit_seller',
-      //   url: {
-      //     path: '/pages/vendor/pendingMenu/main'
-      //   }
-      // },
-      // {
-      //   icon: '/static/images/hostory_icon.png',
-      //   name: '审核历史',
-      //   dotKey: '',
-      //   event: 'click_app_me_audit_history_seller',
-      //   url: {
-      //     path: '/pages/vendor/historyMenu/main'
-      //   }
-      // },
+      {
+        icon: '/static/images/audit_record_icon.png',
+        name: '待审核',
+        dotKey: 'waitAudit',
+        event: 'click_app_me_audit_seller',
+        url: {
+          path: '/pages/vendor/pendingMenu/main'
+        }
+      },
+      {
+        icon: '/static/images/hostory_icon.png',
+        name: '审核历史',
+        dotKey: '',
+        event: 'click_app_me_audit_history_seller',
+        url: {
+          path: '/pages/vendor/historyMenu/main'
+        }
+      },
       {
         icon: '/static/images/review_icon.png',
         name: '合同延时',
