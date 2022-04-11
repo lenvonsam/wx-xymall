@@ -41,13 +41,13 @@ export default {
     },
     getData () {
       // let testUserId = '1346277615056457730' // 员工 何建龙
-      let testUserId = '59bb9e74-e88b-11eb-9a0b-00163e0ba72f' // 采购部长 于成龙
+      // let testUserId = '59bb9e74-e88b-11eb-9a0b-00163e0ba72f' // 采购部长 于成龙
       let params = {
         'startCreateTime': '',
         'endCreateTime': '',
         'tenantId': '1',
         // 'userId': this.currentUser.id,
-        'disposeUserId': testUserId,
+        'disposeUserId': this.currentUser.employeeId,
         'status': [1, 2, 3, 4, 5]
       }
       this.httpPost(this.apiList.zf.queryWorkflowProcessMenu, params).then(res => {
