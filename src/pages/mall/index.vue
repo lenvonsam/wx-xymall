@@ -131,7 +131,7 @@ div
       div 尊敬的用户，您的商城体验权限时间已经结束，如需继续查看商城物资详情，请尽快完善个人信息并等待审核通过
     .padding-sm(v-else)
       div 恭喜您成为型云用户，您的信息正在审核中，请耐心等待
-  modal(v-model="fillModalShow", :title="modalTitle", @cb="fillModalCb")
+  modal(v-model="fillModalShow", :title="modalTitle", @cb="fillModalCb", :btns="fillModalBtns")
     .padding-sm {{fillModalMsg}}
   my-toast(:toastShow="toastShow" :toastMsg="toastMsg")
 </template>
@@ -223,6 +223,10 @@ export default {
       modalMsg: '1',
       fillModalShow: false,
       fillModalMsg: '',
+      fillModalBtns: [
+        { label: '取消', flag: 'cancel', className: 'bg-gray' },
+        { label: '确定', flag: 'confirm', className: 'main-btn' }
+      ],
       trial: 0,
       queryObj: {
         pageNum: 1,
@@ -285,7 +289,7 @@ export default {
         // this.trial = 9
         isAuditing = data.userStatus // 用户状态
         // this.currentUser.isnew = data.isnew
-        if (isAuditing === '01' || isAuditing === '02') {
+        if (isAuditing === '01') {
           if (this.trial >= 0 && this.trial <= 7) {
             this.modalMsg = '1' // 新用户
             // if (lastExperienceDay !== this.trial) {
@@ -304,7 +308,7 @@ export default {
             }
           }
         }
-        if (isAuditing === '03') {
+        if (isAuditing === '02') {
           this.modalMsg = '3' // 已完善未审核过
           this.hiddenPrice = true
           if (isAuditingReminder !== this.getDate()) {
@@ -460,7 +464,9 @@ export default {
       console.log(flag)
       this.fillModalShow = false
       if (flag.toString() === 'confirm') {
-        this.jump('/pages/account/companyUpdate/main?type=2')
+        if (this.currentUser.userStatus !== '02') {
+          this.jump('/pages/account/companyUpdate/main?type=2')
+        }
       }
     },
     // 监听子组件触发清除搜索
@@ -583,7 +589,7 @@ export default {
     },
     // 点击购买/查看价格/到货通知按钮
     mallItemCb (obj, type, evt) {
-      console.log('evt', evt)
+      console.log('params++++', obj, type, evt)
       const self = this
       self.ballValue = evt
       if (this.btnDisable) {
@@ -632,9 +638,24 @@ export default {
             break
           case 'cart':
             this.currentUser.type === 'seller' ? this.logEventGet({ event: 'click_app_mall_add_cart_seller', type: '01' }) : this.logEventGet({ event: 'click_app_mall_add_cart', type: '01' })
-            if (this.currentUser.userStatus === '01' || this.currentUser.userStatus === '02' || this.currentUser.userStatus === '03') {
+            if (this.currentUser.userStatus === '01' || this.currentUser.userStatus === '03') {
               this.fillModalMsg = '请先完善信息'
               this.fillModalShow = true
+              this.fillModalBtns = [
+                { label: '取消', flag: 'cancel', className: 'bg-gray' },
+                { label: '确定', flag: 'confirm', className: 'main-btn' }
+              ]
+              this.btnDisable = false
+            } else if (this.currentUser.userStatus === '02') {
+              // this.showMsg('平台审核中，请耐心等待或联系客服')
+              // this.modalShow = true
+              // this.modalMsg = '3'
+              this.fillModalMsg = '平台审核中，请耐心等待或联系客服'
+              this.fillModalShow = true
+              this.fillModalBtns = [
+                { label: '确定', flag: 'confirm', className: 'main-btn' }
+              ]
+              this.btnDisable = false
             } else {
               obj.num = 1
               this.addCartItem(obj)
