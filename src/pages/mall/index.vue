@@ -730,6 +730,8 @@ export default {
         }
         this.swiperCount = idx
         console.log('prevIdx', this.prevIdx)
+      } else {
+        this.swiperCount = 0
       }
     },
     // 刷新页面
