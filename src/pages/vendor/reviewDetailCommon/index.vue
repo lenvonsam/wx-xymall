@@ -149,7 +149,6 @@ export default {
             this.showMsg('请输入驳回原因')
             return false
           } else {
-            params.status = 2
             params.reason = this.modalVal
             this.modalShow = false
           }
