@@ -240,6 +240,7 @@ export default {
         this.isTabDisabled = false
         if (this.listData.length < 10) this.loadFinish = 3
         this.hideLoading()
+        if (done) done()
       }).catch(err => {
         console.log(err)
       })
