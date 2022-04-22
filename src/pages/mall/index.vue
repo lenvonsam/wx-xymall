@@ -46,7 +46,7 @@ div
                       //- span.ml-5.ft-12(style="color:#666") ({{weightMark}})
                     .text-right.ft-16
                       span.text-red.ft-13(v-if="item.price === '--' || (isLogin && !isNineClocks && item.productClassName ==='H型钢') || (isLogin && !isNineClocks && item.productClassName ==='板材')") 开售时间:{{item.show_time}}
-                      span.text-blue(v-else-if="isLogin && modalMsg == '2'") --
+                      span.text-blue(v-else-if="isLogin && hiddenPrice") --
                       span.text-blue(v-else-if="isLogin") ￥{{item.price}}
                       .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)") 查看价格
                   .row.pt-5.flex-center.ft-12
@@ -71,7 +71,7 @@ div
                       //- .mall-row(:class="{'notice': item.max_count === 0}")
                       // .blue-buy(v-if="(isLogin && !isNineClocks && item.productClassName =='H型钢') || (isLogin && !isNineClocks && item.productClassName =='板材')",style="display:none!important")
                       .blue-buy.text-blue(v-if="isLogin && modalMsg == '2'", @click="goComplete") 完善信息
-                      .blue-buy(v-else-if="item[mallTypeObject[itemType].max_count] == 0 && isLogin",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
+                      .blue-buy(v-else-if="item.isStockEmpty === '1' && isLogin",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
                       .blue-buy(v-else-if="isLogin", @click="mallItemCb(item, 'cart', $event)") 购买
                 template(v-else)
                   .ft-15.row
@@ -92,6 +92,7 @@ div
                   .text-blue.ft-15.text-bold
                     //- ￥{{item[mallTypeObject[itemType].price]}}
                     span.text-red.ft-13(v-if="item.price === '--' || (isLogin && !isNineClocks && item.productClassName ==='H型钢') || (isLogin && !isNineClocks && item.productClassName ==='板材')") 开售时间:{{item.show_time}}
+                    span.text-blue(v-else-if="isLogin && hiddenPrice") --
                     span.text-blue(v-else-if="isLogin") ￥{{item.price}}
                     // span(v-else-if="item.show_price === true") ￥{{item[mallTypeObject[itemType].price]}}
                     // .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)") 查看价格
@@ -101,7 +102,7 @@ div
                       //- .blue-buy(v-if="item[mallTypeObject[itemType].max_count] == 0 && isLogin",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
                       //- .blue-buy(@click="mallItemCb(item, 'cart', $event)", v-else-if="item.show_price") 购买
                       //- .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)", style="padding-top: 2rpx") 查看价格
-                      .blue-buy(v-if="item[mallTypeObject[itemType].max_count] == 0 && isLogin",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
+                      .blue-buy(v-if="item.isStockEmpty === '1' && isLogin",style="background:#f44336!important", @click="mallItemCb(item, 'notice', $event)") 到货通知
                       .blue-buy(v-else-if="isLogin", @click="mallItemCb(item, 'cart', $event)") 购买
                       .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)") 查看价格
             //- .padding.text-gray.ft-13.text-center(v-if="loading") 努力加载中...
@@ -230,7 +231,8 @@ export default {
       queryObj: {
         pageNum: 1,
         pageSize: 20
-      }
+      },
+      hiddenPrice: false
     }
   },
   computed: {
@@ -268,6 +270,7 @@ export default {
     this.btnDisable = false
   },
   onShow () {
+    this.hiddenPrice = false
     this.btnDisable = false
     this.isload = true
     console.log('tempObject++++******', this.tempObject)
@@ -298,6 +301,7 @@ export default {
             }
           } else {
             this.modalMsg = '2' // 超过体验期限
+            this.hiddenPrice = true
             if (overdueReminder !== this.getDate()) {
               this.modalShow = true
               mpvue.setStorageSync('overdueReminder', this.getDate())
@@ -306,6 +310,7 @@ export default {
         }
         if (isAuditing === '02') {
           this.modalMsg = '3' // 已完善未审核过
+          this.hiddenPrice = true
           if (isAuditingReminder !== this.getDate()) {
             this.modalShow = true
             mpvue.setStorageSync('isAuditingReminder', this.getDate())
