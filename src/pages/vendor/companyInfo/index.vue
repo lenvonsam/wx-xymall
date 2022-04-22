@@ -26,7 +26,7 @@ div
     .wrap.padding.bg-white
       .ft-14(v-html="currentObj.texts")
   .empty
-  .go.text-bold.ft-14(@click="goShop") {{isSalesman == 0 ? '去型云采购' : '去型云商城'}}
+  .go.ft-16(@click="goShop") {{isSalesman == 0 ? '去型云采购' : '去型云商城'}}
 </template>
 
 <script>
@@ -153,7 +153,7 @@ export default {
     text-align center
   .active-tab
     position relative
-    color #2485FF
+    color #3DA7FF
     display inline-block
     &::after
       content: "";
@@ -163,7 +163,7 @@ export default {
       transform translateX(-50%)
       height 6rpx
       width 42rpx
-      background-color: #2485FF
+      background-color: #3DA7FF
 .content
   margin-top 112rpx
   margin-bottom 60rpx
@@ -198,7 +198,7 @@ export default {
         border: 15rpx solid
         border-color: transparent transparent transparent black
       &.active-type
-        background-color #2485FF
+        background-color #3DA7FF
         color #fff
         .text::before
           content: ''
@@ -220,13 +220,16 @@ export default {
   width 100%
   height 98rpx
 .go
-  width 100%
+  width 710rpx
   height 98rpx
   line-height 98rpx
   text-align center
-  background #FFFFFF
-  box-shadow 0px -2px 10px 0px rgba(0, 0, 0, 0.09)
+  background #3DA7FF
+  color #fff
+  // box-shadow 0px -2px 10px 0px rgba(0, 0, 0, 0.09)
   position fixed
   bottom 0
-  left 0
+  left calc((100% - 710rpx) / 2)
+  border-radius 50rpx
+  margin-bottom: 10rpx
 </style>
