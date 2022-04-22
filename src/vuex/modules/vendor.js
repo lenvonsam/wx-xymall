@@ -178,7 +178,6 @@ export default {
         dotKey: 'card',
         event: '',
         url: {
-          // path: '/pages/vendor/businessCard/main'
           path: '/pages/vendor/businessCard/main'
         }
       }
