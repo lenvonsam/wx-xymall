@@ -81,8 +81,14 @@ page,
 .border-bottom-line {
   border-bottom: 1rpx solid #ddd;
 }
+.border-top-line {
+  border-top: 1rpx solid #ddd;
+}
 .border-left-line {
   border-left: 1rpx solid #ddd;
+}
+.border-right-line {
+  border-right: 1rpx solid #ddd;
 }
 
 .ft-10 {
@@ -123,6 +129,10 @@ page,
 
 .ft-20 {
   font-size: 40rpx;
+}
+
+.ft-22 {
+  font-size: 44rpx;
 }
 
 .ft-25 {
@@ -291,6 +301,9 @@ page,
 }
 .border-radius {
   border-radius: 10rpx;
+}
+.border-radius-20 {
+  border-radius: 20rpx;
 }
 
 [class*='adjust cuIcon-'] {
