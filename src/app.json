@@ -56,7 +56,6 @@
         "me/main",
         "returnApplicationDetail/main",
         "returnApplicationList/main",
-        "businessCard/main",
         "businessCardNew/main",
         "companyInfo/main",
         "returnApplication/main",
