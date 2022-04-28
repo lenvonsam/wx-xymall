@@ -161,6 +161,17 @@ export default {
               this.modalMsg = '2' // 审核中
             } else {
               this.showMsg('登录成功')
+              // 获取客户对应的业务员
+              self.httpGet(self.apiList.zf.salesman, {
+                unitNo: res.data.unitId
+              }).then(result => {
+                // console.log('result++++++', result)
+                const salesman = result.data.map(item => item.businessUserName).join()
+                // console.log('salesman+++', salesman)
+                mpvue.setStorageSync('salesman', salesman)
+              }).catch(err => {
+                console.log(err)
+              })
               setTimeout(function () {
                 self.canClick = true
                 if (self.backType === 1) {

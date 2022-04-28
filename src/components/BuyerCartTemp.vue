@@ -495,6 +495,18 @@ export default {
           this.modalShow = false
           this.hideLoading()
           self.btnDisable = false
+          // 企业微信通知业务员
+          const time = self.formatDateTime(new Date())
+          const content = `您的客户${this.currentUser.companyName}，${time}生成物资采购合同，合同编号${res.data.saleContractNo}，请及时进行确认，联系电话${this.currentUser.phone}`
+          // console.log('content+++++', content)
+          const salesman = mpvue.getStorageSync('salesman')
+          // console.log('salesman+++++', salesman)
+          self.httpPost(self.apiList.zf.autoNotify, {
+            content: content,
+            members: salesman
+          }).catch(err => {
+            console.log(err)
+          })
           this.jump(`/pages/pay/main?pageType=offlinePay&orderNo=${res.data.saleContractId}`)
         }).catch(e => {
           self.btnDisable = false
