@@ -14,12 +14,12 @@ div
         //- .flex.align-center.margin-bottom-sm
         //-   img.num-img(src="/static/images/card_wx.png")
         //-   .ft-13 {{WX}}
-        .flex.align-center.margin-bottom-sm
-          img.num-img(src="/static/images/card_qq.png")
-          .ft-13 {{QQ}}
-        .flex.align-center
-          img.num-img(src="/static/images/card_mail.png")
-          .ft-13 {{mail}}
+        // .flex.align-center.margin-bottom-sm
+        //   img.num-img(src="/static/images/card_qq.png")
+        //   .ft-13 {{QQ}}
+        // .flex.align-center
+        //   img.num-img(src="/static/images/card_mail.png")
+        //   .ft-13 {{mail}}
     .half
       img(:src="urlImg",style="height:100%;width:100%;border-radius:0 20rpx 20rpx 0;")
     .btns.flex.flex-direction.align-center
@@ -74,10 +74,10 @@ div
   img.go-img(v-if="isSalesman === 0" src="/static/images/card-new-go.png", @click="goShop")
   img.go-img(v-else src="/static/images/card-new-go-shop.png", @click="goShop")
   .empty
-  .link-way.flex.align-center.justify-between
-    img(src="/static/images/card-new-wx-btn.png", @click="addWX", style="height:53rpx;width:63rpx")
-    img(src="/static/images/card-new-phone-btn.png", @click="phoneCall", style="height:96rpx;width:480rpx")
-    img(src="/static/images/card-new-qq-btn.png", @click="addQQ", style="height:53rpx;width:51rpx")
+  .link-way.flex.align-center.justify-center
+    // img(src="/static/images/card-new-wx-btn.png", @click="addWX", style="height:53rpx;width:63rpx")
+    img(src="/static/images/card-new-phone-btn.png", @click="phoneCall", style="height:96rpx;width:560rpx")
+    // img(src="/static/images/card-new-qq-btn.png", @click="addQQ", style="height:53rpx;width:51rpx")
   alert(:msg="alertText", v-model="alertShow", :cb="alertCb")
 </template>
 <script>
