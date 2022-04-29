@@ -7,10 +7,16 @@ div
         .ft-22.text-bold.margin-bottom-xs {{businessUserName}}
         .ft-16.margin-bottom-xs {{departmentName}} {{positionName}}
         .ft-13.margin-bottom-xs {{unitName}}
-      .num.flex.flex-direction
-        .flex.align-center.margin-bottom-sm
-          img.num-img(src="/static/images/card_tel.png")
-          .ft-13 {{phone}}
+        .ft-13.margin-bottom-xs {{phone}}
+      .num.flex.margin-bottom
+        img.margin-right(src="/static/images/card-new-share.png",style="height:56rpx;width:56rpx;", @click="selectCard('1')")
+        // img.margin-right(src="/static/images/card-new-download.png",style="height:56rpx;width:56rpx;", @click="selectCard('2')")
+        img.margin-right(src="/static/images/card-new-exchange.png",style="height:56rpx;width:56rpx;", @click="selectCard('3')")
+        img(src="/static/images/card_wx.png",style="height:56rpx;width:56rpx;", @click="addWX")
+      // .num.flex.flex-direction
+        // .flex.align-center.margin-bottom-sm
+        //   img.num-img(src="/static/images/card_tel.png")
+        //   .ft-13 {{phone}}
         //- .flex.align-center.margin-bottom-sm
         //-   img.num-img(src="/static/images/card_wx.png")
         //-   .ft-13 {{WX}}
@@ -22,11 +28,10 @@ div
         //   .ft-13 {{mail}}
     .half
       img(:src="urlImg",style="height:100%;width:100%;border-radius:0 20rpx 20rpx 0;")
-    .btns.flex.flex-direction.align-center
+    //- .btns.flex.flex-direction.align-center
       img.margin-bottom-sm(src="/static/images/card-new-share.png",style="height:50rpx;width:50rpx;", @click="selectCard('1')")
-      //- img.margin-bottom-sm(src="/static/images/card-new-download.png",style="height:50rpx;width:50rpx;", @click="selectCard('2')")
+      img.margin-bottom-sm(src="/static/images/card-new-download.png",style="height:50rpx;width:50rpx;", @click="selectCard('2')")
       img(src="/static/images/card-new-exchange.png",style="height:50rpx;width:50rpx;", @click="selectCard('3')")
-
   .ad.border-radius-20
       img(src="http://xymobile.xingyun361.com/card-new-ad.png",style="height:100%;width:100%;")
   .card.border-radius-20
@@ -75,8 +80,10 @@ div
   img.go-img(v-else src="/static/images/card-new-go-shop.png", @click="goShop")
   .empty
   .link-way.flex.align-center.justify-center
-    // img(src="/static/images/card-new-wx-btn.png", @click="addWX", style="height:53rpx;width:63rpx")
-    img(src="/static/images/card-new-phone-btn.png", @click="phoneCall", style="height:96rpx;width:560rpx")
+    div.flex.flex-direction.align-center.margin-right-lg(@click="addWX")
+      img.margin-bottom-xs(src="/static/images/card-new-wx-btn.png" style="height:48rpx;width:58rpx")
+      .ft-12(style="color:#90A3AC") 我的企微
+    img(src="/static/images/card-new-phone-btn.png", @click="phoneCall", style="height:96rpx;width:500rpx")
     // img(src="/static/images/card-new-qq-btn.png", @click="addQQ", style="height:53rpx;width:51rpx")
   alert(:msg="alertText", v-model="alertShow", :cb="alertCb")
 </template>
@@ -908,7 +915,7 @@ export default {
     color: #fff
     padding 30rpx 20rpx
     .name
-      height 158rpx
+      height 200rpx
       width 100%
       background-size cover
     .num
