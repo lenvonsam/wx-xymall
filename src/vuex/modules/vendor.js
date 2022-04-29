@@ -179,7 +179,7 @@ export default {
         event: '',
         url: {
           // path: '/pages/vendor/businessCard/main'
-          path: '/pages/vendor/businessCardNew/main'
+          path: '/pages/vendor/businessCard/main'
         }
       }
     ]
