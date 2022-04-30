@@ -22,8 +22,11 @@
   modal(v-model="modalShow", :title="modalTitle", :btns="modalBtns", @cb="modalCb")
     .padding-sm(v-if="modalMsg == '1'")
       div 尊敬的用户，您的商城体验权限时间已经结束，如需继续查看商城物资详情，请尽快完善个人信息并等待审核通过
+    .padding-sm(v-else-if="modalMsg == '5'")
+      div 您的信息审核未通过，如有疑问请联系业务员或咨询客服
     .padding-sm(v-else)
       div 恭喜您成为型云用户，您的信息正在审核中，请耐心等待
+
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
@@ -159,6 +162,9 @@ export default {
             } else if (res.data.userStatus === '02') {
               this.modalShow = true
               this.modalMsg = '2' // 审核中
+            } else if (res.data.userStatus === '05') {
+              this.modalShow = true
+              this.modalMsg = '5' // 审核中
             } else {
               this.showMsg('登录成功')
               // 获取客户对应的业务员
