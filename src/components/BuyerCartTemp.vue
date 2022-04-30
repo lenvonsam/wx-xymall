@@ -497,7 +497,7 @@ export default {
           self.btnDisable = false
           // 企业微信通知业务员
           const time = self.formatDateTime(new Date())
-          const content = `您的客户${this.currentUser.companyName}，${time}生成物资采购合同，合同编号${res.data.saleContractNo}，请及时进行确认，联系电话${this.currentUser.phone}`
+          const content = `您的客户${this.currentUser.companyName}，${time}生成物资销售合同，合同编号${res.data.saleContractNo}，请及时进行确认，联系电话${this.currentUser.phone}`
           // console.log('content+++++', content)
           const salesman = mpvue.getStorageSync('salesman')
           // console.log('salesman+++++', salesman)
