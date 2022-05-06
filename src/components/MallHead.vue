@@ -393,7 +393,7 @@ export default {
       this.materialStr = filters['material'].toString() === '全部' ? '' : filters['material'].toString()
       this.originStr = filters['origin'].toString() === '全部' ? '' : filters['origin'].toString()
       this.temporary = []
-      this.logEventPost({ event: 'app_mall_filter', type: '02', goods_name: this.tabVal, standard: this.standardStr, material: this.materialStr, supply: this.originStr })
+      this.logEventPost({event: 'app_mall_filter', type: '02', param: { goods_name: this.tabVal, standard: this.standardStr, material: this.materialStr, supply: this.originStr }})
       this.sortClose()
     },
     // 点击打开分类页面
