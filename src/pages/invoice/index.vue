@@ -274,7 +274,7 @@ export default {
         this.configVal({ key: 'tempObject', val: res.data })
         // this.showObj = res.data
       } else {
-        const res = await this.httpGet(this.apiList.zf.customerAppliedDetail + '?sourceBusiBillNo=' + ids)
+        const res = await this.httpGet(this.apiList.zf.customerAppliedDetail + '?sourceBusiBillNo=' + ids + '&busiBillType=' + obj.busiBillType)
         console.log(res)
         this.configVal({ key: 'tempObject', val: res.data })
         // this.showObj = res.data
