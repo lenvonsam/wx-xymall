@@ -11,49 +11,26 @@ div
       .bg-white.border-radius(:style="{'margin-bottom': isIpx ? '188rpx' : '120rpx'}")
         .ft-18.padding-sm 审批流程
         .ft-12.text-ellipsis-2.padding-left-sm.padding-right-sm.padding-bottom-xs 审批原因：{{detailData.applyMessage}}
-        //- .relative.padding-top-xl.padding-left-xl.padding-right-sm
-        //-   .flex.justify-between.padding-bottom-xs.border-left-line.padding-left-xl
-        //-     span.ft-16.font-bold 发起申请
-        //-     span.padding-left-xs.text-gray.ft-13 {{detailData.firstTask.createTime}}
-        //-   .flex.justify-between.text-gray.ft-14.border-left-line.padding-left-xl
-        //-     span.ft-14.font-bold 申请人:{{detailData.firstTask.userName}}
-        //-   img(src="/static/images/yes.png", style="height:50rpx;width:50rpx;position:absolute;top:25rpx;left:25rpx;")
-        //- .relative.padding-top-xl.padding-left-xl.padding-right-sm
-        //-   .flex.justify-between.padding-bottom-xs.border-left-line.padding-left-xl
-        //-     span.ft-16.font-bold 审批人
-        //-   .flex.justify-between.text-gray.ft-14.border-left-line.padding-left-xl
-        //-     span.ft-14.font-bold 可审批人:{{detailData.lastTask.userName}}
-        //-     span.ft-14.text-blue(style="white-space: nowrap;") 当前节点/待审批
-        //-   .circle.bg-blue 2
-
-        //- div(v-for="(item, index) in detailData.taskList" :key="index")
-        //-   div.step-title-box
-        //-     div {{ item.taskName }}
-        //-     div.step-title-reason {{ item.reason }}
-        //-   div {{ item.getStepContentTitle }}
-        //-   div {{ item.getNotifyStepContentTitle }}
-        //-   div.app-right-title
-        //-     p {{ item.createTime }}
-        //-   p(v-if="index === taskList.length - 1") 当前节点/{{ item.getStepStatusTitle }}
-        .relative.padding-top-xl.padding-left-xl.padding-right-sm(v-for="(item, index) in detailData.taskList" :key="index")
+        .relative.padding-top-xl.padding-left-xl.padding-right-sm
           .flex.justify-between.padding-bottom-xs.border-left-line.padding-left-xl
-            span.ft-16.font-bold {{ item.taskName }}
-            .flex.flex-direction
-              span.padding-left-xs.text-gray.ft-13 {{ item.createTime }}
+            span.ft-16.font-bold 发起申请
+            span.padding-left-xs.text-gray.ft-13 {{detailData.firstTask.createTime}}
           .flex.justify-between.text-gray.ft-14.border-left-line.padding-left-xl
-            div
-              div.ft-14.font-bold {{ item.getStepContentTitle }}
-              div.ft-14.font-bold {{ item.getNotifyStepContentTitle }}
-            div(v-if="index === taskList.length - 1").ft-14.text-blue(style="white-space: nowrap;") 当前节点/待审批
-          .circle.bg-blue(v-if="detailData.taskList.length - 1 === index") {{index + 1}}
-          .circle.bg-gray(v-else style="color:#ccc") {{index + 1}}
-
+            span.ft-14.font-bold 申请人:{{detailData.firstTask.userName}}
+          img(src="/static/images/yes.png", style="height:50rpx;width:50rpx;position:absolute;top:25rpx;left:25rpx;")
+        .relative.padding-top-xl.padding-left-xl.padding-right-sm
+          .flex.justify-between.padding-bottom-xs.border-left-line.padding-left-xl
+            span.ft-16.font-bold 审批人
+          .flex.justify-between.text-gray.ft-14.border-left-line.padding-left-xl
+            span.ft-14.font-bold 可审批人:{{detailData.lastTask.userName}}
+            span.ft-14.text-blue(style="white-space: nowrap;") 当前节点/待审批
+          .circle.bg-blue 2
         .relative.padding-top-xl.padding-left-xl.padding-right-sm.padding-bottom-sm
           .flex.justify-between.padding-bottom-xs.border-left-line.padding-left-xl
             span.ft-16.font-bold 结束
           .flex.justify-between.text-gray.ft-14.border-left-line.padding-left-xl
             span.ft-14.font-bold 归档
-          .circle.bg-gray(style="color:#ccc") {{detailData.taskList.length + 1}}
+          .circle.bg-gray(style="color:#ccc") 3
 
   .footer.row.bg-white.text-center.text-white.padding-sm(:style="{height: isIpx ? '188rpx' : '120rpx', 'padding-bottom': isIpx ? '68rpx' : '20rpx'}",
    v-if="btnShow && tempObject.fromPage !== 'reviewHistory'")
@@ -75,7 +52,6 @@ div
 import { mapState } from 'vuex'
 import modalInput from '@/components/ModalInput.vue'
 import modal from '@/components/Modal.vue'
-import moment from 'moment'
 export default {
   components: {
     modalInput,
@@ -110,8 +86,7 @@ export default {
       erpModalMsg: '此单存在销售定价变更，注意查看明细定价，是否继续审核通过？',
       erpModalShow2: false,
       erpModalVal: '',
-      jsonData: {},
-      taskList: []
+      jsonData: {}
     }
   },
   computed: {
@@ -306,56 +281,6 @@ export default {
         this.showMsg(err.message || '网络错误')
       }
     },
-    // 获取节点content title
-    getStepContentTitle (index, item) {
-      console.log('xixixixi', item, index)
-      const pendingTaskList = item.pendingTaskList || []
-      console.log('pendingTaskList', item.pendingTaskList)
-
-      const list = Array.from(
-        new Set(
-          pendingTaskList
-            .filter(m => !m.type)
-            .map(m => m.userName)
-            .join()
-            .split(',')
-        )
-      )
-      console.log('获取节点list++++', pendingTaskList[0], pendingTaskList[1], pendingTaskList[2])
-      if (index === 0) return '申请人：' + list.join()
-      if (item.taskKey === 'node-end') {
-        return ''
-      } else {
-        console.log('>>>>>>', (index === this.taskList.length - 1 ? '可' : '' + '审批人: ') + list.join())
-        return (index === this.taskList.length - 1 ? '可' : '' + '审批人: ') + list.join()
-      }
-    },
-    // 获取抄送人信息
-    getNotifyStepContentTitle (index, item) {
-      const pendingTaskList = item.pendingTaskList || []
-      const list = Array.from(
-        new Set(
-          pendingTaskList
-            .filter(m => m.type === 6 || m.type === 7)
-            .map(m => m.userName)
-            .join()
-            .split(',')
-        )
-      )
-      console.log('抄送人信息+++', list)
-      if (list.length === 0) return
-      if (index === 0) return
-      if (item.taskKey === 'node-end') return ''
-      return '抄送人：' + list.join()
-      // return `${
-      //   index === this.taskList.length - 1 ? '可' : ''
-      // }审批人: ${list.join()}`
-    },
-    // 获取节点的审批状态
-    getStepStatusTitle (index, item) {
-      console.log('节点状态', item.taskName)
-      return item.taskName
-    },
     async loadData () {
       console.log('+++>>>>', this.tempObject)
       // this.showLoading()
@@ -377,66 +302,8 @@ export default {
         taskId: data.taskList[data.taskList.length - 1].taskId,
         operName: data.taskList[data.taskList.length - 1].userName,
         firstTask: data.taskList[0],
-        lastTask: data.taskList[data.taskList.length - 1],
-        taskList: data.taskList
+        lastTask: data.taskList[data.taskList.length - 1]
       }
-
-      this.taskList = []
-      let lastTask = {}
-
-      for (let [index, task] of data.taskList.entries()) {
-        if (task.taskKey === lastTask.taskKey) {
-          if (task.userName) {
-            lastTask.content += ',' + task.userName
-          }
-
-          if (task.groupName) {
-            lastTask.content += ',' + task.groupName
-          }
-
-          lastTask.pendingTaskList.push(task)
-          continue
-        }
-
-        if (task.taskKey === 'node-start') {
-          task.title = '发起申请'
-        } else if (task.taskKey === 'node-end') {
-          task.title = '审批结束'
-        } else {
-          task.title = '审批人'
-        }
-
-        if (task.userName) {
-          task.content = task.userName
-        }
-
-        if (task.groupName) {
-          task.content = task.groupName
-        }
-
-        if (task.title === '审批人') {
-          if (task.type === 3) {
-            task.statusContent = '(已驳回)'
-          } else if (task.type === 2) {
-            task.statusContent = '(已同意)'
-          }
-        }
-        lastTask = task
-        lastTask.pendingTaskList = [JSON.parse(JSON.stringify(task))]
-        console.log('7777', index, task)
-        const getStepContentTitle = this.getStepContentTitle(index, task)
-        const getNotifyStepContentTitle = this.getNotifyStepContentTitle(index, task)
-        console.log('getNotifyStepContentTitle+++++', getNotifyStepContentTitle)
-        const getStepStatusTitle = this.getStepStatusTitle(index, task)
-        task.getStepContentTitle = getStepContentTitle
-        task.getNotifyStepContentTitle = getNotifyStepContentTitle
-        task.getStepStatusTitle = getStepStatusTitle
-        task.createTime = moment(task.createTime).format('YYYY-MM-DD HH:mm:ss')
-        this.taskList.push(task)
-      }
-
-      console.log('this.taskList+++++', this.taskList)
-
       console.log('议价参数整理====>', this.detailData)
       // name standard  material  amount  weight money
       let listData = jsonData.saleContractDetailDTOS || jsonData.preDemandDetailDTOS
