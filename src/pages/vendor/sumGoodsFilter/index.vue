@@ -92,7 +92,7 @@ export default {
         fromPage: 'mallFilter',
         noBack: true
       }
-      this.logEventPost({ event: 'app_mall_category', type: '02', goods_name: res.name, standard: res.standards })
+      this.logEventPost({ event: 'app_mall_category', type: '02', param: {goods_name: res.name, standard: res.standards} })
       this.configVal({ key: 'tempObject', val: res })
       this.back(-1)
     },

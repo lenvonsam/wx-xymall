@@ -47,6 +47,7 @@ const wxMixins = {
     httpGet: httpUtil.httpGet,
     httpPost: httpUtil.httpPost,
     httpPostForm: httpUtil.httpPostForm,
+    logEvent: httpUtil.logEvent,
     logEventGet: httpUtil.logEventGet,
     logEventPost: httpUtil.logEventPost,
     ironRequest: httpUtil.ironRequest,
