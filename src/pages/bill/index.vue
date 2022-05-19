@@ -449,6 +449,8 @@ export default {
             item.timeDown = ''
             item.timeDiff = new Date(item.currentDate.replace(/-/g, '/')).getTime() - new Date().getTime() // 服务器时间与本地时间的差额
             item.timeEnd = new Date(item.invalidDate.replace(/-/g, '/')).getTime()
+            item.inTaxReceiveMoney = $NumberUtil.plus(item.inTaxLadingMoney, item.unspentLadingAmount)
+            item.liftingFeeMoney = $NumberUtil.plus(item.ladingLiftingFeeMoney, item.unspentLadingLiftingAmount)
             item.timeEndLading = (item.ladingInvalidDate && new Date(item.ladingInvalidDate.replace(/-/g, '/')).getTime()) || 0
             item.status = self.contractStatus.find(c => {
               return c.id === item.xingyunContractStatus
@@ -479,6 +481,8 @@ export default {
             item.timeDiff = new Date(item.currentDate.replace(/-/g, '/')).getTime() - new Date().getTime() // 服务器时间与本地时间的差额
             item.timeEnd = new Date(item.invalidDate.replace(/-/g, '/')).getTime()
             item.timeEndLading = (item.ladingInvalidDate && new Date(item.ladingInvalidDate.replace(/-/g, '/')).getTime()) || 0
+            item.inTaxReceiveMoney = $NumberUtil.plus(item.inTaxLadingMoney, item.unspentLadingAmount)
+            item.liftingFeeMoney = $NumberUtil.plus(item.ladingLiftingFeeMoney, item.unspentLadingLiftingAmount)
             item.status = self.contractStatus.find(c => {
               return c.id === item.xingyunContractStatus
             }).name
