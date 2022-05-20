@@ -102,10 +102,11 @@ export default {
       }
     }
   },
-  created () {
+  onShow () {
     // 微信小程序版本更新
     this.autoUpdate()
-
+  },
+  created () {
     console.log('App.vue created生命周期')
     // 调用API从本地缓存中获取数据
     /*
