@@ -720,27 +720,25 @@ export default {
           mpvue.setStorageSync('cartAllCount', cartAllCount + 1)
 
           // console.log('obj+++', obj)
-          let allWeight = 0
-          if (obj.quantityType === '01') {
-            allWeight = obj.ratioAvailableManagerWeight
-          } else {
-            allWeight = obj.ratioAvailableManagerWeight
-          }
-          const addWeight = ((allWeight / obj.ratioAvailableAmount) * obj.num).toFixed(3)
-          const addPrice = obj.onlineQuantityType === '01' ? obj.ratioPriceManager : obj.ratioPricePound
-          const itemMsg = obj.onlineProductBrandName + '/' + obj.productTextureName + '/' + obj.specification + '/' + obj.length + '/' + obj.prodAreaName + '/' + (obj.toleranceRange ? obj.toleranceRange + '/' : '') + (obj.weightRange ? obj.weightRange : '')
+          // let allWeight = 0
+          // if (obj.quantityType === '01') {
+          //   allWeight = obj.ratioAvailableManagerWeight
+          // } else {
+          //   allWeight = obj.ratioAvailableManagerWeight
+          // }
+          // const addWeight = ((allWeight / obj.ratioAvailableAmount) * obj.num).toFixed(3)
+          // const addPrice = obj.onlineQuantityType === '01' ? obj.ratioPriceManager : obj.ratioPricePound
+          // const itemMsg = obj.onlineProductBrandName + '/' + obj.productTextureName + '/' + obj.specification + '/' + obj.length + '/' + obj.prodAreaName + '/' + (obj.toleranceRange ? obj.toleranceRange + '/' : '') + (obj.weightRange ? obj.weightRange : '')
           // 企业微信通知业务员
-          const time = this.formatDateTime(new Date())
-          const content = `您的客户${this.currentUser.companyName}于${time}对物资（${itemMsg}）进行加购，加购数量${obj.num}支，加购吨位${addWeight}吨，物资单价${addPrice}元/吨，请及时进行联系，联系电话${this.currentUser.phone}`
-          // console.log('content+++++', content)
-          const salesman = mpvue.getStorageSync('salesman')
-          // console.log('salesman++', salesman)
-          this.httpPost(this.apiList.zf.autoNotify, {
-            content: content,
-            members: salesman
-          }).catch(err => {
-            console.log(err)
-          })
+          // const time = this.formatDateTime(new Date())
+          // const content = `您的客户${this.currentUser.companyName}于${time}对物资（${itemMsg}）进行加购，加购数量${obj.num}支，加购吨位${addWeight}吨，物资单价${addPrice}元/吨，请及时进行联系，联系电话${this.currentUser.phone}`
+          // const salesman = mpvue.getStorageSync('salesman')
+          // this.httpPost(this.apiList.zf.autoNotify, {
+          //   content: content,
+          //   members: salesman
+          // }).catch(err => {
+          //   console.log(err)
+          // })
         } else {
           this.btnDisable = false
         }
