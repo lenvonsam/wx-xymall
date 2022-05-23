@@ -36,7 +36,8 @@ div
                       .padding-bottom-xs {{item.orgName}}
                       .flex.justify-between.padding-bottom-xs
                         span 共{{item.contractAmount}}支，{{item.estimatedTonnage}}吨
-                        .ft-18.text-black ￥{{item.inTaxReceiveMoney}}
+                        .ft-18.text-black(v-if="item.status ==='待付款'") ￥{{item.inTaxLadingMoney}}
+                        .ft-18.text-black(v-else) ￥{{item.inTaxReceiveMoney}}
                       .flex.justify-between.padding-bottom-xs
                         span 吊费：¥{{item.liftingFeeMoney}}
                         span(v-if="item.status === '已付款' && item.timeDown", style="display: flex;")
@@ -64,6 +65,7 @@ div
 </template>
 <script>
 import { mapState } from 'vuex'
+import $NumberUtil from '@/utils/bignumber'
 export default {
   data () {
     return {
@@ -287,6 +289,8 @@ export default {
             item.timeDiff = new Date(item.currentDate.replace(/-/g, '/')).getTime() - new Date().getTime() // 服务器时间与本地时间的差额
             item.timeEnd = new Date(item.invalidDate.replace(/-/g, '/')).getTime()
             item.timeEndLading = item.timeEndLading && (new Date(item.ladingInvalidDate.replace(/-/g, '/')).getTime() || 0)
+            item.inTaxReceiveMoney = $NumberUtil.plus(item.inTaxLadingMoney, item.unspentLadingAmount)
+            item.liftingFeeMoney = $NumberUtil.plus(item.ladingLiftingFeeMoney, item.unspentLadingLiftingAmount)
             console.log('>>>>')
             item.status = self.contractStatus.find(c => {
               return c.id === item.xingyunContractStatus
@@ -445,6 +449,8 @@ export default {
             item.timeDown = ''
             item.timeDiff = new Date(item.currentDate.replace(/-/g, '/')).getTime() - new Date().getTime() // 服务器时间与本地时间的差额
             item.timeEnd = new Date(item.invalidDate.replace(/-/g, '/')).getTime()
+            item.inTaxReceiveMoney = $NumberUtil.plus(item.inTaxLadingMoney, item.unspentLadingAmount)
+            item.liftingFeeMoney = $NumberUtil.plus(item.ladingLiftingFeeMoney, item.unspentLadingLiftingAmount)
             item.timeEndLading = (item.ladingInvalidDate && new Date(item.ladingInvalidDate.replace(/-/g, '/')).getTime()) || 0
             item.status = self.contractStatus.find(c => {
               return c.id === item.xingyunContractStatus
@@ -475,6 +481,8 @@ export default {
             item.timeDiff = new Date(item.currentDate.replace(/-/g, '/')).getTime() - new Date().getTime() // 服务器时间与本地时间的差额
             item.timeEnd = new Date(item.invalidDate.replace(/-/g, '/')).getTime()
             item.timeEndLading = (item.ladingInvalidDate && new Date(item.ladingInvalidDate.replace(/-/g, '/')).getTime()) || 0
+            item.inTaxReceiveMoney = $NumberUtil.plus(item.inTaxLadingMoney, item.unspentLadingAmount)
+            item.liftingFeeMoney = $NumberUtil.plus(item.ladingLiftingFeeMoney, item.unspentLadingLiftingAmount)
             item.status = self.contractStatus.find(c => {
               return c.id === item.xingyunContractStatus
             }).name

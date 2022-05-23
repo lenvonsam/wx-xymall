@@ -49,10 +49,10 @@ div
       .bg-white.solid-top.padding-sm.flex
         .col 共{{billDetail.totalAmount}}支，{{billDetail.totalWeight}}吨
         .col.text-right
-          .ft-12 吊费: ¥{{billDetail.liftingFeeMoney}}
+          .ft-12 吊费: ¥{{billDetail.countPrice.liftingFeeMoney}}
           .padding-top-xs
             span 合同金额：
-            span.text-red ￥{{billDetail.inTaxReceiveMoney}}
+            span.text-red ￥{{billDetail.countPrice.inTaxReceiveMoney}}
       .bg-white.mt-half-rem(v-if="billDetail.status_desc !== '待补款' && billDetail.status_desc !== '违约'")
         .padding-sm.text-black.text-bold.solid-bottom 实发信息
         .text-gray.padding-sm
@@ -145,6 +145,7 @@ div
 <script>
 import copyBtn from '@/components/CopyBtn.vue'
 import { mapState } from 'vuex'
+import $NumberUtil from '@/utils/bignumber'
 
 export default {
   data () {
@@ -180,6 +181,12 @@ export default {
       this.billDetail = res.data
       let totalWeight = 0
       let totalAmount = 0
+      res.data.countPrice = {
+        // inTaxReceiveMoney: res.data.inTaxReceiveMoney,
+        // liftingFeeMoney: res.data.liftingFeeMoney
+        inTaxReceiveMoney: $NumberUtil.plus(res.data.inTaxLadingMoney, res.data.unspentLadingAmount),
+        liftingFeeMoney: $NumberUtil.plus(res.data.ladingLiftingFeeMoney, res.data.unspentLadingLiftingAmount)
+      }
       res.data.contractDetailList.map((ic, idx) => {
         totalAmount += ic.amount
         if (ic.quantityType === '01') {
@@ -189,6 +196,7 @@ export default {
           totalWeight += ic.poundWeight
         }
       })
+
       this.billDetail.totalAmount = totalAmount
       this.billDetail.totalWeight = this.toFixed(totalWeight, 3)
       this.billDetail.status_desc = this.contractStatus.find(c => {

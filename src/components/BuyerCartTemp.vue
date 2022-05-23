@@ -47,7 +47,7 @@
                         span.ml-5 {{cart.stockZoneName}}
                         span.sub-mark.ml-5 {{cart.prodAreaName}}
                       .pt-5
-                        span {{cart.ratioAvailableAmount}}支 / {{cart.cartQuantityType == '02' ? cart.avblePoundWeight : cart.avbleManagerWeight}}吨
+                        span {{cart.ratioAvailableAmount}}支 / {{cart.cartQuantityType == '02' ? cart.ratioAvailablePoundWeight : cart.ratioAvailableManagerWeight}}吨
                         span.padding-left-xs 吊费:
                         span.ml-10 {{cart.price === '--' ? '--' : cart.liftingFee > 0 ? '￥' + cart.liftingFee + '/吨' : cart.liftingFee == 0 ? '无' : '线下结算'}}
                       .pt-5(v-if="cart.toleranceRange || cart.weightRange")
@@ -495,6 +495,16 @@ export default {
           this.modalShow = false
           this.hideLoading()
           self.btnDisable = false
+          // 企业微信通知业务员
+          // const time = self.formatDateTime(new Date())
+          // const content = `您的客户${this.currentUser.companyName}，${time}生成物资销售合同，合同编号${res.data.saleContractNo}，请及时进行确认，联系电话${this.currentUser.phone}`
+          // const salesman = mpvue.getStorageSync('salesman')
+          // self.httpPost(self.apiList.zf.autoNotify, {
+          //   content: content,
+          //   members: salesman
+          // }).catch(err => {
+          //   console.log(err)
+          // })
           this.jump(`/pages/pay/main?pageType=offlinePay&orderNo=${res.data.saleContractId}`)
         }).catch(e => {
           self.btnDisable = false

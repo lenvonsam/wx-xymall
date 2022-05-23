@@ -436,6 +436,10 @@ export default {
     // 首页banner图
     onlineBanner: 'sale/public/onlineBanner/queryPage',
     // 获取资源定价详情接口
-    queryPageByPriceVersion: 'purchase/resourcePricingItem/queryPageByPriceVersion'
+    queryPageByPriceVersion: 'purchase/resourcePricingItem/queryPageByPriceVersion',
+    // 获取该用户对应的业务员
+    salesman: 'base/salesman/list',
+    // 企业微信通知
+    autoNotify: 'wechat/cpAuth/autoNotify'
   }
 }

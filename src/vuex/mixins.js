@@ -47,6 +47,7 @@ const wxMixins = {
     httpGet: httpUtil.httpGet,
     httpPost: httpUtil.httpPost,
     httpPostForm: httpUtil.httpPostForm,
+    logEvent: httpUtil.logEvent,
     logEventGet: httpUtil.logEventGet,
     logEventPost: httpUtil.logEventPost,
     ironRequest: httpUtil.ironRequest,
@@ -269,6 +270,19 @@ const wxMixins = {
     base64FromStr (encoded) {
       var bytes = BASE64.decode(encoded)
       return UTF8.decode(bytes)
+    },
+    // 获取当前时间
+    formatDateTime (date) {
+      var y = date.getFullYear()
+      var m = date.getMonth() + 1
+      m = m < 10 ? ('0' + m) : m
+      var d = date.getDate()
+      d = d < 10 ? ('0' + d) : d
+      var h = date.getHours()
+      h = h < 10 ? ('0' + h) : h
+      var minute = date.getMinutes()
+      minute = minute < 10 ? ('0' + minute) : minute
+      return y + '年' + m + '月' + d + '日' + h + '时' + minute + '分'
     },
     // 设置购物车数量
     async setCartCount (userId) {

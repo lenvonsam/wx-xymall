@@ -129,6 +129,8 @@ div
           sapn(style="color: #000;font-size: 14px;font-weight: 400;") 天，请尽快完善信息哦！
     .padding-sm(v-else-if="modalMsg == '2'")
       div 尊敬的用户，您的商城体验权限时间已经结束，如需继续查看商城物资详情，请尽快完善个人信息并等待审核通过
+    .padding-sm(v-else-if="modalMsg == '5'")
+      div 尊敬的用户，您的信息审核未通过，如需继续查看商城物资详情，请联系业务员或咨询客服
     .padding-sm(v-else)
       div 恭喜您成为型云用户，您的信息正在审核中，请耐心等待
   modal(v-model="fillModalShow", :title="modalTitle", @cb="fillModalCb", :btns="fillModalBtns")
@@ -280,7 +282,7 @@ export default {
       // let lastExperienceDay = mpvue.getStorageSync('lastExperienceDay') || '' // 体验过期时间
       let isAuditingReminder = mpvue.getStorageSync('isAuditingReminder') || '' // 账号审核提醒
       let overdueReminder = mpvue.getStorageSync('overdueReminder') || '' // 体验过期提醒
-
+      let rejectReminder = mpvue.getStorageSync('rejectReminder') || '' // 账户审核驳回
       this.httpPost(this.apiList.zf.getPersonInfo, {}).then(res => {
         console.log('用户已登陆，获取用户信息++++', res)
         let data = res.data
@@ -306,6 +308,15 @@ export default {
               this.modalShow = true
               mpvue.setStorageSync('overdueReminder', this.getDate())
             }
+          }
+        }
+        console.log('isAuditing+++++', isAuditing)
+        if (isAuditing === '05') {
+          this.modalMsg = '5' // 审核未通过
+          this.hiddenPrice = true
+          if (rejectReminder !== this.getDate()) {
+            this.modalShow = true
+            mpvue.setStorageSync('rejectReminder', this.getDate())
           }
         }
         if (isAuditing === '02') {
@@ -464,7 +475,7 @@ export default {
       console.log(flag)
       this.fillModalShow = false
       if (flag.toString() === 'confirm') {
-        if (this.currentUser.userStatus !== '02') {
+        if (this.currentUser.userStatus !== '02' && this.currentUser.userStatus !== '05') {
           this.jump('/pages/account/companyUpdate/main?type=2')
         }
       }
@@ -656,6 +667,13 @@ export default {
                 { label: '确定', flag: 'confirm', className: 'main-btn' }
               ]
               this.btnDisable = false
+            } else if (this.currentUser.userStatus === '05') {
+              this.fillModalMsg = '您的信息未审核通过，如有疑问请联系业务员或咨询客服'
+              this.fillModalShow = true
+              this.fillModalBtns = [
+                { label: '确定', flag: 'confirm', className: 'main-btn' }
+              ]
+              this.btnDisable = false
             } else {
               obj.num = 1
               this.addCartItem(obj)
@@ -700,6 +718,27 @@ export default {
           var cartAllCount = mpvue.getStorageSync('cartAllCount') || 0
           this.tabDot(cartAllCount + 1)
           mpvue.setStorageSync('cartAllCount', cartAllCount + 1)
+
+          // console.log('obj+++', obj)
+          // let allWeight = 0
+          // if (obj.quantityType === '01') {
+          //   allWeight = obj.ratioAvailableManagerWeight
+          // } else {
+          //   allWeight = obj.ratioAvailableManagerWeight
+          // }
+          // const addWeight = ((allWeight / obj.ratioAvailableAmount) * obj.num).toFixed(3)
+          // const addPrice = obj.onlineQuantityType === '01' ? obj.ratioPriceManager : obj.ratioPricePound
+          // const itemMsg = obj.onlineProductBrandName + '/' + obj.productTextureName + '/' + obj.specification + '/' + obj.length + '/' + obj.prodAreaName + '/' + (obj.toleranceRange ? obj.toleranceRange + '/' : '') + (obj.weightRange ? obj.weightRange : '')
+          // 企业微信通知业务员
+          // const time = this.formatDateTime(new Date())
+          // const content = `您的客户${this.currentUser.companyName}于${time}对物资（${itemMsg}）进行加购，加购数量${obj.num}支，加购吨位${addWeight}吨，物资单价${addPrice}元/吨，请及时进行联系，联系电话${this.currentUser.phone}`
+          // const salesman = mpvue.getStorageSync('salesman')
+          // this.httpPost(this.apiList.zf.autoNotify, {
+          //   content: content,
+          //   members: salesman
+          // }).catch(err => {
+          //   console.log(err)
+          // })
         } else {
           this.btnDisable = false
         }
@@ -856,7 +895,7 @@ export default {
     },
     // 模态框回调
     erpModalCb (flag) {
-      this.httpPost(this.apiList.zf.updatePersonAgreement, {userGeneralAgreement: true}).then(res => {
+      this.httpPost(this.apiList.zf.updatePersonAgreement, { userGeneralAgreement: true }).then(res => {
         console.log('updateRule_res=====>' + JSON.stringify(res))
       }).catch(e => {
         console.log('updateRule_e=====>' + e)

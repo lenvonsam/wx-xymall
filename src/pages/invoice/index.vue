@@ -274,7 +274,7 @@ export default {
         this.configVal({ key: 'tempObject', val: res.data })
         // this.showObj = res.data
       } else {
-        const res = await this.httpGet(this.apiList.zf.customerAppliedDetail + '?sourceBusiBillNo=' + ids)
+        const res = await this.httpGet(this.apiList.zf.customerAppliedDetail + '?sourceBusiBillNo=' + ids + '&busiBillType=' + obj.busiBillType)
         console.log(res)
         this.configVal({ key: 'tempObject', val: res.data })
         // this.showObj = res.data
@@ -422,6 +422,7 @@ export default {
           res.data.map(itm => {
             let temp = itm
             // temp.checked = self.allChecked
+            temp.checked = false
             temp.price = Number(itm.price)
             self.listData.push(temp)
           })
@@ -438,6 +439,7 @@ export default {
         } else {
           res.data.map(itm => {
             let temp = itm
+            temp.checked = false
             // temp.checked = self.allChecked
             temp.price = Number(itm.price)
             self.listData.push(temp)
