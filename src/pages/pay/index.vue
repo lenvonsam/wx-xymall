@@ -243,7 +243,7 @@ export default {
           if (this.payTabsActive === '全款支付') {
             paramsOnj.paymentType = '01'
           } else if (this.payTabsActive === '定金支付') {
-            paramsOnj.paymentType = '02'
+            paramsOnj.paymentType = '03'
             paramsOnj.depositRatio = this.percent
           }
           this.showLoading()
