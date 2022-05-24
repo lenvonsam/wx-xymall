@@ -88,7 +88,7 @@ div
                 span {{billDetail.inTaxPayMoney}} 元
             .flex.padding-bottom-xs(v-if="billDetail.payMethod === '03'")
               .col 定金抵扣
-              .col.text-right.text-black {{billDetail.depositMoney}} 元
+              .col.text-right.text-black {{billDetail.earnestDeductAmount == 0 ? '0.00' : billDetail.earnestDeductAmount}}元
             .flex
               .col 未支付
               .col.text-right.text-black {{billDetail.unpaidAmount}} 元
