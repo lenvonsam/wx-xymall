@@ -321,7 +321,7 @@ export default {
         this.btnDisable = false
         return false
       }
-      this.logEventGet({ event: 'click_app_quotation_share', type: '01' })
+      this.logEvent({ event: 'click_app_quotation_share', type: '01' })
       const filterArray = this.carts.filter(item => {
         return item.choosed === true
       })

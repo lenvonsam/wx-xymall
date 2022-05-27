@@ -266,7 +266,7 @@ export default {
     }
   },
   onTabItemTap (item) {
-    this.logEventGet({ event: 'click_app_nav_mall', type: '01' })
+    this.logEvent({ event: 'click_app_nav_mall', type: '01' })
   },
   onUnload () {
     this.btnDisable = false
@@ -648,7 +648,7 @@ export default {
               })
             break
           case 'cart':
-            this.currentUser.type === 'seller' ? this.logEventGet({ event: 'click_app_mall_add_cart_seller', type: '01' }) : this.logEventGet({ event: 'click_app_mall_add_cart', type: '01' })
+            this.currentUser.type === 'seller' ? this.logEvent({ event: 'click_app_mall_add_cart_seller', type: '01' }) : this.logEvent({ event: 'click_app_mall_add_cart', type: '01' })
             if (this.currentUser.userStatus === '01' || this.currentUser.userStatus === '03') {
               this.fillModalMsg = '请先完善信息'
               this.fillModalShow = true
@@ -720,25 +720,27 @@ export default {
           mpvue.setStorageSync('cartAllCount', cartAllCount + 1)
 
           // console.log('obj+++', obj)
-          // let allWeight = 0
-          // if (obj.quantityType === '01') {
-          //   allWeight = obj.ratioAvailableManagerWeight
-          // } else {
-          //   allWeight = obj.ratioAvailableManagerWeight
-          // }
-          // const addWeight = ((allWeight / obj.ratioAvailableAmount) * obj.num).toFixed(3)
-          // const addPrice = obj.onlineQuantityType === '01' ? obj.ratioPriceManager : obj.ratioPricePound
-          // const itemMsg = obj.onlineProductBrandName + '/' + obj.productTextureName + '/' + obj.specification + '/' + obj.length + '/' + obj.prodAreaName + '/' + (obj.toleranceRange ? obj.toleranceRange + '/' : '') + (obj.weightRange ? obj.weightRange : '')
-          // 企业微信通知业务员
-          // const time = this.formatDateTime(new Date())
-          // const content = `您的客户${this.currentUser.companyName}于${time}对物资（${itemMsg}）进行加购，加购数量${obj.num}支，加购吨位${addWeight}吨，物资单价${addPrice}元/吨，请及时进行联系，联系电话${this.currentUser.phone}`
-          // const salesman = mpvue.getStorageSync('salesman')
-          // this.httpPost(this.apiList.zf.autoNotify, {
-          //   content: content,
-          //   members: salesman
-          // }).catch(err => {
-          //   console.log(err)
-          // })
+          const salesman = mpvue.getStorageSync('salesman')
+          if (salesman) {
+            let allWeight = 0
+            if (obj.quantityType === '01') {
+              allWeight = obj.ratioAvailableManagerWeight
+            } else {
+              allWeight = obj.ratioAvailableManagerWeight
+            }
+            const addWeight = ((allWeight / obj.ratioAvailableAmount) * obj.num).toFixed(3)
+            const addPrice = obj.onlineQuantityType === '01' ? obj.ratioPriceManager : obj.ratioPricePound
+            const itemMsg = obj.onlineProductBrandName + '/' + obj.productTextureName + '/' + obj.specification + '/' + obj.length + '/' + obj.prodAreaName + '/' + (obj.toleranceRange ? obj.toleranceRange + '/' : '') + (obj.weightRange ? obj.weightRange : '')
+            // 企业微信通知业务员
+            const time = this.formatDateTime(new Date())
+            const content = `您的客户${this.currentUser.companyName}于${time}对物资（${itemMsg}）进行加购，加购数量${obj.num}支，加购吨位${addWeight}吨，物资单价${addPrice}元/吨，请及时进行联系，联系电话${this.currentUser.phone}`
+            this.httpPost(this.apiList.zf.autoNotify, {
+              content: content,
+              members: salesman
+            }).catch(err => {
+              console.log(err)
+            })
+          }
         } else {
           this.btnDisable = false
         }

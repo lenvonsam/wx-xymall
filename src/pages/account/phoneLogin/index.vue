@@ -107,17 +107,17 @@ export default {
       'configVal'
     ]),
     jumpBack () {
-      this.logEventGet({ event: 'click_app_login_pwd', type: '01' })
+      this.logEvent({ event: 'click_app_login_pwd', type: '01' })
       this.back()
     },
     // 跳转注册页面
     jumpReg () {
-      // this.logEventGet({ event: 'click_app_register' })
+      // this.logEvent({ event: 'click_app_register' })
       this.jump('/pages/account/register/main')
     },
     // 跳转忘记密码页面
     jumpToChildPwd () {
-      // this.logEventGet({ event: 'click_app_forgetpwd' })
+      // this.logEvent({ event: 'click_app_forgetpwd' })
       this.configVal({ key: 'tempObject', val: { action: 'pageForward' } })
       this.jump('/pages/account/phoneLogin/main?type=forgetPwd')
     },
@@ -188,9 +188,9 @@ export default {
                 console.log('短信验证码登陆成功，获取用户信息+++++')
                 self.httpPost(self.apiList.zf.getPersonInfo, {}).then(res => {
                   if (res.data.userTypeLogo === '01') {
-                    this.logEventGet({event: 'click_app_login', type: '01'})
+                    this.logEvent({event: 'click_app_login', type: '01'})
                   } else {
-                    this.logEventGet({event: 'click_app_login_seller', type: '01'})
+                    this.logEvent({event: 'click_app_login_seller', type: '01'})
                   }
                   self.setUser({ token: self.token, user: res.data })
                   // console.log(res.data.userStatus, res.data.userTypeLogo, 'hahah++++')

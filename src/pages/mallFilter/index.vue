@@ -118,7 +118,7 @@ export default {
     },
     // 关键词搜索
     searchChange () {
-      this.currentUser.type === 'seller' ? this.logEventGet({ event: 'click_app_mall_category_search_seller', type: '01' }) : this.logEventGet({ event: 'click_app_mall_category_search', type: '01' })
+      this.currentUser.type === 'seller' ? this.logEvent({ event: 'click_app_mall_category_search_seller', type: '01' }) : this.logEvent({ event: 'click_app_mall_category_search', type: '01' })
       this.supplyList = []
       this.queryObject.specification = this.searchVal.replace(/x/g, '*')
       this.queryObject.specification = this.searchVal.replace(/×/g, '*')
@@ -264,7 +264,7 @@ export default {
     },
     // 点击右侧数字导航
     selectTag (idx) {
-      this.currentUser.type === 'seller' ? this.logEventGet({ event: 'click_app_mall_category_right_seller', type: '01' }) : this.logEventGet({ event: 'click_app_mall_category_right', type: '01' })
+      this.currentUser.type === 'seller' ? this.logEvent({ event: 'click_app_mall_category_right_seller', type: '01' }) : this.logEvent({ event: 'click_app_mall_category_right', type: '01' })
       this.searchIdx = idx
     }
   }

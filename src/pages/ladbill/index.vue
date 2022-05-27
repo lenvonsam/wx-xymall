@@ -187,7 +187,7 @@ export default {
       this.billTab[idx].data = []
       this.currentPage = 1
       this.finished = true
-      this.logEventGet({ event: 'click_app_td_search', type: '01' })
+      this.logEvent({ event: 'click_app_td_search', type: '01' })
       // this.listData = []
       this.loadData()
       // this.swiperCount = 0
@@ -236,8 +236,8 @@ export default {
         }
       }
       if (type === 'pay') {
-        if (this.tabName === '-2') this.logEventGet({ event: 'click_app_mylad_all_pay', type: '01' })
-        if (this.tabName === '4') this.logEventGet({ event: 'click_app_mylad_needpay_pay', type: '01' })
+        if (this.tabName === '-2') this.logEvent({ event: 'click_app_mylad_all_pay', type: '01' })
+        if (this.tabName === '4') this.logEvent({ event: 'click_app_mylad_needpay_pay', type: '01' })
         // 提单支付
         this.jump(`/pages/pay/main?pageType=ladPay&orderNo=${obj.no}&price=${obj.pay_price}&contractNo=${obj.contract_no}`)
       }

@@ -125,26 +125,26 @@ export default {
       }
     },
     jumpProfile () {
-      this.logEventGet({ event: 'click_app_me_information', type: '01' })
+      this.logEvent({ event: 'click_app_me_information', type: '01' })
       this.jump('/pages/account/profile/main')
     },
     jumpBalance () {
-      this.logEventGet({ event: 'click_app_me_balance', type: '01' })
+      this.logEvent({ event: 'click_app_me_balance', type: '01' })
       this.jump('/pages/account/balance/main')
     },
     jumpBillMore () {
-      this.logEventGet({ event: 'click_app_me_myorder_more', type: '01' })
+      this.logEvent({ event: 'click_app_me_myorder_more', type: '01' })
       this.jump('/pages/bill/main')
     },
     jumpBicon (url) {
-      // if (url.path === '/bill?tabName=1') this.logEventGet({ event: 'click_app_me_to_pay_order' })
-      // if (url.path === '/ladbill/confirm/list') this.logEventGet({ event: 'click_app_me_to_confirm' })
-      // if (url.path === '/ladbill?tabName=4') this.logEventGet({ event: 'click_app_me_to_pay_contract' })
-      // if (url.path === '/invoice') this.logEventGet({ event: 'click_app_me_to_invoice' })
+      // if (url.path === '/bill?tabName=1') this.logEvent({ event: 'click_app_me_to_pay_order' })
+      // if (url.path === '/ladbill/confirm/list') this.logEvent({ event: 'click_app_me_to_confirm' })
+      // if (url.path === '/ladbill?tabName=4') this.logEvent({ event: 'click_app_me_to_pay_contract' })
+      // if (url.path === '/invoice') this.logEvent({ event: 'click_app_me_to_invoice' })
       this.jump(url.path)
     },
     serviceCallUrl () {
-      this.logEventGet({ event: 'click_app_me_tel', type: '01' })
+      this.logEvent({ event: 'click_app_me_tel', type: '01' })
       window.location.href = 'tel://' + this.serviceCall
     }
   }

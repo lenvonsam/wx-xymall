@@ -287,7 +287,7 @@ export default {
       // this.sortCb('name')
     },
     classifyClick () {
-      // this.logEventGet({ event: 'click_app_mall_category' })
+      // this.logEvent({ event: 'click_app_mall_category' })
       const firstShare = mpvue.getStorageSync('firstShareMallClassify') || false
       if (!firstShare) {
         this.modalIntroShow = true
@@ -372,7 +372,7 @@ export default {
     },
     standardChange (e) {
       this.throttle(() => {
-        // this.logEventGet({ event: 'click_app_mall_category_search' })
+        // this.logEvent({ event: 'click_app_mall_category_search' })
         this.queryObject.search = e.mp.detail.value
         this.currentPage = 1
         this.sortCb('standard')

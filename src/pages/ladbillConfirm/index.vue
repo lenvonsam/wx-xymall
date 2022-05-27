@@ -61,7 +61,7 @@ export default {
       this.loadData(done)
     },
     jumpConfirm (item) {
-      this.logEventGet({ event: 'click_app_td_confirm', type: '01' })
+      this.logEvent({ event: 'click_app_td_confirm', type: '01' })
       this.jump('/pages/ladbillConfirmDetail/main?contractId=' + item.saleContractId)
     },
     loadData (done) {

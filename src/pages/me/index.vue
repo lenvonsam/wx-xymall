@@ -151,7 +151,7 @@ export default {
     })
   },
   onTabItemTap (item) {
-    this.logEventGet({ event: 'click_app_nav_me', type: '01' })
+    this.logEvent({ event: 'click_app_nav_me', type: '01' })
   },
   onHide () {
     this.alertShow = false
@@ -343,7 +343,7 @@ export default {
         this.modalMsg = '您未登录,请先登录'
         this.modalShow = true
       } else {
-        this.logEventGet({ event: 'click_app_me_message', type: '01' })
+        this.logEvent({ event: 'click_app_me_message', type: '01' })
         this.jump('/pages/cardList/main?title=消息中心&type=noticeList')
       }
     },
@@ -421,7 +421,7 @@ export default {
         this.modalMsg = '您未登录,请先登录'
         this.modalShow = true
       } else {
-        this.logEventGet({ event: 'click_app_me_setting', type: '01' })
+        this.logEvent({ event: 'click_app_me_setting', type: '01' })
         this.jump('/pages/account/setting/main')
       }
     },
@@ -431,7 +431,7 @@ export default {
         this.modalMsg = '您未登录,请先登录'
         this.modalShow = true
       } else {
-        this.logEventGet({ event: item.event, type: '01' })
+        this.logEvent({ event: item.event, type: '01' })
         this.jump(item.url)
       }
     },
@@ -441,7 +441,7 @@ export default {
       if (!this.isLogin) {
         this.jump('/pages/account/login/main')
       } else {
-        // this.logEventGet({ event: 'click_app_me_profile' })
+        // this.logEvent({ event: 'click_app_me_profile' })
         this.jump('/pages/account/profile/main')
       }
     },
@@ -452,10 +452,10 @@ export default {
         this.modalShow = true
       } else {
         if (this.currentUser.type === 'seller') {
-          this.logEventGet({ event: 'click_app_me_order_all_seller', type: '01' })
+          this.logEvent({ event: 'click_app_me_order_all_seller', type: '01' })
           this.jump('/pages/vendor/contractTrack/main')
         } else {
-          this.logEventGet({ event: 'click_app_me_balance', type: '01' })
+          this.logEvent({ event: 'click_app_me_balance', type: '01' })
           this.jump('/pages/account/balance/main')
         }
       }
@@ -466,8 +466,8 @@ export default {
         this.modalMsg = '您未登录,请先登录'
         this.modalShow = true
       } else {
-        // this.logEventGet({ event: 'click_app_me_myorder_more' })
-        // this.logEventGet({ event: 'click_app_me_order_all' })
+        // this.logEvent({ event: 'click_app_me_myorder_more' })
+        // this.logEvent({ event: 'click_app_me_order_all' })
         this.jump('/pages/bill/main')
       }
     },
@@ -477,7 +477,7 @@ export default {
         this.modalMsg = '您未登录,请先登录'
         this.modalShow = true
       } else {
-        this.logEventGet({ event: icon.event, type: '01' })
+        this.logEvent({ event: icon.event, type: '01' })
         this.jump(icon.url.path)
       }
     },
@@ -486,7 +486,7 @@ export default {
         this.modalMsg = '您未登录,请先登录'
         this.modalShow = true
       } else {
-        this.logEventGet({ event: icon.event, type: '01' })
+        this.logEvent({ event: icon.event, type: '01' })
         this.jump(icon.url.path)
       }
     }

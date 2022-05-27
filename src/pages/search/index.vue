@@ -83,7 +83,7 @@ export default {
         this.configVal({ key: 'tempObject', val: { search: searchName, fromPage: 'search', noBack: true } })
       } else {
         // 搜索框搜索
-        this.logEventPost({ event: 'app_mall_search', type: '02', param: { search: this.searchWord || '' } })
+        this.logEvent({ event: 'app_mall_search', type: '02', param: { search: this.searchWord || '' } })
         this.configVal({ key: 'tempObject', val: { search: this.searchWord || '', fromPage: 'search', noBack: true } })
       }
       this.searchWord = ''

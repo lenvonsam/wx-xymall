@@ -95,17 +95,17 @@ export default {
     },
     // 跳转手机验证码注册页面
     jumpReg () {
-      this.logEventGet({ event: 'click_app_register', type: '01' })
+      this.logEvent({ event: 'click_app_register', type: '01' })
       this.jump('/pages/account/register/main')
     },
     // 跳转忘记密码页面
     jumpForgetPwd () {
-      this.logEventGet({ event: 'click_app_forgetpwd', type: '01' })
+      this.logEvent({ event: 'click_app_forgetpwd', type: '01' })
       this.jump('/pages/account/phoneLogin/main?type=forgetPwd')
     },
     // 跳转手机验证码登陆页面
     jumpPhoneLogin () {
-      this.logEventGet({ event: 'click_app_login_phone', type: '01' })
+      this.logEvent({ event: 'click_app_login_phone', type: '01' })
       this.jump('/pages/account/phoneLogin/main')
     },
     // 账号密码登陆
@@ -143,7 +143,7 @@ export default {
           self.httpPost(self.apiList.zf.getPersonInfo, {}).then(res => {
             console.log(res.data)
             self.setUser({token: self.token, user: res.data})
-            res.data.userTypeLogo === '01' ? this.logEventGet({event: 'click_app_login', type: '01'}) : this.logEventGet({event: 'click_app_login_seller', type: '01'})
+            res.data.userTypeLogo === '01' ? this.logEvent({event: 'click_app_login', type: '01'}) : this.logEvent({event: 'click_app_login_seller', type: '01'})
             if (res.data.userStatus === '01') {
               const trial = Number(7 - res.data.experienceDays) // 体验期剩余天数
               if (trial >= 0 && trial <= 7) {
@@ -190,7 +190,7 @@ export default {
           })
           this.configVal({ key: 'oldVersion', val: this.currentVersion })
           // this.getRemoteSearchHistory(data)
-          // data.type === 'seller' ? this.logEventGet({ event: 'click_app_login_seller' }) : this.logEventGet({ event: 'click_app_login' })
+          // data.type === 'seller' ? this.logEvent({ event: 'click_app_login_seller' }) : this.logEvent({ event: 'click_app_login' })
           // if (data.isnew) {
           //   this.canClick = true
           //   this.confirm({ content: '您是新用户，请先完善公司信息' }).then(res => {

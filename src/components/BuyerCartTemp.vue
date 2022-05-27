@@ -284,7 +284,7 @@ export default {
       this.pickWayShow = false
     },
     jumpMall () {
-      this.logEventGet({ event: 'click_app_cart_go_mall', type: '01' })
+      this.logEvent({ event: 'click_app_cart_go_mall', type: '01' })
       this.tab('/pages/mall/main')
     },
     alertCb () {
@@ -293,7 +293,7 @@ export default {
     },
     openEdit () {
       this.pickWayShow = false
-      if (!this.isEdit) this.logEventGet({event: 'click_app_cart_modify', type: '01'})
+      if (!this.isEdit) this.logEvent({event: 'click_app_cart_modify', type: '01'})
       this.isEdit = !this.isEdit
     },
     tabSelect (type, item) {
@@ -305,7 +305,7 @@ export default {
       }
     },
     openPickWay (type) {
-      this.logEventGet({event: 'click_app_cart_address', type: '01'})
+      this.logEvent({event: 'click_app_cart_address', type: '01'})
       this.pickWayShow = !this.pickWayShow
     },
     refresher (done) {
@@ -319,7 +319,7 @@ export default {
     },
     // 清空购物车
     clearCarts () {
-      this.logEventGet({ event: 'click_app_cart_del_all', type: '01' })
+      this.logEvent({ event: 'click_app_cart_del_all', type: '01' })
       const self = this
       console.log(this.carts)
       if (this.carts.length > 0) {
@@ -366,7 +366,7 @@ export default {
       }
     },
     choosedAll () {
-      this.logEventGet({ event: 'click_app_cart_checkall', type: '01' })
+      this.logEvent({ event: 'click_app_cart_checkall', type: '01' })
       this.allChoosed = !this.allChoosed
       if (this.allChoosed) {
         this.carts.map(itm => {
@@ -388,7 +388,7 @@ export default {
       let canSellArray = filterArray.filter(itm => String(itm.price).indexOf('--') >= 0)
       // const self = this
       if (this.isEdit) {
-        this.logEventGet({ event: 'click_app_cart_del', type: '01' })
+        this.logEvent({ event: 'click_app_cart_del', type: '01' })
         if (filterArray.length === 0) {
           this.showMsg('请选择所需删除的商品')
           return
@@ -502,16 +502,18 @@ export default {
           this.hideLoading()
           self.btnDisable = false
           // 企业微信通知业务员
-          // const time = self.formatDateTime(new Date())
-          // const content = `您的客户${this.currentUser.companyName}，${time}生成物资销售合同，合同编号${res.data.saleContractNo}，请及时进行确认，联系电话${this.currentUser.phone}`
-          // const salesman = mpvue.getStorageSync('salesman')
-          // self.httpPost(self.apiList.zf.autoNotify, {
-          //   content: content,
-          //   members: salesman
-          // }).catch(err => {
-          //   console.log(err)
-          // })
-          this.jump(`/pages/pay/main?pageType=offlinePay&orderNo=${res.data.saleContractId}`)
+          const salesman = mpvue.getStorageSync('salesman')
+          if (salesman) {
+            const time = self.formatDateTime(new Date())
+            const content = `您的客户${this.currentUser.companyName}，${time}生成物资销售合同，合同编号${res.data.saleContractNo}，请及时进行确认，联系电话${this.currentUser.phone}`
+            self.httpPost(self.apiList.zf.autoNotify, {
+              content: content,
+              members: salesman
+            }).catch(err => {
+              console.log(err)
+            })
+            this.jump(`/pages/pay/main?pageType=offlinePay&orderNo=${res.data.saleContractId}`)
+          }
         }).catch(e => {
           self.btnDisable = false
           this.modalShow = false

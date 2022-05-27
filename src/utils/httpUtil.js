@@ -310,7 +310,8 @@ function logEvent (params, noSeller) {
   } else {
     let header = {
       'PlatformId': 'ZF',
-      'AppType': 'xingyun-miniapp'
+      'AppType': 'xingyun-miniapp',
+      'Authorization': this.token
     }
     let url = zfBASICURL + this.apiList.zf.logSave
     mpvue.request({

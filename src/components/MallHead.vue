@@ -266,35 +266,35 @@ export default {
     ]),
     // 获取焦点（请输入规格快速查询）
     standardInputFocus () {
-      this.currentUser.type === 'seller' ? this.logEventGet({ event: 'click_app_mall_standard_search_seller', type: '01' }) : this.logEventGet({ event: 'click_app_mall_standard_search', type: '01' })
+      this.currentUser.type === 'seller' ? this.logEvent({ event: 'click_app_mall_standard_search_seller', type: '01' }) : this.logEvent({ event: 'click_app_mall_standard_search', type: '01' })
     },
     // 打开规格下拉筛选框
     openStandard () {
       this.currentPage = 0
-      this.currentUser.type === 'seller' ? this.logEventGet({ event: 'click_app_mall_standard_seller', type: '01' }) : this.logEventGet({ event: 'click_app_mall_standard', type: '01' })
+      this.currentUser.type === 'seller' ? this.logEvent({ event: 'click_app_mall_standard_seller', type: '01' }) : this.logEvent({ event: 'click_app_mall_standard', type: '01' })
       this.sortCb('standard')
     },
     // 打开材质下拉筛选框
     openMaterial () {
       this.currentPage = 0
-      this.currentUser.type === 'seller' ? this.logEventGet({ event: 'click_app_mall_material_seller', type: '01' }) : this.logEventGet({ event: 'click_app_mall_material', type: '01' })
+      this.currentUser.type === 'seller' ? this.logEvent({ event: 'click_app_mall_material_seller', type: '01' }) : this.logEvent({ event: 'click_app_mall_material', type: '01' })
       this.sortCb('material')
     },
     // 打开产地下拉筛选框
     openSupply () {
       this.currentPage = 0
-      this.currentUser.type === 'seller' ? this.logEventGet({ event: 'click_app_mall_supply_seller', type: '01' }) : this.logEventGet({ event: 'click_app_mall_supply', type: '01' })
+      this.currentUser.type === 'seller' ? this.logEvent({ event: 'click_app_mall_supply_seller', type: '01' }) : this.logEvent({ event: 'click_app_mall_supply', type: '01' })
       this.sortCb('origin')
     },
     // 打开品名下拉筛选框
     openName () {
       this.currentPage = 0
-      this.currentUser.type === 'seller' ? this.logEventGet({ event: 'click_app_mall_goods_drop_down_seller', type: '01' }) : this.logEventGet({ event: 'click_app_mall_goods_drop_down', type: '01' })
+      this.currentUser.type === 'seller' ? this.logEvent({ event: 'click_app_mall_goods_drop_down_seller', type: '01' }) : this.logEvent({ event: 'click_app_mall_goods_drop_down', type: '01' })
       this.activeTab = 'name'
     },
     // 点击跳转搜索页面
     jumpSearchInput () {
-      this.currentUser.type === 'seller' ? this.logEventGet({ event: 'click_app_mall_search_seller', type: '01' }) : this.logEventGet({ event: 'click_app_mall_search', type: '01' })
+      this.currentUser.type === 'seller' ? this.logEvent({ event: 'click_app_mall_search_seller', type: '01' }) : this.logEvent({ event: 'click_app_mall_search', type: '01' })
       this.jump('/pages/search/main')
     },
     // 清除搜索（请输入规格快速查询）
@@ -315,7 +315,7 @@ export default {
     },
     // 点击分类
     classifyClick () {
-      this.currentUser.type === 'seller' ? this.logEventGet({ event: 'click_app_mall_category_seller', type: '01' }) : this.logEventGet({ event: 'click_app_mall_category', type: '01' })
+      this.currentUser.type === 'seller' ? this.logEvent({ event: 'click_app_mall_category_seller', type: '01' }) : this.logEvent({ event: 'click_app_mall_category', type: '01' })
       // 分类使用引导图
       const firstShare = mpvue.getStorageSync('firstShareMallClassify') || false
       if (!firstShare) {
@@ -393,7 +393,7 @@ export default {
       this.materialStr = filters['material'].toString() === '全部' ? '' : filters['material'].toString()
       this.originStr = filters['origin'].toString() === '全部' ? '' : filters['origin'].toString()
       this.temporary = []
-      this.logEventPost({event: 'app_mall_filter', type: '02', param: { goods_name: this.tabVal, standard: this.standardStr, material: this.materialStr, supply: this.originStr }})
+      this.logEvent({event: 'app_mall_filter', type: '02', param: { goods_name: this.tabVal, standard: this.standardStr, material: this.materialStr, supply: this.originStr }})
       this.sortClose()
     },
     // 点击打开分类页面
@@ -416,7 +416,7 @@ export default {
     // 规格下拉筛选框搜索框搜索内容改变
     standardChange (e) {
       this.throttle(() => {
-        this.currentUser.type === 'seller' ? this.logEventGet({ event: 'click_app_mall_category_search_seller', type: '01' }) : this.logEventGet({ event: 'click_app_mall_category_search', type: '01' })
+        this.currentUser.type === 'seller' ? this.logEvent({ event: 'click_app_mall_category_search_seller', type: '01' }) : this.logEvent({ event: 'click_app_mall_category_search', type: '01' })
         this.queryObject.search = e.mp.detail.value
         this.currentPage = 0
         this.sortCb('standard')
@@ -775,9 +775,9 @@ export default {
     // 选择商城的展示模式
     selectMall (flag) {
       if (flag) {
-        this.currentUser.type === 'seller' ? this.logEventGet({ event: 'click_app_mall_view_list_seller', type: '01' }) : this.logEventGet({ event: 'click_app_mall_view_list', type: '01' })
+        this.currentUser.type === 'seller' ? this.logEvent({ event: 'click_app_mall_view_list_seller', type: '01' }) : this.logEvent({ event: 'click_app_mall_view_list', type: '01' })
       } else {
-        this.currentUser.type === 'seller' ? this.logEventGet({ event: 'click_app_mall_view_grid_seller', type: '01' }) : this.logEventGet({ event: 'click_app_mall_view_grid', type: '01' })
+        this.currentUser.type === 'seller' ? this.logEvent({ event: 'click_app_mall_view_grid_seller', type: '01' }) : this.logEvent({ event: 'click_app_mall_view_grid', type: '01' })
       }
       this.mallFlag = flag
       this.$emit('selectMall', flag)
