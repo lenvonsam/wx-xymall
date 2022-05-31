@@ -53,8 +53,8 @@ div
   .mask(v-if="isSave")
     .save.flex.flex-direction.align-center.relative
       .close(style="z-index: 999")
-        img(src="/static/images/card-new-close.png", @click="closePoster", style="position:absolute;top:0rpx;right:0rpx;height:50rpx;width:50rpx;")
-      img(:src="posterImg", style="height:900rpx;width:550rpx;z-index:998;")
+        img(src="/static/images/card-new-close.png", @click="closePoster", style="position:absolute;top:0rpx;right:0rpx;height:50rpx;width:50rpx;border-top-right-radius: 12rpx;")
+      img(:src="posterImg", style="height:900rpx;width:550rpx;z-index:998;border-top-left-radius: 12rpx;border-top-right-radius: 12rpx;")
       .save-btn(@click="saveToAlbum") 保存名片至相册
   .mask(v-if="isExchange")
     .exchange
@@ -1078,6 +1078,7 @@ export default {
       top 0
       right 0
       border-bottom-left-radius 100%
+      border-top-right-radius: 12rpx;
       z-index 998
     .save-btn
       height 80rpx
