@@ -206,7 +206,7 @@ export default {
     // 点击产品分类
     classifyClick (id, name) {
       // this.configVal({ key: 'tempObject', val: { name: title } })
-      this.logEvent({ event: 'click_app_index_category', name: name, type: '01' })
+      this.logEvent({ event: 'click_app_index_category', param: {name: name}, type: '01' })
       this.configVal({ key: 'tempObject', val: { name: name, fromPage: 'home' } })
       this.tab('/pages/mall/main')
     },
@@ -227,7 +227,7 @@ export default {
     },
     // 点击查看更多
     mallMore () {
-      this.logEvent({ event: 'click_app_index_category', name: '查看更多', type: '01' })
+      this.logEvent({ event: 'click_app_index_category', param: {name: '查看更多'}, type: '01' })
       this.tab('/pages/mall/main')
     },
     // initChart (canvas, width, height) {

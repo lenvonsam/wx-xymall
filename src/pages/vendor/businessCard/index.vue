@@ -10,7 +10,7 @@ div
         .ft-13.margin-bottom-xs {{phone}}
       .num.flex.margin-bottom
         img.margin-right(src="/static/images/card-new-share.png",style="height:56rpx;width:56rpx;", @click="selectCard('1')")
-        // img.margin-right(src="/static/images/card-new-download.png",style="height:56rpx;width:56rpx;", @click="selectCard('2')")
+        img.margin-right(src="/static/images/card-new-download.png",style="height:56rpx;width:56rpx;", @click="selectCard('2')")
         img.margin-right(src="/static/images/card-new-exchange.png",style="height:56rpx;width:56rpx;", @click="selectCard('3')")
         img(src="/static/images/card_wx.png",style="height:56rpx;width:56rpx;", @click="addWX")
       // .num.flex.flex-direction
