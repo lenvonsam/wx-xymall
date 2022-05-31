@@ -45,17 +45,23 @@ export default {
     },
     // 微信小程序版本更新
     autoUpdate () {
-      console.log(new Date())
+      console.log('进入小程序版本检查更新+++')
+      console.log(wx.canIUse('getUpdateManager'))
+      // console.log(new Date())
       // 获取小程序更新机制兼容
       if (wx.canIUse('getUpdateManager')) {
+        console.log('canIUse111')
         const updateManager = wx.getUpdateManager()
         // 1. 检查小程序是否有新版本发布
         updateManager.onCheckForUpdate(res => {
+          console.log('canIUse222', res)
           // 请求完新版本信息的回调
           if (res.hasUpdate) {
+            console.log('canIUse333')
             // 2. 小程序有新版本，则静默下载新版本，做好更新准备
             updateManager.onUpdateReady(() => {
-              console.log(new Date())
+              // console.log(new Date())
+              console.log('canIUse444')
               wx.showModal({
                 title: '更新提示',
                 content: '新版本已经准备好，是否重启应用？',
@@ -101,10 +107,6 @@ export default {
         })
       }
     }
-  },
-  onShow () {
-    // 微信小程序版本更新
-    this.autoUpdate()
   },
   created () {
     console.log('App.vue created生命周期')
@@ -246,6 +248,21 @@ export default {
       }
     })
   }
+  mounted() {
+    console.log('App mounted')
+  },
+  onLoad() {
+    console.log(App onLoad')
+  },
+  onReady () {
+    console.log('App onReady')
+  },
+  onShow() {
+    console.log('App onShow')
+    // 微信小程序版本更新
+    this.autoUpdate()
+  },
+
 }
 </script>
 
