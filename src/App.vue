@@ -247,22 +247,21 @@ export default {
         console.log('capsule:>>', capsule)
       }
     })
-  }
-  mounted() {
+  },
+  mounted () {
     console.log('App mounted')
   },
-  onLoad() {
-    console.log(App onLoad')
+  onLoad () {
+    console.log('App onLoad')
   },
   onReady () {
     console.log('App onReady')
   },
-  onShow() {
+  onShow () {
     console.log('App onShow')
     // 微信小程序版本更新
     this.autoUpdate()
-  },
-
+  }
 }
 </script>
 
