@@ -268,7 +268,7 @@ export default {
             if (item.orgId !== 'C00011') {
               item.contractDelayTimes = item.contractDelayTimes - 1
             }
-            return item.auditStatus !== '10' && item.auditStatus !== '20' && item.xingyunContractStatus !== '02' && item.xingyunContractStatus !== '03' && (!item.goodsFlag && !item.out_amount)
+            return item.auditStatus !== '10' && item.auditStatus !== '20' && item.xingyunContractStatus !== '02' && item.xingyunContractStatus !== '03' && item.contractType !== '07' && (!item.goodsFlag && !item.out_amount)
           })
           if (arr.length === 0 && me.currentPage === 1) {
             me.listData = []
