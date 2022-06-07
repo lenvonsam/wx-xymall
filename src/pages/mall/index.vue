@@ -520,6 +520,7 @@ export default {
       const idx = e.mp.detail.current
       this.mallTabVal = this.goodsNameList[idx].id
       console.log('mallTabVal', this.mallTabVal)
+      this.logEvent({ event: 'app_mall_filter', param: {goods_name: this.mallTabVal}, type: '02' })
       if (this.goodsNameList[idx]) {
         this.showLoading()
         this.isload = true

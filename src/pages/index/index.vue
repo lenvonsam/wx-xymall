@@ -102,6 +102,7 @@ export default {
     }
   },
   onLoad (opt) {
+    this.logEvent({ event: 'click_app_nav_index', type: '01' })
     console.log('onLoad', opt)
     /**
      * 添加扫码后获取参数操作
@@ -206,7 +207,7 @@ export default {
     // 点击产品分类
     classifyClick (id, name) {
       // this.configVal({ key: 'tempObject', val: { name: title } })
-      this.logEvent({ event: 'click_app_index_category', param: {name: name}, type: '01' })
+      this.logEvent({ event: 'click_app_index_category', param: {name: name}, type: '02' })
       this.configVal({ key: 'tempObject', val: { name: name, fromPage: 'home' } })
       this.tab('/pages/mall/main')
     },
@@ -227,7 +228,7 @@ export default {
     },
     // 点击查看更多
     mallMore () {
-      this.logEvent({ event: 'click_app_index_category', param: {name: '查看更多'}, type: '01' })
+      this.logEvent({ event: 'click_app_index_category', param: {name: '查看更多'}, type: '02' })
       this.tab('/pages/mall/main')
     },
     // initChart (canvas, width, height) {

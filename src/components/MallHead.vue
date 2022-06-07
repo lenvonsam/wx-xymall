@@ -393,7 +393,13 @@ export default {
       this.materialStr = filters['material'].toString() === '全部' ? '' : filters['material'].toString()
       this.originStr = filters['origin'].toString() === '全部' ? '' : filters['origin'].toString()
       this.temporary = []
-      this.logEvent({event: 'app_mall_filter', type: '02', param: { goods_name: this.tabVal, standard: this.standardStr, material: this.materialStr, supply: this.originStr }})
+      const param = {goods_name: this.tabVal, standard: this.standardStr, material: this.materialStr, supply: this.originStr}
+      for (let key of Object.keys(param)) {
+        if (!param[key]) {
+          delete param[key]
+        }
+      }
+      this.logEvent({event: 'app_mall_filter', type: '02', param: param})
       this.sortClose()
     },
     // 点击打开分类页面
