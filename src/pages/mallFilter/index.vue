@@ -107,7 +107,7 @@ export default {
     // 选择规格并返回上一级
     selectStandard (val) {
       const res = {
-        name: this.queryObject.name,
+        name: this.queryObject.productBrandName,
         standards: val,
         fromPage: 'mallFilter',
         noBack: true

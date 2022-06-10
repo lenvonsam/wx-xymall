@@ -81,11 +81,13 @@ export default {
       if (typeof searchName === 'string') {
         // 记录搜索
         this.configVal({ key: 'tempObject', val: { search: searchName, fromPage: 'search', noBack: true } })
+        this.logEvent({ event: 'app_mall_search', type: '02', param: { search: searchName || '' } })
       } else {
         // 搜索框搜索
-        this.logEvent({ event: 'app_mall_search', type: '02', param: { search: this.searchWord || '' } })
         this.configVal({ key: 'tempObject', val: { search: this.searchWord || '', fromPage: 'search', noBack: true } })
+        this.logEvent({ event: 'app_mall_search', type: '02', param: { search: this.searchWord || '' } })
       }
+
       this.searchWord = ''
       // if (this.isLogin && typeof searchName !== 'string') {
       //   // 搜索框搜索
