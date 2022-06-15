@@ -102,7 +102,7 @@ export default {
     }
   },
   onLoad (opt) {
-    this.logEvent({ event: 'click_app_nav_index', type: '01' })
+    this.logEvent({ event: 'click_app_nav_index_other', type: '01' })
     console.log('onLoad', opt)
     /**
      * 添加扫码后获取参数操作
@@ -132,6 +132,9 @@ export default {
     // if (this.isLogin && this.currentUser.type === 'buyer' && !this.currentUser.userGeneralAgreement) {
     //   this.modalShow = true
     // }
+  },
+  onTabItemTap (item) {
+    this.logEvent({ event: 'click_app_nav_index', type: '01' })
   },
   onShow (opt) {
     this.echartHeight = (400 / 345) * (this.screenWidth - 30)
