@@ -104,6 +104,19 @@ export default {
   onLoad (opt) {
     this.logEvent({ event: 'click_app_nav_index_other', type: '01' })
     console.log('onLoad', opt)
+    // 企业微信通知业务员
+    const salesman = mpvue.getStorageSync('salesman')
+    console.log('业务员++', salesman)
+    if (salesman) {
+      const time = this.formatDateTime(new Date())
+      const content = `${salesman}您好：您的客户${this.currentUser.companyName}于${time}登录型云小程序，联系电话${this.currentUser.phone}，请须知。`
+      this.httpPost(this.apiList.zf.autoNotify, {
+        content: content,
+        members: salesman
+      }).catch(err => {
+        console.log(err)
+      })
+    }
     /**
      * 添加扫码后获取参数操作
      * @author samy
