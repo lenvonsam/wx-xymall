@@ -169,12 +169,23 @@ export default {
               this.showMsg('登录成功')
               // 获取客户对应的业务员
               self.httpGet(self.apiList.zf.salesman, {
-                unitNo: res.data.unitId
+                id: res.data.unitId
               }).then(result => {
                 // console.log('result++++++', result)
-                const salesman = result.data.map(item => item.businessUserName).join()
-                // console.log('salesman+++', salesman)
+                const salesman = result.data.employeeName || ''
+                console.log('salesman+++', salesman)
                 mpvue.setStorageSync('salesman', salesman)
+                // 企业微信通知业务员
+                if (salesman) {
+                  const time = this.formatDateTime(new Date())
+                  const content = `${salesman}您好：您的客户${this.currentUser.companyName}于${time}登录型云小程序，联系电话${this.currentUser.phone}，请须知。`
+                  this.httpPost(this.apiList.zf.autoNotify, {
+                    content: content,
+                    members: salesman
+                  }).catch(err => {
+                    console.log(err)
+                  })
+                }
               }).catch(err => {
                 console.log(err)
               })
