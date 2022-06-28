@@ -210,7 +210,7 @@ export default {
     // 点击产品分类
     classifyClick (id, name) {
       // this.configVal({ key: 'tempObject', val: { name: title } })
-      this.logEvent({ event: 'click_app_index_category', param: {name: name}, type: '02' })
+      this.logEvent({ event: 'click_app_index_category', param: { name: name }, type: '02' })
       this.configVal({ key: 'tempObject', val: { name: name, fromPage: 'home' } })
       this.tab('/pages/mall/main')
     },
@@ -231,7 +231,7 @@ export default {
     },
     // 点击查看更多
     mallMore () {
-      this.logEvent({ event: 'click_app_index_category', param: {name: '查看更多'}, type: '02' })
+      this.logEvent({ event: 'click_app_index_category', param: { name: '查看更多' }, type: '02' })
       this.tab('/pages/mall/main')
     },
     // initChart (canvas, width, height) {
@@ -294,7 +294,7 @@ export default {
     },
     // 超时未提货物模态框回调
     modalCb (flag) {
-      this.httpPost(this.apiList.zf.updatePersonAgreement, {userGeneralAgreement: true}).then(res => {
+      this.httpPost(this.apiList.zf.updatePersonAgreement, { userGeneralAgreement: true }).then(res => {
         console.log('updateRule_res=====>' + JSON.stringify(res))
       }).catch(e => {
         console.log('updateRule_e=====>' + e)
@@ -320,9 +320,9 @@ export default {
   border-radius 10px
   text-align center
   font-size 13px
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space nowrap
+  overflow hidden
+  text-overflow ellipsis
 .padding-15
   padding 15px
 </style>

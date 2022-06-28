@@ -898,7 +898,7 @@ export default {
     },
     // 模态框回调
     erpModalCb (flag) {
-      this.httpPost(this.apiList.zf.updatePersonAgreement, {userGeneralAgreement: true}).then(res => {
+      this.httpPost(this.apiList.zf.updatePersonAgreement, { userGeneralAgreement: true }).then(res => {
         console.log('updateRule_res=====>' + JSON.stringify(res))
       }).catch(e => {
         console.log('updateRule_e=====>' + e)
