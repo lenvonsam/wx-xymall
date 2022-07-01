@@ -4,6 +4,7 @@ import BASE64 from 'base-64'
 // const zfBASICURL = 'http://47.103.130.166:8008/api/' // zf测试环境地址
 // const zfBASICURL = 'http://47.103.131.110:8008/api/' // zf开发环境地址
 const zfBASICURL = 'http://testway.xingyun361.com/api/' // 测试环境地址
+// const zfBASICURL = 'http://172.16.120.242:8008/api/' // 调试环境地址
 // const zfBASICURL = 'http://prepway.xingyun361.com/api/' // uat环境地址
 // const zfBASICURL = 'https://gateway.xingyun361.com/api/' // 正式环境地址
 // const BASICURL = 'https://mobileapp.xingyun361.com/quasarserverdev' // 测试环境地址
