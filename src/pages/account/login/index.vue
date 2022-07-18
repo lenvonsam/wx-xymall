@@ -108,6 +108,15 @@ export default {
       this.logEvent({ event: 'click_app_login_phone', type: '01' })
       this.jump('/pages/account/phoneLogin/main')
     },
+    // 获取当前日期
+    getDate () {
+      let date = new Date()
+      let year = date.getFullYear()
+      let month = date.getMonth() + 1
+      let day = date.getDate()
+      date = year + '-' + month + '-' + day
+      return date
+    },
     // 账号密码登陆
     async remoteLogin () {
       try {
@@ -143,7 +152,13 @@ export default {
           self.httpPost(self.apiList.zf.getPersonInfo, {}).then(res => {
             console.log(res.data)
             self.setUser({token: self.token, user: res.data})
-            res.data.userTypeLogo === '01' ? this.logEvent({event: 'click_app_login', type: '01'}) : this.logEvent({event: 'click_app_login_seller', type: '01'})
+            const firstRecord = mpvue.getStorageSync('firstRecord')
+            if (firstRecord !== self.getDate()) {
+              console.log('firstRecord++', firstRecord)
+              console.log('self.getDate()++', self.getDate())
+              mpvue.setStorageSync('firstRecord', self.getDate())
+              res.data.userTypeLogo === '01' ? self.logEvent({event: 'click_app_login', type: '01'}) : self.logEvent({event: 'click_app_login_seller', type: '01'})
+            }
             if (res.data.userStatus === '01') {
               const trial = Number(7 - res.data.experienceDays) // 体验期剩余天数
               if (trial >= 0 && trial <= 7) {

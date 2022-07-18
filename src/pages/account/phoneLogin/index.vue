@@ -133,6 +133,15 @@ export default {
       this.resetVal()
       this.back()
     },
+    // 获取当前日期
+    getDate () {
+      let date = new Date()
+      let year = date.getFullYear()
+      let month = date.getMonth() + 1
+      let day = date.getDate()
+      date = year + '-' + month + '-' + day
+      return date
+    },
     // 手机验证码登陆/忘记密码提交
     async remoteHandler () {
       try {
@@ -187,10 +196,10 @@ export default {
                 // 短信验证码登陆成功，获取用户信息
                 console.log('短信验证码登陆成功，获取用户信息+++++')
                 self.httpPost(self.apiList.zf.getPersonInfo, {}).then(res => {
-                  if (res.data.userTypeLogo === '01') {
-                    this.logEvent({event: 'click_app_login', type: '01'})
-                  } else {
-                    this.logEvent({event: 'click_app_login_seller', type: '01'})
+                  const firstRecord = mpvue.getStorageSync('firstRecord')
+                  if (firstRecord !== self.getDate()) {
+                    mpvue.setStorageSync('firstRecord', self.getDate())
+                    res.data.userTypeLogo === '01' ? self.logEvent({event: 'click_app_login', type: '01'}) : self.logEvent({event: 'click_app_login_seller', type: '01'})
                   }
                   self.setUser({ token: self.token, user: res.data })
                   // console.log(res.data.userStatus, res.data.userTypeLogo, 'hahah++++')
