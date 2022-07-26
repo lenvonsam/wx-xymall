@@ -270,7 +270,10 @@ export default {
             // 企业微信通知业务员
             if (salesman) {
               const time = this.formatDateTime(new Date())
-              const content = `${salesman}您好：您的客户${this.currentUser.companyName}，${time}发起开票申请，提单编号为${this.nosArray}，联系电话${this.currentUser.phone}，请悉知`
+              let content = `${salesman}您好：您的客户${this.currentUser.companyName}，${time}发起开票申请，提单编号为${this.nosArray}，联系电话${this.currentUser.phone}，请悉知`
+              if (process.env.NODE_ENV === 'development') {
+                content = `【测试】${salesman}您好：您的客户${this.currentUser.companyName}，${time}发起开票申请，提单编号为${this.nosArray}，联系电话${this.currentUser.phone}，请悉知`
+              }
               this.httpPost(this.apiList.zf.autoNotify, {
                 content: content,
                 members: salesman
