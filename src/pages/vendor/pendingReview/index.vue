@@ -302,6 +302,9 @@ export default {
       } else if (this.configId === '14') {
         auditTypeText = '重量校验'
         this.jump(`/pages/vendor/reviewDetailWeight/main?id=${item.id}&auditType=${auditTypeText}`)
+      } else if (this.configId === '68') {
+        auditTypeText = '白条'
+        this.jump(`/pages/vendor/reviewDetailCredit/main?id=${item.id}&auditType=${auditTypeText}`)
       } else {
         auditTypeText = '通用'
         this.jump(`/pages/vendor/reviewDetailCommon/main?id=${item.id}&auditType=${auditTypeText}`)

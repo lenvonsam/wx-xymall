@@ -82,6 +82,7 @@
         "cart/main",
         "quotation/main",
         "reviewDetailCommon/main",
+        "reviewDetailCredit/main",
         "reviewDetailDiscuss/main",
         "reviewDetailChange/main",
         "reviewDetailReturn/main",
