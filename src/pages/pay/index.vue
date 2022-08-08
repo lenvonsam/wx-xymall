@@ -20,8 +20,8 @@ div
     .pay-tabs.flex.ft-bold.bg-white.ft-16
       .col.border-right-line.ft-666(@click="payTabs('全款支付')")
         span(:class="payTabsActive === '全款支付' ? 'pay-tab-active' : ''") 全款支付
-      // .col(@click="payTabs('定金支付')")
-      //   span(:class="payTabsActive === '定金支付' ? 'pay-tab-active' : ''") 定金支付
+      .col(@click="payTabs('定金支付')")
+        span(:class="payTabsActive === '定金支付' ? 'pay-tab-active' : ''") 定金支付
     .pay-tabs-card
       .tishi(v-show="payTabsActive === '定金支付'") 定金比例约{{percent}}%，请出库后补足尾款
 
