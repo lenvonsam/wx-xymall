@@ -86,6 +86,7 @@ div
               .col.text-right.text-black
                 span.ft-12.pr-5(v-if="billDetail.payMethod === '03'") (定金支付：{{billDetail.advancePaymentMoney}}元)
                 span {{billDetail.inTaxPayMoney}} 元
+              .span.ft-12.pr-5(v-if="billDetail.payMethod === '02'") (现金支付：{{billDetail.cashPayMoney}}元 + 白条支付：{{billDetail.creditUseMoney}})
             .flex.padding-bottom-xs(v-if="billDetail.payMethod === '03'")
               .col 定金抵扣
               .col.text-right.text-black {{billDetail.earnestDeductAmount == 0 ? '0.00' : billDetail.earnestDeductAmount}}元
