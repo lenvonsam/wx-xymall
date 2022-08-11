@@ -3,57 +3,60 @@ div
   nav-bar(title="待审核", isBack)
   .padding-sm
     div
-      .bg-white.card(v-if="detailData.minicontrols.length")
-        div.margin-bottom-xs(v-for="item in detailData.minicontrols" :key="item.title")
-          span {{item.title}}：
-          span.padding-left-xs {{jsonData[item.fieldValue]}}
-      // div(:style="{'margin-bottom': isIpx ? '188rpx' : '120rpx'}")
-      .bg-white.border-radius(:style="{'margin-bottom': isIpx ? '188rpx' : '120rpx'}")
-        .ft-18.padding-sm 审批流程
-        .ft-12.text-ellipsis-2.padding-left-sm.padding-right-sm.padding-bottom-xs 审批原因：{{detailData.applyMessage}}
-        //- .relative.padding-top-xl.padding-left-xl.padding-right-sm
-        //-   .flex.justify-between.padding-bottom-xs.border-left-line.padding-left-xl
-        //-     span.ft-16.font-bold 发起申请
-        //-     span.padding-left-xs.text-gray.ft-13 {{detailData.firstTask.createTime}}
-        //-   .flex.justify-between.text-gray.ft-14.border-left-line.padding-left-xl
-        //-     span.ft-14.font-bold 申请人:{{detailData.firstTask.userName}}
-        //-   img(src="/static/images/yes.png", style="height:50rpx;width:50rpx;position:absolute;top:25rpx;left:25rpx;")
-        //- .relative.padding-top-xl.padding-left-xl.padding-right-sm
-        //-   .flex.justify-between.padding-bottom-xs.border-left-line.padding-left-xl
-        //-     span.ft-16.font-bold 审批人
-        //-   .flex.justify-between.text-gray.ft-14.border-left-line.padding-left-xl
-        //-     span.ft-14.font-bold 可审批人:{{detailData.lastTask.userName}}
-        //-     span.ft-14.text-blue(style="white-space: nowrap;") 当前节点/待审批
-        //-   .circle.bg-blue 2
-
-        //- div(v-for="(item, index) in detailData.taskList" :key="index")
-        //-   div.step-title-box
-        //-     div {{ item.taskName }}
-        //-     div.step-title-reason {{ item.reason }}
-        //-   div {{ item.getStepContentTitle }}
-        //-   div {{ item.getNotifyStepContentTitle }}
-        //-   div.app-right-title
-        //-     p {{ item.createTime }}
-        //-   p(v-if="index === taskList.length - 1") 当前节点/{{ item.getStepStatusTitle }}
-        .relative.padding-top-xl.padding-left-xl.padding-right-sm.padding-bottom-sm(v-for="(item, index) in taskList" :key="index")
+      .bg-white.card
+        .row.justify-between.padding-bottom-xs
+          .col.text-blue(@click="jumpBillDetail") {{detailData.saleContractNo}}
+          // .text-red {{statusList[detailData.auditStatus] || '待审核'}}
+          .text-red 待审核
+        .row.justify-between.padding-bottom-xs
+          .text-gray.col {{detailData.custName}}
+          .text-black ¥ {{detailData.totalMoeny}}
+        .row.justify-between.text-gray.padding-bottom-xs
+          .col 共{{detailData.amount}}支，{{detailData.weight}}吨
+          span 操作员：{{detailData.operName}}
+        .row
+          span 使用白条金额：
+          span.text-red {{detailData.creditUseMoney}}
+    .ft-18.padding-top-sm.padding-bottom-sm 商品信息
+      .bg-white.card(v-for="(item, index) in dataList", :key="index")
+        .row.justify-between.padding-bottom-xs
+          .text-black.col {{item.name}} {{item.standard}}
+          .text-blue ¥ {{item.price}}
+        .text-gray
+          .row.justify-between.padding-bottom-xs
+            .col
+              span.padding-right-xs {{item.material}}
+              span.padding-right-xs {{item.length}}
+              span.padding-right-xs {{item.wh_name}}
+              span.sub-mark.ml-5 {{item.supply}}
+            span ({{item.quantityType}})
+          .padding-bottom-xs {{item.amount}}支/{{item.weight}}吨
+          .padding-bottom-xs
+            span.padding-right-xs(v-if="item.toleranceRange") 公差范围 {{item.toleranceRange}}
+            span(v-if="item.weightRange") 重量范围 {{item.weightRange}}
+    div(:style="{'margin-bottom': isIpx ? '188rpx' : '120rpx'}")
+      .ft-18.padding-top-sm.padding-bottom-sm 审批流程
+      .bg-white.border-radius
+        .relative.padding-top-xl.padding-left-xl.padding-right-sm
           .flex.justify-between.padding-bottom-xs.border-left-line.padding-left-xl
-            span.ft-16.font-bold {{ item.taskName }}
-            .flex.flex-direction
-              span.padding-left-xs.text-gray.ft-13 {{ item.createTime }}
+            span.ft-16.font-bold 发起申请
+            span.padding-left-xs.text-gray.ft-13 {{detailData.firstTask.createTime}}
           .flex.justify-between.text-gray.ft-14.border-left-line.padding-left-xl
-            div
-              div.ft-14.font-bold {{ item.stepContentTitle }}
-              div.ft-14.font-bold {{ item.notifyStepContentTitle }}
-            div(v-if="index === taskList.length - 1").ft-14.text-blue(style="white-space: nowrap;") 当前节点/{{ item.taskName }}
-          .circle.bg-blue(v-if="taskList.length - 1 === index") {{index + 1}}
-          .circle.bg-gray(v-else style="color:#ccc") {{index + 1}}
-
-        //- .relative.padding-top-xl.padding-left-xl.padding-right-sm.padding-bottom-sm
-        //-   .flex.justify-between.padding-bottom-xs.border-left-line.padding-left-xl
-        //-     span.ft-16.font-bold 结束
-        //-   .flex.justify-between.text-gray.ft-14.border-left-line.padding-left-xl
-        //-     span.ft-14.font-bold 归档
-        //-   .circle.bg-gray(style="color:#ccc") {{detailData.taskList.length + 1}}
+            span.ft-14.font-bold 申请人:{{detailData.firstTask.userName}}
+          img(src="/static/images/yes.png", style="height:50rpx;width:50rpx;position:absolute;top:25rpx;left:25rpx;")
+        .relative.padding-top-xl.padding-left-xl.padding-right-sm
+          .flex.justify-between.padding-bottom-xs.border-left-line.padding-left-xl
+            span.ft-16.font-bold 审批人
+          .flex.justify-between.text-gray.ft-14.border-left-line.padding-left-xl
+            span.ft-14.font-bold 可审批人:{{detailData.lastTask.userName}}
+            span.ft-14.text-blue(style="white-space: nowrap;") 当前节点/待审批
+          .circle.bg-blue 2
+        .relative.padding-top-xl.padding-left-xl.padding-right-sm.padding-bottom-sm
+          .flex.justify-between.padding-bottom-xs.border-left-line.padding-left-xl
+            span.ft-16.font-bold 结束
+          .flex.justify-between.text-gray.ft-14.border-left-line.padding-left-xl
+            span.ft-14.font-bold 归档
+          .circle.bg-gray(style="color:#ccc") 3
 
   .footer.row.bg-white.text-center.text-white.padding-sm(:style="{height: isIpx ? '188rpx' : '120rpx', 'padding-bottom': isIpx ? '68rpx' : '20rpx'}",
    v-if="btnShow && tempObject.fromPage !== 'reviewHistory'")
@@ -75,7 +78,7 @@ div
 import { mapState } from 'vuex'
 import modalInput from '@/components/ModalInput.vue'
 import modal from '@/components/Modal.vue'
-import moment from 'moment'
+import Moment from 'moment'
 export default {
   components: {
     modalInput,
@@ -122,13 +125,7 @@ export default {
     }),
     dataList () {
       return this.detailData.list
-      // return this.detailData.list.filter(item => {
-      //   return item.good_name !== '吊费'
-      // })
     }
-    // auditType () {
-    //   return this.tempObject.auditType
-    // }
   },
   onUnload () {
     this.disabled = false
@@ -370,88 +367,32 @@ export default {
       this.btnShow = true
       let res = await this.httpGet(this.apiList.zf.getDetail + '?id=' + this.id + '&userId=' + this.currentUser.employeeId)
       console.log(res)
-      let configData = JSON.parse(res.data.config)
-      console.log('configData===>', configData)
+      console.log(JSON.parse(res.data.json))
       let data = res.data
       let jsonData = (JSON.parse(res.data.json))
       console.log('未整理参数===>', jsonData)
-      this.jsonData = jsonData
       this.detailData = {
-        minicontrols: configData.minicontrols ? configData.minicontrols : [],
-        applyMessage: jsonData.applyMessage,
-        invoiceStatus: '待复审',
+        saleContractId: jsonData.saleContractId,
+        // liftStatus: data.need_lift,
+        status: data.status,
+        saleContractNo: jsonData.saleContractNo,
+        custName: jsonData.settlementUnitName,
+        amount: jsonData.contractAmount,
+        weight: jsonData.contractType === '01' ? jsonData.contractManagerWeight : jsonData.contractPoundWeight,
+        totalMoeny: jsonData.inTaxReceiveMoney,
+        delayTime: Moment(jsonData.contractDelayDate).add(jsonData.delayTempDay, 'h').format('YYYY-MM-DD HH:mm:ss'),
+        invoiceStatus: '待付款',
         auditStatus: jsonData.auditStatus,
+        delayReasons: jsonData.delayReasons || '',
         json: data.json,
         taskId: data.taskList[data.taskList.length - 1].taskId,
         operName: data.taskList[data.taskList.length - 1].userName,
         firstTask: data.taskList[0],
         lastTask: data.taskList[data.taskList.length - 1],
-        taskList: data.taskList
+        creditUseMoney: jsonData.creditUseMoney
       }
-
-      this.taskList = []
-      let lastTask = {}
-
-      console.log('data.taskList+++++++', data.taskList)
-      for (let [index, task] of data.taskList.entries()) {
-        if (task.taskKey === lastTask.taskKey) {
-          if (task.userName) {
-            lastTask.content += ',' + task.userName
-          }
-
-          if (task.groupName) {
-            lastTask.content += ',' + task.groupName
-          }
-
-          lastTask.pendingTaskList.push(task)
-          continue
-        }
-
-        if (task.taskKey === 'node-start') {
-          task.title = '发起申请'
-        } else if (task.taskKey === 'node-end') {
-          task.title = '审批结束'
-        } else {
-          task.title = '审批人'
-        }
-
-        if (task.userName) {
-          task.content = task.userName
-        }
-
-        if (task.groupName) {
-          task.content = task.groupName
-        }
-
-        if (task.title === '审批人') {
-          if (task.type === 3) {
-            task.statusContent = '(已驳回)'
-          } else if (task.type === 2) {
-            task.statusContent = '(已同意)'
-          }
-        }
-        lastTask = task
-        lastTask.pendingTaskList = [JSON.parse(JSON.stringify(task))]
-        console.log('7777', index, task)
-
-        task.createTime = moment(task.createTime).format('YYYY-MM-DD HH:mm:ss')
-        this.taskList.push(task)
-      }
-
-      console.log('this.taskList+++++', this.taskList)
-      this.taskList.forEach((item, index) => {
-        var getStepContentTitle = this.getStepContentTitle(index, item)
-        var getNotifyStepContentTitle = this.getNotifyStepContentTitle(index, item)
-        var getStepStatusTitle = this.getStepStatusTitle(index, item)
-        item.stepContentTitle = getStepContentTitle
-        item.notifyStepContentTitle = getNotifyStepContentTitle
-        item.stepStatusTitle = getStepStatusTitle
-      })
-      console.log('this.taskList22222+++++', this.taskList)
-
-      console.log('议价参数整理====>', this.detailData)
       // name standard  material  amount  weight money
-      let listData = jsonData.saleContractDetailDTOS || jsonData.preDemandDetailDTOS
+      let listData = jsonData.contractDetailList
       this.detailData.list = listData.map(item => {
         return {
           name: item.productBrandName,
@@ -459,9 +400,10 @@ export default {
           material: item.productTextureName,
           supply: item.prodAreaName,
           length: item.length,
+          amount: item.amount,
+          weight: item.quantityType === '01' ? item.managerWeight : item.poundWeight,
           wh_name: item.stockZoneName,
-          max_count: item.avbleAmount,
-          max_weight: item.quantityType === '01' ? item.managerWeight : item.poundWeight,
+          salePrice: item.salePrice,
           price: item.quantityType === '01' ? item.priceManager : item.pricePound,
           quantityType: item.quantityType === '01' ? '理计' : '磅计',
           weightRange: item.weightRange,

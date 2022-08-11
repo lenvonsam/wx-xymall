@@ -264,6 +264,24 @@ export default {
         self.httpPost(url, postList).then(res => {
           const msg = self.pageTitle === '申请发票' ? '申请发票成功' : '发票确认成功'
           self.showMsg(msg, '', 1000)
+          if (self.pageTitle === '申请发票') {
+            // 企业微信通知业务员
+            const salesman = mpvue.getStorageSync('salesman')
+            // 企业微信通知业务员
+            if (salesman) {
+              const time = this.formatDateTime(new Date())
+              let content = `${salesman}您好：您的客户${this.currentUser.companyName}，${time}发起开票申请，提单编号为${this.nosArray}，联系电话${this.currentUser.phone}，请悉知`
+              if (process.env.NODE_ENV === 'development') {
+                content = `【测试】${salesman}您好：您的客户${this.currentUser.companyName}，${time}发起开票申请，提单编号为${this.nosArray}，联系电话${this.currentUser.phone}，请悉知`
+              }
+              this.httpPost(this.apiList.zf.autoNotify, {
+                content: content,
+                members: salesman
+              }).catch(err => {
+                console.log(err)
+              })
+            }
+          }
           setTimeout(() => {
             self.back()
           }, 1000)

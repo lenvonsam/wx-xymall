@@ -506,7 +506,10 @@ export default {
           console.log('业务员++', salesman)
           if (salesman) {
             const time = self.formatDateTime(new Date())
-            const content = `您的客户${this.currentUser.companyName}，${time}生成物资销售合同，合同编号${res.data.saleContractNo}，请及时进行确认，联系电话${this.currentUser.phone}`
+            let content = `您的客户${this.currentUser.companyName}，${time}生成物资销售合同，合同编号${res.data.saleContractNo}，请及时进行确认，联系电话${this.currentUser.phone}`
+            if (process.env.NODE_ENV === 'development') {
+              content = `【测试】您的客户${this.currentUser.companyName}，${time}生成物资销售合同，合同编号${res.data.saleContractNo}，请及时进行确认，联系电话${this.currentUser.phone}`
+            }
             self.httpPost(self.apiList.zf.autoNotify, {
               content: content,
               members: salesman

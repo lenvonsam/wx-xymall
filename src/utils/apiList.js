@@ -438,7 +438,8 @@ export default {
     // 获取资源定价详情接口
     queryPageByPriceVersion: 'purchase/resourcePricingItem/queryPageByPriceVersion',
     // 获取该用户对应的业务员
-    salesman: 'base/salesman/list',
+    // salesman: 'base/salesman/list',
+    salesman: 'base/unit/getEmployeeByUnitId',
     // 企业微信通知
     autoNotify: 'wechat/cpAuth/autoNotify'
   }

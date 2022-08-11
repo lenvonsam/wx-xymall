@@ -108,6 +108,15 @@ export default {
       this.logEvent({ event: 'click_app_login_phone', type: '01' })
       this.jump('/pages/account/phoneLogin/main')
     },
+    // 获取当前日期
+    getDate () {
+      let date = new Date()
+      let year = date.getFullYear()
+      let month = date.getMonth() + 1
+      let day = date.getDate()
+      date = year + '-' + month + '-' + day
+      return date
+    },
     // 账号密码登陆
     async remoteLogin () {
       try {
@@ -143,7 +152,13 @@ export default {
           self.httpPost(self.apiList.zf.getPersonInfo, {}).then(res => {
             console.log(res.data)
             self.setUser({token: self.token, user: res.data})
-            res.data.userTypeLogo === '01' ? this.logEvent({event: 'click_app_login', type: '01'}) : this.logEvent({event: 'click_app_login_seller', type: '01'})
+            const firstRecord = mpvue.getStorageSync('firstRecord')
+            if (firstRecord !== self.getDate()) {
+              console.log('firstRecord++', firstRecord)
+              console.log('self.getDate()++', self.getDate())
+              mpvue.setStorageSync('firstRecord', self.getDate())
+              res.data.userTypeLogo === '01' ? self.logEvent({event: 'click_app_login', type: '01'}) : self.logEvent({event: 'click_app_login_seller', type: '01'})
+            }
             if (res.data.userStatus === '01') {
               const trial = Number(7 - res.data.experienceDays) // 体验期剩余天数
               if (trial >= 0 && trial <= 7) {
@@ -178,7 +193,10 @@ export default {
                 // 企业微信通知业务员
                 if (salesman) {
                   const time = this.formatDateTime(new Date())
-                  const content = `${salesman}您好：您的客户${this.currentUser.companyName}于${time}登录型云小程序，联系电话${this.currentUser.phone}，请须知。`
+                  let content = `${salesman}您好：您的客户${this.currentUser.companyName}于${time}登录型云小程序，联系电话${this.currentUser.phone}，请须知。`
+                  if (process.env.NODE_ENV === 'development') {
+                    content = `【测试】${salesman}您好：您的客户${this.currentUser.companyName}于${time}登录型云小程序，联系电话${this.currentUser.phone}，请须知。`
+                  }
                   this.httpPost(this.apiList.zf.autoNotify, {
                     content: content,
                     members: salesman

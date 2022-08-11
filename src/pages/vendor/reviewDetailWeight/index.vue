@@ -3,10 +3,43 @@ div
   nav-bar(title="待审核", isBack)
   .padding-sm
     div
-      .bg-white.card(v-if="detailData.minicontrols.length")
-        div.margin-bottom-xs(v-for="item in detailData.minicontrols" :key="item.title")
-          span {{item.title}}：
-          span.padding-left-xs {{jsonData[item.fieldValue]}}
+      .bg-white.card
+        .row.justify-between.padding-bottom-xs
+          .col.text-blue {{detailData.businessTypeNo}}
+          .text-red 待审核
+        .row.justify-between.padding-bottom-xs
+          .text-gray.col {{detailData.purchaseOrgName}}
+          .col.text-right 操作员：{{detailData.operName}}
+        .solid-top.padding-top-xs.padding-bottom-xs.row.justify-between(v-if="tempObject.auditType !== 'ERP定价'")
+            .col.text-black {{detailData.updateDate}}
+            span(v-if="detailData.totalLiftCharge") 吊费：{{detailData.totalLiftCharge}}元
+      .ft-18.padding-top-sm.padding-bottom-sm 出库校验
+      .bg-white.card {{detailData.deliveryOutCheckMessage}}
+      .ft-18.padding-top-sm.padding-bottom-sm 商品信息
+      .bg-white.card(v-for="(item, index) in dataList", :key="index")
+        .row.justify-between.padding-bottom-xs
+          .text-black.col {{item.name}} {{item.standard}}
+          //- .text-blue ¥ {{item.price}}
+        .text-gray
+          .row.justify-between.padding-bottom-xs
+            .col
+              span.padding-right-xs {{item.material}}
+              span.padding-right-xs {{item.length}}
+              span.padding-right-xs {{item.wh_name}}
+              span.sub-mark.ml-5 {{item.supply}}
+            span ({{item.quantityTypeText}})
+          //- .padding-bottom-xs {{item.amount}}支/{{item.weight}}吨
+          .padding-bottom-xs
+            span.padding-right-xs(v-if="item.toleranceRange") 公差范围 {{item.toleranceRange}}
+            span(v-if="item.weightRange") 重量范围 {{item.weightRange}}
+          .solid-top.padding-top-xs.padding-bottom-xs.text-black(v-if="item.salePrice != 0")
+             .row.justify-between.text-gray.margin-bottom-xs
+              span 公差：{{item.tolerance}}
+              span 单支重：{{item.unitWeight}}
+              span 厚度：{{item.thickness}}
+             .row
+              span.margin-right-sm 出库数量：{{item.outAmount}}
+              span 出库吨位：{{item.quantityType == '01' ? item.outManagerWeight : item.outPoundWeight}}
       // div(:style="{'margin-bottom': isIpx ? '188rpx' : '120rpx'}")
       .bg-white.border-radius(:style="{'margin-bottom': isIpx ? '188rpx' : '120rpx'}")
         .ft-18.padding-sm 审批流程
@@ -63,7 +96,7 @@ div
     .padding-sm
       .bg-gray.input-box
         input(:placeholder="'请填写'+modalInputTitle", v-model="modalVal", :disabled="modalInputTitle === '退款金额'")
-      .text-red.text-left.padding-top-sm(v-if="modalInputTitle === '驳回原因'") 注：一旦驳回，此单将被删除，必须重新申请，请与销售沟通，并告知客户！
+      //- .text-red.text-left.padding-top-sm(v-if="modalInputTitle === '驳回原因'") 注：一旦驳回，此单将被删除，必须重新申请，请与销售沟通，并告知客户！
   modal(v-model="erpModalShow1", @cb="erpModalCb", :title="erpModalTitle")
     .padding-sm {{erpModalMsg}}
   modal-input(v-model="erpModalShow2", :title="erpModalTitle", confirmText="确定", type="customize", :cb="erpModalCbInput")
@@ -386,7 +419,12 @@ export default {
         operName: data.taskList[data.taskList.length - 1].userName,
         firstTask: data.taskList[0],
         lastTask: data.taskList[data.taskList.length - 1],
-        taskList: data.taskList
+        taskList: data.taskList,
+        deliveryOutCheckMessage: jsonData.deliveryOutCheckMessage,
+        businessTypeNo: jsonData.businessTypeNo,
+        updateDate: jsonData.updateDate,
+        updateUserName: jsonData.updateUserName,
+        purchaseOrgName: jsonData.purchaseOrgName
       }
 
       this.taskList = []
@@ -451,7 +489,8 @@ export default {
 
       console.log('议价参数整理====>', this.detailData)
       // name standard  material  amount  weight money
-      let listData = jsonData.saleContractDetailDTOS || jsonData.preDemandDetailDTOS
+      let listData = jsonData.deliveryOutDetailList
+      console.log('jsonData+++', jsonData)
       this.detailData.list = listData.map(item => {
         return {
           name: item.productBrandName,
@@ -463,11 +502,18 @@ export default {
           max_count: item.avbleAmount,
           max_weight: item.quantityType === '01' ? item.managerWeight : item.poundWeight,
           price: item.quantityType === '01' ? item.priceManager : item.pricePound,
-          quantityType: item.quantityType === '01' ? '理计' : '磅计',
+          quantityTypeText: item.quantityType === '01' ? '理计' : '磅计',
           weightRange: item.weightRange,
-          toleranceRange: item.toleranceRange
+          toleranceRange: item.toleranceRange,
+          tolerance: item.tolerance,
+          outManagerWeight: item.outManagerWeight,
+          outPoundWeight: item.outPoundWeight,
+          quantityType: item.quantityType,
+          unitWeight: item.unitWeight,
+          thickness: item.thickness
         }
       })
+      console.log('this.detailData.list+++', this.detailData.list)
     }
   }
 }

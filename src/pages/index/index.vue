@@ -74,7 +74,8 @@ export default {
       modalShow: false,
       modalTitle: '超时未提货物收费标准',
       modalMsg: '对于在库物资，买方在平台上购买物资并支付货款后，应在约定的时间内（系统默认时间为5天）制作提单并提货。超过约定时间未提的合同物资将被判定为违约（超期未提），买方须承担未及时提货而产生的仓储管理费，并于提货时自行与仓库管理方结算。卖方有权对违约合同物资进行处置，进行合同取消并退还对应货款。',
-      btn: [{ label: '确定', flag: 'confirm', className: 'main-btn' }]
+      btn: [{ label: '确定', flag: 'confirm', className: 'main-btn' }],
+      tabItemTap: false
     }
   },
   components: {
@@ -102,7 +103,7 @@ export default {
     }
   },
   onLoad (opt) {
-    this.logEvent({ event: 'click_app_nav_index_other', type: '01' })
+    // this.logEvent({ event: 'click_app_nav_index_other', type: '01' })
     console.log('onLoad', opt)
     /**
      * 添加扫码后获取参数操作
@@ -134,9 +135,25 @@ export default {
     // }
   },
   onTabItemTap (item) {
+    console.log(1111)
+    this.tabItemTap = true
     this.logEvent({ event: 'click_app_nav_index', type: '01' })
   },
   onShow (opt) {
+    this.tabItemTap = false
+    if (this.isLogin) {
+      setTimeout(() => {
+        if (!this.tabItemTap) {
+          const firstRecord = mpvue.getStorageSync('firstRecord')
+          if (firstRecord !== this.getDate()) {
+            mpvue.setStorageSync('firstRecord', this.getDate())
+            this.logEvent({event: 'click_app_login', type: '01'})
+          } else {
+            this.logEvent({ event: 'click_app_nav_index_other', type: '01' })
+          }
+        }
+      }, 3000)
+    }
     this.echartHeight = (400 / 345) * (this.screenWidth - 30)
     this.loadBanner()
     // this.getTrends()
@@ -179,6 +196,15 @@ export default {
     ...mapActions([
       'configVal'
     ]),
+    // 获取当前日期
+    getDate () {
+      let date = new Date()
+      let year = date.getFullYear()
+      let month = date.getMonth() + 1
+      let day = date.getDate()
+      date = year + '-' + month + '-' + day
+      return date
+    },
     // 跳转公告页面
     jumpNotice () {
       this.logEvent({ event: 'click_app_index_notice_more', type: '01' })

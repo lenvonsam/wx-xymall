@@ -321,6 +321,23 @@ export default {
                 this.hideLoading()
                 this.btnDisabled = false
                 this.showMsg('修改成功')
+                // 企业微信通知业务员
+                const salesman = mpvue.getStorageSync('salesman')
+                console.log('业务员++', salesman)
+                // 企业微信通知业务员
+                if (salesman) {
+                  const time = this.formatDateTime(new Date())
+                  let content = `${salesman}您好：您的客户${this.currentUser.companyName}，${time}发起合同修改，修改合同编号为${this.saleContractNo}，请及时进行确认，联系电话${this.currentUser.phone}`
+                  if (process.env.NODE_ENV === 'development') {
+                    content = `【测试】${salesman}您好：您的客户${this.currentUser.companyName}，${time}发起合同修改，修改合同编号为${this.saleContractNo}，请及时进行确认，联系电话${this.currentUser.phone}`
+                  }
+                  this.httpPost(this.apiList.zf.autoNotify, {
+                    content: content,
+                    members: salesman
+                  }).catch(err => {
+                    console.log(err)
+                  })
+                }
                 setTimeout(() => {
                   this.back()
                 }, 1500)
