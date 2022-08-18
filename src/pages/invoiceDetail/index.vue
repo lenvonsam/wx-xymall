@@ -276,7 +276,8 @@ export default {
               }
               this.httpPost(this.apiList.zf.autoNotify, {
                 content: content,
-                members: salesman
+                members: salesman,
+                title: '申请开票'
               }).catch(err => {
                 console.log(err)
               })
