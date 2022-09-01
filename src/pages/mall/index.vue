@@ -740,7 +740,8 @@ export default {
             }
             this.httpPost(this.apiList.zf.autoNotify, {
               content: content,
-              members: salesman
+              members: salesman,
+              title: '客户加购'
             }).catch(err => {
               console.log(err)
             })

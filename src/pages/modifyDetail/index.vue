@@ -333,7 +333,8 @@ export default {
                   }
                   this.httpPost(this.apiList.zf.autoNotify, {
                     content: content,
-                    members: salesman
+                    members: salesman,
+                    title: '合同修改'
                   }).catch(err => {
                     console.log(err)
                   })

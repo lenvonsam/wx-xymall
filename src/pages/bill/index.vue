@@ -382,7 +382,7 @@ export default {
             const leftTime = item.timeEnd - (new Date().getTime() + item.timeDiff)
             const seconds = Math.floor(leftTime / 1000) % 60
             const minutes = Math.floor(leftTime / 1000 / 60) % 60
-            const hours = Math.floor(leftTime / 1000 / 60 / 60) % 24
+            const hours = Math.floor(leftTime / 1000 / 60 / 60)
             // const day = Math.floor(leftTime / 1000 / 60 / 60 / 24)
             const h = Math.abs(hours) >= 10 ? Math.abs(hours) + '' : '0' + Math.abs(hours)
             const m = Math.abs(minutes) >= 10 ? Math.abs(minutes) + '' : '0' + Math.abs(minutes)
