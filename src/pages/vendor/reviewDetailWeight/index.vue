@@ -33,13 +33,9 @@ div
             span.padding-right-xs(v-if="item.toleranceRange") 公差范围 {{item.toleranceRange}}
             span(v-if="item.weightRange") 重量范围 {{item.weightRange}}
           .solid-top.padding-top-xs.padding-bottom-xs.text-black(v-if="item.salePrice != 0")
-             .row.justify-between.text-gray.margin-bottom-xs
-              span 公差：{{item.tolerance}}
-              span 单支重：{{item.unitWeight}}
-              span 厚度：{{item.thickness}}
              .row
-              span.margin-right-sm 出库数量：{{item.outAmount}}
-              span 出库吨位：{{item.quantityType == '01' ? item.outManagerWeight : item.outPoundWeight}}
+              span.margin-right-sm 出库数量：{{item.amount}}
+              span 出库吨位：{{item.poundWeight}}
       // div(:style="{'margin-bottom': isIpx ? '188rpx' : '120rpx'}")
       .bg-white.border-radius(:style="{'margin-bottom': isIpx ? '188rpx' : '120rpx'}")
         .ft-18.padding-sm 审批流程
@@ -509,8 +505,10 @@ export default {
           outManagerWeight: item.outManagerWeight,
           outPoundWeight: item.outPoundWeight,
           quantityType: item.quantityType,
+          poundWeight: item.poundWeight,
           unitWeight: item.unitWeight,
-          thickness: item.thickness
+          thickness: item.thickness,
+          amount: item.amount
         }
       })
       console.log('this.detailData.list+++', this.detailData.list)
