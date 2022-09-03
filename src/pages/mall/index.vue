@@ -520,7 +520,7 @@ export default {
       const idx = e.mp.detail.current
       this.mallTabVal = this.goodsNameList[idx].id
       console.log('mallTabVal', this.mallTabVal)
-      this.logEvent({ event: 'app_mall_filter', param: {goods_name: this.mallTabVal}, type: '02' })
+      this.logEvent({ event: 'app_mall_filter', param: { goods_name: this.mallTabVal }, type: '02' })
       if (this.goodsNameList[idx]) {
         this.showLoading()
         this.isload = true
@@ -806,13 +806,13 @@ export default {
         // delete this.queryObject.supplys
         // delete this.queryObject.search
         const res = await this.httpPost(this.apiList.zf.shopMallList, this.queryObject)
-        let currentDate = res.data.currentDate.replace(/-/g, '/')
-        let $this = new Date(currentDate) === 'Invalid Date' ? new Date(currentDate.substr(0, 19)) : new Date(currentDate)
-        if ($this.getHours() < 9) {
-          this.isNineClocks = false
-        } else {
-          this.isNineClocks = true
-        }
+        // let currentDate = res.data.currentDate.replace(/-/g, '/')
+        // let $this = new Date(currentDate) === 'Invalid Date' ? new Date(currentDate.substr(0, 19)) : new Date(currentDate)
+        // if ($this.getHours() < 9) {
+        //   this.isNineClocks = false
+        // } else {
+        //   this.isNineClocks = true
+        // }
         this.productBrandNames = res.data.productBrandNames || []
         this.specifications = res.data.specifications || []
         const reg = /\d+\.*\d*/
@@ -902,7 +902,7 @@ export default {
     },
     // 模态框回调
     erpModalCb (flag) {
-      this.httpPost(this.apiList.zf.updatePersonAgreement, {userGeneralAgreement: true}).then(res => {
+      this.httpPost(this.apiList.zf.updatePersonAgreement, { userGeneralAgreement: true }).then(res => {
         console.log('updateRule_res=====>' + JSON.stringify(res))
       }).catch(e => {
         console.log('updateRule_e=====>' + e)
