@@ -45,8 +45,8 @@ div
                       //- .sub-mark.ml-5 {{item[mallTypeObject[itemType].supply]}}
                       //- span.ml-5.ft-12(style="color:#666") ({{weightMark}})
                     .text-right.ft-16
-                      span.text-red.ft-13(v-if="item.price === '--' || (isLogin && !isNineClocks && item.productClassName ==='H型钢') || (isLogin && !isNineClocks && item.productClassName ==='板材')") 开售时间:{{item.show_time}}
-                      span.text-blue(v-else-if="isLogin && hiddenPrice") --
+                      //- span.text-red.ft-13(v-if="item.price === '--' || (isLogin && !isNineClocks && item.productClassName ==='H型钢') || (isLogin && !isNineClocks && item.productClassName ==='板材')") 开售时间:{{item.show_time}}
+                      span.text-blue(v-if="isLogin && hiddenPrice") --
                       span.text-blue(v-else-if="isLogin") ￥{{item.price}}
                       .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)") 查看价格
                   .row.pt-5.flex-center.ft-12
@@ -91,9 +91,9 @@ div
                     span(v-else) --支/--吨
                   .text-blue.ft-15.text-bold
                     //- ￥{{item[mallTypeObject[itemType].price]}}
-                    span.text-red.ft-13(v-if="item.price === '--' || (isLogin && !isNineClocks && item.productClassName ==='H型钢') || (isLogin && !isNineClocks && item.productClassName ==='板材')") 开售时间:{{item.show_time}}
-                    span.text-blue(v-else-if="isLogin && hiddenPrice") --
-                    span.text-blue(v-else-if="isLogin") ￥{{item.price}}
+                    //- span.text-red.ft-13(v-if="item.price === '--' || (isLogin && !isNineClocks && item.productClassName ==='H型钢') || (isLogin && !isNineClocks && item.productClassName ==='板材')") 开售时间:{{item.show_time}}
+                    span.text-blue(v-if="isLogin && hiddenPrice") --
+                    span.text-blue(v-else="isLogin") ￥{{item.price}}
                     // span(v-else-if="item.show_price === true") ￥{{item[mallTypeObject[itemType].price]}}
                     // .blue-buy.ft-12(v-else, @click="mallItemCb(item, 'showPrice', $event)") 查看价格
                   .text-gray.flex
@@ -192,7 +192,7 @@ export default {
           weightRange: 'weight_range'
         }
       },
-      isNineClocks: false,
+      // isNineClocks: false,
       weightMark: '',
       itemType: 'product',
       introImages: ['mall_classify.png', 'mall_good.png', 'mall_standard.png'],
@@ -829,7 +829,7 @@ export default {
         resData.map(item => {
           const weightMark = []
           const price = []
-          item.show_time = '9:00'
+          // item.show_time = '9:00'
           if (item.onlineQuantityType === '02' || item.onlineQuantityType === '00') {
             weightMark.push('磅计')
             price.push(item.ratioPricePound)
