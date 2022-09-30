@@ -112,6 +112,7 @@ export default {
         fromPage: 'mallFilter',
         noBack: true
       }
+      this.logEvent({ event: 'click_app_mall_category_search', type: '01' })
       this.logEvent({ event: 'app_mall_category', type: '02', param: {goods_name: res.name, standard: res.standards} })
       this.configVal({key: 'tempObject', val: res, fromPage: 'mallFilter'})
       this.back(-1)
