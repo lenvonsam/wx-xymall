@@ -315,7 +315,7 @@ export default {
     },
     // 点击分类
     classifyClick () {
-      this.currentUser.type === 'seller' ? this.logEvent({ event: 'click_app_mall_category_seller', type: '01' }) : this.logEvent({ event: 'click_app_mall_category', type: '01' })
+      this.currentUser.type === 'seller' ? this.logEvent({ event: 'click_app_mall_category_seller', type: '01' }) : this.logEvent({ event: 'click_app_mall_category_right', type: '01' })
       // 分类使用引导图
       const firstShare = mpvue.getStorageSync('firstShareMallClassify') || false
       if (!firstShare) {
@@ -435,7 +435,7 @@ export default {
     selectSort (sortIdx, idx) {
       console.log('selectSort++++', 'sortIdx', sortIdx, 'idx', idx)
       console.log(this.sortList[sortIdx].data)
-
+      this.logEvent({event: 'click_app_mall_standard_search', type: '01'})
       if (sortIdx !== 0) {
         this.temporary.push(idx)
       }

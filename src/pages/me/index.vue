@@ -92,7 +92,7 @@ div
               .margin-left-sm.col.solid-bottom 用户设置
           .cuIcon-right.text-gray
         .item.padding-sm.flex.solid-bottom.align-center.relative.ft-15
-          button(open-type="contact", style="position: absolute; left:0;right: 0; top:0; bottom: 0; z-index: 10; background: transparent")
+          button(open-type="contact", bind-contact="handleContact", style="position: absolute; left:0;right: 0; top:0; bottom: 0; z-index: 10; background: transparent")
           .col
             .flex.align-center
               img(src="/static/images/customer_icon.png", mode="widthFix")
@@ -441,7 +441,7 @@ export default {
       if (!this.isLogin) {
         this.jump('/pages/account/login/main')
       } else {
-        // this.logEvent({ event: 'click_app_me_profile' })
+        this.logEvent({ event: 'click_app_me_profile', type: '01' })
         this.jump('/pages/account/profile/main')
       }
     },
@@ -462,6 +462,7 @@ export default {
     },
     // 查看全部合同
     jumpBillMore () {
+      this.logEvent({ event: 'click_app_me_order_all', type: '01' })
       if (!this.isLogin) {
         this.modalMsg = '您未登录,请先登录'
         this.modalShow = true
@@ -489,7 +490,14 @@ export default {
         this.logEvent({ event: icon.event, type: '01' })
         this.jump(icon.url.path)
       }
+    },
+    // 在线客服回调
+    handleContact (e) {
+      console.log(e.detail.path)
+      console.log(e.detail.query)
+      this.logEvent({ event: 'click_app_me_kf', type: '01' })
     }
+
     // 超时未提货物收费标准模态框回调
     // ruleModalCb (flag) {
     //   this.httpPost(this.apiList.zf.updatePersonAgreement, {userGeneralAgreement: true}).then(res => {
