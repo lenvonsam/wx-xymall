@@ -382,6 +382,19 @@ export default {
               this.hideLoading()
               this.btnDisable = false
               this.tab('/pages/me/main')
+              // 合同回收
+              const salesman = mpvue.getStorageSync('salesman')
+              const time = this.formatDateTime(new Date())
+              if (salesman) {
+                let content = `${salesman}您好，您的客户${this.currentUser.companyName}于${time}进行合同回收操作【移动】，新的合同号为${res.data},请须知`
+                this.httpPost(this.apiList.zf.autoNotify, {
+                  content: content,
+                  members: salesman,
+                  title: '合同回收'
+                }).catch(err => {
+                  console.log(err)
+                })
+              }
             }).catch(e => {
               this.btnDisable = false
               // this.modalShow = false

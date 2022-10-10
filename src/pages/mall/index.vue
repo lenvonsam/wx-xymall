@@ -734,10 +734,7 @@ export default {
             const itemMsg = obj.onlineProductBrandName + '/' + obj.productTextureName + '/' + obj.specification + '/' + obj.length + '/' + obj.prodAreaName + '/' + (obj.toleranceRange ? obj.toleranceRange + '/' : '') + (obj.weightRange ? obj.weightRange : '')
             // 企业微信通知业务员
             const time = this.formatDateTime(new Date())
-            let content = `您的客户${this.currentUser.companyName}于${time}对物资（${itemMsg}）进行加购，加购数量${obj.num}支，加购吨位${addWeight}吨，物资单价${addPrice}元/吨，请及时进行联系，联系电话${this.currentUser.phone}`
-            if (process.env.NODE_ENV === 'development') {
-              content = `【测试】您的客户${this.currentUser.companyName}于${time}对物资（${itemMsg}）进行加购，加购数量${obj.num}支，加购吨位${addWeight}吨，物资单价${addPrice}元/吨，请及时进行联系，联系电话${this.currentUser.phone}`
-            }
+            let content = `您的客户${this.currentUser.companyName}于${time}对物资（${itemMsg}）进行加购【移动】，加购数量${obj.num}支，加购吨位${addWeight}吨，物资单价${addPrice}元/吨，请及时进行联系，联系电话${this.currentUser.phone}`
             this.httpPost(this.apiList.zf.autoNotify, {
               content: content,
               members: salesman,
