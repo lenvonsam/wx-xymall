@@ -91,6 +91,9 @@ export default {
     }
     this.pageType === 'smsLogin' ? this.pageTitle = '手机登录' : this.pageTitle = '找回密码'
     console.log('pageType:>>', this.pageType)
+    if (this.$root.$mp.query.phoneNum) {
+      this.phone = this.$root.$mp.query.phoneNum
+    }
   },
   onUnload () {
     this.codeBtnShow = false
