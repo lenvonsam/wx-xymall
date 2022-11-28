@@ -106,7 +106,7 @@ export default {
     // 跳转手机验证码登陆页面
     jumpPhoneLogin () {
       this.logEvent({ event: 'click_app_login_phone', type: '01' })
-      this.jump('/pages/account/phoneLogin/main')
+      this.jump(`/pages/account/phoneLogin/main?phoneNum=${this.uname}`)
     },
     // 获取当前日期
     getDate () {
