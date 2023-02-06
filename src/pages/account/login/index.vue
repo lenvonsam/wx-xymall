@@ -12,7 +12,7 @@
       .flex-30.text-gray
         icon.ft-18.adjust.cuIcon-unlock
       .col
-        input.no-border.ft-16(placeholder="请输入密码(6-12位)", type="password", v-model="upwd", :maxlength="12")
+        input.no-border.ft-16(placeholder="请输入密码", type="password", v-model="upwd", :maxlength="50")
     .row
       .col.text-blue.padding-top(@click="jumpReg") 立即注册
       .col.text-right.padding-top(@click="jumpForgetPwd") 忘记密码？
@@ -129,7 +129,7 @@ export default {
           return
         }
         if (!this.pwdReg.test(this.upwd)) {
-          this.showMsg('请输入6-12位密码，只能是数字、字母和下划线')
+          this.showMsg('请输入至少六位密码，只能是数字、字母或下划线')
           return
         }
         if (this.canClick) {

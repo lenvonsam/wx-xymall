@@ -15,7 +15,7 @@
         .flex-30.text-gray
           icon.ft-18.adjust.cuIcon-unlock
         .col
-          input.no-border.ft-16(placeholder="请输入密码(6-12位)", type="password", v-model="password", :maxlength="12")
+          input.no-border.ft-16(placeholder="请输入密码", type="password", v-model="password", :maxlength="50")
       .row
         .col.text-blue.padding-top.ft-12(@click="newUserRegister") 新用户注册绑定
     div(v-else)
