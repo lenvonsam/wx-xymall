@@ -30,7 +30,7 @@ div
         .col
           input(placeholder="请输入验证码", type="number", v-model="val2")
         .flex-90.text-center(style="border-left: 1rpx solid #ddd")
-          auth-btn(:phone="currentUser.phone", v-if="currentUser.phone", :codeType="type === 'loginPwd' ? 4 : 5")
+          auth-btn(:phone="currentUser.phone", v-if="currentUser.phone", :codeType="type === 'loginPwd' ? 3 : 5")
       .row.padding
         .flex-100 新密码
         .col
@@ -165,7 +165,7 @@ export default {
           return
         }
         if (!this.pwdReg.test(this.val2)) {
-          this.showMsg('请输入6-12位密码，只能是数字、字母和下划线')
+          this.showMsg('请输入至少六位密码，只能是数字、字母或下划线')
           this.canHttp = false
           return
         }
@@ -173,7 +173,7 @@ export default {
         queryObject.old_pwd = this.base64Str(this.val1.trim())
       } else {
         if (!this.pwdReg.test(this.val3)) {
-          this.showMsg('请输入6-12位密码，只能是数字、字母和下划线')
+          this.showMsg('请输入至少六位密码，只能是数字、字母或下划线')
           this.canHttp = false
           return
         }

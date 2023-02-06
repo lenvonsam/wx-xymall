@@ -21,7 +21,7 @@
       .flex-30
         icon.ft-18.adjust.cuIcon-lock.text-gray
       .col
-        input.no-border.ft-16(placeholder="请输入新密码(6-12位)", v-model="pwd", type="password", :maxlength="12")
+        input.no-border.ft-16(placeholder="请输入新密码", v-model="pwd", type="password", :maxlength="50")
     .row(v-if="pageType=='smsLogin'")
       .col.text-blue.padding-top(@click="jumpReg") 立即注册
       .col.text-right.padding-top(@click="jumpToChildPwd") 忘记密码？
@@ -165,7 +165,7 @@ export default {
           return
         }
         if (this.pageType === 'forgetPwd' && !this.pwdReg.test(this.pwd)) {
-          this.showMsg('请输入6-12位密码，只能是数字、字母和下划线')
+          this.showMsg('请输入密码，只能是数字、字母或下划线')
           return
         }
         let params = {}
