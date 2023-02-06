@@ -7,7 +7,7 @@
     slot
       .padding.padding-lr-lg
         .bg-gray.input-box
-          input(:placeholder="placeholder", v-model="inputVal", type="password", v-if="type === 'password'", :maxlength="12")
+          input(:placeholder="placeholder", v-model="inputVal", type="password", v-if="type === 'password'", :maxlength="50")
           input(:placeholder="placeholder", v-model="inputVal", v-else)
     .padding.row
       .col.text-center
@@ -68,7 +68,7 @@ export default {
           return
         }
         if (!this.pwdReg.test(this.inputVal)) {
-          this.showMsg('请输入6-12位密码，只能是数字、字母和下划线')
+          this.showMsg('请输入至少六位密码，只能是数字、字母或下划线')
           return
         }
       }

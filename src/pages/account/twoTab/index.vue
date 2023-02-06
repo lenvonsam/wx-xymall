@@ -165,7 +165,7 @@ export default {
           return
         }
         if (!this.pwdReg.test(this.val2)) {
-          this.showMsg('请输入6-12位密码，只能是数字、字母和下划线')
+          this.showMsg('请输入至少六位密码，只能是数字、字母或下划线')
           this.canHttp = false
           return
         }
@@ -173,7 +173,7 @@ export default {
         queryObject.old_pwd = this.base64Str(this.val1.trim())
       } else {
         if (!this.pwdReg.test(this.val3)) {
-          this.showMsg('请输入6-12位密码，只能是数字、字母和下划线')
+          this.showMsg('请输入至少六位密码，只能是数字、字母或下划线')
           this.canHttp = false
           return
         }
