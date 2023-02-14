@@ -441,6 +441,12 @@ export default {
     // salesman: 'base/salesman/list',
     salesman: 'base/unit/getEmployeeByUnitId',
     // 企业微信通知
-    autoNotify: 'wechat/cpAuth/autoNotify'
+    autoNotify: 'wechat/cpAuth/autoNotify',
+    // 付款申请查询接口
+    payApply: 'finance/payApply/queryPayApplyAndItemForMiniApp',
+    // 数据字典id查询
+    menuGetUserMenu: 'base/dictionary/query',
+    // 数据字典值查询
+    menuValue: 'base/dictionary-value/query'
   }
 }

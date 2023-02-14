@@ -1,6 +1,7 @@
 import UTF8 from 'utf8'
 import BASE64 from 'base-64'
 // const zfBASICURL = 'http://172.16.120.240:8008/api/' // zf本地环境地址
+// const zfBASICURL = 'http://172.16.120.241:8008/api/' // 朱超良IP地址
 // const zfBASICURL = 'http://47.103.130.166:8008/api/' // zf测试环境地址
 // const zfBASICURL = 'http://47.103.131.110:8008/api/' // zf开发环境地址
 const zfBASICURL = 'http://testway.xingyun361.com/api/' // 测试环境地址
