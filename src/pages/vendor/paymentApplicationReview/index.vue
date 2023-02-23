@@ -345,9 +345,15 @@ export default {
       let detail = await this.httpPost(api, params)
       detail.data[0].feeItemCode = detail.data[0].feeItemCode.split('_')[0][0] + detail.data[0].feeItemCode.split('_')[1]
       detail.data[0].applyMoney = formatMoney(detail.data[0].applyMoney, '¥', 2)
+      detail.data[0].applyMoney = detail.data[0].applyMoney.indexOf('.') === -1 ? detail.data[0].applyMoney + '.00' : detail.data[0].applyMoney
       detail.data.forEach((item, index) => {
-        console.log(item, index)
         item.itemApplyMoney = formatMoney(item.itemApplyMoney, '¥', 2)
+        item.itemApplyMoney = item.itemApplyMoney.indexOf('.') === -1 ? item.itemApplyMoney + '.00' : item.itemApplyMoney
+      })
+      this.companyName.forEach(item => {
+        if (detail.data[0].companyName === item.name) {
+          detail.data[0].companyName = item.abbreviation
+        }
       })
       this.financialAuditDetails = detail.data[0]
       this.detail = detail.data
