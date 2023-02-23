@@ -5,41 +5,41 @@ div
     div
       .bg-white.padding-all
         .row.justify-between.padding-bottom-xs
-          .col 收款单位：{{financialAuditDetails.receiptUnitName}}
-          .text-blue.company-circle {{financialAuditDetails.companyName}}
+          .col 收款单位：{{financialAuditDetails.receiptUnitName ? financialAuditDetails.receiptUnitName : ''}}
+          .text-blue.company-circle {{financialAuditDetails.companyName ? financialAuditDetails.companyName : ''}}
         .row.justify-between.padding-bottom-xs
           div
             span.text-gray.col 申请单号：
-            span {{financialAuditDetails.payApplyNo}}
-          div.text-black.text-gray.padding-right 工作组：{{financialAuditDetails.workGroup}}
+            span {{financialAuditDetails.payApplyNo ? financialAuditDetails.payApplyNo : ''}}
+          div.text-black.text-gray.padding-right 工作组：{{financialAuditDetails.workGroup ? financialAuditDetails.workGroup : ''}}
         .row.justify-between.text-gray.padding-bottom-xs
           div
             span 申请总金额：
-            span.text-orange {{financialAuditDetails.applyMoney}}
+            span.text-orange {{financialAuditDetails.applyMoney ? financialAuditDetails.applyMoney : ''}}
           div.padding-right 支付方式：
             span.text-black {{financialAuditDetails.paymentType ? financialAuditDetails.paymentType : ''}}
         .row.text-gray.justify-between
           div
             span 申请来源：
-            span {{financialAuditDetails.sourceBillType}}
+            span {{financialAuditDetails.sourceBillType ? financialAuditDetails.sourceBillType : ''}}
           div.padding-right
             span 制单人：
-            span.text-black {{financialAuditDetails.orderMakerName}}
+            span.text-black {{financialAuditDetails.orderMakerName ? financialAuditDetails.orderMakerName : ''}}
         .row.text-gray
-          span 备注：{{financialAuditDetails.payApplyDesc}}
+          span 备注：{{financialAuditDetails.payApplyDesc ? financialAuditDetails.payApplyDesc : ''}}
     div
       .ft-16.padding-top-sm.padding-bottom-sm.padding-left-sm 付款申请信息
       .bg-white.card
         .row.padding-bottom-xs
-          .col {{financialAuditDetails.feeItemName}}
+          .col {{financialAuditDetails.feeItemName ? financialAuditDetails.feeItemName : ''}}
         .row.text-gray.padding-bottom-xs.block
           div.row.justify-between(v-for="(item, index) in detail" :key="index")
             div
               span 申请金额：
-              span.text-orange {{item.itemApplyMoney}}
+              span.text-orange {{item.itemApplyMoney ? item.itemApplyMoney : ''}}
             div
               span.text-gray 合同号：
-              span.text-black {{item.sourceBillNo}}
+              span.text-black {{item.sourceBillNo ? item.sourceBillNo : ''}}
           //- div.row.justify-between
           //-   div
           //-     span 申请金额:
@@ -126,7 +126,17 @@ export default {
       erpModalShow2: false,
       erpModalVal: '',
       financialAuditDetails: {},
-      detail: []
+      detail: [],
+      companyName: [
+        {name: '江苏智恒达机械科技有限公司', abbreviation: '智恒达'},
+        {name: '江苏岳洋通金属加工有限公司', abbreviation: '岳洋通'},
+        {name: '江苏智恒达投资集团合肥有限公司', abbreviation: '智恒达合肥'},
+        {name: '江苏智恒达投资集团有限公司', abbreviation: '智恒达集团'},
+        {name: '江苏智恒达型云网络科技有限公司', abbreviation: '型云'},
+        {name: '常州金新怡机械科技有限公司', abbreviation: '金新怡'},
+        {name: '江苏型升供应链服务有限公司', abbreviation: '型升供应链'},
+        {name: '常州智恒达投资合伙企业（有限合伙）', abbreviation: '智恒达合伙'}
+      ]
     }
   },
 
@@ -401,7 +411,6 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 285rpx;
 .card
   padding 10px
   border-radius 5px
