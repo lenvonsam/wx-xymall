@@ -101,7 +101,7 @@ export default {
       id: '',
       modalVal: '',
       modalInputTitle: '退款金额',
-      // modalShow: false,
+      modalShow: false,
       detailData: {
         list: []
       },
