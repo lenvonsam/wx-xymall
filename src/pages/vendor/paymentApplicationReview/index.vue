@@ -17,7 +17,7 @@ div
             span 申请总金额：
             span.text-orange {{financialAuditDetails.applyMoney}}
           div.padding-right 支付方式：
-            span.text-black {{financialAuditDetails.feeItemCode}}
+            span.text-black {{financialAuditDetails.paymentType ? financialAuditDetails.paymentType : ''}}
         .row.text-gray.justify-between
           div
             span 申请来源：
@@ -343,7 +343,7 @@ export default {
       const api = this.apiList.zf.payApply
       const params = {payApplyId: jsonData.payApplyId}
       let detail = await this.httpPost(api, params)
-      detail.data[0].feeItemCode = detail.data[0].feeItemCode.split('_')[0][0] + detail.data[0].feeItemCode.split('_')[1]
+      // detail.data[0].feeItemCode = detail.data[0].feeItemCode.split('_')[0][0] + detail.data[0].feeItemCode.split('_')[1]
       detail.data[0].applyMoney = formatMoney(detail.data[0].applyMoney, '¥', 2)
       detail.data[0].applyMoney = detail.data[0].applyMoney.indexOf('.') === -1 ? detail.data[0].applyMoney + '.00' : detail.data[0].applyMoney
       detail.data.forEach((item, index) => {
@@ -378,8 +378,8 @@ export default {
             menuRes.data.forEach(menuValueItem => {
               if (menuValueItem.dictionaryName === '工作组' && menuValueItem.value === this.financialAuditDetails.workGroup) {
                 this.financialAuditDetails.workGroup = menuValueItem.name
-              } else if (menuValueItem.dictionaryName === '支付方式' && menuValueItem.value === this.financialAuditDetails.feeItemCode) {
-                this.financialAuditDetails.feeItemCode = menuValueItem.name
+              } else if (menuValueItem.dictionaryName === '支付方式' && menuValueItem.value === this.financialAuditDetails.paymentType) {
+                this.financialAuditDetails.paymentType = menuValueItem.name
               } else if (menuValueItem.value === this.financialAuditDetails.sourceBillType) {
                 this.financialAuditDetails.sourceBillType = menuValueItem.name
               }
