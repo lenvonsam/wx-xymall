@@ -30,16 +30,17 @@ div
     div
       .ft-16.padding-top-sm.padding-bottom-sm.padding-left-sm 付款申请信息
       .bg-white.card
-        .row.padding-bottom-xs
-          .col {{financialAuditDetails.feeItemName ? financialAuditDetails.feeItemName : ''}}
         .row.text-gray.padding-bottom-xs.block
-          div.row.justify-between(v-for="(item, index) in detail" :key="index")
-            div
-              span 申请金额：
-              span.text-orange {{item.itemApplyMoney ? item.itemApplyMoney : ''}}
-            div
-              span.text-gray 合同号：
-              span.text-black {{item.sourceBillNo ? item.sourceBillNo : ''}}
+          div(v-for="(item, index) in payMentInformation" :key="index")
+            .row.padding-bottom-xs
+              .col {{item.feeItemName ? item.feeItemName : ''}}
+            div.row.justify-between(v-for="(items,childrenIndex) in item.children" :key="items.sourceBillNo")
+              div
+                span 申请金额：
+                span.text-orange {{items.itemApplyMoney ? items.itemApplyMoney : ''}}
+              div
+                span.text-gray 合同号：
+                span.text-black {{items.sourceBillNo ? items.sourceBillNo : ''}}
           //- div.row.justify-between
           //-   div
           //-     span 申请金额:
@@ -127,6 +128,7 @@ export default {
       erpModalVal: '',
       financialAuditDetails: {},
       detail: [],
+      payMentInformation: [],
       companyName: [
         {name: '江苏智恒达机械科技有限公司', abbreviation: '智恒达'},
         {name: '江苏岳洋通金属加工有限公司', abbreviation: '岳洋通'},
@@ -182,6 +184,31 @@ export default {
       this.disabled = true
       this.jump(`/pages/billDetail/main?contractId=${this.detailData.saleContractId}`)
     },
+
+    handlerDatas (arr) {
+      // 筛选相同费用项目的单据
+      let tempArr = []
+      let endData = []
+      for (let i = 0; i < arr.length; i++) {
+        if (tempArr.indexOf(arr[i].feeItemName) === -1) {
+          endData.push({
+            feeItemName: arr[i].feeItemName,
+            children: [arr[i]]
+          })
+          tempArr.push(arr[i].feeItemName)
+        } else {
+          for (let j = 0; j < endData.length; j++) {
+            if (endData[j].feeItemName === arr[i].feeItemName) {
+              endData[j].children.push(arr[i])
+              break
+            }
+          }
+        }
+      }
+      this.payMentInformation = endData
+      // console.log(endData, 'endData') // 最终输出
+    },
+
     // 弹窗回调
     modalHandler ({ type }) {
       if (type === 'confirm') {
@@ -397,6 +424,7 @@ export default {
           })
         })
       })
+      this.handlerDatas(this.detail)
     }
   }
 }
