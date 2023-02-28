@@ -123,7 +123,7 @@ export default {
     this.btnDisable = false
   },
   onLoad (options) {
-    console.log(options.configId)
+    console.log('options.configId>>>', options.configId)
     this.configId = options.configId
     this.onRefresh()
   },
@@ -305,6 +305,9 @@ export default {
       } else if (this.configId === '68') {
         auditTypeText = '白条'
         this.jump(`/pages/vendor/reviewDetailCredit/main?id=${item.id}&auditType=${auditTypeText}`)
+      } else if (this.configId === '713') {
+        auditTypeText = '财务审核'
+        this.jump(`/pages/vendor/paymentApplicationReview/main?id=${item.id}&auditType=${auditTypeText}`)
       } else {
         auditTypeText = '通用'
         this.jump(`/pages/vendor/reviewDetailCommon/main?id=${item.id}&auditType=${auditTypeText}`)
