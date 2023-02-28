@@ -6,7 +6,7 @@ div
       .bg-white.padding-all
         .row.justify-between.padding-bottom-xs
           .col 收款单位：{{financialAuditDetails.receiptUnitName ? financialAuditDetails.receiptUnitName : ''}}
-          .text-blue.company-circle {{financialAuditDetails.companyName ? financialAuditDetails.companyName : ''}}
+          .text-blue.company-circle {{shortName || ''}}
         .row.justify-between.padding-bottom-xs
           div
             span.text-gray.col 申请单号：
@@ -18,7 +18,7 @@ div
             span.text-orange {{financialAuditDetails.applyMoney ? financialAuditDetails.applyMoney : ''}}
           div.padding-right 支付方式：
             span.text-black {{financialAuditDetails.paymentType ? financialAuditDetails.paymentType : ''}}
-        .row.text-gray.justify-between
+        .row.text-gray.justify-between.padding-bottom-xs
           div
             span 申请来源：
             span {{financialAuditDetails.sourceBillType ? financialAuditDetails.sourceBillType : ''}}
@@ -32,7 +32,7 @@ div
       .bg-white.card
         .row.text-gray.padding-bottom-xs.block
           div(v-for="(item, index) in payMentInformation" :key="index")
-            .row.padding-bottom-xs
+            .row.padding-bottom-xs.text-black
               .col {{item.feeItemName ? item.feeItemName : ''}}
             div.row.justify-between(v-for="(items,childrenIndex) in item.children" :key="items.sourceBillNo")
               div
@@ -129,16 +129,17 @@ export default {
       financialAuditDetails: {},
       detail: [],
       payMentInformation: [],
-      companyName: [
-        {name: '江苏智恒达机械科技有限公司', abbreviation: '智恒达'},
-        {name: '江苏岳洋通金属加工有限公司', abbreviation: '岳洋通'},
-        {name: '江苏智恒达投资集团合肥有限公司', abbreviation: '智恒达合肥'},
-        {name: '江苏智恒达投资集团有限公司', abbreviation: '智恒达集团'},
-        {name: '江苏智恒达型云网络科技有限公司', abbreviation: '型云'},
-        {name: '常州金新怡机械科技有限公司', abbreviation: '金新怡'},
-        {name: '江苏型升供应链服务有限公司', abbreviation: '型升供应链'},
-        {name: '常州智恒达投资合伙企业（有限合伙）', abbreviation: '智恒达合伙'}
-      ]
+      shortName: ''
+      // companyName: [
+      //   {name: '江苏智恒达机械科技有限公司', abbreviation: '智恒达'},
+      //   {name: '江苏岳洋通金属加工有限公司', abbreviation: '岳洋通'},
+      //   {name: '江苏智恒达投资集团合肥有限公司', abbreviation: '智恒达合肥'},
+      //   {name: '江苏智恒达投资集团有限公司', abbreviation: '智恒达集团'},
+      //   {name: '江苏智恒达型云网络科技有限公司', abbreviation: '型云'},
+      //   {name: '常州金新怡机械科技有限公司', abbreviation: '金新怡'},
+      //   {name: '江苏型升供应链服务有限公司', abbreviation: '型升供应链'},
+      //   {name: '常州智恒达投资合伙企业（有限合伙）', abbreviation: '智恒达合伙'}
+      // ]
     }
   },
 
@@ -146,7 +147,8 @@ export default {
     ...mapState({
       isIpx: state => state.isIpx,
       modules: state => state.modules,
-      screenHeight: state => state.screenHeight
+      screenHeight: state => state.screenHeight,
+      companyName: state => state.companyName
     }),
     dataList () {
       return this.detailData.list
@@ -387,9 +389,10 @@ export default {
         item.itemApplyMoney = formatMoney(item.itemApplyMoney, '¥', 2)
         item.itemApplyMoney = item.itemApplyMoney.indexOf('.') === -1 ? item.itemApplyMoney + '.00' : item.itemApplyMoney
       })
+
       this.companyName.forEach(item => {
-        if (detail.data[0].companyName === item.name) {
-          detail.data[0].companyName = item.abbreviation
+        if (detail.data[0].companyCode === item.code) {
+          this.shortName = item.shortName
         }
       })
       this.financialAuditDetails = detail.data[0]
@@ -433,7 +436,7 @@ export default {
 .padding-right
   width: 289rpx;
 .company-circle
-  border: 1px solid blue;
+  border: 1px solid #0081ff;
   border-radius: 20rpx;
   padding: 0 13rpx;
   white-space: nowrap;
