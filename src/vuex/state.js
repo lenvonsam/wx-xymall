@@ -133,5 +133,16 @@ export default {
     { id: '08', name: '违约' },
     { id: '09', name: '已取消' },
     { id: '10', name: '审核中' }
+  ],
+  companyName: [
+    {code: 'C00001', name: '江苏智恒达投资集团有限公司', shortName: '智恒达集团'},
+    {code: 'C00008', name: '江苏智恒达机械科技有限公司', shortName: '智恒达'},
+    {code: 'C00009', name: '江苏岳洋通金属加工有限公司', shortName: '岳洋通'},
+    {code: 'C00010', name: '江苏智恒达投资集团合肥有限公司', shortName: '智恒达合肥'},
+    {code: 'C00011', name: '江苏智恒达型云网络科技有限公司', shortName: '型云'},
+    {code: 'C00012', name: '常州金新怡机械科技有限公司', shortName: '金新怡'},
+    {code: 'C00013', name: '江苏型升供应链服务有限公司', shortName: '型升供应链'},
+    {code: 'C00014', name: '常州智恒达投资合伙企业（有限合伙）', shortName: '智恒达合伙'},
+    {code: 'C00015', name: '虚拟部', shortName: '虚拟部'}
   ]
 }
