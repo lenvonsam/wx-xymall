@@ -5,41 +5,42 @@ div
     div
       .bg-white.padding-all
         .row.justify-between.padding-bottom-xs
-          .col 收款单位：{{financialAuditDetails.receiptUnitName}}
-          .text-blue.company-circle {{financialAuditDetails.companyName}}
+          .col 收款单位：{{financialAuditDetails.receiptUnitName ? financialAuditDetails.receiptUnitName : ''}}
+          .text-blue.company-circle {{shortName || ''}}
         .row.justify-between.padding-bottom-xs
           div
             span.text-gray.col 申请单号：
-            span {{financialAuditDetails.payApplyNo}}
-          div.text-black.text-gray.padding-right 工作组：{{financialAuditDetails.workGroup}}
+            span {{financialAuditDetails.payApplyNo ? financialAuditDetails.payApplyNo : ''}}
+          div.text-black.text-gray.padding-right 工作组：{{financialAuditDetails.workGroup ? financialAuditDetails.workGroup : ''}}
         .row.justify-between.text-gray.padding-bottom-xs
           div
             span 申请总金额：
-            span.text-orange {{financialAuditDetails.applyMoney}}
+            span.text-orange {{financialAuditDetails.applyMoney ? financialAuditDetails.applyMoney : ''}}
           div.padding-right 支付方式：
-            span.text-black {{financialAuditDetails.feeItemCode}}
-        .row.text-gray.justify-between
+            span.text-black {{financialAuditDetails.paymentType ? financialAuditDetails.paymentType : ''}}
+        .row.text-gray.justify-between.padding-bottom-xs
           div
             span 申请来源：
-            span {{financialAuditDetails.sourceBillType}}
+            span {{financialAuditDetails.sourceBillType ? financialAuditDetails.sourceBillType : ''}}
           div.padding-right
             span 制单人：
-            span.text-black {{financialAuditDetails.orderMakerName}}
+            span.text-black {{financialAuditDetails.orderMakerName ? financialAuditDetails.orderMakerName : ''}}
         .row.text-gray
-          span 备注：{{financialAuditDetails.payApplyDesc}}
+          span 备注：{{financialAuditDetails.payApplyDesc ? financialAuditDetails.payApplyDesc : ''}}
     div
       .ft-16.padding-top-sm.padding-bottom-sm.padding-left-sm 付款申请信息
       .bg-white.card
-        .row.padding-bottom-xs
-          .col {{financialAuditDetails.feeItemName}}
         .row.text-gray.padding-bottom-xs.block
-          div.row.justify-between(v-for="(item, index) in detail" :key="index")
-            div
-              span 申请金额：
-              span.text-orange {{item.itemApplyMoney}}
-            div
-              span.text-gray 合同号：
-              span.text-black {{item.sourceBillNo}}
+          div(v-for="(item, index) in payMentInformation" :key="index")
+            .row.padding-bottom-xs.text-black
+              .col {{item.feeItemName ? item.feeItemName : ''}}
+            div.row.justify-between(v-for="(items,childrenIndex) in item.children" :key="items.sourceBillNo")
+              div
+                span 申请金额：
+                span.text-orange {{items.itemApplyMoney ? items.itemApplyMoney : ''}}
+              div
+                span.text-gray 合同号：
+                span.text-black {{items.sourceBillNo ? items.sourceBillNo : ''}}
           //- div.row.justify-between
           //-   div
           //-     span 申请金额:
@@ -101,7 +102,7 @@ export default {
       id: '',
       modalVal: '',
       modalInputTitle: '退款金额',
-      // modalShow: false,
+      modalShow: false,
       detailData: {
         list: []
       },
@@ -126,7 +127,19 @@ export default {
       erpModalShow2: false,
       erpModalVal: '',
       financialAuditDetails: {},
-      detail: []
+      detail: [],
+      payMentInformation: [],
+      shortName: ''
+      // companyName: [
+      //   {name: '江苏智恒达机械科技有限公司', abbreviation: '智恒达'},
+      //   {name: '江苏岳洋通金属加工有限公司', abbreviation: '岳洋通'},
+      //   {name: '江苏智恒达投资集团合肥有限公司', abbreviation: '智恒达合肥'},
+      //   {name: '江苏智恒达投资集团有限公司', abbreviation: '智恒达集团'},
+      //   {name: '江苏智恒达型云网络科技有限公司', abbreviation: '型云'},
+      //   {name: '常州金新怡机械科技有限公司', abbreviation: '金新怡'},
+      //   {name: '江苏型升供应链服务有限公司', abbreviation: '型升供应链'},
+      //   {name: '常州智恒达投资合伙企业（有限合伙）', abbreviation: '智恒达合伙'}
+      // ]
     }
   },
 
@@ -134,7 +147,8 @@ export default {
     ...mapState({
       isIpx: state => state.isIpx,
       modules: state => state.modules,
-      screenHeight: state => state.screenHeight
+      screenHeight: state => state.screenHeight,
+      companyName: state => state.companyName
     }),
     dataList () {
       return this.detailData.list
@@ -172,6 +186,31 @@ export default {
       this.disabled = true
       this.jump(`/pages/billDetail/main?contractId=${this.detailData.saleContractId}`)
     },
+
+    handlerDatas (arr) {
+      // 筛选相同费用项目的单据
+      let tempArr = []
+      let endData = []
+      for (let i = 0; i < arr.length; i++) {
+        if (tempArr.indexOf(arr[i].feeItemName) === -1) {
+          endData.push({
+            feeItemName: arr[i].feeItemName,
+            children: [arr[i]]
+          })
+          tempArr.push(arr[i].feeItemName)
+        } else {
+          for (let j = 0; j < endData.length; j++) {
+            if (endData[j].feeItemName === arr[i].feeItemName) {
+              endData[j].children.push(arr[i])
+              break
+            }
+          }
+        }
+      }
+      this.payMentInformation = endData
+      // console.log(endData, 'endData') // 最终输出
+    },
+
     // 弹窗回调
     modalHandler ({ type }) {
       if (type === 'confirm') {
@@ -343,11 +382,18 @@ export default {
       const api = this.apiList.zf.payApply
       const params = {payApplyId: jsonData.payApplyId}
       let detail = await this.httpPost(api, params)
-      detail.data[0].feeItemCode = detail.data[0].feeItemCode.split('_')[0][0] + detail.data[0].feeItemCode.split('_')[1]
+      // detail.data[0].feeItemCode = detail.data[0].feeItemCode.split('_')[0][0] + detail.data[0].feeItemCode.split('_')[1]
       detail.data[0].applyMoney = formatMoney(detail.data[0].applyMoney, '¥', 2)
+      detail.data[0].applyMoney = detail.data[0].applyMoney.indexOf('.') === -1 ? detail.data[0].applyMoney + '.00' : detail.data[0].applyMoney
       detail.data.forEach((item, index) => {
-        console.log(item, index)
         item.itemApplyMoney = formatMoney(item.itemApplyMoney, '¥', 2)
+        item.itemApplyMoney = item.itemApplyMoney.indexOf('.') === -1 ? item.itemApplyMoney + '.00' : item.itemApplyMoney
+      })
+
+      this.companyName.forEach(item => {
+        if (detail.data[0].companyCode === item.code) {
+          this.shortName = item.shortName
+        }
       })
       this.financialAuditDetails = detail.data[0]
       this.detail = detail.data
@@ -372,8 +418,8 @@ export default {
             menuRes.data.forEach(menuValueItem => {
               if (menuValueItem.dictionaryName === '工作组' && menuValueItem.value === this.financialAuditDetails.workGroup) {
                 this.financialAuditDetails.workGroup = menuValueItem.name
-              } else if (menuValueItem.dictionaryName === '支付方式' && menuValueItem.value === this.financialAuditDetails.feeItemCode) {
-                this.financialAuditDetails.feeItemCode = menuValueItem.name
+              } else if (menuValueItem.dictionaryName === '支付方式' && menuValueItem.value === this.financialAuditDetails.paymentType) {
+                this.financialAuditDetails.paymentType = menuValueItem.name
               } else if (menuValueItem.value === this.financialAuditDetails.sourceBillType) {
                 this.financialAuditDetails.sourceBillType = menuValueItem.name
               }
@@ -381,6 +427,7 @@ export default {
           })
         })
       })
+      this.handlerDatas(this.detail)
     }
   }
 }
@@ -389,13 +436,12 @@ export default {
 .padding-right
   width: 289rpx;
 .company-circle
-  border: 1px solid blue;
+  border: 1px solid #0081ff;
   border-radius: 20rpx;
   padding: 0 13rpx;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 285rpx;
 .card
   padding 10px
   border-radius 5px

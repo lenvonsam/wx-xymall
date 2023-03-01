@@ -7,7 +7,6 @@ import BASE64 from 'base-64'
 // const zfBASICURL = 'http://testway.xingyun361.com/api/' // uat环境地址
 const zfBASICURL = 'https://gateway.xingyun361.com/api/' // 正式环境地址
 // const BASICURL = 'https://mobileapp.xingyun361.com/quasarserverdev' // 测试环境地址
-// const BASICURL = 'https://mobileapp.xingyun361.com/quasarserverstage' // 预上线环境地址
 const BASICURL = 'https://mobileapp.xingyun361.com/quasarserver'
 // const BASICURL = 'https://47.97.195.16/quasarserver'
 // const BASICURL = 'http://localhost:8077'
