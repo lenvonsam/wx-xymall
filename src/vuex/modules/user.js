@@ -92,10 +92,10 @@ export default {
         console.log('6666++++', data.user.userTypeLogo)
 
         // TODO 待后端接口完善字段，区分当前账号是买家还是卖家
-        if (data.user.userTypeLogo === '01') {
-          state.currentUser.type = 'buyer'
-        } else {
+        if (data.user.userTypeLogo === '02') {
           state.currentUser.type = 'seller'
+        } else {
+          state.currentUser.type = 'buyer'
         }
         // TODO 搜索历史
         // state.currentUser.localSearchs = []
@@ -135,10 +135,10 @@ export default {
         console.log('AUTOUSER currentUser:>> token', token)
         if (token) {
           state.currentUser = currentUser
-          if (currentUser.userTypeLogo === '01') {
-            state.currentUser.type = 'buyer'
-          } else {
+          if (currentUser.userTypeLogo === '02') {
             state.currentUser.type = 'seller'
+          } else {
+            state.currentUser.type = 'buyer'
           }
           state.token = token
           state.isLogin = true
